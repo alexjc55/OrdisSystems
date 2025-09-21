@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
-import { useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { useShopTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import { generateHomeSEO } from "@/lib/seo-utils";
@@ -186,10 +186,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                 )}
                 {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage) && (
                   <div className="text-base sm:text-lg flex justify-between">
-                    <span className="text-gray-700 font-bold flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {t('address')}:
-                    </span>
+                    <span className="text-gray-700 font-bold">{t('address')}:</span>
                     <span className="text-gray-700 text-right break-words max-w-[60%]">
                       {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)}
                     </span>
@@ -248,9 +245,23 @@ export default function Home() {
   const { isOpen: isCartOpen, addItem } = useCartStore();
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
+  const { t: tCommon } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+
+  // Combined translation function that uses correct namespace for each key
+  const tCombined = (key: string) => {
+    // Keys that should use common translations
+    const commonKeys = ['address', 'phone', 'email', 'contacts', 'workingHours', 'notSpecified', 'loadingError'];
+    
+    if (commonKeys.includes(key)) {
+      return tCommon(key);
+    }
+    
+    // Default to shop translations
+    return t(key);
+  };
 
   // Fetch categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithCount[]>({
@@ -574,7 +585,7 @@ export default function Home() {
            storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "top" && (
             <InfoBlocks 
               storeSettings={storeSettings} 
-              t={t} 
+              t={tCombined} 
               currentLanguage={currentLanguage} 
             />
           )}
@@ -867,7 +878,7 @@ export default function Home() {
         <div className="px-6 pb-6">
           <InfoBlocks 
             storeSettings={storeSettings} 
-            t={t} 
+            t={tCombined} 
             currentLanguage={currentLanguage} 
           />
         </div>
