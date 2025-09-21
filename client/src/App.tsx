@@ -33,6 +33,7 @@ import GuestOrderPage from "@/pages/guest-order";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
@@ -276,6 +277,9 @@ function Router() {
         <Route path="/landing" component={Landing} />
         <Route component={NotFound} />
       </Switch>
+      
+      {/* Analytics Tracker - Automatically tracks route changes for all analytics services */}
+      <AnalyticsTracker debug={true} />
       
       {/* PWA Status Bar */}
       <PWAStatusBar />

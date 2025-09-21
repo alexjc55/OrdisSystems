@@ -13,14 +13,16 @@ import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import Header from "@/components/layout/header";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export default function ThanksPage() {
   const [location] = useLocation();
   const { t } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
+  const { sendPurchase, sendGoal } = useAnalytics();
   const [orderData, setOrderData] = useState<{
     orderId?: number;
     guestAccessToken?: string;
@@ -46,6 +48,80 @@ export default function ThanksPage() {
       hasEmail: urlParams.get("hasEmail") !== "false" // Default to true, false only if explicitly set
     });
   }, [location, currentLanguage]);
+
+  // Fetch full order details for analytics
+  const { data: fullOrderData } = useQuery({
+    queryKey: [
+      orderData.isGuest ? "/api/orders/guest" : "/api/orders", 
+      orderData.isGuest ? orderData.guestAccessToken : orderData.orderId
+    ],
+    queryFn: async () => {
+      if (!orderData.orderId) return null;
+      
+      // Use guest endpoint for guest orders, regular endpoint for user orders
+      if (orderData.isGuest && orderData.guestAccessToken) {
+        try {
+          return await apiRequest("GET", `/api/orders/guest/${orderData.guestAccessToken}`);
+        } catch (error) {
+          console.warn('[Analytics] Failed to fetch guest order details:', error);
+          return null;
+        }
+      } else if (!orderData.isGuest && orderData.orderId) {
+        try {
+          return await apiRequest("GET", `/api/orders/${orderData.orderId}`);
+        } catch (error) {
+          console.warn('[Analytics] Failed to fetch order details:', error);
+          return null;
+        }
+      }
+      return null;
+    },
+    enabled: Boolean(orderData.orderId && (orderData.isGuest ? orderData.guestAccessToken : true)),
+    retry: 1,
+    staleTime: 0 // Always refetch order data
+  });
+
+  // Send analytics events when order data is available
+  useEffect(() => {
+    // Wait for both URL parameters and order details to be loaded
+    if (!orderData.orderId || !fullOrderData) return;
+    
+    try {
+      // Prepare analytics data
+      const analyticsData = {
+        orderId: orderData.orderId,
+        value: parseFloat(fullOrderData.totalAmount) || 0,
+        currency: 'ILS', // Default currency for Israel
+        items: fullOrderData.orderItems?.map((item: any) => ({
+          name: item.product?.name || `Product ${item.productId}`,
+          quantity: parseFloat(item.quantity) || 1,
+          price: parseFloat(item.totalPrice) || 0
+        })) || []
+      };
+
+      // Send purchase conversion event
+      sendPurchase(analyticsData);
+      
+      // Send additional goals for better tracking
+      sendGoal('order_completed', {
+        order_id: orderData.orderId,
+        order_value: analyticsData.value,
+        is_guest: orderData.isGuest,
+        currency: 'ILS'
+      });
+
+      // Send specific goal for thank you page visit
+      sendGoal('thank_you_page_visited', {
+        order_id: orderData.orderId,
+        referrer: document.referrer
+      });
+
+      console.log('[Analytics] Purchase conversion events sent for order:', orderData.orderId);
+      
+    } catch (error) {
+      console.error('[Analytics] Error sending purchase events:', error);
+    }
+  }, [orderData.orderId, fullOrderData, orderData.isGuest, sendPurchase, sendGoal]);
 
   // SEO for thanks page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
