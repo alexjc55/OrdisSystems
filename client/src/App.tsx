@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -23,7 +23,6 @@ import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
-import AdminSalesPage from "@/pages/admin-sales";
 import Profile from "@/pages/profile";
 import ChangePasswordPage from "@/pages/change-password";
 import ForgotPasswordPage from "@/pages/forgot-password";
@@ -34,12 +33,10 @@ import GuestOrderPage from "@/pages/guest-order";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
-import analytics from "@/lib/analytics";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
-  const [location] = useLocation();
   
   // Handle URL-based language switching
   useUrlLanguage();
@@ -82,11 +79,6 @@ function Router() {
       i18n.off('languageChanged', handleLanguageChange);
     };
   }, [i18n]);
-
-  // Track page views on wouter location changes
-  useEffect(() => {
-    analytics.trackPageView(location);
-  }, [location]);
 
   // Force disable scroll lock on any attempt by Radix UI
   useEffect(() => {
@@ -274,7 +266,6 @@ function Router() {
         <Route path="/all-products" component={Home} />
         <Route path="/auth" component={AuthPage} />
         <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
-        <ProtectedRoute path="/admin/sales" component={() => <AdminSalesPage />} />
         <ProtectedRoute path="/profile" component={() => <Profile />} />
         <Route path="/checkout" component={Checkout} />
         <Route path="/thanks" component={ThanksPage} />

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product } from '@shared/schema';
 import { calculateTotal, roundUpToNearestTenAgorot, type ProductUnit } from './currency';
-import analytics from './analytics';
 
 export interface CartItem {
   product: Product;
@@ -54,25 +53,12 @@ export const useCartStore = create<CartStore>()(
           };
           set({ items: [...validItems, newItem] });
         }
-        
-        // Track add to cart event
-        analytics.trackAddToCart(
-          product.id,
-          quantity,
-          calculateTotal(parseFloat(product.price), quantity, product.unit as ProductUnit)
-        );
       },
       
       removeItem: (productId) => {
         const items = get().items;
-        const removedItem = items.find(item => item.product && item.product.id === productId);
         const validItems = items.filter(item => item.product && item.product.id && item.product.id !== productId);
         set({ items: validItems });
-        
-        // Track remove from cart event
-        if (removedItem) {
-          analytics.trackRemoveFromCart(productId, removedItem.quantity);
-        }
       },
       
       updateQuantity: (productId, quantity) => {

@@ -22,9 +22,6 @@ export default function PushNotificationRequest() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
-    // Only execute if running in browser environment
-    if (typeof window === 'undefined') return;
-    
     // Check current permission status
     if ('Notification' in window) {
       setPermission(Notification.permission);
@@ -32,7 +29,7 @@ export default function PushNotificationRequest() {
 
     // Show request after shorter delay if permission not granted
     const timer = setTimeout(() => {
-      if ('Notification' in window && Notification.permission === 'default') {
+      if (Notification.permission === 'default') {
         const lastRequested = localStorage.getItem('push-permission-requested');
         const daysSinceRequest = lastRequested ? 
           (Date.now() - parseInt(lastRequested)) / (1000 * 60 * 60 * 24) : 999;
@@ -47,7 +44,7 @@ export default function PushNotificationRequest() {
 
     // Listen for PWA installation event
     const handlePWAInstalled = () => {
-      if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      if (Notification.permission === 'default') {
         setShowRequest(true);
       }
     };
@@ -60,7 +57,7 @@ export default function PushNotificationRequest() {
                           (window.navigator as any).standalone ||
                           document.referrer.includes('android-app://');
       
-      if (isStandalone && typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+      if (isStandalone && Notification.permission === 'default') {
         // Delay showing the request in standalone mode
         setTimeout(() => setShowRequest(true), 3000);
       }
