@@ -93,27 +93,27 @@ export function useAnalytics() {
             referer: referrer || document.referrer,
             title: title || document.title
           });
-          console.log('[Analytics] Yandex Metrika pageview sent:', path, 'Counter:', counterId);
+          if (import.meta.env.DEV) console.log('[Analytics] Yandex Metrika pageview sent:', path, 'Counter:', counterId);
         } else {
-          console.warn('[Analytics] Yandex Metrika counter ID not found - pageview skipped');
+          if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika counter ID not found - pageview skipped');
         }
       } else {
-        console.warn('[Analytics] Yandex Metrika not available - pageview skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika not available - pageview skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] Yandex Metrika pageview error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika pageview error:', error);
     }
 
     try {
       // Facebook Pixel
       if (typeof window.fbq === 'function') {
         window.fbq('track', 'PageView');
-        console.log('[Analytics] Facebook Pixel pageview sent:', path);
+        if (import.meta.env.DEV) console.log('[Analytics] Facebook Pixel pageview sent:', path);
       } else {
-        console.warn('[Analytics] Facebook Pixel not available - pageview skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel not available - pageview skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] Facebook Pixel pageview error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel pageview error:', error);
     }
 
     try {
@@ -124,12 +124,12 @@ export function useAnalytics() {
           page_title: title || document.title,
           page_location: window.location.origin + path
         });
-        console.log('[Analytics] Google Analytics pageview sent:', path);
+        if (import.meta.env.DEV) console.log('[Analytics] Google Analytics pageview sent:', path);
       } else {
-        console.warn('[Analytics] Google Analytics not available - pageview skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics not available - pageview skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] Google Analytics pageview error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics pageview error:', error);
     }
 
     try {
@@ -141,12 +141,12 @@ export function useAnalytics() {
           page_title: title || document.title,
           page_location: window.location.origin + path
         });
-        console.log('[Analytics] GTM dataLayer pageview sent:', path);
+        if (import.meta.env.DEV) console.log('[Analytics] GTM dataLayer pageview sent:', path);
       } else {
-        console.warn('[Analytics] GTM dataLayer not available - pageview skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] GTM dataLayer not available - pageview skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] GTM dataLayer pageview error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] GTM dataLayer pageview error:', error);
     }
   }, [getYandexCounterId]);
 
@@ -165,15 +165,15 @@ export function useAnalytics() {
             order_price: value,
             currency
           });
-          console.log('[Analytics] Yandex Metrika purchase sent:', { orderId, value, counterId });
+          if (import.meta.env.DEV) console.log('[Analytics] Yandex Metrika purchase sent:', { orderId, value, counterId });
         } else {
-          console.warn('[Analytics] Yandex Metrika counter ID not found - purchase skipped');
+          if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika counter ID not found - purchase skipped');
         }
       } else {
-        console.warn('[Analytics] Yandex Metrika not available - purchase skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika not available - purchase skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] Yandex Metrika purchase error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika purchase error:', error);
     }
 
     try {
@@ -186,12 +186,12 @@ export function useAnalytics() {
           content_type: 'product',
           num_items: items.length || 1
         });
-        console.log('[Analytics] Facebook Pixel purchase sent:', { orderId, value });
+        if (import.meta.env.DEV) console.log('[Analytics] Facebook Pixel purchase sent:', { orderId, value });
       } else {
-        console.warn('[Analytics] Facebook Pixel not available - purchase skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel not available - purchase skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] Facebook Pixel purchase error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel purchase error:', error);
     }
 
     try {
@@ -208,12 +208,12 @@ export function useAnalytics() {
             price: item.price
           }))
         });
-        console.log('[Analytics] Google Analytics purchase sent:', { orderId, value });
+        if (import.meta.env.DEV) console.log('[Analytics] Google Analytics purchase sent:', { orderId, value });
       } else {
-        console.warn('[Analytics] Google Analytics not available - purchase skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics not available - purchase skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] Google Analytics purchase error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics purchase error:', error);
     }
 
     try {
@@ -233,12 +233,12 @@ export function useAnalytics() {
             }))
           }
         });
-        console.log('[Analytics] GTM dataLayer purchase sent:', { orderId, value });
+        if (import.meta.env.DEV) console.log('[Analytics] GTM dataLayer purchase sent:', { orderId, value });
       } else {
-        console.warn('[Analytics] GTM dataLayer not available - purchase skipped');
+        if (import.meta.env.DEV) console.warn('[Analytics] GTM dataLayer not available - purchase skipped');
       }
     } catch (error) {
-      console.warn('[Analytics] GTM dataLayer purchase error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] GTM dataLayer purchase error:', error);
     }
   }, [getYandexCounterId]);
 
@@ -250,39 +250,39 @@ export function useAnalytics() {
         const counterId = getYandexCounterId();
         if (counterId) {
           window.ym(counterId, 'reachGoal', goalName, params);
-          console.log('[Analytics] Yandex Metrika goal sent:', goalName, params, 'Counter:', counterId);
+          if (import.meta.env.DEV) console.log('[Analytics] Yandex Metrika goal sent:', goalName, params, 'Counter:', counterId);
         } else {
-          console.warn('[Analytics] Yandex Metrika counter ID not found - goal skipped:', goalName);
+          if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika counter ID not found - goal skipped:', goalName);
         }
       } else {
-        console.warn('[Analytics] Yandex Metrika not available - goal skipped:', goalName);
+        if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika not available - goal skipped:', goalName);
       }
     } catch (error) {
-      console.warn('[Analytics] Yandex Metrika goal error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika goal error:', error);
     }
 
     try {
       // Facebook Pixel custom event
       if (typeof window.fbq === 'function') {
         window.fbq('trackCustom', goalName, params);
-        console.log('[Analytics] Facebook Pixel custom event sent:', goalName, params);
+        if (import.meta.env.DEV) console.log('[Analytics] Facebook Pixel custom event sent:', goalName, params);
       } else {
-        console.warn('[Analytics] Facebook Pixel not available - custom event skipped:', goalName);
+        if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel not available - custom event skipped:', goalName);
       }
     } catch (error) {
-      console.warn('[Analytics] Facebook Pixel custom event error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel custom event error:', error);
     }
 
     try {
       // Google Analytics custom event
       if (typeof window.gtag === 'function') {
         window.gtag('event', goalName, params);
-        console.log('[Analytics] Google Analytics custom event sent:', goalName, params);
+        if (import.meta.env.DEV) console.log('[Analytics] Google Analytics custom event sent:', goalName, params);
       } else {
-        console.warn('[Analytics] Google Analytics not available - custom event skipped:', goalName);
+        if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics not available - custom event skipped:', goalName);
       }
     } catch (error) {
-      console.warn('[Analytics] Google Analytics custom event error:', error);
+      if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics custom event error:', error);
     }
   }, [getYandexCounterId]);
 

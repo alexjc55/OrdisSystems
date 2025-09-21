@@ -117,11 +117,11 @@ export default function ThanksPage() {
           referrer: document.referrer
         });
 
-        console.log('[Analytics] Minimal purchase conversion events sent for order:', orderData.orderId);
+        if (import.meta.env.DEV) console.log('[Analytics] Minimal purchase conversion events sent for order:', orderData.orderId);
         setAnalyticsSent(true); // Prevent duplicate sends
         
       } catch (error) {
-        console.error('[Analytics] Error sending minimal purchase events:', error);
+        if (import.meta.env.DEV) console.error('[Analytics] Error sending minimal purchase events:', error);
       }
     };
 
@@ -157,11 +157,11 @@ export default function ThanksPage() {
           referrer: document.referrer
         });
 
-        console.log('[Analytics] Complete purchase conversion events sent for order:', orderData.orderId);
+        if (import.meta.env.DEV) console.log('[Analytics] Complete purchase conversion events sent for order:', orderData.orderId);
         setAnalyticsSent(true); // Prevent duplicate sends
         
       } catch (error) {
-        console.error('[Analytics] Error sending complete purchase events:', error);
+        if (import.meta.env.DEV) console.error('[Analytics] Error sending complete purchase events:', error);
       }
     } else {
       // Send minimal analytics after a short delay to allow for data loading
