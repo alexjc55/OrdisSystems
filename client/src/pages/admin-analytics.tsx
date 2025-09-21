@@ -182,7 +182,7 @@ export default function AdminAnalytics() {
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
       <Header />
-      <div className="container mx-auto px-2 sm:px-4 py-8 space-y-6 max-w-7xl">
+      <div className="mx-auto w-full max-w-7xl px-2 sm:px-4 py-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
@@ -398,12 +398,12 @@ export default function AdminAnalytics() {
                 {adminT('analytics.chart.description')}
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 px-2 sm:px-6">
+            <CardContent className="pt-6 px-0 sm:px-6">
               {timeseriesLoading ? (
                 <div className="h-80 bg-muted rounded animate-pulse" />
               ) : chartData.length > 0 ? (
-                <div className="w-full overflow-x-auto">
-                  <ResponsiveContainer width="100%" height={400} minWidth={300}>
+                <div className="w-full -mx-2 sm:mx-0">
+                  <ResponsiveContainer width="100%" height={400}>
                   <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
