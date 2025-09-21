@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { useAnalytics } from '@/hooks/useAnalytics';
+import { useAnalytics, shouldTrackAnalytics } from '@/hooks/useAnalytics';
+import { useAuth } from '@/hooks/use-auth';
 
 interface AnalyticsTrackerProps {
   /**
@@ -25,6 +26,7 @@ interface AnalyticsTrackerProps {
 export function AnalyticsTracker({ debug = false, delay = 100 }: AnalyticsTrackerProps) {
   const [location] = useLocation();
   const { sendPageView } = useAnalytics();
+  const { user } = useAuth();
   const previousLocation = useRef<string | null>(null);
   const isInitialLoad = useRef(true);
   
@@ -55,6 +57,18 @@ export function AnalyticsTracker({ debug = false, delay = 100 }: AnalyticsTracke
     // Delay sending analytics to allow page content to load and title to update
     const timeoutId = setTimeout(() => {
       try {
+        // Check if we should track analytics for this path/user
+        if (!shouldTrackAnalytics(location, user?.role)) {
+          if (debug) {
+            console.log('[AnalyticsTracker] Analytics blocked for admin or admin page:', {
+              path: location,
+              userRole: user?.role,
+              reason: user?.role === 'admin' || user?.role === 'worker' ? 'admin/worker user' : 'admin page'
+            });
+          }
+          return;
+        }
+        
         // Send pageview event to all available analytics services
         sendPageView({
           path: location,

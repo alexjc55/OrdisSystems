@@ -15,7 +15,8 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useAnalytics } from "@/hooks/useAnalytics";
+import { useAnalytics, shouldTrackAnalytics } from "@/hooks/useAnalytics";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function ThanksPage() {
   const [location] = useLocation();
@@ -23,6 +24,7 @@ export default function ThanksPage() {
   const { currentLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const { sendPurchase, sendGoal } = useAnalytics();
+  const { user } = useAuth();
   const [orderData, setOrderData] = useState<{
     orderId?: number;
     guestAccessToken?: string;
@@ -88,6 +90,17 @@ export default function ThanksPage() {
   useEffect(() => {
     // Wait for both URL parameters and order details to be loaded
     if (!orderData.orderId || analyticsSent) return;
+    
+    // Check if we should track analytics for this user/page
+    if (!shouldTrackAnalytics(location, user?.role)) {
+      if (import.meta.env.DEV) {
+        console.log('[Analytics] Conversion events blocked - admin user or admin page:', {
+          path: location,
+          userRole: user?.role
+        });
+      }
+      return;
+    }
     
     // Try to send analytics with minimal data if we have order ID but no full data yet
     const sendMinimalAnalytics = () => {
@@ -168,7 +181,7 @@ export default function ThanksPage() {
       const timeout = setTimeout(sendMinimalAnalytics, 1000);
       return () => clearTimeout(timeout);
     }
-  }, [orderData.orderId, fullOrderData, orderData.isGuest, sendPurchase, sendGoal, analyticsSent]);
+  }, [orderData.orderId, fullOrderData, orderData.isGuest, sendPurchase, sendGoal, analyticsSent, location, user?.role]);
 
   // SEO for thanks page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);

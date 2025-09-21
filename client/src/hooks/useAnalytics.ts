@@ -1,5 +1,25 @@
 import { useCallback } from 'react';
 
+// Function to check if analytics should be tracked for current path/user
+export function shouldTrackAnalytics(path?: string, userRole?: string): boolean {
+  // Block if user is admin or worker
+  if (userRole && (userRole === 'admin' || userRole === 'worker')) {
+    return false;
+  }
+  
+  // Block if path is an admin route (including localized variants)
+  if (path) {
+    // Match paths like /admin, /ru/admin, /en/admin, etc. with optional query params or hash
+    // Supports any 2-letter locale (optional region code) and handles query/hash params
+    const adminPathRegex = /^(?:\/[a-z]{2}(?:-[A-Z]{2})?)?\/admin(?:[/?#]|$)/i;
+    if (adminPathRegex.test(path)) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 // Types for analytics events
 interface PageViewEvent {
   path: string;
