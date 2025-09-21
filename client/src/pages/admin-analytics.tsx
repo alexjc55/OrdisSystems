@@ -427,7 +427,13 @@ export default function AdminAnalytics() {
                         if (name === 'revenue') {
                           return [formatCurrency(value as number), adminT('analytics.chart.revenue')];
                         }
-                        return [value, name === 'totalOrders' ? adminT('analytics.chart.totalOrders') : adminT('analytics.chart.completedOrders')];
+                        if (name === 'totalOrders') {
+                          return [value, adminT('analytics.chart.totalOrders')];
+                        }
+                        if (name === 'completedOrders') {
+                          return [value, adminT('analytics.chart.completedOrders')];
+                        }
+                        return [value, name];
                       }}
                     />
                     <Legend />
