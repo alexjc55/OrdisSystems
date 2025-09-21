@@ -12,6 +12,7 @@ import { format, startOfDay, endOfDay, subDays, startOfMonth, startOfYear, parse
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import Header from "@/components/layout/header";
 
 // Types
 interface AnalyticsSummary {
@@ -162,7 +163,7 @@ export default function AdminAnalytics() {
   // Get status badge color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'delivered': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
       case 'processing': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
@@ -179,7 +180,9 @@ export default function AdminAnalytics() {
   })) || [];
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 pt-16">
+      <Header />
+      <div className="container mx-auto px-4 py-8 space-y-6 max-w-7xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
@@ -228,12 +231,14 @@ export default function AdminAnalytics() {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className={cn("w-[200px] justify-start text-left font-normal", 
+                      className={cn("w-full sm:w-[200px] justify-start text-left font-normal min-h-[40px] px-3", 
                         !customFromDate && "text-muted-foreground")}
                       data-testid="date-from-picker"
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {customFromDate ? format(customFromDate, "PPP") : adminT('analytics.filters.selectFromDate')}
+                      <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">
+                        {customFromDate ? format(customFromDate, "dd.MM.yyyy") : adminT('analytics.filters.selectFromDate')}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -252,12 +257,14 @@ export default function AdminAnalytics() {
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className={cn("w-[200px] justify-start text-left font-normal",
+                      className={cn("w-full sm:w-[200px] justify-start text-left font-normal min-h-[40px] px-3",
                         !customToDate && "text-muted-foreground")}
                       data-testid="date-to-picker"
                     >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {customToDate ? format(customToDate, "PPP") : adminT('analytics.filters.selectToDate')}
+                      <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">
+                        {customToDate ? format(customToDate, "dd.MM.yyyy") : adminT('analytics.filters.selectToDate')}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -324,8 +331,8 @@ export default function AdminAnalytics() {
                 <div className="space-y-1 mt-2">
                   {Object.entries(summaryData.ordersByStatus)
                     .sort(([statusA], [statusB]) => {
-                      if (statusA === 'completed') return -1;
-                      if (statusB === 'completed') return 1;
+                      if (statusA === 'delivered') return -1;
+                      if (statusB === 'delivered') return 1;
                       return statusA.localeCompare(statusB);
                     })
                     .map(([status, count]) => (
@@ -457,6 +464,7 @@ export default function AdminAnalytics() {
           </Card>
         </>
       )}
+      </div>
     </div>
   );
 }

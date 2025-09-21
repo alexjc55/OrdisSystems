@@ -3447,18 +3447,18 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         const count = parseInt(row.count as string);
         ordersByStatus[status] = count;
         totalOrders += count;
-        if (status === 'completed') {
+        if (status === 'delivered') {
           completedOrders = count;
         }
       }
       
-      // Get revenue from completed orders
+      // Get revenue from delivered orders
       const revenueResult = await db.execute(sql`
         SELECT COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as count
         FROM orders 
-        WHERE status = 'completed' 
-        AND completed_at >= ${defaultFrom} 
-        AND completed_at < ${defaultTo}
+        WHERE status = 'delivered' 
+        AND created_at >= ${defaultFrom} 
+        AND created_at < ${defaultTo}
       `);
       
       const revenue = parseFloat(revenueResult.rows[0]?.revenue as string || '0');
@@ -3496,22 +3496,22 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         SELECT 
           DATE_TRUNC(${query.granularity}, created_at) as bucket,
           COUNT(*) as orders,
-          COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_orders
+          COUNT(CASE WHEN status = 'delivered' THEN 1 END) as completed_orders
         FROM orders 
         WHERE created_at >= ${defaultFrom} AND created_at < ${defaultTo}
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
       
-      // Get revenue timeseries for completed orders
+      // Get revenue timeseries for delivered orders
       const revenueTimeseries = await db.execute(sql`
         SELECT 
-          DATE_TRUNC(${query.granularity}, completed_at) as bucket,
+          DATE_TRUNC(${query.granularity}, created_at) as bucket,
           COALESCE(SUM(total_amount), 0) as revenue
         FROM orders 
-        WHERE status = 'completed' 
-        AND completed_at >= ${defaultFrom} 
-        AND completed_at < ${defaultTo}
+        WHERE status = 'delivered' 
+        AND created_at >= ${defaultFrom} 
+        AND created_at < ${defaultTo}
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
