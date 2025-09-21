@@ -390,86 +390,90 @@ export default function AdminAnalytics() {
             </Card>
           </div>
 
-          {/* Sales Chart */}
-          <Card data-testid="sales-chart">
-            <CardHeader>
-              <CardTitle>{adminT('analytics.chart.title')}</CardTitle>
-              <CardDescription>
-                {adminT('analytics.chart.description')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6 px-0 sm:px-6">
-              {timeseriesLoading ? (
-                <div className="h-80 bg-muted rounded animate-pulse" />
-              ) : chartData.length > 0 ? (
-                <div className="w-full -mx-2 sm:mx-0">
-                  <ResponsiveContainer width="100%" height={400}>
-                  <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis 
-                      dataKey="date" 
-                      tick={{ fontSize: 12 }}
-                      tickLine={{ stroke: '#ccc' }}
-                    />
-                    <YAxis 
-                      yAxisId="orders"
-                      tick={{ fontSize: 12 }}
-                      tickLine={{ stroke: '#ccc' }}
-                    />
-                    <YAxis 
-                      yAxisId="revenue"
-                      orientation="right"
-                      tick={{ fontSize: 12 }}
-                      tickLine={{ stroke: '#ccc' }}
-                    />
-                    <Tooltip 
-                      labelFormatter={(value) => adminT('analytics.chart.date') + ': ' + value}
-                      formatter={(value, name) => {
-                        if (name === 'revenue') {
-                          return [formatCurrency(value as number), adminT('analytics.chart.revenue')];
-                        }
-                        if (name === 'totalOrders') {
-                          return [value, adminT('analytics.chart.totalOrders')];
-                        }
-                        if (name === 'completedOrders') {
-                          return [value, adminT('analytics.chart.completedOrders')];
-                        }
-                        return [value, name];
-                      }}
-                    />
-                    <Legend />
-                    <Bar 
-                      yAxisId="orders"
-                      dataKey="totalOrders" 
-                      fill="#3b82f6" 
-                      name={adminT('analytics.chart.totalOrders')}
-                      opacity={0.8}
-                    />
-                    <Bar 
-                      yAxisId="orders"
-                      dataKey="completedOrders" 
-                      fill="#22c55e" 
-                      name={adminT('analytics.chart.completedOrders')}
-                    />
-                    <Line 
-                      yAxisId="revenue"
-                      type="monotone" 
-                      dataKey="revenue" 
-                      stroke="#f59e0b" 
-                      strokeWidth={3}
-                      name={adminT('analytics.chart.revenue')}
-                      dot={{ fill: '#f59e0b', r: 4 }}
-                    />
-                  </ComposedChart>
-                </ResponsiveContainer>
-                </div>
-              ) : (
-                <div className="h-80 flex items-center justify-center text-muted-foreground">
-                  {adminT('analytics.chart.noData')}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Sales Chart - Mobile Full Width */}
+          <div className="-mx-2 sm:mx-0">
+            <Card data-testid="sales-chart">
+              <CardHeader>
+                <CardTitle>{adminT('analytics.chart.title')}</CardTitle>
+                <CardDescription>
+                  {adminT('analytics.chart.description')}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 px-0">
+                {timeseriesLoading ? (
+                  <div className="h-80 bg-muted rounded animate-pulse" />
+                ) : chartData.length > 0 ? (
+                  <div className="w-full">
+                    <ResponsiveContainer width="100%" height={400}>
+                    <ComposedChart data={chartData} margin={{ top: 16, right: 8, left: 8, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="date" 
+                        tick={{ fontSize: 12 }}
+                        tickLine={{ stroke: '#ccc' }}
+                      />
+                      <YAxis 
+                        yAxisId="orders"
+                        tick={{ fontSize: 12 }}
+                        tickLine={{ stroke: '#ccc' }}
+                      />
+                      <YAxis 
+                        yAxisId="revenue"
+                        orientation="right"
+                        tick={{ fontSize: 12 }}
+                        tickLine={{ stroke: '#ccc' }}
+                      />
+                      <Tooltip 
+                        labelFormatter={(value) => adminT('analytics.chart.date') + ': ' + value}
+                        formatter={(value, name) => {
+                          if (name === 'revenue') {
+                            return [formatCurrency(value as number), adminT('analytics.chart.revenue')];
+                          }
+                          if (name === 'totalOrders') {
+                            return [value, adminT('analytics.chart.totalOrders')];
+                          }
+                          if (name === 'completedOrders') {
+                            return [value, adminT('analytics.chart.completedOrders')];
+                          }
+                          return [value, name];
+                        }}
+                      />
+                      <div className="hidden sm:block">
+                        <Legend />
+                      </div>
+                      <Bar 
+                        yAxisId="orders"
+                        dataKey="totalOrders" 
+                        fill="#3b82f6" 
+                        name={adminT('analytics.chart.totalOrders')}
+                        opacity={0.8}
+                      />
+                      <Bar 
+                        yAxisId="orders"
+                        dataKey="completedOrders" 
+                        fill="#22c55e" 
+                        name={adminT('analytics.chart.completedOrders')}
+                      />
+                      <Line 
+                        yAxisId="revenue"
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke="#f59e0b" 
+                        strokeWidth={3}
+                        name={adminT('analytics.chart.revenue')}
+                        dot={{ fill: '#f59e0b', r: 4 }}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-80 flex items-center justify-center text-muted-foreground">
+                    {adminT('analytics.chart.noData')}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </>
       )}
       </div>
