@@ -352,6 +352,8 @@ export default function AdminAnalytics() {
                     setSelectedPeriod(preset.key);
                     if (preset.key === 'custom') {
                       setShowCustomPicker(true);
+                    } else {
+                      setShowCustomPicker(false);
                     }
                   }}
                   data-testid={`period-${preset.key}`}
