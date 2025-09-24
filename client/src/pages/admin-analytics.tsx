@@ -64,7 +64,7 @@ export default function AdminAnalytics() {
     }
   };
   
-  const [selectedPeriod, setSelectedPeriod] = useState<string>('today');
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('thisMonth');
   const [granularity, setGranularity] = useState<'day' | 'month'>('day');
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: startOfDay(new Date()),
