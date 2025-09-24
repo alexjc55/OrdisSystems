@@ -3433,12 +3433,15 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       
       console.log(`[Analytics Debug] Summary query params: from=${defaultFrom}, to=${defaultTo}, tz=${userTimezone}`);
       
-      // Get orders by status for the period with timezone-aware filtering
+      // Get orders by status for the period (simplified without timezone for now)
+      const nextDay = new Date(defaultTo);
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = nextDay.toISOString().split('T')[0];
+      
       const ordersResult = await db.execute(sql`
         SELECT status, COUNT(*) as count 
         FROM orders 
-        WHERE (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
-        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        WHERE created_at >= ${defaultFrom} AND created_at < ${nextDayStr}
         GROUP BY status
       `);
       
@@ -3456,13 +3459,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         }
       }
       
-      // Get revenue from delivered orders with timezone-aware filtering
+      // Get revenue from delivered orders (simplified)
       const revenueResult = await db.execute(sql`
         SELECT COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as count
         FROM orders 
         WHERE status = 'delivered' 
-        AND (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
-        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        AND created_at >= ${defaultFrom} 
+        AND created_at < ${nextDayStr}
       `);
       
       const revenue = parseFloat(revenueResult.rows[0]?.revenue as string || '0');
@@ -3498,28 +3501,31 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       
       console.log(`[Analytics Debug] Timeseries query params: from=${defaultFrom}, to=${defaultTo}, tz=${userTimezone}, granularity=${query.granularity}`);
       
-      // Get timeseries data for orders with timezone-aware filtering and bucketing
+      // Get timeseries data for orders (simplified)
+      const nextDay = new Date(defaultTo);
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayStr = nextDay.toISOString().split('T')[0];
+      
       const ordersTimeseries = await db.execute(sql`
         SELECT 
-          DATE_TRUNC(${query.granularity}, (created_at AT TIME ZONE ${userTimezone})) as bucket,
+          DATE_TRUNC(${query.granularity}, created_at) as bucket,
           COUNT(*) as orders,
           COUNT(CASE WHEN status = 'delivered' THEN 1 END) as completed_orders
         FROM orders 
-        WHERE (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
-        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        WHERE created_at >= ${defaultFrom} AND created_at < ${nextDayStr}
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
       
-      // Get revenue timeseries for delivered orders with timezone-aware filtering
+      // Get revenue timeseries for delivered orders (simplified)
       const revenueTimeseries = await db.execute(sql`
         SELECT 
-          DATE_TRUNC(${query.granularity}, (created_at AT TIME ZONE ${userTimezone})) as bucket,
+          DATE_TRUNC(${query.granularity}, created_at) as bucket,
           COALESCE(SUM(total_amount), 0) as revenue
         FROM orders 
         WHERE status = 'delivered' 
-        AND (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
-        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        AND created_at >= ${defaultFrom} 
+        AND created_at < ${nextDayStr}
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
