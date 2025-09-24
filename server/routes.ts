@@ -3437,7 +3437,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const ordersResult = await db.execute(sql`
         SELECT status, COUNT(*) as count 
         FROM orders 
-        WHERE created_at::date = ${defaultFrom}::date
+        WHERE created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
         GROUP BY status
       `);
       
@@ -3460,7 +3460,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         SELECT COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as count
         FROM orders 
         WHERE status = 'delivered' 
-        AND created_at::date = ${defaultFrom}::date
+        AND created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
       `);
       
       const revenue = parseFloat(revenueResult.rows[0]?.revenue as string || '0');
@@ -3503,7 +3503,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           COUNT(*) as orders,
           COUNT(CASE WHEN status = 'delivered' THEN 1 END) as completed_orders
         FROM orders 
-        WHERE created_at::date = ${defaultFrom}::date
+        WHERE created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
@@ -3515,7 +3515,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           COALESCE(SUM(total_amount), 0) as revenue
         FROM orders 
         WHERE status = 'delivered' 
-        AND created_at::date = ${defaultFrom}::date
+        AND created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
