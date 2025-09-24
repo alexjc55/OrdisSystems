@@ -188,13 +188,43 @@ export default function AdminAnalytics() {
     }
   };
 
-  const handleCustomDateRange = (range: any) => {
-    setCustomDateRange(range);
-    if (range?.from && range?.to) {
+  const handleCustomDateRange = (range: { from?: Date; to?: Date } | undefined) => {
+    if (!range) return;
+    const prev = customDateRange;
+
+    // Если полный диапазон уже был выбран и пользователь кликает новую дату,
+    // react-day-picker передает { from: prev.from, to: clicked }.
+    // Интерпретируем это как начало нового диапазона.
+    if (
+      prev?.from && prev?.to &&
+      range?.from && range?.to &&
+      prev.from.getTime() === range.from.getTime() &&
+      prev.to.getTime() !== range.to.getTime()
+    ) {
+      const newStart = range.to!; // Дата, на которую кликнул пользователь
+      const next = { from: newStart, to: undefined };
+      setCustomDateRange(next);
+      setCustomFromDate(newStart);
+      setCustomToDate(undefined);
       setSelectedPeriod('custom');
+      // Оставляем календарь открытым для выбора второй даты
+      return;
+    }
+
+    // Обычная обработка
+    setCustomDateRange(range);
+    if (range.from && !range.to) {
+      setCustomFromDate(range.from);
+      setCustomToDate(undefined);
+      setSelectedPeriod('custom');
+      // Оставляем календарь открытым
+      return;
+    }
+    if (range.from && range.to) {
       setCustomFromDate(range.from);
       setCustomToDate(range.to);
-      // Закрываем календарь после выбора полного диапазона
+      setSelectedPeriod('custom');
+      // Закрываем календарь только после выбора полного диапазона
       setIsCalendarOpen(false);
     }
   };
