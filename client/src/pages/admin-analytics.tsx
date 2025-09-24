@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import Header from "@/components/layout/header";
+import { useLocation } from "wouter";
 
 // Types
 interface AnalyticsSummary {
@@ -52,6 +53,12 @@ const PERIOD_PRESETS = [
 export default function AdminAnalytics() {
   const { t } = useCommonTranslation();
   const { t: adminT } = useAdminTranslation();
+  const [, navigate] = useLocation();
+  
+  // Navigation handler for orders
+  const goToOrders = () => {
+    navigate('/admin/orders');
+  };
   
   // Get locale for calendar based on current language
   const getCalendarLocale = () => {
@@ -234,7 +241,11 @@ export default function AdminAnalytics() {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {/* Total Active Orders */}
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+              <div 
+                className="flex items-center justify-between p-4 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors" 
+                onClick={goToOrders}
+                data-testid="total-active-orders-link"
+              >
                 <div>
                   <p className="text-sm text-blue-600 font-medium">{adminT('analytics.activeOrders.totalActive')}</p>
                   <p className="text-2xl font-bold text-blue-800">{activeOrdersData.totalActiveOrders}</p>
