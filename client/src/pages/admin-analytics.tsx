@@ -338,6 +338,84 @@ export default function AdminAnalytics() {
         </CardContent>
       </Card>
 
+      {/* Active Orders Section */}
+      {activeOrdersData && (
+        <Card data-testid="active-orders-summary">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-blue-600" />
+              {adminT('analytics.activeOrders.title')}
+            </CardTitle>
+            <CardDescription>
+              {adminT('analytics.activeOrders.description')}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* Total Active Orders */}
+              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-blue-600 font-medium">{adminT('analytics.activeOrders.totalActive')}</p>
+                  <p className="text-2xl font-bold text-blue-800">{activeOrdersData.totalActiveOrders}</p>
+                </div>
+                <ShoppingBag className="h-8 w-8 text-blue-600" />
+              </div>
+
+              {/* Total Active Amount */}
+              <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-green-600 font-medium">{adminT('analytics.activeOrders.totalAmount')}</p>
+                  <p className="text-2xl font-bold text-green-800">{formatCurrency(activeOrdersData.totalActiveAmount)}</p>
+                </div>
+                <DollarSign className="h-8 w-8 text-green-600" />
+              </div>
+
+              {/* Average Active Order */}
+              <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
+                <div>
+                  <p className="text-sm text-purple-600 font-medium">{adminT('analytics.activeOrders.averageOrder')}</p>
+                  <p className="text-2xl font-bold text-purple-800">
+                    {formatCurrency(activeOrdersData.totalActiveOrders > 0 
+                      ? activeOrdersData.totalActiveAmount / activeOrdersData.totalActiveOrders 
+                      : 0
+                    )}
+                  </p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-purple-600" />
+              </div>
+            </div>
+
+            {/* Active Orders by Status */}
+            <div className="mt-6">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">{adminT('analytics.activeOrders.byStatus')}</h4>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {Object.entries(activeOrdersData.ordersByStatus)
+                  .sort(([,a], [,b]) => b.count - a.count)
+                  .map(([status, data]) => (
+                  <div key={status} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Badge className={cn("text-xs", getStatusColor(status))}>
+                        {adminT(`orders.status.${status}` as any)}
+                      </Badge>
+                      <span className="text-sm font-medium">{data.count}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {formatCurrency(data.amount)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {activeOrdersLoading && (
+              <div className="flex items-center justify-center py-8">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Loading State */}
       {summaryLoading && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -525,84 +603,6 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
           </div>
-
-          {/* Active Orders Section */}
-          {activeOrdersData && (
-            <Card className="mt-6" data-testid="active-orders-summary">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ShoppingBag className="h-5 w-5 text-blue-600" />
-                  {adminT('analytics.activeOrders.title')}
-                </CardTitle>
-                <CardDescription>
-                  {adminT('analytics.activeOrders.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {/* Total Active Orders */}
-                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                    <div>
-                      <p className="text-sm text-blue-600 font-medium">{adminT('analytics.activeOrders.totalActive')}</p>
-                      <p className="text-2xl font-bold text-blue-800">{activeOrdersData.totalActiveOrders}</p>
-                    </div>
-                    <ShoppingBag className="h-8 w-8 text-blue-600" />
-                  </div>
-
-                  {/* Total Active Amount */}
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                    <div>
-                      <p className="text-sm text-green-600 font-medium">{adminT('analytics.activeOrders.totalAmount')}</p>
-                      <p className="text-2xl font-bold text-green-800">{formatCurrency(activeOrdersData.totalActiveAmount)}</p>
-                    </div>
-                    <DollarSign className="h-8 w-8 text-green-600" />
-                  </div>
-
-                  {/* Average Active Order */}
-                  <div className="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-                    <div>
-                      <p className="text-sm text-purple-600 font-medium">{adminT('analytics.activeOrders.averageOrder')}</p>
-                      <p className="text-2xl font-bold text-purple-800">
-                        {formatCurrency(activeOrdersData.totalActiveOrders > 0 
-                          ? activeOrdersData.totalActiveAmount / activeOrdersData.totalActiveOrders 
-                          : 0
-                        )}
-                      </p>
-                    </div>
-                    <TrendingUp className="h-8 w-8 text-purple-600" />
-                  </div>
-                </div>
-
-                {/* Active Orders by Status */}
-                <div className="mt-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">{adminT('analytics.activeOrders.byStatus')}</h4>
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {Object.entries(activeOrdersData.ordersByStatus)
-                      .sort(([,a], [,b]) => b.count - a.count)
-                      .map(([status, data]) => (
-                      <div key={status} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <Badge className={cn("text-xs", getStatusColor(status))}>
-                            {adminT(`orders.status.${status}` as any)}
-                          </Badge>
-                          <span className="text-sm font-medium">{data.count}</span>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {formatCurrency(data.amount)}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {activeOrdersLoading && (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
         </>
       )}
       </div>
