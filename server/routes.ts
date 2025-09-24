@@ -3434,14 +3434,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       console.log(`[Analytics Debug] Summary query params: from=${defaultFrom}, to=${defaultTo}, tz=${userTimezone}`);
       
       // Get orders by status for the period (simplified without timezone for now)
-      const nextDay = new Date(defaultTo);
-      nextDay.setDate(nextDay.getDate() + 1);
-      const nextDayStr = nextDay.toISOString().split('T')[0];
-      
       const ordersResult = await db.execute(sql`
         SELECT status, COUNT(*) as count 
         FROM orders 
-        WHERE created_at >= ${defaultFrom} AND created_at < ${nextDayStr}
+        WHERE created_at::date = ${defaultFrom}::date
         GROUP BY status
       `);
       
@@ -3464,8 +3460,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         SELECT COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as count
         FROM orders 
         WHERE status = 'delivered' 
-        AND created_at >= ${defaultFrom} 
-        AND created_at < ${nextDayStr}
+        AND created_at::date = ${defaultFrom}::date
       `);
       
       const revenue = parseFloat(revenueResult.rows[0]?.revenue as string || '0');
@@ -3502,17 +3497,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       console.log(`[Analytics Debug] Timeseries query params: from=${defaultFrom}, to=${defaultTo}, tz=${userTimezone}, granularity=${query.granularity}`);
       
       // Get timeseries data for orders (simplified)
-      const nextDay = new Date(defaultTo);
-      nextDay.setDate(nextDay.getDate() + 1);
-      const nextDayStr = nextDay.toISOString().split('T')[0];
-      
       const ordersTimeseries = await db.execute(sql`
         SELECT 
           DATE_TRUNC(${query.granularity}, created_at) as bucket,
           COUNT(*) as orders,
           COUNT(CASE WHEN status = 'delivered' THEN 1 END) as completed_orders
         FROM orders 
-        WHERE created_at >= ${defaultFrom} AND created_at < ${nextDayStr}
+        WHERE created_at::date = ${defaultFrom}::date
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
@@ -3524,8 +3515,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           COALESCE(SUM(total_amount), 0) as revenue
         FROM orders 
         WHERE status = 'delivered' 
-        AND created_at >= ${defaultFrom} 
-        AND created_at < ${nextDayStr}
+        AND created_at::date = ${defaultFrom}::date
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
