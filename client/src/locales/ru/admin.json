@@ -1243,7 +1243,10 @@
       "title": "Фильтры периода",
       "selectFromDate": "Выберите начальную дату",
       "selectToDate": "Выберите конечную дату",
-      "selectedPeriod": "Выбранный период"
+      "selectedPeriod": "Выбранный период",
+      "granularity": "Группировка",
+      "byDays": "По дням",
+      "byMonths": "По месяцам"
     },
     "periods": {
       "today": "Сегодня",

@@ -47,6 +47,7 @@ export default function AdminAnalytics() {
   const { t: adminT } = useAdminTranslation();
   
   const [selectedPeriod, setSelectedPeriod] = useState<string>('today');
+  const [granularity, setGranularity] = useState<'day' | 'month'>('day');
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: startOfDay(new Date()),
     to: endOfDay(new Date())
@@ -129,10 +130,10 @@ export default function AdminAnalytics() {
         from: formatDateForAPI(dateRange.from),
         to: formatDateForAPI(dateRange.to),
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        granularity: 'day'
+        granularity: granularity
       }
     ],
-    queryFn: () => apiRequest("GET", `/api/admin/analytics/timeseries?from=${formatDateForAPI(dateRange.from)}&to=${formatDateForAPI(dateRange.to)}&tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}&granularity=day`),
+    queryFn: () => apiRequest("GET", `/api/admin/analytics/timeseries?from=${formatDateForAPI(dateRange.from)}&to=${formatDateForAPI(dateRange.to)}&tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}&granularity=${granularity}`),
     enabled: Boolean(dateRange.from && dateRange.to)
   });
 
@@ -173,7 +174,7 @@ export default function AdminAnalytics() {
 
   // Format chart data for display
   const chartData = timeseriesData?.map(item => ({
-    date: format(parseISO(item.bucketStart), 'dd/MM'),
+    date: format(parseISO(item.bucketStart), granularity === 'month' ? 'MM/yyyy' : 'dd/MM'),
     totalOrders: item.orders,
     completedOrders: item.completedOrders,
     revenue: item.revenue
@@ -204,6 +205,29 @@ export default function AdminAnalytics() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3">
+            {/* Granularity Selector */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-700">{adminT('analytics.filters.granularity')}:</span>
+              <div className="flex gap-1">
+                <Button
+                  variant={granularity === 'day' ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setGranularity('day')}
+                  data-testid="granularity-day"
+                >
+                  {adminT('analytics.filters.byDays')}
+                </Button>
+                <Button
+                  variant={granularity === 'month' ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setGranularity('month')}
+                  data-testid="granularity-month"
+                >
+                  {adminT('analytics.filters.byMonths')}
+                </Button>
+              </div>
+            </div>
+            
             {/* Period Presets */}
             <div className="flex flex-wrap gap-2">
               {PERIOD_PRESETS.map(preset => (

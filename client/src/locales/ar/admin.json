@@ -1039,7 +1039,10 @@
       "title": "مرشحات الفترة",
       "selectFromDate": "اختر تاريخ البداية",
       "selectToDate": "اختر تاريخ النهاية",
-      "selectedPeriod": "الفترة المحددة"
+      "selectedPeriod": "الفترة المحددة",
+      "granularity": "التجميع",
+      "byDays": "حسب الأيام",
+      "byMonths": "حسب الأشهر"
     },
     "periods": {
       "today": "اليوم",
