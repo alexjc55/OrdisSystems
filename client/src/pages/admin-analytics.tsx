@@ -250,7 +250,7 @@ export default function AdminAnalytics() {
 
             {/* Custom Date Range */}
             {(selectedPeriod === 'custom' || showCustomPicker) && (
-              <div className="flex gap-2 items-center">
+              <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -275,7 +275,8 @@ export default function AdminAnalytics() {
                   </PopoverContent>
                 </Popover>
 
-                <span className="text-muted-foreground">—</span>
+                <span className="text-muted-foreground self-center hidden sm:inline">—</span>
+                <div className="text-muted-foreground text-center sm:hidden text-xs py-1">↓</div>
 
                 <Popover>
                   <PopoverTrigger asChild>
