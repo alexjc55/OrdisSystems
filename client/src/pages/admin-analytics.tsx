@@ -81,6 +81,7 @@ export default function AdminAnalytics() {
   const [customToDate, setCustomToDate] = useState<Date | undefined>();
   const [customDateRange, setCustomDateRange] = useState<{from: Date | undefined, to: Date | undefined} | undefined>();
   const [showCustomPicker, setShowCustomPicker] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // Update date range based on selected period
   useEffect(() => {
@@ -193,6 +194,8 @@ export default function AdminAnalytics() {
       setSelectedPeriod('custom');
       setCustomFromDate(range.from);
       setCustomToDate(range.to);
+      // Закрываем календарь после выбора полного диапазона
+      setIsCalendarOpen(false);
     }
   };
 
@@ -365,8 +368,10 @@ export default function AdminAnalytics() {
                     setSelectedPeriod(preset.key);
                     if (preset.key === 'custom') {
                       setShowCustomPicker(true);
+                      setIsCalendarOpen(true);
                     } else {
                       setShowCustomPicker(false);
+                      setIsCalendarOpen(false);
                     }
                   }}
                   data-testid={`period-${preset.key}`}
@@ -379,7 +384,7 @@ export default function AdminAnalytics() {
             {/* Custom Date Range */}
             {(selectedPeriod === 'custom' || showCustomPicker) && (
               <div className="flex flex-col gap-2">
-                <Popover>
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
