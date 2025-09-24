@@ -79,6 +79,7 @@ export default function AdminAnalytics() {
   });
   const [customFromDate, setCustomFromDate] = useState<Date | undefined>();
   const [customToDate, setCustomToDate] = useState<Date | undefined>();
+  const [customDateRange, setCustomDateRange] = useState<{from: Date | undefined, to: Date | undefined} | undefined>();
   const [showCustomPicker, setShowCustomPicker] = useState(false);
 
   // Update date range based on selected period
@@ -113,7 +114,10 @@ export default function AdminAnalytics() {
         to = endOfDay(today);
         break;
       case 'custom':
-        if (customFromDate && customToDate) {
+        if (customDateRange?.from && customDateRange?.to) {
+          from = startOfDay(customDateRange.from);
+          to = endOfDay(customDateRange.to);
+        } else if (customFromDate && customToDate) {
           from = startOfDay(customFromDate);
           to = endOfDay(customToDate);
         } else {
@@ -126,7 +130,7 @@ export default function AdminAnalytics() {
     }
 
     setDateRange({ from, to });
-  }, [selectedPeriod, customFromDate, customToDate]);
+  }, [selectedPeriod, customFromDate, customToDate, customDateRange]);
 
   // Format dates for API
   const formatDateForAPI = (date: Date) => {
@@ -180,6 +184,15 @@ export default function AdminAnalytics() {
     setCustomToDate(date);
     if (date && customFromDate) {
       setSelectedPeriod('custom');
+    }
+  };
+
+  const handleCustomDateRange = (range: any) => {
+    setCustomDateRange(range);
+    if (range?.from && range?.to) {
+      setSelectedPeriod('custom');
+      setCustomFromDate(range.from);
+      setCustomToDate(range.to);
     }
   };
 
@@ -365,56 +378,31 @@ export default function AdminAnalytics() {
 
             {/* Custom Date Range */}
             {(selectedPeriod === 'custom' || showCustomPicker) && (
-              <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <div className="flex flex-col gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
                       variant="outline"
-                      className={cn("w-full sm:w-[200px] justify-start text-left font-normal min-h-[40px] px-3", 
-                        !customFromDate && "text-muted-foreground")}
-                      data-testid="date-from-picker"
+                      className={cn("w-full sm:w-[280px] justify-start text-left font-normal min-h-[40px] px-3", 
+                        (!customDateRange?.from || !customDateRange?.to) && "text-muted-foreground")}
+                      data-testid="date-range-picker"
                     >
                       <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">
-                        {customFromDate ? format(customFromDate, "dd.MM.yyyy", { locale: getCalendarLocale() }) : adminT('analytics.filters.selectFromDate')}
+                        {customDateRange?.from && customDateRange?.to 
+                          ? `${format(customDateRange.from, "dd.MM.yyyy", { locale: getCalendarLocale() })} — ${format(customDateRange.to, "dd.MM.yyyy", { locale: getCalendarLocale() })}`
+                          : adminT('analytics.filters.selectDateRange')}
                       </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     <Calendar
-                      mode="single"
-                      selected={customFromDate}
-                      onSelect={handleCustomFromDate}
+                      mode="range"
+                      selected={customDateRange}
+                      onSelect={handleCustomDateRange}
                       locale={getCalendarLocale()}
                       initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-
-                <span className="text-muted-foreground self-center hidden sm:inline">—</span>
-                <div className="text-muted-foreground text-center sm:hidden text-xs py-1">↓</div>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn("w-full sm:w-[200px] justify-start text-left font-normal min-h-[40px] px-3",
-                        !customToDate && "text-muted-foreground")}
-                      data-testid="date-to-picker"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                      <span className="truncate">
-                        {customToDate ? format(customToDate, "dd.MM.yyyy", { locale: getCalendarLocale() }) : adminT('analytics.filters.selectToDate')}
-                      </span>
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={customToDate}
-                      onSelect={handleCustomToDate}
-                      locale={getCalendarLocale()}
-                      initialFocus
+                      numberOfMonths={2}
                     />
                   </PopoverContent>
                 </Popover>

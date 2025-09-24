@@ -1327,6 +1327,7 @@
       "title": "מסנני תקופה",
       "selectFromDate": "בחרו תאריך התחלה",
       "selectToDate": "בחרו תאריך סיום",
+      "selectDateRange": "בחרו טווח תאריכים",
       "selectedPeriod": "תקופה נבחרת",
       "granularity": "קבוצת נתונים",
       "byDays": "לפי ימים",

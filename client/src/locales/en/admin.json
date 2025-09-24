@@ -1238,6 +1238,7 @@
       "title": "Period Filters",
       "selectFromDate": "Select start date",
       "selectToDate": "Select end date",
+      "selectDateRange": "Select date range",
       "selectedPeriod": "Selected period",
       "granularity": "Granularity",
       "byDays": "By Days",

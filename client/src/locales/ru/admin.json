@@ -1243,6 +1243,7 @@
       "title": "Фильтры периода",
       "selectFromDate": "Выберите начальную дату",
       "selectToDate": "Выберите конечную дату",
+      "selectDateRange": "Выберите диапазон дат",
       "selectedPeriod": "Выбранный период",
       "granularity": "Группировка",
       "byDays": "По дням",

@@ -1039,6 +1039,7 @@
       "title": "مرشحات الفترة",
       "selectFromDate": "اختر تاريخ البداية",
       "selectToDate": "اختر تاريخ النهاية",
+      "selectDateRange": "اختر نطاق التاريخ",
       "selectedPeriod": "الفترة المحددة",
       "granularity": "التجميع",
       "byDays": "حسب الأيام",
