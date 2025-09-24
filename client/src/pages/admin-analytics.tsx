@@ -9,6 +9,7 @@ import { CalendarIcon, BarChart3, TrendingUp, ShoppingBag, Target, DollarSign, F
 import { useQuery } from "@tanstack/react-query";
 import { useCommonTranslation, useAdminTranslation } from "@/hooks/use-language";
 import { format, startOfDay, endOfDay, subDays, startOfMonth, startOfYear, parseISO } from "date-fns";
+import { ru, enUS, he, ar } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
@@ -45,6 +46,17 @@ const PERIOD_PRESETS = [
 export default function AdminAnalytics() {
   const { t } = useCommonTranslation();
   const { t: adminT } = useAdminTranslation();
+  
+  // Get locale for calendar based on current language
+  const getCalendarLocale = () => {
+    const currentLanguage = localStorage.getItem('language') || 'ru';
+    switch (currentLanguage) {
+      case 'en': return enUS;
+      case 'he': return he;
+      case 'ar': return ar;
+      default: return ru;
+    }
+  };
   
   const [selectedPeriod, setSelectedPeriod] = useState<string>('today');
   const [granularity, setGranularity] = useState<'day' | 'month'>('day');
@@ -174,7 +186,7 @@ export default function AdminAnalytics() {
 
   // Format chart data for display
   const chartData = timeseriesData?.map(item => ({
-    date: format(parseISO(item.bucketStart), granularity === 'month' ? 'MM/yyyy' : 'dd/MM'),
+    date: format(parseISO(item.bucketStart), granularity === 'month' ? 'MM/yyyy' : 'dd/MM', { locale: getCalendarLocale() }),
     totalOrders: item.orders,
     completedOrders: item.completedOrders,
     revenue: item.revenue
@@ -261,7 +273,7 @@ export default function AdminAnalytics() {
                     >
                       <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">
-                        {customFromDate ? format(customFromDate, "dd.MM.yyyy") : adminT('analytics.filters.selectFromDate')}
+                        {customFromDate ? format(customFromDate, "dd.MM.yyyy", { locale: getCalendarLocale() }) : adminT('analytics.filters.selectFromDate')}
                       </span>
                     </Button>
                   </PopoverTrigger>
@@ -270,6 +282,7 @@ export default function AdminAnalytics() {
                       mode="single"
                       selected={customFromDate}
                       onSelect={handleCustomFromDate}
+                      locale={getCalendarLocale()}
                       initialFocus
                     />
                   </PopoverContent>
@@ -288,7 +301,7 @@ export default function AdminAnalytics() {
                     >
                       <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">
-                        {customToDate ? format(customToDate, "dd.MM.yyyy") : adminT('analytics.filters.selectToDate')}
+                        {customToDate ? format(customToDate, "dd.MM.yyyy", { locale: getCalendarLocale() }) : adminT('analytics.filters.selectToDate')}
                       </span>
                     </Button>
                   </PopoverTrigger>
@@ -297,6 +310,7 @@ export default function AdminAnalytics() {
                       mode="single"
                       selected={customToDate}
                       onSelect={handleCustomToDate}
+                      locale={getCalendarLocale()}
                       initialFocus
                     />
                   </PopoverContent>
@@ -307,7 +321,7 @@ export default function AdminAnalytics() {
 
           {/* Selected Period Display */}
           <div className="mt-3 text-sm text-muted-foreground">
-            {adminT('analytics.filters.selectedPeriod')}: {format(dateRange.from, 'PPP')} — {format(dateRange.to, 'PPP')}
+            {adminT('analytics.filters.selectedPeriod')}: {format(dateRange.from, 'PPP', { locale: getCalendarLocale() })} — {format(dateRange.to, 'PPP', { locale: getCalendarLocale() })}
           </div>
         </CardContent>
       </Card>
