@@ -57,7 +57,7 @@ export default function AdminAnalytics() {
   
   // Navigation handler for orders
   const goToOrders = () => {
-    navigate('/admin/orders');
+    navigate('/admin?tab=orders');
   };
   
   // Get locale for calendar based on current language
