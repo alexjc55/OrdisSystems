@@ -3559,6 +3559,45 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     }
   });
 
+  // Analytics active orders endpoint
+  app.get('/api/admin/analytics/active-orders', requireAdmin, async (req: any, res) => {
+    try {
+      const db = await getDB();
+      
+      // Get current active orders (all statuses except 'delivered' and 'cancelled')
+      const activeOrdersResult = await db.execute(sql`
+        SELECT status, COUNT(*) as count, COALESCE(SUM(total_amount), 0) as amount
+        FROM orders 
+        WHERE status NOT IN ('delivered', 'cancelled')
+        GROUP BY status
+        ORDER BY count DESC
+      `);
+      
+      let totalActiveOrders = 0;
+      let totalActiveAmount = 0;
+      const ordersByStatus: Record<string, { count: number; amount: number }> = {};
+      
+      for (const row of activeOrdersResult.rows) {
+        const status = row.status as string;
+        const count = parseInt(row.count as string);
+        const amount = parseFloat(row.amount as string);
+        ordersByStatus[status] = { count, amount };
+        totalActiveOrders += count;
+        totalActiveAmount += amount;
+      }
+      
+      res.json({
+        ordersByStatus,
+        totalActiveOrders,
+        totalActiveAmount: Math.round(totalActiveAmount * 100) / 100
+      });
+      
+    } catch (error) {
+      console.error('Analytics active orders error:', error);
+      res.status(500).json({ message: 'Failed to fetch active orders analytics' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

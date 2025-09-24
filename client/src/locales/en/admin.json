@@ -1273,6 +1273,14 @@
     },
     "error": {
       "failedToLoad": "Failed to load analytics data"
+    },
+    "activeOrders": {
+      "title": "Current Active Orders",
+      "description": "All orders except delivered and cancelled, regardless of creation date",
+      "totalActive": "Total Active Orders",
+      "totalAmount": "Active Orders Amount",
+      "averageOrder": "Average Active Order",
+      "byStatus": "Active Orders by Status"
     }
   }
 }
