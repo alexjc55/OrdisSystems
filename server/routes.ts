@@ -3428,13 +3428,17 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Default to today in user's timezone if no dates provided
       const now = new Date();
       const defaultFrom = query.from || now.toISOString().split('T')[0];
-      const defaultTo = query.to || new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const defaultTo = query.to || now.toISOString().split('T')[0];
+      const userTimezone = query.tz || 'UTC';
       
-      // Get orders by status for the period
+      console.log(`[Analytics Debug] Summary query params: from=${defaultFrom}, to=${defaultTo}, tz=${userTimezone}`);
+      
+      // Get orders by status for the period with timezone-aware filtering
       const ordersResult = await db.execute(sql`
         SELECT status, COUNT(*) as count 
         FROM orders 
-        WHERE created_at >= ${defaultFrom} AND created_at < ${defaultTo}
+        WHERE (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
         GROUP BY status
       `);
       
@@ -3452,13 +3456,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         }
       }
       
-      // Get revenue from delivered orders
+      // Get revenue from delivered orders with timezone-aware filtering
       const revenueResult = await db.execute(sql`
         SELECT COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as count
         FROM orders 
         WHERE status = 'delivered' 
-        AND created_at >= ${defaultFrom} 
-        AND created_at < ${defaultTo}
+        AND (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
       `);
       
       const revenue = parseFloat(revenueResult.rows[0]?.revenue as string || '0');
@@ -3489,29 +3493,33 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Default to today if no dates provided
       const now = new Date();
       const defaultFrom = query.from || new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const defaultTo = query.to || new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const defaultTo = query.to || now.toISOString().split('T')[0];
+      const userTimezone = query.tz || 'UTC';
       
-      // Get timeseries data for orders
+      console.log(`[Analytics Debug] Timeseries query params: from=${defaultFrom}, to=${defaultTo}, tz=${userTimezone}, granularity=${query.granularity}`);
+      
+      // Get timeseries data for orders with timezone-aware filtering and bucketing
       const ordersTimeseries = await db.execute(sql`
         SELECT 
-          DATE_TRUNC(${query.granularity}, created_at) as bucket,
+          DATE_TRUNC(${query.granularity}, (created_at AT TIME ZONE ${userTimezone})) as bucket,
           COUNT(*) as orders,
           COUNT(CASE WHEN status = 'delivered' THEN 1 END) as completed_orders
         FROM orders 
-        WHERE created_at >= ${defaultFrom} AND created_at < ${defaultTo}
+        WHERE (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
       
-      // Get revenue timeseries for delivered orders
+      // Get revenue timeseries for delivered orders with timezone-aware filtering
       const revenueTimeseries = await db.execute(sql`
         SELECT 
-          DATE_TRUNC(${query.granularity}, created_at) as bucket,
+          DATE_TRUNC(${query.granularity}, (created_at AT TIME ZONE ${userTimezone})) as bucket,
           COALESCE(SUM(total_amount), 0) as revenue
         FROM orders 
         WHERE status = 'delivered' 
-        AND created_at >= ${defaultFrom} 
-        AND created_at < ${defaultTo}
+        AND (created_at AT TIME ZONE 'UTC') >= (timestamp ${defaultFrom} || ' 00:00:00' AT TIME ZONE ${userTimezone})
+        AND (created_at AT TIME ZONE 'UTC') < (timestamp (${defaultTo}::date + interval '1 day') || ' 00:00:00' AT TIME ZONE ${userTimezone})
         GROUP BY bucket
         ORDER BY bucket ASC
       `);
