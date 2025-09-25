@@ -261,41 +261,93 @@ export function AdminCacheBuster() {
     setIsClearing(true);
     
     try {
-      // Clear browser caches
+      console.log('🧹 [AdminCacheBuster] Starting aggressive cache clearing...');
+      
+      // 1. Очистка всех браузерных кешей
       if ('caches' in window) {
         const cacheNames = await caches.keys();
+        console.log('🗑️ [AdminCacheBuster] Clearing caches:', cacheNames);
         await Promise.all(cacheNames.map(name => caches.delete(name)));
       }
 
-      // Update Service Worker cache version
+      // 2. Агрессивная очистка Service Worker для PWA
       if ('serviceWorker' in navigator) {
         try {
+          // Уведомляем SW о принудительном обновлении
           const registration = await navigator.serviceWorker.getRegistration();
           if (registration && registration.active) {
-            // Check if postMessage method exists on active worker
-            if (typeof registration.active.postMessage === 'function') {
-              registration.active.postMessage({ type: 'FORCE_UPDATE' });
-            }
+            registration.active.postMessage({ type: 'FORCE_UPDATE' });
           }
+          
+          // Отключаем все Service Workers (особенно важно для PWA на мобильных)
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          console.log('🔌 [AdminCacheBuster] Unregistering', registrations.length, 'service workers');
+          await Promise.all(registrations.map(reg => reg.unregister()));
         } catch (swError) {
-          console.warn('Service Worker message failed:', swError);
-          // Continue with cache clearing even if SW fails
+          console.warn('Service Worker cleanup failed:', swError);
         }
       }
 
-      // Clear localStorage related to cache
-      localStorage.removeItem('app_hash');
-      localStorage.removeItem('app_version');
-      localStorage.removeItem('build_time');
-      localStorage.removeItem('last_update');
-      localStorage.removeItem('update_skipped');
+      // 3. Полная очистка всех хранилищ
+      console.log('🗑️ [AdminCacheBuster] Clearing all storage...');
+      
+      // Очищаем localStorage полностью
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // 4. Очистка IndexedDB (особенно важно для PWA)
+      if ('indexedDB' in window) {
+        try {
+          const databases = await indexedDB.databases?.() || [];
+          console.log('🗂️ [AdminCacheBuster] Clearing', databases.length, 'IndexedDB databases');
+          await Promise.all(
+            databases.map(db => {
+              if (db.name) {
+                return new Promise<void>((resolve, reject) => {
+                  const deleteReq = indexedDB.deleteDatabase(db.name!);
+                  deleteReq.onsuccess = () => resolve();
+                  deleteReq.onerror = () => reject(deleteReq.error);
+                  deleteReq.onblocked = () => {
+                    console.warn('IndexedDB deletion blocked for:', db.name);
+                    resolve(); // Don't fail the entire process
+                  };
+                });
+              }
+            })
+          );
+        } catch (idbError) {
+          console.warn('IndexedDB cleanup failed:', idbError);
+        }
+      }
 
-      alert('Кеш очищен! Приложение будет перезагружено.');
-      window.location.reload();
+      // 5. Мобильная/PWA специфичная очистка
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isPWA = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+      
+      if (isMobile || isPWA) {
+        console.log('📱 [AdminCacheBuster] Mobile/PWA detected - using aggressive reload');
+        
+        // Принудительная перезагрузка с обходом всех кешей
+        setTimeout(() => {
+          window.location.replace(window.location.href + '?cache_bust=' + Date.now() + '&mobile_clear=1');
+        }, 1000);
+      } else {
+        console.log('💻 [AdminCacheBuster] Desktop detected - using hard reload');
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+
+      alert('✅ Кеш полностью очищен!\n📱 Для мобильных устройств: используйте агрессивную перезагрузку\n💻 Для десктопа: обычная перезагрузка\n\nПриложение будет перезагружено...');
       
     } catch (error) {
-      console.error('Cache clear failed:', error);
-      alert('Ошибка очистки кеша: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка'));
+      console.error('❌ [AdminCacheBuster] Cache clear failed:', error);
+      alert('⚠️ Ошибка очистки кеша: ' + (error instanceof Error ? error.message : 'Неизвестная ошибка') + '\n\nПопробуйте принудительную перезагрузку (Ctrl+Shift+R)');
+      
+      // Fallback: простая перезагрузка даже при ошибке
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } finally {
       setIsClearing(false);
     }

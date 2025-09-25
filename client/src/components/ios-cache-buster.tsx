@@ -6,6 +6,9 @@ import { useCommonTranslation } from '@/hooks/use-language';
 // iOS-specific cache buster for aggressive cache clearing
 export function IOSCacheBuster() {
   const [isIOS, setIsIOS] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [currentSessionHash, setCurrentSessionHash] = useState('');
   
   // Safe translation hook with error handling
   let t: (key: string) => string;
