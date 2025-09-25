@@ -327,10 +327,52 @@ export function AdminCacheBuster() {
       if (isMobile || isPWA) {
         console.log('📱 [AdminCacheBuster] Mobile/PWA detected - using aggressive reload');
         
-        // Принудительная перезагрузка с обходом всех кешей
-        setTimeout(() => {
-          window.location.replace(window.location.href + '?cache_bust=' + Date.now() + '&mobile_clear=1');
-        }, 1000);
+        // Дополнительные меры для iOS против белого экрана
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+          console.log('🍎 [AdminCacheBuster] iOS detected - applying white screen prevention measures');
+          
+          try {
+            // Очищаем мета-теги кеширования
+            document.querySelectorAll('meta[http-equiv*="cache"], meta[name*="cache"]').forEach(tag => tag.remove());
+            
+            // Добавляем агрессивные анти-кеш мета-теги
+            const head = document.head;
+            const antiCacheMetas = [
+              { 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0' },
+              { 'http-equiv': 'Pragma', content: 'no-cache' },
+              { 'http-equiv': 'Expires', content: '-1' },
+              { name: 'format-detection', content: 'telephone=no' },
+              { name: 'mobile-web-app-capable', content: 'yes' }
+            ];
+            
+            antiCacheMetas.forEach(attrs => {
+              const meta = document.createElement('meta');
+              Object.entries(attrs).forEach(([key, value]) => meta.setAttribute(key, value));
+              head.appendChild(meta);
+            });
+            
+            // iOS специфичная перезагрузка
+            setTimeout(() => {
+              const iosUrl = window.location.href.split('?')[0] + '?ios_admin_clear=' + Date.now() + '&prevent_white_screen=' + Math.random().toString(36);
+              console.log('🍎 [AdminCacheBuster] iOS URL replacement:', iosUrl);
+              window.location.replace(iosUrl);
+            }, 800);
+            
+          } catch (error) {
+            console.error('🍎 [AdminCacheBuster] iOS measures failed:', error);
+            // Fallback для iOS
+            setTimeout(() => {
+              window.location.href = window.location.href.split('?')[0] + '?ios_fallback=' + Date.now();
+            }, 500);
+          }
+          
+        } else {
+          // Для других мобильных устройств
+          setTimeout(() => {
+            window.location.replace(window.location.href + '?cache_bust=' + Date.now() + '&mobile_clear=1');
+          }, 1000);
+        }
+        
       } else {
         console.log('💻 [AdminCacheBuster] Desktop detected - using hard reload');
         setTimeout(() => {

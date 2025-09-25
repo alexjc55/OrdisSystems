@@ -211,12 +211,52 @@ export function IOSCacheBuster() {
         );
       }
 
-      // 5. iOS-specific: более агрессивная перезагрузка для преодоления кеша
+      // 5. iOS-specific: УЛЬТРА агрессивная перезагрузка для преодоления белого экрана
       if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-        // Для iOS: полная замена URL с timestamp и форсированная перезагрузка
+        console.log('🍎 [iOS-CacheBuster] Applying ULTRA aggressive iOS reload strategy...');
+        
+        // Множественные попытки очистки для борьбы с белым экраном
         const currentHash = Date.now().toString();
-        const newUrl = window.location.href.split('?')[0] + '?ios_cache_bust=' + currentHash + '&v=' + currentHash;
-        window.location.replace(newUrl);
+        
+        try {
+          // 1. Попытка через history API
+          if (window.history && typeof window.history.replaceState === 'function') {
+            const newUrl = window.location.href.split('?')[0] + '?ios_cache_bust=' + currentHash + '&v=' + currentHash + '&reload=' + Math.random();
+            window.history.replaceState(null, '', newUrl);
+          }
+          
+          // 2. Принудительная очистка мета-тегов кеширования в DOM
+          const metaTags = document.querySelectorAll('meta[http-equiv*="cache"], meta[name*="cache"]');
+          metaTags.forEach(tag => tag.remove());
+          
+          // 3. Добавляем агрессивные мета-теги против кеширования
+          const head = document.head;
+          const noCacheMetas = [
+            { 'http-equiv': 'Cache-Control', content: 'no-cache, no-store, must-revalidate, max-age=0' },
+            { 'http-equiv': 'Pragma', content: 'no-cache' },
+            { 'http-equiv': 'Expires', content: '0' },
+            { name: 'cache-control', content: 'no-cache' }
+          ];
+          
+          noCacheMetas.forEach(attrs => {
+            const meta = document.createElement('meta');
+            Object.entries(attrs).forEach(([key, value]) => meta.setAttribute(key, value));
+            head.appendChild(meta);
+          });
+          
+          // 4. Ультра агрессивная перезагрузка с полной заменой URL
+          setTimeout(() => {
+            const ultraUrl = window.location.href.split('?')[0] + '?ios_force_reload=' + currentHash + '&t=' + Date.now() + '&cache_bust=1';
+            console.log('🍎 [iOS-CacheBuster] Force replacing URL:', ultraUrl);
+            window.location.replace(ultraUrl);
+          }, 100);
+          
+        } catch (error) {
+          console.error('🍎 [iOS-CacheBuster] Ultra reload failed, using fallback:', error);
+          // Экстренный fallback для критических случаев
+          window.location.href = window.location.href.split('?')[0] + '?emergency_reload=' + Date.now();
+        }
+        
       } else {
         // Стандартная перезагрузка для других устройств
         window.location.reload();
