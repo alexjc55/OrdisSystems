@@ -143,9 +143,9 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                           : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
                         
                         return (
-                          <div key={index} className="text-base sm:text-lg flex justify-between">
+                          <div key={index} className="text-base sm:text-lg">
                             <span className="font-bold">{daysText}:</span>
-                            <span className="text-gray-700">{group.hours}</span>
+                            <span className="text-gray-700 ml-2">{group.hours}</span>
                           </div>
                         );
                       })}
@@ -173,28 +173,29 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
               </div>
               <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
                 {storeSettings.contactPhone && (
-                  <div className="text-base sm:text-lg flex justify-between">
+                  <div className="text-base sm:text-lg">
                     <span className="text-gray-700 font-bold">{t('phone')}:</span>
-                    <span className="text-gray-700">{storeSettings.contactPhone}</span>
+                    <span className="text-gray-700 ml-2">{storeSettings.contactPhone}</span>
+                    <div className="text-xs text-gray-500 mt-1">WhatsApp</div>
                   </div>
                 )}
                 {storeSettings.contactEmail && (
-                  <div className="text-base sm:text-lg flex justify-between">
+                  <div className="text-base sm:text-lg">
                     <span className="text-gray-700 font-bold">{t('email')}:</span>
-                    <span className="text-gray-700 break-all">{storeSettings.contactEmail}</span>
+                    <span className="text-gray-700 ml-2 break-all">{storeSettings.contactEmail}</span>
                   </div>
                 )}
                 {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage) && (
-                  <div className="text-base sm:text-lg flex justify-between">
-                    <span className="text-gray-700 font-bold">
+                  <div className="text-base sm:text-lg">
+                    <div className="text-gray-700 font-bold mb-1">
                       {currentLanguage === 'en' ? 'Address' : 
                        currentLanguage === 'he' ? 'כתובת' : 
                        currentLanguage === 'ar' ? 'العنوان' : 
                        'Адрес'}:
-                    </span>
-                    <span className="text-gray-700 text-right break-words max-w-[60%]">
+                    </div>
+                    <div className="text-gray-700 break-words leading-relaxed">
                       {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)}
-                    </span>
+                    </div>
                   </div>
                 )}
               </div>
