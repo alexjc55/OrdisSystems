@@ -177,6 +177,7 @@ export const storeSettings = pgTable("store_settings", {
   freeDeliveryFrom: decimal("free_delivery_from", { precision: 10, scale: 2 }).default("50.00"),
   minDeliveryTimeHours: integer("min_delivery_time_hours").default(2), // Minimum hours for delivery
   maxDeliveryTimeDays: integer("max_delivery_time_days").default(4), // Maximum days for delivery
+  deliveryTimeMode: varchar("delivery_time_mode", { enum: ["hours", "half_day", "disabled"] }).default("hours"), // Delivery time selection mode: hours (based on working hours), half_day (morning/afternoon), disabled (no time selection)
   paymentMethods: jsonb("payment_methods"), // Array of payment methods
   isDeliveryEnabled: boolean("is_delivery_enabled").default(true),
   isPickupEnabled: boolean("is_pickup_enabled").default(true),
