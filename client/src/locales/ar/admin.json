@@ -1101,7 +1101,7 @@
     "date": "التاريخ",
     "description": "الوصف",
     "reason": "السبب (اختياري)",
-    "descriptionPlaceholder": "على سبيل المثال: رأس السنة",
+    "descriptionPlaceholder": "على سبيل المثال: يوم عطلة",
     "reasonPlaceholder": "معلومات إضافية حول الإغلاق",
     "dateRequired": "الرجاء اختيار تاريخ",
     "descriptionRequired": "الرجاء إدخال الوصف",

@@ -1300,7 +1300,7 @@
     "date": "Date",
     "description": "Description",
     "reason": "Reason (optional)",
-    "descriptionPlaceholder": "For example: New Year",
+    "descriptionPlaceholder": "For example: Day off",
     "reasonPlaceholder": "Additional information about the closure",
     "dateRequired": "Please select a date",
     "descriptionRequired": "Please enter description",
