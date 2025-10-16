@@ -368,7 +368,7 @@ export default function Checkout() {
         guestInfo: {
           ...data,
           deliveryDate,
-          deliveryTime: formatDeliveryTimeRange(selectedGuestTime),
+          deliveryTime: selectedGuestTime,
           paymentMethod: selectedGuestPaymentMethod,
         },
         language: currentLanguage, // Add language for email localization
@@ -449,7 +449,7 @@ export default function Checkout() {
         userId: newUser.id, // Link order to the newly created user
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
-        deliveryTime: formatDeliveryTimeRange(selectedRegisterTime),
+        deliveryTime: selectedRegisterTime,
         paymentMethod: selectedRegisterPaymentMethod,
         customerPhone: data.phone,
         status: "pending"
@@ -531,7 +531,7 @@ export default function Checkout() {
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
         deliveryDate,
-        deliveryTime: formatDeliveryTimeRange(selectedTime),
+        deliveryTime: selectedTime,
         paymentMethod: formData.paymentMethod,
         status: "pending"
       };
