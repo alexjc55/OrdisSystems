@@ -622,6 +622,18 @@ export const marketingNotifications = pgTable("marketing_notifications", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
+// Closed dates table (holidays and special closures)
+export const closedDates = pgTable("closed_dates", {
+  id: serial("id").primaryKey(),
+  date: varchar("date", { length: 10 }).notNull().unique(), // YYYY-MM-DD format
+  reason: text("reason").notNull(), // Russian description
+  reason_en: text("reason_en"),
+  reason_he: text("reason_he"),
+  reason_ar: text("reason_ar"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
 // Relations - Simplified to avoid Drizzle ORM issues
 export const productsRelations = relations(products, ({ many }) => ({
   orderItems: many(orderItems),
@@ -800,6 +812,12 @@ export const updateThemeSchema = baseThemeSchema.partial().omit({
   isActive: true,
 });
 
+export const insertClosedDateSchema = createInsertSchema(closedDates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -817,6 +835,8 @@ export type InsertUserAddress = z.infer<typeof insertUserAddressSchema>;
 export type UserAddress = typeof userAddresses.$inferSelect;
 export type InsertTheme = z.infer<typeof insertThemeSchema>;
 export type Theme = typeof themes.$inferSelect;
+export type InsertClosedDate = z.infer<typeof insertClosedDateSchema>;
+export type ClosedDate = typeof closedDates.$inferSelect;
 
 // Extended types with relations
 export type InsertProductCategory = z.infer<typeof insertProductCategorySchema>;
