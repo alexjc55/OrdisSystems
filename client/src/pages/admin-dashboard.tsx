@@ -697,7 +697,7 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
 });
 
 // OrderEditForm component
-function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, isRTL: boolean }) {
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCommon, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, tCommon: (key: string) => string, isRTL: boolean }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
@@ -1487,21 +1487,29 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, isRT
                       />
                     </PopoverContent>
                   </Popover>
-                  <Select
-                    value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
-                    onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
-                  >
-                    <SelectTrigger className="text-sm h-8">
-                      <SelectValue placeholder={adminT('orders.selectTime')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                        <SelectItem key={slot.value} value={slot.label}>
-                          {slot.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {/* Check if delivery time is in half-day format */}
+                  {(editedOrder.deliveryTime === 'half_day_first' || editedOrder.deliveryTime === 'half_day_second' || editedOrder.deliveryTime === 'morning' || editedOrder.deliveryTime === 'afternoon') ? (
+                    <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-50">
+                      <Clock className="mr-2 h-4 w-4 text-gray-500" />
+                      {formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon)}
+                    </div>
+                  ) : (
+                    <Select
+                      value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                      onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                    >
+                      <SelectTrigger className="text-sm h-8">
+                        <SelectValue placeholder={adminT('orders.selectTime')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
+                          <SelectItem key={slot.value} value={slot.label}>
+                            {slot.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
 
@@ -5298,6 +5306,7 @@ export default function AdminDashboard() {
                     }}
                     searchPlaceholder={adminT('common.searchProducts')}
                     adminT={adminT}
+                    tCommon={commonT}
                     isRTL={isRTL}
                   />
                 )}
