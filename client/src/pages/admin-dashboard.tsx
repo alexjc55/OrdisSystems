@@ -2525,12 +2525,21 @@ function ClosedDatesManager() {
       });
       setIsAddDialogOpen(false);
     },
-    onError: () => {
-      toast({
-        title: adminT('closedDates.error'),
-        description: adminT('closedDates.addError'),
-        variant: 'destructive',
-      });
+    onError: (error: any) => {
+      // Check if it's a duplicate date error
+      if (error?.response?.data?.isDuplicate) {
+        toast({
+          title: adminT('closedDates.error'),
+          description: error.response.data.message || 'Эта дата уже добавлена как выходной день',
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: adminT('closedDates.error'),
+          description: adminT('closedDates.addError'),
+          variant: 'destructive',
+        });
+      }
     },
   });
 

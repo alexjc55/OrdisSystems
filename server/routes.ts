@@ -3634,6 +3634,15 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: 'Invalid data', errors: error.errors });
       }
+      
+      // Check for duplicate date error (PostgreSQL unique constraint violation)
+      if (error && typeof error === 'object' && 'code' in error && error.code === '23505') {
+        return res.status(409).json({ 
+          message: 'Эта дата уже добавлена как выходной день',
+          isDuplicate: true 
+        });
+      }
+      
       console.error('Error adding closed date:', error);
       res.status(500).json({ message: 'Failed to add closed date' });
     }
