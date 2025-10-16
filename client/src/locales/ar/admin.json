@@ -11,7 +11,8 @@
     "permissions": "الصلاحيات",
     "basic": "الأساسي",
     "colors": "الألوان",
-    "visuals": "المرئي"
+    "visuals": "المرئي",
+    "closedDates": "أيام الإغلاق"
   },
   "actions": {
     "add": "إضافة",
@@ -1091,5 +1092,29 @@
       "averageOrder": "متوسط الطلب النشط",
       "byStatus": "الطلبات النشطة حسب الحالة"
     }
+  },
+  "closedDates": {
+    "title": "أيام الإغلاق والعطلات",
+    "description": "إدارة التواريخ التي يكون فيها المتجر مغلقًا للتوصيل",
+    "managementDescription": "إضافة التواريخ التي لا يتوفر فيها التوصيل (عطلات نهاية الأسبوع، العطلات، فترات الصيانة)",
+    "addDate": "إضافة تاريخ",
+    "date": "التاريخ",
+    "description": "الوصف",
+    "reason": "السبب (اختياري)",
+    "descriptionPlaceholder": "على سبيل المثال: رأس السنة",
+    "reasonPlaceholder": "معلومات إضافية حول الإغلاق",
+    "dateRequired": "الرجاء اختيار تاريخ",
+    "descriptionRequired": "الرجاء إدخال الوصف",
+    "addDescription": "إضافة يوم إغلاق أو عطلة جديدة",
+    "noDates": "لا توجد أيام إغلاق. جميع التواريخ متاحة للتوصيل.",
+    "confirmDelete": "حذف يوم الإغلاق؟",
+    "confirmDeleteDescription": "سيصبح هذا التاريخ متاحًا للتوصيل مرة أخرى",
+    "dateAdded": "تمت إضافة التاريخ",
+    "dateAddedSuccess": "تمت إضافة يوم الإغلاق بنجاح",
+    "dateDeleted": "تم حذف التاريخ",
+    "dateDeletedSuccess": "تم حذف يوم الإغلاق بنجاح",
+    "error": "خطأ",
+    "addError": "فشل في إضافة يوم الإغلاق",
+    "deleteError": "فشل في حذف يوم الإغلاق"
   }
 }

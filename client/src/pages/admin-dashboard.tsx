@@ -2508,17 +2508,14 @@ function ClosedDatesManager() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   // Fetch closed dates
-  const { data: closedDates = [], isLoading } = useQuery({
+  const { data: closedDates = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/closed-dates'],
   });
 
   // Add closed date mutation
   const addClosedDateMutation = useMutation({
-    mutationFn: async (data: { date: string; description: string; reason: string }) => {
-      return await apiRequest('/api/admin/closed-dates', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+    mutationFn: async (data: { date: string; description: string; reason?: string }) => {
+      return await apiRequest('POST', '/api/admin/closed-dates', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/closed-dates'] });
@@ -2540,9 +2537,7 @@ function ClosedDatesManager() {
   // Delete closed date mutation
   const deleteClosedDateMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/admin/closed-dates/${id}`, {
-        method: 'DELETE',
-      });
+      return await apiRequest('DELETE', `/api/admin/closed-dates/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/closed-dates'] });

@@ -19,7 +19,8 @@
     "permissions": "Permissions",
     "basic": "Basic",
     "colors": "Colors",
-    "visuals": "Visual"
+    "visuals": "Visual",
+    "closedDates": "Closed Dates"
   },
   "actions": {
     "add": "Add",
@@ -1290,5 +1291,29 @@
       "averageOrder": "Average Active Order",
       "byStatus": "Active Orders by Status"
     }
+  },
+  "closedDates": {
+    "title": "Closed Dates & Holidays",
+    "description": "Manage dates when the store is closed for delivery",
+    "managementDescription": "Add dates when delivery is not available (weekends, holidays, maintenance breaks)",
+    "addDate": "Add Date",
+    "date": "Date",
+    "description": "Description",
+    "reason": "Reason (optional)",
+    "descriptionPlaceholder": "For example: New Year",
+    "reasonPlaceholder": "Additional information about the closure",
+    "dateRequired": "Please select a date",
+    "descriptionRequired": "Please enter description",
+    "addDescription": "Add a new closed date or holiday",
+    "noDates": "No closed dates. All dates are available for delivery.",
+    "confirmDelete": "Delete closed date?",
+    "confirmDeleteDescription": "This date will become available for delivery again",
+    "dateAdded": "Date Added",
+    "dateAddedSuccess": "Closed date successfully added",
+    "dateDeleted": "Date Deleted",
+    "dateDeletedSuccess": "Closed date successfully deleted",
+    "error": "Error",
+    "addError": "Failed to add closed date",
+    "deleteError": "Failed to delete closed date"
   }
 }

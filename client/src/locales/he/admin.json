@@ -11,7 +11,8 @@
     "permissions": "הרשאות",
     "basic": "בסיסי",
     "colors": "צבעים",
-    "visuals": "ויזואלי"
+    "visuals": "ויזואלי",
+    "closedDates": "ימי סגירה"
   },
   "actions": {
     "add": "הוסף",
@@ -1379,5 +1380,29 @@
       "averageOrder": "ממוצע הזמנה פעילה",
       "byStatus": "הזמנות פעילות לפי סטטוס"
     }
+  },
+  "closedDates": {
+    "title": "ימי סגירה וחגים",
+    "description": "ניהול תאריכים שבהם החנות סגורה למשלוחים",
+    "managementDescription": "הוספת תאריכים שבהם המשלוח לא זמין (סופ\"ש, חגים, הפסקות תחזוקה)",
+    "addDate": "הוספת תאריך",
+    "date": "תאריך",
+    "description": "תיאור",
+    "reason": "סיבה (אופציונלי)",
+    "descriptionPlaceholder": "לדוגמה: שנה חדשה",
+    "reasonPlaceholder": "מידע נוסף על הסגירה",
+    "dateRequired": "נא לבחור תאריך",
+    "descriptionRequired": "נא להזין תיאור",
+    "addDescription": "הוספת יום סגירה או חג חדש",
+    "noDates": "אין ימי סגירה. כל התאריכים זמינים למשלוח.",
+    "confirmDelete": "למחוק יום סגירה?",
+    "confirmDeleteDescription": "תאריך זה יהיה זמין למשלוח שוב",
+    "dateAdded": "תאריך נוסף",
+    "dateAddedSuccess": "יום הסגירה נוסף בהצלחה",
+    "dateDeleted": "תאריך נמחק",
+    "dateDeletedSuccess": "יום הסגירה נמחק בהצלחה",
+    "error": "שגיאה",
+    "addError": "נכשל בהוספת יום סגירה",
+    "deleteError": "נכשל במחיקת יום סגירה"
   }
 }
