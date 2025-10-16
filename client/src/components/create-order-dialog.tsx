@@ -169,9 +169,23 @@ const getDateLocale = (language: string) => {
 };
 
 // Generate delivery times based on working hours like in checkout
-const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday') => {
+const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday', deliveryTimeMode: string = 'hours') => {
   if (!workingHours || !selectedDate) return [];
   
+  // If delivery time is disabled, return empty array
+  if (deliveryTimeMode === 'disabled') {
+    return [];
+  }
+  
+  // If half-day mode, return two options
+  if (deliveryTimeMode === 'half_day') {
+    return [
+      { value: 'half_day_first', label: 'First half of the day' },
+      { value: 'half_day_second', label: 'Second half of the day' }
+    ];
+  }
+  
+  // Default hours mode - generate 2-hour intervals based on working hours
   const date = new Date(selectedDate + 'T00:00:00');
   const today = format(new Date(), "yyyy-MM-dd");
   const isToday = selectedDate === today;
@@ -404,7 +418,8 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     return generateDeliveryTimes(
       storeSettings.workingHours,
       selectedDateValue,
-      storeSettings.weekStartDay
+      storeSettings.weekStartDay,
+      storeSettings.deliveryTimeMode || 'hours'
     );
   }, [form.watch('deliveryDate'), storeSettings]);
 
