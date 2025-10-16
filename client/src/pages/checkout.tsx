@@ -104,7 +104,17 @@ const generateDeliveryDates = (minDeliveryTimeHours: number = 2, maxDeliveryTime
   return dates;
 };
 
-const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday') => {
+const generateDeliveryTimes = (
+  workingHours: any, 
+  selectedDate: string, 
+  weekStartDay: string = 'monday',
+  deliveryTimeMode: 'hours' | 'half_day' | 'disabled' = 'hours'
+) => {
+  // If delivery time selection is disabled, return empty array
+  if (deliveryTimeMode === 'disabled') {
+    return [];
+  }
+  
   if (!workingHours || !selectedDate) return [];
   
   const date = new Date(selectedDate + 'T00:00:00');
@@ -129,7 +139,30 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
     }];
   }
   
-  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  // Half-day mode: only morning/afternoon options
+  if (deliveryTimeMode === 'half_day') {
+    const timeSlots: { value: string; label: string }[] = [];
+    
+    // Morning option (if it's not afternoon already)
+    if (!isToday || currentHour < 12) {
+      timeSlots.push({
+        value: 'morning',
+        label: 'Morning' // Will be translated
+      });
+    }
+    
+    // Afternoon option
+    if (!isToday || currentHour < 18) {
+      timeSlots.push({
+        value: 'afternoon',
+        label: 'Afternoon' // Will be translated
+      });
+    }
+    
+    return timeSlots.length > 0 ? timeSlots : [];
+  }
+  
+  // Hours mode: generate 2-hour intervals based on working hours
   const timeSlots: { value: string; label: string }[] = [];
   const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
   
@@ -232,7 +265,7 @@ export default function Checkout() {
     if (!storeSettings?.workingHours) return false;
     
     const today = format(new Date(), "yyyy-MM-dd");
-    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay);
+    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay, storeSettings.deliveryTimeMode || 'hours');
     
     // Check if there are any valid time slots (not just "closed")
     return todayTimeSlots.some(slot => slot.value !== 'closed');
@@ -787,7 +820,8 @@ export default function Checkout() {
                                     const todayTimeSlots = generateDeliveryTimes(
                                       storeSettings.workingHours, 
                                       format(date, "yyyy-MM-dd"), 
-                                      storeSettings.weekStartDay
+                                      storeSettings.weekStartDay,
+                                      storeSettings.deliveryTimeMode || 'hours'
                                     );
                                     return !todayTimeSlots.some(slot => slot.value !== 'closed');
                                   }
@@ -801,25 +835,28 @@ export default function Checkout() {
                         </Popover>
                       </div>
 
-                      <div>
-                        <Label htmlFor="deliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                        <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
-                          <SelectTrigger>
-                            <SelectValue placeholder={tShop('checkout.selectTime')} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {selectedDate && generateDeliveryTimes(
-                              storeSettings?.workingHours,
-                              format(selectedDate, "yyyy-MM-dd"),
-                              storeSettings?.weekStartDay
-                            ).map((time) => (
-                              <SelectItem key={time.value} value={time.value}>
-                                {time.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      {storeSettings?.deliveryTimeMode !== 'disabled' && (
+                        <div>
+                          <Label htmlFor="deliveryTime">{tShop('checkout.deliveryTime')} *</Label>
+                          <Select value={selectedTime} onValueChange={setSelectedTime} disabled={!selectedDate} required>
+                            <SelectTrigger>
+                              <SelectValue placeholder={tShop('checkout.selectTime')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {selectedDate && generateDeliveryTimes(
+                                storeSettings?.workingHours,
+                                format(selectedDate, "yyyy-MM-dd"),
+                                storeSettings?.weekStartDay,
+                                storeSettings?.deliveryTimeMode || 'hours'
+                              ).map((time) => (
+                                <SelectItem key={time.value} value={time.value}>
+                                  {time.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -1030,25 +1067,28 @@ export default function Checkout() {
                           </Popover>
                         </div>
 
-                        <div>
-                          <Label htmlFor="registerDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                          <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
-                            <SelectTrigger>
-                              <SelectValue placeholder={tShop('checkout.selectTime')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {selectedRegisterDate && generateDeliveryTimes(
-                                storeSettings?.workingHours,
-                                format(selectedRegisterDate, "yyyy-MM-dd"),
-                                storeSettings?.weekStartDay
-                              ).map((time) => (
-                                <SelectItem key={time.value} value={time.value}>
-                                  {time.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        {storeSettings?.deliveryTimeMode !== 'disabled' && (
+                          <div>
+                            <Label htmlFor="registerDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
+                            <Select value={selectedRegisterTime} onValueChange={setSelectedRegisterTime} disabled={!selectedRegisterDate} required>
+                              <SelectTrigger>
+                                <SelectValue placeholder={tShop('checkout.selectTime')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {selectedRegisterDate && generateDeliveryTimes(
+                                  storeSettings?.workingHours,
+                                  format(selectedRegisterDate, "yyyy-MM-dd"),
+                                  storeSettings?.weekStartDay,
+                                  storeSettings?.deliveryTimeMode || 'hours'
+                                ).map((time) => (
+                                  <SelectItem key={time.value} value={time.value}>
+                                    {time.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                       </div>
 
                       <div>
@@ -1266,25 +1306,28 @@ export default function Checkout() {
                           </Popover>
                         </div>
 
-                        <div>
-                          <Label htmlFor="guestDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
-                          <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
-                            <SelectTrigger>
-                              <SelectValue placeholder={tShop('checkout.selectTime')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {selectedGuestDate && generateDeliveryTimes(
-                                storeSettings?.workingHours,
-                                format(selectedGuestDate, "yyyy-MM-dd"),
-                                storeSettings?.weekStartDay
-                              ).map((time) => (
-                                <SelectItem key={time.value} value={time.value}>
-                                  {time.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        {storeSettings?.deliveryTimeMode !== 'disabled' && (
+                          <div>
+                            <Label htmlFor="guestDeliveryTime">{tShop('checkout.deliveryTime')} *</Label>
+                            <Select value={selectedGuestTime} onValueChange={setSelectedGuestTime} disabled={!selectedGuestDate} required>
+                              <SelectTrigger>
+                                <SelectValue placeholder={tShop('checkout.selectTime')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {selectedGuestDate && generateDeliveryTimes(
+                                  storeSettings?.workingHours,
+                                  format(selectedGuestDate, "yyyy-MM-dd"),
+                                  storeSettings?.weekStartDay,
+                                  storeSettings?.deliveryTimeMode || 'hours'
+                                ).map((time) => (
+                                  <SelectItem key={time.value} value={time.value}>
+                                    {time.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                       </div>
 
                       <div>
