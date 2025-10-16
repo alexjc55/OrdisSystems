@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { getDB } from "./db";
 import { setupAuth, isAuthenticated } from "./auth";
 import bcrypt from "bcryptjs";
-import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings } from "@shared/schema";
+import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings, closedDates, insertClosedDateSchema } from "@shared/schema";
 import { PushNotificationService } from "./push-notifications";
 import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "./email-service";
 import { z } from "zod";
@@ -3599,6 +3599,63 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     } catch (error) {
       console.error('Analytics active orders error:', error);
       res.status(500).json({ message: 'Failed to fetch active orders analytics' });
+    }
+  });
+
+  // Get all closed dates (public endpoint for checkout)
+  app.get('/api/closed-dates', async (req, res) => {
+    try {
+      const db = await getDB();
+      const dates = await db.select().from(closedDates).orderBy(closedDates.date);
+      res.json(dates);
+    } catch (error) {
+      console.error('Error fetching closed dates:', error);
+      res.status(500).json({ message: 'Failed to fetch closed dates' });
+    }
+  });
+
+  // Add closed date (admin only)
+  app.post('/api/admin/closed-dates', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const validatedData = insertClosedDateSchema.parse(req.body);
+      const db = await getDB();
+      
+      const [newDate] = await db.insert(closedDates)
+        .values(validatedData)
+        .returning();
+      
+      res.status(201).json(newDate);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid data', errors: error.errors });
+      }
+      console.error('Error adding closed date:', error);
+      res.status(500).json({ message: 'Failed to add closed date' });
+    }
+  });
+
+  // Delete closed date (admin only)
+  app.delete('/api/admin/closed-dates/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user;
+      if (!user || user.role !== 'admin') {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { id } = req.params;
+      const db = await getDB();
+      
+      await db.delete(closedDates).where(sql`id = ${id}`);
+      
+      res.json({ message: 'Closed date deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting closed date:', error);
+      res.status(500).json({ message: 'Failed to delete closed date' });
     }
   });
 
