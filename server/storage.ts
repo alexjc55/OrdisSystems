@@ -32,7 +32,7 @@ import {
   type Theme,
   type InsertTheme,
 } from "@shared/schema";
-import { db } from "./db";
+import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 
@@ -140,18 +140,25 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  private async getDatabase() {
+    return await getDB();
+  }
+
   // User operations (required for Replit Auth)
   async getUser(id: string): Promise<User | undefined> {
+    const db = await this.getDatabase();
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
+    const db = await this.getDatabase();
     const [user] = await db.select().from(users).where(eq(users.username, username.toLowerCase()));
     return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    const db = await this.getDatabase();
     const [user] = await db
       .insert(users)
       .values(userData)
@@ -167,6 +174,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User> {
+    const db = await this.getDatabase();
     const [user] = await db
       .update(users)
       .set({ ...updates, updatedAt: new Date() })
@@ -177,10 +185,12 @@ export class DatabaseStorage implements IStorage {
 
   // User address operations
   async getUserAddresses(userId: string): Promise<UserAddress[]> {
+    const db = await this.getDatabase();
     return await db.select().from(userAddresses).where(eq(userAddresses.userId, userId)).orderBy(desc(userAddresses.isDefault), userAddresses.label);
   }
 
   async createUserAddress(address: InsertUserAddress): Promise<UserAddress> {
+    const db = await this.getDatabase();
     // If this is set as default, unset all other defaults for this user
     if (address.isDefault) {
       await db
@@ -197,6 +207,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserAddress(id: number, address: Partial<InsertUserAddress>): Promise<UserAddress> {
+    const db = await this.getDatabase();
     // If this is being set as default, unset all other defaults for this user
     if (address.isDefault) {
       const existingAddress = await db.select().from(userAddresses).where(eq(userAddresses.id, id)).limit(1);
@@ -217,10 +228,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUserAddress(id: number): Promise<void> {
+    const db = await this.getDatabase();
     await db.delete(userAddresses).where(eq(userAddresses.id, id));
   }
 
   async setDefaultAddress(userId: string, addressId: number): Promise<void> {
+    const db = await this.getDatabase();
     // Unset all defaults for this user
     await db
       .update(userAddresses)
@@ -236,6 +249,7 @@ export class DatabaseStorage implements IStorage {
 
   // Category operations
   async getCategories(includeInactive = false): Promise<CategoryWithCount[]> {
+    const db = await this.getDatabase();
     const categoriesData = await db
       .select()
       .from(categories)
@@ -265,11 +279,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCategoryById(id: number): Promise<Category | undefined> {
+    const db = await this.getDatabase();
     const [category] = await db.select().from(categories).where(eq(categories.id, id));
     return category;
   }
 
   async createCategory(category: InsertCategory): Promise<Category> {
+    const db = await this.getDatabase();
     const [newCategory] = await db
       .insert(categories)
       .values(category)
@@ -278,6 +294,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category> {
+    const db = await this.getDatabase();
     const [updatedCategory] = await db
       .update(categories)
       .set({ ...category, updatedAt: new Date() })
@@ -287,10 +304,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteCategory(id: number): Promise<void> {
+    const db = await this.getDatabase();
     await db.delete(categories).where(eq(categories.id, id));
   }
 
   async updateCategoryOrders(categoryOrders: { id: number; sortOrder: number }[]): Promise<void> {
+    const db = await this.getDatabase();
     for (const { id, sortOrder } of categoryOrders) {
       await db
         .update(categories)
@@ -301,6 +320,7 @@ export class DatabaseStorage implements IStorage {
 
   // Product operations
   async getProducts(categoryId?: number): Promise<ProductWithCategories[]> {
+    const db = await this.getDatabase();
     if (categoryId) {
       // Get products for specific category via junction table
       const productsWithCategories = await db
@@ -547,6 +567,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategories>> {
+    const db = await this.getDatabase();
     const { page, limit, search, categoryId, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
@@ -678,6 +699,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProductById(id: number): Promise<ProductWithCategories | undefined> {
+    const db = await this.getDatabase();
     const [product] = await db
       .select()
       .from(products)
@@ -699,12 +721,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProductsByIds(ids: number[]): Promise<Product[]> {
+    const db = await this.getDatabase();
     if (ids.length === 0) return [];
     const productsList = await db.select().from(products).where(inArray(products.id, ids));
     return productsList;
   }
 
   async createProduct(product: InsertProduct): Promise<Product> {
+    const db = await this.getDatabase();
     const { categoryIds, ...productData } = product;
     
     // Create product without categories first
@@ -727,6 +751,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product> {
+    const db = await this.getDatabase();
     const { categoryIds, ...productData } = product;
     
     // Update product data
@@ -756,6 +781,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateProductAvailability(id: number, availabilityStatus: "available" | "out_of_stock_today" | "completely_unavailable"): Promise<Product> {
+    const db = await this.getDatabase();
     const [updatedProduct] = await db
       .update(products)
       .set({ 
@@ -769,6 +795,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProduct(id: number): Promise<void> {
+    const db = await this.getDatabase();
     // Delete category relationships first (they should cascade automatically, but being explicit)
     await db.delete(productCategories).where(eq(productCategories.productId, id));
     // Delete the product
@@ -776,6 +803,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async searchProducts(query: string): Promise<ProductWithCategories[]> {
+    const db = await this.getDatabase();
     const productsData = await db
       .select()
       .from(products)
@@ -815,6 +843,7 @@ export class DatabaseStorage implements IStorage {
 
   // Order operations
   async getOrders(userId?: string): Promise<OrderWithItems[]> {
+    const db = await this.getDatabase();
     const whereClause = userId ? eq(orders.userId, userId) : undefined;
 
     const ordersData = await db
@@ -920,6 +949,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>> {
+    const db = await this.getDatabase();
     const { page, limit, search, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
@@ -1096,6 +1126,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOrderById(id: number): Promise<OrderWithItems | undefined> {
+    const db = await this.getDatabase();
     const [order] = await db
       .select()
       .from(orders)
@@ -1195,6 +1226,7 @@ export class DatabaseStorage implements IStorage {
 
   // Get guest order by access token
   async getGuestOrderByToken(token: string): Promise<OrderWithItems | undefined> {
+    const db = await this.getDatabase();
     // Check token expiry
     const [order] = await db
       .select()
@@ -1261,6 +1293,7 @@ export class DatabaseStorage implements IStorage {
 
   // Claim guest order and attach to user account
   async claimGuestOrder(claimToken: string, userId: string): Promise<Order | undefined> {
+    const db = await this.getDatabase();
     try {
       // Find order by claim token
       const [order] = await db
@@ -1291,6 +1324,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {
+    const db = await this.getDatabase();
     return await db.transaction(async (tx: any) => {
       const [newOrder] = await tx
         .insert(orders)
@@ -1309,6 +1343,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order> {
+    const db = await this.getDatabase();
     const [updatedOrder] = await db
       .update(orders)
       .set({ ...orderData, updatedAt: new Date() })
@@ -1318,6 +1353,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order> {
+    const db = await this.getDatabase();
     const [updatedOrder] = await db
       .update(orders)
       .set({ status, updatedAt: new Date() })
@@ -1327,6 +1363,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateOrderItems(orderId: number, items: any[]): Promise<void> {
+    const db = await this.getDatabase();
     return await db.transaction(async (tx: any) => {
       // Delete existing order items
       await tx.delete(orderItems).where(eq(orderItems.orderId, orderId));
@@ -1348,11 +1385,13 @@ export class DatabaseStorage implements IStorage {
 
   // Store settings
   async getStoreSettings(): Promise<StoreSettings | undefined> {
+    const db = await this.getDatabase();
     const [settings] = await db.select().from(storeSettings).limit(1);
     return settings;
   }
 
   async updateStoreSettings(settings: Partial<InsertStoreSettings>): Promise<StoreSettings> {
+    const db = await this.getDatabase();
     const existingSettings = await this.getStoreSettings();
     
     if (existingSettings) {
@@ -1377,6 +1416,7 @@ export class DatabaseStorage implements IStorage {
 
   // User operations with pagination
   async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User & { orderCount: number; totalOrderAmount: number }>> {
+    const db = await this.getDatabase();
     const { page, limit, search, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
 
@@ -1459,6 +1499,7 @@ export class DatabaseStorage implements IStorage {
 
   // Admin user management methods
   async createUser(userData: Omit<UpsertUser, 'id'> & { password?: string }): Promise<User> {
+    const db = await this.getDatabase();
     // Generate a unique ID for manual user creation
     const userId = `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
@@ -1475,6 +1516,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUser(id: string, updates: Partial<UpsertUser>): Promise<User> {
+    const db = await this.getDatabase();
     const [user] = await db
       .update(users)
       .set({
@@ -1491,6 +1533,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async checkUserDeletionImpact(id: string): Promise<{ hasOrders: boolean; orderCount: number; hasAddresses: boolean; addressCount: number }> {
+    const db = await this.getDatabase();
     // Check for related orders
     const [orderCountResult] = await db
       .select({ count: count() })
@@ -1512,6 +1555,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUser(id: string, forceDelete: boolean = false): Promise<void> {
+    const db = await this.getDatabase();
     if (!forceDelete) {
       // Check if user has related data before deletion
       const impact = await this.checkUserDeletionImpact(id);
@@ -1537,6 +1581,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserRole(id: string, role: "admin" | "worker" | "customer"): Promise<User> {
+    const db = await this.getDatabase();
     const [user] = await db
       .update(users)
       .set({
@@ -1554,11 +1599,13 @@ export class DatabaseStorage implements IStorage {
 
   // Password management methods
   async getUserByEmail(email: string): Promise<User | undefined> {
+    const db = await this.getDatabase();
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user;
   }
 
   async updatePassword(userId: string, hashedPassword: string): Promise<User> {
+    const db = await this.getDatabase();
     const [user] = await db
       .update(users)
       .set({ 
@@ -1577,6 +1624,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPasswordResetToken(email: string): Promise<{ token: string; userId: string }> {
+    const db = await this.getDatabase();
     const user = await this.getUserByEmail(email);
     if (!user) {
       throw new Error("User not found");
@@ -1598,6 +1646,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async validatePasswordResetToken(token: string): Promise<{ userId: string; isValid: boolean }> {
+    const db = await this.getDatabase();
     const [user] = await db
       .select()
       .from(users)
@@ -1617,6 +1666,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async clearPasswordResetToken(userId: string): Promise<void> {
+    const db = await this.getDatabase();
     await db
       .update(users)
       .set({
@@ -1629,10 +1679,12 @@ export class DatabaseStorage implements IStorage {
 
   // Theme management methods
   async getThemes(): Promise<Theme[]> {
+    const db = await this.getDatabase();
     return await db.select().from(themes).orderBy(themes.createdAt);
   }
 
   async getActiveTheme(): Promise<Theme | undefined> {
+    const db = await this.getDatabase();
     const [activeTheme] = await db
       .select()
       .from(themes)
@@ -1642,6 +1694,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getThemeById(id: string): Promise<Theme | undefined> {
+    const db = await this.getDatabase();
     const [theme] = await db
       .select()
       .from(themes)
@@ -1651,6 +1704,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTheme(theme: InsertTheme): Promise<Theme> {
+    const db = await this.getDatabase();
     const themeWithId = {
       ...theme,
       id: theme.id || crypto.randomUUID()
@@ -1664,6 +1718,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTheme(id: string, theme: Partial<InsertTheme>): Promise<Theme> {
+    const db = await this.getDatabase();
     try {
       // Use standard Drizzle update with all fields - let database handle missing columns
       const [updatedTheme] = await db
@@ -1683,10 +1738,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteTheme(id: string): Promise<void> {
+    const db = await this.getDatabase();
     await db.delete(themes).where(eq(themes.id, id));
   }
 
   async activateTheme(id: string): Promise<Theme> {
+    const db = await this.getDatabase();
     return await db.transaction(async (tx: any) => {
       // Deactivate all themes
       await tx
