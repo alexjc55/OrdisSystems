@@ -2581,11 +2581,11 @@ function ClosedDatesManager() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-600">
+      <div className={`flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+        <p className={`text-sm text-gray-600 ${isRTL ? 'text-right' : 'text-left'}`}>
           {adminT('closedDates.managementDescription')}
         </p>
-        <Button onClick={() => setIsAddDialogOpen(true)} data-testid="button-add-closed-date">
+        <Button onClick={() => setIsAddDialogOpen(true)} data-testid="button-add-closed-date" className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           {adminT('closedDates.addDate')}
         </Button>
