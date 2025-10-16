@@ -1044,7 +1044,7 @@ export default function Profile() {
                       {selectedOrder.deliveryTime && (
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">{t('profile.deliveryTime')}:</span>
-                          <span className="text-sm">{formatDeliveryTimeRange(selectedOrder.deliveryTime)}</span>
+                          <span className="text-sm">{formatDeliveryTimeRange(selectedOrder.deliveryTime, t)}</span>
                         </div>
                       )}
                       {selectedOrder.paymentMethod && (

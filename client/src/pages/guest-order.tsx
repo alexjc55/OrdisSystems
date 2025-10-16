@@ -330,7 +330,7 @@ export default function GuestOrderPage() {
                           day: 'numeric'
                         }
                       )}
-                      {order.deliveryTime && ` ${formatDeliveryTimeRange(order.deliveryTime)}`}
+                      {order.deliveryTime && ` ${formatDeliveryTimeRange(order.deliveryTime, t)}`}
                     </span>
                   </div>
                 )}
