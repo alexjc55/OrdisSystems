@@ -1487,12 +1487,25 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                       />
                     </PopoverContent>
                   </Popover>
-                  {/* Check if delivery time is in half-day format */}
-                  {(editedOrder.deliveryTime === 'half_day_first' || editedOrder.deliveryTime === 'half_day_second' || editedOrder.deliveryTime === 'morning' || editedOrder.deliveryTime === 'afternoon') ? (
-                    <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-50">
-                      <Clock className="mr-2 h-4 w-4 text-gray-500" />
-                      {formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon)}
+                  {/* Delivery time based on store settings */}
+                  {storeSettingsData?.deliveryTimeMode === 'disabled' ? (
+                    <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-100 text-gray-500">
+                      <Clock className="mr-2 h-4 w-4" />
+                      {adminT('settings.deliveryTimeDisabled')}
                     </div>
+                  ) : storeSettingsData?.deliveryTimeMode === 'half_day' ? (
+                    <Select
+                      value={editedOrder.deliveryTime || ""}
+                      onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                    >
+                      <SelectTrigger className="text-sm h-8">
+                        <SelectValue placeholder={adminT('orders.selectTime')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="half_day_first">{tCommon('checkout.halfDayFirst')}</SelectItem>
+                        <SelectItem value="half_day_second">{tCommon('checkout.halfDaySecond')}</SelectItem>
+                      </SelectContent>
+                    </Select>
                   ) : (
                     <Select
                       value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
@@ -1587,21 +1600,42 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                     />
                   </PopoverContent>
                 </Popover>
-                <Select
-                  value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
-                  onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
-                >
-                  <SelectTrigger className="text-sm h-8">
-                    <SelectValue placeholder={adminT('orders.selectTime')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
-                      <SelectItem key={slot.value} value={slot.label}>
-                        {slot.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {/* Delivery time based on store settings */}
+                {storeSettingsData?.deliveryTimeMode === 'disabled' ? (
+                  <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-100 text-gray-500 h-8">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {adminT('settings.deliveryTimeDisabled')}
+                  </div>
+                ) : storeSettingsData?.deliveryTimeMode === 'half_day' ? (
+                  <Select
+                    value={editedOrder.deliveryTime || ""}
+                    onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                  >
+                    <SelectTrigger className="text-sm h-8">
+                      <SelectValue placeholder={adminT('orders.selectTime')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="half_day_first">{tCommon('checkout.halfDayFirst')}</SelectItem>
+                      <SelectItem value="half_day_second">{tCommon('checkout.halfDaySecond')}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Select
+                    value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                    onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
+                  >
+                    <SelectTrigger className="text-sm h-8">
+                      <SelectValue placeholder={adminT('orders.selectTime')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
+                        <SelectItem key={slot.value} value={slot.label}>
+                          {slot.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
           </div>
