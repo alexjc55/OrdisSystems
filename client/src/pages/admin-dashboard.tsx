@@ -8661,7 +8661,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             <FormItem>
               <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                 <Clock className="h-4 w-4" />
-                {adminT('storeSettings.deliveryTimeMode')}
+                {adminT('storeSettings.deliveryTimeModeLabel')}
               </FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>

@@ -232,7 +232,9 @@
     "minPrepTime": "Минимальное время приготовления",
     "orderFor": "Заказ на",
     "timeConstraints": "Временные ограничения",
-    "futureOrderError": "Следующие товары доступны только для заказа на завтра: {{products}}"
+    "futureOrderError": "Следующие товары доступны только для заказа на завтра: {{products}}",
+    "halfDayFirst": "Первая половина дня",
+    "halfDaySecond": "Вторая половина дня"
   },
   "auth": {
     "loginSuccess": "Вход выполнен",

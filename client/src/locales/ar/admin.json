@@ -836,6 +836,8 @@
     "deliveryPayment": "التوصيل والدفع",
     "deliveryInfo": "معلومات التوصيل",
     "deliveryInfoPlaceholder": "أدخل معلومات التوصيل",
+    "deliveryTimeModeLabel": "وضع وقت التوصيل",
+    "selectDeliveryTimeMode": "اختر وضع وقت التوصيل",
     "paymentInfo": "معلومات الدفع",
     "cashOnDelivery": "نقداً عند الاستلام",
     "bankCard": "بطاقة بنكية",
@@ -900,7 +902,12 @@
     "canEditOrdersDescription": "السماح بتعديل طلبات العملاء",
     "canViewSettingsDescription": "السماح بعرض إعدادات المتجر",
     "canManageSettingsDescription": "السماح بتغيير إعدادات المتجر",
-    "canEditOrders": "تعديل الطلبات"
+    "canEditOrders": "تعديل الطلبات",
+    "deliveryTimeMode": {
+      "hours": "بناءً على ساعات عمل المتجر",
+      "halfDay": "النصف الأول/الثاني من اليوم",
+      "disabled": "معطل"
+    }
   },
   "systemSettings": {
     "canManageProducts": "إدارة المنتجات",

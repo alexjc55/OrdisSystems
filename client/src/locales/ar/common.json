@@ -201,7 +201,9 @@
     "orderFor": "طلب لـ",
     "timeConstraints": "القيود الزمنية",
     "canNowPlaceOrder": "يمكن الآن تقديم الطلب",
-    "futureOrderError": "المنتجات التالية متاحة فقط للطلب غداً: {{products}}"
+    "futureOrderError": "المنتجات التالية متاحة فقط للطلب غداً: {{products}}",
+    "halfDayFirst": "النصف الأول من اليوم",
+    "halfDaySecond": "النصف الثاني من اليوم"
   },
   "cart": {
     "cart": "السلة",

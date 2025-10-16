@@ -548,6 +548,8 @@
     "deliveryPayment": "משלוח ותשלום",
     "deliveryInfo": "מידע על משלוח",
     "deliveryInfoPlaceholder": "הכנס מידע על משלוח",
+    "deliveryTimeModeLabel": "מצב זמן משלוח",
+    "selectDeliveryTimeMode": "בחר מצב זמן משלוח",
     "paymentInfo": "מידע על תשלום",
     "cashOnDelivery": "מזומן בקבלה",
     "bankCard": "כרטיס בנק",
@@ -609,7 +611,12 @@
     "canEditOrdersDescription": "אפשר עריכת הזמנות לקוחות",
     "canViewSettingsDescription": "אפשר צפייה בהגדרות החנות",
     "canManageSettingsDescription": "אפשר שינוי הגדרות החנות",
-    "canEditOrders": "עריכת הזמנות"
+    "canEditOrders": "עריכת הזמנות",
+    "deliveryTimeMode": {
+      "hours": "על בסיס שעות פתיחת החנות",
+      "halfDay": "חצי ראשון/חצי שני של היום",
+      "disabled": "מושבת"
+    }
   },
   "systemSettings": {
     "canManageProducts": "ניהול מוצרים",

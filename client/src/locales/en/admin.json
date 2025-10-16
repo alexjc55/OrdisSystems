@@ -610,6 +610,8 @@
     "deliveryPayment": "Delivery and Payment",
     "deliveryInfo": "Delivery Information",
     "deliveryInfoPlaceholder": "Enter delivery information",
+    "deliveryTimeModeLabel": "Delivery Time Mode",
+    "selectDeliveryTimeMode": "Select delivery time mode",
     "paymentInfo": "Payment Information",
     "cashOnDelivery": "Cash on Delivery",
     "bankCard": "Bank Card",
@@ -674,7 +676,12 @@
     "canEditOrders": "Edit Orders",
     "advertisingFeeds": "Advertising Feeds",
     "feedsDescription": "Product feed links for integration with Facebook, Google Ads and Yandex Direct advertising platforms. Feeds automatically update when products change.",
-    "feedsNote": "Links point to product categories since there are no individual product pages. Feeds support all store languages."
+    "feedsNote": "Links point to product categories since there are no individual product pages. Feeds support all store languages.",
+    "deliveryTimeMode": {
+      "hours": "Based on store working hours",
+      "halfDay": "First/Second half of day",
+      "disabled": "Disabled"
+    }
   },
   "barcode": {
     "title": "Barcode System",

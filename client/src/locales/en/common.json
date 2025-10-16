@@ -215,7 +215,9 @@
     "minPrepTime": "Minimum preparation time",
     "orderFor": "Order for",
     "timeConstraints": "Time constraints",
-    "futureOrderError": "The following products are only available for tomorrow's order: {{products}}"
+    "futureOrderError": "The following products are only available for tomorrow's order: {{products}}",
+    "halfDayFirst": "First half of the day",
+    "halfDaySecond": "Second half of the day"
   },
   "auth": {
     "loginSuccess": "Login successful",

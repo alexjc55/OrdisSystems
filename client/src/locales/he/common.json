@@ -215,7 +215,9 @@
     "minPrepTime": "תורגם",
     "orderFor": "תורגם",
     "timeConstraints": "תורגם",
-    "futureOrderError": "תורגם"
+    "futureOrderError": "תורגם",
+    "halfDayFirst": "המחצית הראשונה של היום",
+    "halfDaySecond": "המחצית השנייה של היום"
   },
   "auth": {
     "loginSuccess": "התחברות בוצעה",
