@@ -7364,6 +7364,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
+      deliveryTimeMode: storeSettings?.deliveryTimeMode || "hours",
       discountBadgeText: getLocalizedFieldForAdmin(storeSettings, 'discountBadgeText', currentLanguage, storeSettings) || "",
       showBannerImage: storeSettings?.showBannerImage !== false,
       showTitleDescription: storeSettings?.showTitleDescription !== false,
@@ -7465,6 +7466,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
+        deliveryTimeMode: storeSettings?.deliveryTimeMode || "hours",
 
         showBannerImage: storeSettings?.showBannerImage !== false,
         showTitleDescription: storeSettings?.showTitleDescription !== false,
@@ -8647,6 +8649,32 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   {...field}
                 />
               </FormControl>
+              <FormMessage className="text-xs" />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="deliveryTimeMode"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className={`text-sm flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                <Clock className="h-4 w-4" />
+                {adminT('storeSettings.deliveryTimeMode')}
+              </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={adminT('storeSettings.selectDeliveryTimeMode')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="hours">{adminT('storeSettings.deliveryTimeMode.hours')}</SelectItem>
+                  <SelectItem value="half_day">{adminT('storeSettings.deliveryTimeMode.halfDay')}</SelectItem>
+                  <SelectItem value="disabled">{adminT('storeSettings.deliveryTimeMode.disabled')}</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage className="text-xs" />
             </FormItem>
           )}
