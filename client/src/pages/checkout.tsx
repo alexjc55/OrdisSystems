@@ -207,6 +207,11 @@ export default function Checkout() {
   const { currentLanguage } = useLanguage();
   const dateLocale = getDateLocale(currentLanguage);
 
+  // Load closed dates for blocking in calendar
+  const { data: closedDates = [] } = useQuery<any[]>({
+    queryKey: ['/api/closed-dates'],
+  });
+
   // SEO for checkout page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
   const title = `Оформление заказа - ${storeName || 'eDAHouse'}`;
@@ -802,6 +807,12 @@ export default function Checkout() {
                                 // Check if date is before today
                                 if (date < today) return true;
                                 
+                                // Check if date is in closed dates list
+                                const dateStr = format(date, "yyyy-MM-dd");
+                                if (closedDates.some((closedDate: any) => closedDate.date === dateStr)) {
+                                  return true;
+                                }
+                                
                                 // Check if it's a non-working day
                                 if (storeSettings?.workingHours) {
                                   const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -1047,6 +1058,12 @@ export default function Checkout() {
                                   // Check if date is before today
                                   if (date < today) return true;
                                   
+                                  // Check if date is in closed dates list
+                                  const dateStr = format(date, "yyyy-MM-dd");
+                                  if (closedDates.some((closedDate: any) => closedDate.date === dateStr)) {
+                                    return true;
+                                  }
+                                  
                                   // Check if it's a non-working day
                                   if (storeSettings?.workingHours) {
                                     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -1286,6 +1303,12 @@ export default function Checkout() {
                                   
                                   // Check if date is before today
                                   if (date < today) return true;
+                                  
+                                  // Check if date is in closed dates list
+                                  const dateStr = format(date, "yyyy-MM-dd");
+                                  if (closedDates.some((closedDate: any) => closedDate.date === dateStr)) {
+                                    return true;
+                                  }
                                   
                                   // Check if it's a non-working day
                                   if (storeSettings?.workingHours) {
