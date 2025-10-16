@@ -2527,10 +2527,10 @@ function ClosedDatesManager() {
     },
     onError: (error: any) => {
       // Check if it's a duplicate date error
-      if (error?.response?.data?.isDuplicate) {
+      if (error?.isDuplicate) {
         toast({
           title: adminT('closedDates.error'),
-          description: error.response.data.message || 'Эта дата уже добавлена как выходной день',
+          description: error.message || 'Эта дата уже добавлена как выходной день',
           variant: 'destructive',
         });
       } else {
