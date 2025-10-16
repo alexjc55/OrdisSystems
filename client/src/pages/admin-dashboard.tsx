@@ -2601,45 +2601,75 @@ function ClosedDatesManager() {
         ) : (
           closedDates.map((closedDate: any) => (
             <Card key={closedDate.id} className="p-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CalendarIcon className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold">
-                      {format(new Date(closedDate.date), 'dd MMMM yyyy', {
-                        locale: i18n.language === 'ru' ? ru : i18n.language === 'en' ? enUS : i18n.language === 'he' ? he : ar
-                      })}
-                    </h3>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                <div className="flex-1 w-full">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <CalendarIcon className="w-5 h-5 text-primary" />
+                      <h3 className="font-semibold">
+                        {format(new Date(closedDate.date), 'dd MMMM yyyy', {
+                          locale: i18n.language === 'ru' ? ru : i18n.language === 'en' ? enUS : i18n.language === 'he' ? he : ar
+                        })}
+                      </h3>
+                    </div>
+                    <div className="sm:hidden">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" data-testid={`button-delete-closed-date-${closedDate.id}`}>
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>{adminT('closedDates.confirmDelete')}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {adminT('closedDates.confirmDeleteDescription')}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteClosedDateMutation.mutate(closedDate.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              {adminT('actions.delete')}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
                   <p className="text-sm text-gray-700 mb-1">{closedDate.description}</p>
                   {closedDate.reason && (
                     <p className="text-sm text-gray-500">{closedDate.reason}</p>
                   )}
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="sm" data-testid={`button-delete-closed-date-${closedDate.id}`}>
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{adminT('closedDates.confirmDelete')}</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {adminT('closedDates.confirmDeleteDescription')}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteClosedDateMutation.mutate(closedDate.id)}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        {adminT('actions.delete')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <div className="hidden sm:block">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="sm" data-testid={`button-delete-closed-date-${closedDate.id}`}>
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{adminT('closedDates.confirmDelete')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {adminT('closedDates.confirmDeleteDescription')}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteClosedDateMutation.mutate(closedDate.id)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          {adminT('actions.delete')}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
             </Card>
           ))
@@ -2696,11 +2726,11 @@ function ClosedDatesManager() {
                   </FormItem>
                 )}
               />
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)} className="w-full sm:w-auto">
                   {adminT('actions.cancel')}
                 </Button>
-                <Button type="submit" disabled={addClosedDateMutation.isPending} data-testid="button-submit-closed-date">
+                <Button type="submit" disabled={addClosedDateMutation.isPending} data-testid="button-submit-closed-date" className="w-full sm:w-auto">
                   {addClosedDateMutation.isPending ? adminT('common.loading') : adminT('actions.add')}
                 </Button>
               </DialogFooter>
