@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useCartStore } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -206,11 +206,60 @@ export default function Checkout() {
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const dateLocale = getDateLocale(currentLanguage);
+  const { t: tCommon } = useCommonTranslation();
+  const { t: tShop } = useShopTranslation();
 
   // Load closed dates for blocking in calendar
   const { data: closedDates = [] } = useQuery<any[]>({
     queryKey: ['/api/closed-dates'],
   });
+
+  // Create Set for fast lookup
+  const closedDatesSet = useMemo(() => {
+    return new Set(closedDates.map((d: any) => d.date));
+  }, [closedDates]);
+
+  // Helper function to check if date should be disabled in calendar
+  const isDateDisabled = useCallback((date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Check if date is before today
+    if (date < today) return true;
+    
+    // Check if date is in closed dates list
+    const dateStr = format(date, "yyyy-MM-dd");
+    if (closedDatesSet.has(dateStr)) return true;
+    
+    // Check if it's a non-working day
+    if (storeSettings?.workingHours) {
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const dayName = dayNames[date.getDay()];
+      const daySchedule = storeSettings.workingHours[dayName];
+      
+      // Disable if no schedule or closed or weekend
+      if (!daySchedule || daySchedule.trim() === '' || 
+          daySchedule.toLowerCase().includes('закрыто') || 
+          daySchedule.toLowerCase().includes('closed') ||
+          daySchedule.toLowerCase().includes('выходной')) {
+        return true;
+      }
+      
+      // Check if today has no available delivery times
+      if (date.getTime() === today.getTime()) {
+        const todayTimeSlots = generateDeliveryTimes(
+          storeSettings.workingHours, 
+          format(date, "yyyy-MM-dd"), 
+          storeSettings.weekStartDay,
+          storeSettings.deliveryTimeMode || 'hours',
+          tCommon
+        );
+        return !todayTimeSlots.some(slot => slot.value !== 'closed');
+      }
+    }
+    
+    return false;
+  }, [closedDatesSet, storeSettings, tCommon]);
 
   // SEO for checkout page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -289,9 +338,6 @@ export default function Checkout() {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
   const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
-
-  const { t: tCommon } = useCommonTranslation();
-  const { t: tShop } = useShopTranslation();
   
   // Create schemas inside component with access to translation functions
   const guestOrderSchema = z.object({
@@ -800,48 +846,7 @@ export default function Checkout() {
                                 setSelectedTime(""); // Reset time selection when date changes
                                 setDatePickerOpen(false); // Close calendar after selection
                               }}
-                              disabled={(date) => {
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
-                                
-                                // Check if date is before today
-                                if (date < today) return true;
-                                
-                                // Check if date is in closed dates list
-                                const dateStr = format(date, "yyyy-MM-dd");
-                                if (closedDates.some((closedDate: any) => closedDate.date === dateStr)) {
-                                  return true;
-                                }
-                                
-                                // Check if it's a non-working day
-                                if (storeSettings?.workingHours) {
-                                  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                                  const dayName = dayNames[date.getDay()];
-                                  const daySchedule = storeSettings.workingHours[dayName];
-                                  
-                                  // Disable if no schedule or closed or weekend
-                                  if (!daySchedule || daySchedule.trim() === '' || 
-                                      daySchedule.toLowerCase().includes('закрыто') || 
-                                      daySchedule.toLowerCase().includes('closed') ||
-                                      daySchedule.toLowerCase().includes('выходной')) {
-                                    return true;
-                                  }
-                                  
-                                  // Check if today has no available delivery times
-                                  if (date.getTime() === today.getTime()) {
-                                    const todayTimeSlots = generateDeliveryTimes(
-                                      storeSettings.workingHours, 
-                                      format(date, "yyyy-MM-dd"), 
-                                      storeSettings.weekStartDay,
-                                      storeSettings.deliveryTimeMode || 'hours',
-                                      tCommon
-                                    );
-                                    return !todayTimeSlots.some(slot => slot.value !== 'closed');
-                                  }
-                                }
-                                
-                                return false;
-                              }}
+                              disabled={isDateDisabled}
                               initialFocus
                             />
                           </PopoverContent>
@@ -1051,36 +1056,7 @@ export default function Checkout() {
                                   setSelectedRegisterTime(""); // Reset time selection when date changes
                                   setRegisterDatePickerOpen(false); // Close calendar after selection
                                 }}
-                                disabled={(date) => {
-                                  const today = new Date();
-                                  today.setHours(0, 0, 0, 0);
-                                  
-                                  // Check if date is before today
-                                  if (date < today) return true;
-                                  
-                                  // Check if date is in closed dates list
-                                  const dateStr = format(date, "yyyy-MM-dd");
-                                  if (closedDates.some((closedDate: any) => closedDate.date === dateStr)) {
-                                    return true;
-                                  }
-                                  
-                                  // Check if it's a non-working day
-                                  if (storeSettings?.workingHours) {
-                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                                    const dayName = dayNames[date.getDay()];
-                                    const daySchedule = storeSettings.workingHours[dayName];
-                                    
-                                    // Disable if no schedule or closed or weekend
-                                    if (!daySchedule || daySchedule.trim() === '' || 
-                                        daySchedule.toLowerCase().includes('закрыто') || 
-                                        daySchedule.toLowerCase().includes('closed') ||
-                                        daySchedule.toLowerCase().includes('выходной')) {
-                                      return true;
-                                    }
-                                  }
-                                  
-                                  return false;
-                                }}
+                                disabled={isDateDisabled}
                                 initialFocus
                               />
                             </PopoverContent>
@@ -1297,36 +1273,7 @@ export default function Checkout() {
                                   setSelectedGuestTime(""); // Reset time selection when date changes
                                   setGuestDatePickerOpen(false); // Close calendar after selection
                                 }}
-                                disabled={(date) => {
-                                  const today = new Date();
-                                  today.setHours(0, 0, 0, 0);
-                                  
-                                  // Check if date is before today
-                                  if (date < today) return true;
-                                  
-                                  // Check if date is in closed dates list
-                                  const dateStr = format(date, "yyyy-MM-dd");
-                                  if (closedDates.some((closedDate: any) => closedDate.date === dateStr)) {
-                                    return true;
-                                  }
-                                  
-                                  // Check if it's a non-working day
-                                  if (storeSettings?.workingHours) {
-                                    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-                                    const dayName = dayNames[date.getDay()];
-                                    const daySchedule = storeSettings.workingHours[dayName];
-                                    
-                                    // Disable if no schedule or closed or weekend
-                                    if (!daySchedule || daySchedule.trim() === '' || 
-                                        daySchedule.toLowerCase().includes('закрыто') || 
-                                        daySchedule.toLowerCase().includes('closed') ||
-                                        daySchedule.toLowerCase().includes('выходной')) {
-                                      return true;
-                                    }
-                                  }
-                                  
-                                  return false;
-                                }}
+                                disabled={isDateDisabled}
                                 initialFocus
                               />
                             </PopoverContent>
