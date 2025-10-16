@@ -108,7 +108,8 @@ const generateDeliveryTimes = (
   workingHours: any, 
   selectedDate: string, 
   weekStartDay: string = 'monday',
-  deliveryTimeMode: 'hours' | 'half_day' | 'disabled' = 'hours'
+  deliveryTimeMode: 'hours' | 'half_day' | 'disabled' = 'hours',
+  t?: (key: string) => string
 ) => {
   // If delivery time selection is disabled, return empty array
   if (deliveryTimeMode === 'disabled') {
@@ -135,7 +136,7 @@ const generateDeliveryTimes = (
       daySchedule.toLowerCase().includes('выходной')) {
     return [{
       value: 'closed',
-      label: 'Closed' // Will be translated in component
+      label: t ? t('checkout.closed') : 'Закрыто'
     }];
   }
   
@@ -143,19 +144,19 @@ const generateDeliveryTimes = (
   if (deliveryTimeMode === 'half_day') {
     const timeSlots: { value: string; label: string }[] = [];
     
-    // Morning option (if it's not afternoon already)
+    // First half of day option (if it's not afternoon already)
     if (!isToday || currentHour < 12) {
       timeSlots.push({
-        value: 'morning',
-        label: 'Morning' // Will be translated
+        value: 'half_day_first',
+        label: t ? t('checkout.halfDayFirst') : 'Первая половина дня'
       });
     }
     
-    // Afternoon option
+    // Second half of day option
     if (!isToday || currentHour < 18) {
       timeSlots.push({
-        value: 'afternoon',
-        label: 'Afternoon' // Will be translated
+        value: 'half_day_second',
+        label: t ? t('checkout.halfDaySecond') : 'Вторая половина дня'
       });
     }
     
@@ -265,7 +266,7 @@ export default function Checkout() {
     if (!storeSettings?.workingHours) return false;
     
     const today = format(new Date(), "yyyy-MM-dd");
-    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay, storeSettings.deliveryTimeMode || 'hours');
+    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay, storeSettings.deliveryTimeMode || 'hours', tCommon);
     
     // Check if there are any valid time slots (not just "closed")
     return todayTimeSlots.some(slot => slot.value !== 'closed');
@@ -821,7 +822,8 @@ export default function Checkout() {
                                       storeSettings.workingHours, 
                                       format(date, "yyyy-MM-dd"), 
                                       storeSettings.weekStartDay,
-                                      storeSettings.deliveryTimeMode || 'hours'
+                                      storeSettings.deliveryTimeMode || 'hours',
+                                      tCommon
                                     );
                                     return !todayTimeSlots.some(slot => slot.value !== 'closed');
                                   }
@@ -847,7 +849,8 @@ export default function Checkout() {
                                 storeSettings?.workingHours,
                                 format(selectedDate, "yyyy-MM-dd"),
                                 storeSettings?.weekStartDay,
-                                storeSettings?.deliveryTimeMode || 'hours'
+                                storeSettings?.deliveryTimeMode || 'hours',
+                                tCommon
                               ).map((time) => (
                                 <SelectItem key={time.value} value={time.value}>
                                   {time.label}
@@ -1079,7 +1082,8 @@ export default function Checkout() {
                                   storeSettings?.workingHours,
                                   format(selectedRegisterDate, "yyyy-MM-dd"),
                                   storeSettings?.weekStartDay,
-                                  storeSettings?.deliveryTimeMode || 'hours'
+                                  storeSettings?.deliveryTimeMode || 'hours',
+                                  tCommon
                                 ).map((time) => (
                                   <SelectItem key={time.value} value={time.value}>
                                     {time.label}
@@ -1318,7 +1322,8 @@ export default function Checkout() {
                                   storeSettings?.workingHours,
                                   format(selectedGuestDate, "yyyy-MM-dd"),
                                   storeSettings?.weekStartDay,
-                                  storeSettings?.deliveryTimeMode || 'hours'
+                                  storeSettings?.deliveryTimeMode || 'hours',
+                                  tCommon
                                 ).map((time) => (
                                   <SelectItem key={time.value} value={time.value}>
                                     {time.label}
