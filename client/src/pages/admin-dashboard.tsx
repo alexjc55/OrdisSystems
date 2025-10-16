@@ -2514,7 +2514,7 @@ function ClosedDatesManager() {
 
   // Add closed date mutation
   const addClosedDateMutation = useMutation({
-    mutationFn: async (data: { date: string; description: string; reason?: string }) => {
+    mutationFn: async (data: { date: string; reason: string }) => {
       return await apiRequest('POST', '/api/admin/closed-dates', data);
     },
     onSuccess: () => {
@@ -2557,15 +2557,13 @@ function ClosedDatesManager() {
 
   const closedDateSchema = z.object({
     date: z.string().min(1, adminT('closedDates.dateRequired')),
-    description: z.string().min(1, adminT('closedDates.descriptionRequired')),
-    reason: z.string().optional(),
+    reason: z.string().min(1, adminT('closedDates.descriptionRequired')),
   });
 
   const form = useForm({
     resolver: zodResolver(closedDateSchema),
     defaultValues: {
       date: '',
-      description: '',
       reason: '',
     },
   });
@@ -2639,9 +2637,8 @@ function ClosedDatesManager() {
                       </AlertDialog>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-700 mb-1">{closedDate.description}</p>
                   {closedDate.reason && (
-                    <p className="text-sm text-gray-500">{closedDate.reason}</p>
+                    <p className="text-sm text-gray-700">{closedDate.reason}</p>
                   )}
                 </div>
                 <div className="hidden sm:block">
@@ -2702,25 +2699,12 @@ function ClosedDatesManager() {
               />
               <FormField
                 control={form.control}
-                name="description"
+                name="reason"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{adminT('closedDates.description')}</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder={adminT('closedDates.descriptionPlaceholder')} data-testid="input-closed-date-description" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="reason"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{adminT('closedDates.reason')}</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} placeholder={adminT('closedDates.reasonPlaceholder')} data-testid="input-closed-date-reason" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
