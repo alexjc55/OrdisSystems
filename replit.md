@@ -27,10 +27,11 @@ Translation management: Always ensure all changes are applied to all 4 languages
 - **API**: RESTful API with structured error handling.
 - **Data Flow**: Defined flows for order processing (browsing, cart, checkout, admin processing), admin management (product, order, user, store settings, theme configuration), and authentication (registration, login, session management, role-based protection).
 
-### Recent Critical Updates (August 2025)
-- **VPS Database Synchronization COMPLETED**: Successfully resolved major database schema mismatch between local and VPS environments. Added 32 missing slider columns to VPS database (33 total), fixing critical slider functionality error "Failed to execute 'text' on 'Response': body stream already read".
-- **PM2 Process Configuration Fixed**: Corrected VPS deployment process to use `dist/index.js` with proper startup commands.
-- **Production Deployment Stabilized**: VPS slider functionality now fully operational after database migration.
+### Recent Critical Updates
+- **October 2025 - Delivery Time Mode Feature**: Implemented flexible delivery time selection system with three modes: hours-based (2-hour intervals from working hours), half-day (first/second half of day), and disabled (no time selection). Feature includes full multilingual support across all 4 languages and integration with checkout flow, admin panel, and order displays.
+- **August 2025 - VPS Database Synchronization COMPLETED**: Successfully resolved major database schema mismatch between local and VPS environments. Added 32 missing slider columns to VPS database (33 total), fixing critical slider functionality error "Failed to execute 'text' on 'Response': body stream already read".
+- **August 2025 - PM2 Process Configuration Fixed**: Corrected VPS deployment process to use `dist/index.js` with proper startup commands.
+- **August 2025 - Production Deployment Stabilized**: VPS slider functionality now fully operational after database migration.
 
 ### Key Features
 - **Authentication & Authorization**: Role-based access control (admin, worker, customer) with secure password hashing and session management.
