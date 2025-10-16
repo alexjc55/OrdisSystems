@@ -134,8 +134,16 @@ export function formatWeight(weight: number | string): string {
 }
 
 // Convert single delivery time to time range format
-export function formatDeliveryTimeRange(deliveryTime: string): string {
+export function formatDeliveryTimeRange(deliveryTime: string, t?: any): string {
   if (!deliveryTime) return deliveryTime;
+  
+  // Handle half-day formats
+  if (deliveryTime === 'half_day_first') {
+    return t ? t('checkout.halfDayFirst') : 'Первая половина дня';
+  }
+  if (deliveryTime === 'half_day_second') {
+    return t ? t('checkout.halfDaySecond') : 'Вторая половина дня';
+  }
   
   // If it's already a range, return as is
   if (deliveryTime.includes(' - ')) {
