@@ -3,6 +3,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
+import { getDB } from "./db";
 
 const app = express();
 app.use(express.json());
@@ -39,6 +40,15 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Ensure database is initialized before starting the server
+  try {
+    await getDB();
+    console.log("✅ Database connection verified");
+  } catch (error) {
+    console.error("❌ Failed to connect to database. Server will not start.", error);
+    process.exit(1);
+  }
+
   // Seed database with initial data
   try {
     await seedDatabase();
