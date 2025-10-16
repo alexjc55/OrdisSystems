@@ -2499,6 +2499,224 @@ function ItemDiscountDialog({
   );
 }
 
+// Closed Dates Manager Component
+function ClosedDatesManager() {
+  const { toast } = useToast();
+  const { t: adminT, i18n } = useAdminTranslation();
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const queryClient = useQueryClient();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  // Fetch closed dates
+  const { data: closedDates = [], isLoading } = useQuery({
+    queryKey: ['/api/closed-dates'],
+  });
+
+  // Add closed date mutation
+  const addClosedDateMutation = useMutation({
+    mutationFn: async (data: { date: string; description: string; reason: string }) => {
+      return await apiRequest('/api/admin/closed-dates', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/closed-dates'] });
+      toast({
+        title: adminT('closedDates.dateAdded'),
+        description: adminT('closedDates.dateAddedSuccess'),
+      });
+      setIsAddDialogOpen(false);
+    },
+    onError: () => {
+      toast({
+        title: adminT('closedDates.error'),
+        description: adminT('closedDates.addError'),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  // Delete closed date mutation
+  const deleteClosedDateMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/admin/closed-dates/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/closed-dates'] });
+      toast({
+        title: adminT('closedDates.dateDeleted'),
+        description: adminT('closedDates.dateDeletedSuccess'),
+      });
+    },
+    onError: () => {
+      toast({
+        title: adminT('closedDates.error'),
+        description: adminT('closedDates.deleteError'),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const closedDateSchema = z.object({
+    date: z.string().min(1, adminT('closedDates.dateRequired')),
+    description: z.string().min(1, adminT('closedDates.descriptionRequired')),
+    reason: z.string().optional(),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(closedDateSchema),
+    defaultValues: {
+      date: '',
+      description: '',
+      reason: '',
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof closedDateSchema>) => {
+    addClosedDateMutation.mutate(data);
+    form.reset();
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8">{adminT('common.loading')}</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <p className="text-sm text-gray-600">
+          {adminT('closedDates.managementDescription')}
+        </p>
+        <Button onClick={() => setIsAddDialogOpen(true)} data-testid="button-add-closed-date">
+          <Plus className="w-4 h-4 mr-2" />
+          {adminT('closedDates.addDate')}
+        </Button>
+      </div>
+
+      {/* Closed Dates List */}
+      <div className="space-y-3">
+        {closedDates.length === 0 ? (
+          <div className="text-center py-8 bg-gray-50 rounded-lg">
+            <CalendarIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-500">{adminT('closedDates.noDates')}</p>
+          </div>
+        ) : (
+          closedDates.map((closedDate: any) => (
+            <Card key={closedDate.id} className="p-4">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CalendarIcon className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold">
+                      {format(new Date(closedDate.date), 'dd MMMM yyyy', {
+                        locale: i18n.language === 'ru' ? ru : i18n.language === 'en' ? enUS : i18n.language === 'he' ? he : ar
+                      })}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-1">{closedDate.description}</p>
+                  {closedDate.reason && (
+                    <p className="text-sm text-gray-500">{closedDate.reason}</p>
+                  )}
+                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="sm" data-testid={`button-delete-closed-date-${closedDate.id}`}>
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{adminT('closedDates.confirmDelete')}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {adminT('closedDates.confirmDeleteDescription')}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteClosedDateMutation.mutate(closedDate.id)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        {adminT('actions.delete')}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Add Closed Date Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{adminT('closedDates.addDate')}</DialogTitle>
+            <DialogDescription>
+              {adminT('closedDates.addDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{adminT('closedDates.date')}</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} data-testid="input-closed-date" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{adminT('closedDates.description')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder={adminT('closedDates.descriptionPlaceholder')} data-testid="input-closed-date-description" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="reason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{adminT('closedDates.reason')}</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder={adminT('closedDates.reasonPlaceholder')} data-testid="input-closed-date-reason" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  {adminT('actions.cancel')}
+                </Button>
+                <Button type="submit" disabled={addClosedDateMutation.isPending} data-testid="button-submit-closed-date">
+                  {addClosedDateMutation.isPending ? adminT('common.loading') : adminT('actions.add')}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
@@ -3856,6 +4074,12 @@ export default function AdminDashboard() {
                       <span className="admin-tab-text">{adminT('tabs.settings')}</span>
                     </TabsTrigger>
                   )}
+                  {hasPermission("canViewSettings") && (
+                    <TabsTrigger value="closed-dates" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.closedDates')}>
+                      <CalendarIcon className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.closedDates')}</span>
+                    </TabsTrigger>
+                  )}
                   {hasPermission("canViewUsers") && (
                     <TabsTrigger value="users" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.users')}>
                       <Users className="w-4 h-4 ml-1" />
@@ -3912,6 +4136,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="store-settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.settings')}>
                       <Settings className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{adminT('tabs.settings')}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canViewSettings") && (
+                    <TabsTrigger value="closed-dates" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.closedDates')}>
+                      <CalendarIcon className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.closedDates')}</span>
                     </TabsTrigger>
                   )}
                   {isAdmin && (
@@ -5794,6 +6024,28 @@ export default function AdminDashboard() {
                     
                     <TranslationManager />
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
+          {/* Closed Dates Management */}
+          {hasPermission("canViewSettings") && (
+            <TabsContent value="closed-dates" className="space-y-4 sm:space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                      <CalendarIcon className="h-5 w-5" />
+                      {adminT('closedDates.title')}
+                    </CardTitle>
+                    <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {adminT('closedDates.description')}
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ClosedDatesManager />
                 </CardContent>
               </Card>
             </TabsContent>
