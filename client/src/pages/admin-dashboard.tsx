@@ -821,11 +821,18 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     return notes.replace(/\[ORDER_DATA:.*?\]/g, '').replace(/\[DISCOUNTS:.*?\]/g, '').trim();
   };
 
+  // Convert old delivery time values to new format
+  const normalizeDeliveryTime = (time: string) => {
+    if (time === 'morning') return 'half_day_first';
+    if (time === 'afternoon') return 'half_day_second';
+    return time;
+  };
+
   const [editedOrder, setEditedOrder] = useState({
     customerPhone: order.customerPhone || order.guestPhone || '',
     deliveryAddress: order.deliveryAddress || '',
     deliveryDate: order.deliveryDate || '',
-    deliveryTime: order.deliveryTime || '',
+    deliveryTime: normalizeDeliveryTime(order.deliveryTime || ''),
     status: order.status || 'pending',
     notes: cleanNotes(order.customerNotes || ''),
   });
