@@ -137,11 +137,19 @@ export function formatWeight(weight: number | string): string {
 export function formatDeliveryTimeRange(deliveryTime: string, t?: any): string {
   if (!deliveryTime) return deliveryTime;
   
-  // Handle half-day formats
+  // Handle half-day formats (new values)
   if (deliveryTime === 'half_day_first') {
     return t ? t('checkout.halfDayFirst') : 'Первая половина дня';
   }
   if (deliveryTime === 'half_day_second') {
+    return t ? t('checkout.halfDaySecond') : 'Вторая половина дня';
+  }
+  
+  // Handle legacy values for backward compatibility
+  if (deliveryTime === 'morning') {
+    return t ? t('checkout.halfDayFirst') : 'Первая половина дня';
+  }
+  if (deliveryTime === 'afternoon') {
     return t ? t('checkout.halfDaySecond') : 'Вторая половина дня';
   }
   

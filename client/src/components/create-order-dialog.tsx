@@ -169,7 +169,7 @@ const getDateLocale = (language: string) => {
 };
 
 // Generate delivery times based on working hours like in checkout
-const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday', deliveryTimeMode: string = 'hours') => {
+const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday', deliveryTimeMode: string = 'hours', t?: (key: string) => string) => {
   if (!workingHours || !selectedDate) return [];
   
   // If delivery time is disabled, return empty array
@@ -180,8 +180,8 @@ const generateDeliveryTimes = (workingHours: any, selectedDate: string, weekStar
   // If half-day mode, return two options
   if (deliveryTimeMode === 'half_day') {
     return [
-      { value: 'half_day_first', label: 'First half of the day' },
-      { value: 'half_day_second', label: 'Second half of the day' }
+      { value: 'half_day_first', label: t ? t('checkout.halfDayFirst') : 'Первая половина дня' },
+      { value: 'half_day_second', label: t ? t('checkout.halfDaySecond') : 'Вторая половина дня' }
     ];
   }
   
@@ -257,6 +257,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
   
   const { t } = useTranslation();
   const adminT = (key: string) => t(`admin:${key}`);
+  const { t: tCommon } = useCommonTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { storeSettings } = useStoreSettings();
@@ -419,7 +420,8 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
       storeSettings.workingHours,
       selectedDateValue,
       storeSettings.weekStartDay,
-      storeSettings.deliveryTimeMode || 'hours'
+      storeSettings.deliveryTimeMode || 'hours',
+      tCommon
     );
   }, [form.watch('deliveryDate'), storeSettings]);
 
