@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { insertCategorySchema, insertProductSchema, insertOrderSchema, insertStoreSettingsSchema, updateStoreSettingsSchema, insertThemeSchema, updateThemeSchema, pushSubscriptions, marketingNotifications, storeSettings, closedDates, insertClosedDateSchema } from "@shared/schema";
 import { PushNotificationService } from "./push-notifications";
 import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "./email-service";
+import { sendFacebookPurchaseEvent, type FacebookOrderData } from "./facebook-conversions-api";
 import { z } from "zod";
 import { sql } from "drizzle-orm";
 import multer from "multer";
@@ -1275,6 +1276,47 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         console.error('Error sending email notifications:', emailError);
         // Не прерывать создание заказа если email уведомления не отправились
       }
+
+      // Send Facebook Conversions API Purchase event
+      try {
+        const currentStoreSettings = await storage.getStoreSettings();
+        const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+        
+        if (
+          currentStoreSettings?.facebookConversionsApiEnabled &&
+          currentStoreSettings?.facebookPixelId &&
+          facebookAccessToken
+        ) {
+          const fbOrderData: FacebookOrderData = {
+            orderId: order.id,
+            email: guestInfo.email,
+            phone: guestInfo.phone,
+            firstName: guestInfo.firstName,
+            lastName: guestInfo.lastName,
+            totalAmount: typeof totalAmount === 'string' ? parseFloat(totalAmount) : totalAmount,
+            currency: 'ILS',
+            items: items.map((item: any) => ({
+              productId: item.productId,
+              quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
+              price: typeof item.pricePerKg === 'string' ? parseFloat(item.pricePerKg) : item.pricePerKg,
+            })),
+            eventSourceUrl: req.get('origin') || req.get('referer') || `${req.protocol}://${req.get('host')}`,
+            clientIp: req.ip || req.headers['x-forwarded-for'] as string,
+            clientUserAgent: req.headers['user-agent'],
+            fbp: req.cookies?._fbp,
+            fbc: req.cookies?._fbc || (req.query?.fbclid ? `fb.1.${Date.now()}.${req.query.fbclid}` : undefined),
+          };
+
+          await sendFacebookPurchaseEvent(
+            currentStoreSettings.facebookPixelId,
+            facebookAccessToken,
+            fbOrderData
+          );
+        }
+      } catch (fbError) {
+        console.error('Error sending Facebook Conversions API event:', fbError);
+        // Don't interrupt order creation if Facebook event fails
+      }
       
       // Return order with tokens for guest access
       res.status(201).json({
@@ -1516,6 +1558,47 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       } catch (emailError) {
         console.error('Error sending new order email notification:', emailError);
         // Не прерывать создание заказа если email уведомление не отправилось
+      }
+
+      // Send Facebook Conversions API Purchase event
+      try {
+        const currentStoreSettings = await storage.getStoreSettings();
+        const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+        
+        if (
+          currentStoreSettings?.facebookConversionsApiEnabled &&
+          currentStoreSettings?.facebookPixelId &&
+          facebookAccessToken
+        ) {
+          const fbOrderData: FacebookOrderData = {
+            orderId: order.id,
+            email: user?.email || undefined,
+            phone: orderData.customerPhone || user?.phone,
+            firstName: user?.firstName || undefined,
+            lastName: user?.lastName || undefined,
+            totalAmount: typeof validatedData.totalAmount === 'string' ? parseFloat(validatedData.totalAmount) : validatedData.totalAmount,
+            currency: 'ILS',
+            items: validatedData.items.map((item: any) => ({
+              productId: item.productId,
+              quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
+              price: typeof item.pricePerKg === 'string' ? parseFloat(item.pricePerKg) : item.pricePerKg,
+            })),
+            eventSourceUrl: req.get('origin') || req.get('referer') || `${req.protocol}://${req.get('host')}`,
+            clientIp: req.ip || req.headers['x-forwarded-for'] as string,
+            clientUserAgent: req.headers['user-agent'],
+            fbp: req.cookies?._fbp,
+            fbc: req.cookies?._fbc || (req.query?.fbclid ? `fb.1.${Date.now()}.${req.query.fbclid}` : undefined),
+          };
+
+          await sendFacebookPurchaseEvent(
+            currentStoreSettings.facebookPixelId,
+            facebookAccessToken,
+            fbOrderData
+          );
+        }
+      } catch (fbError) {
+        console.error('Error sending Facebook Conversions API event:', fbError);
+        // Don't interrupt order creation if Facebook event fails
       }
       
       res.json(order);
@@ -1955,6 +2038,53 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
       // Clear orders cache
       clearCachePattern('admin-orders');
+
+      // Send Facebook Conversions API Purchase event
+      try {
+        const currentStoreSettings = await storage.getStoreSettings();
+        const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+        
+        if (
+          currentStoreSettings?.facebookConversionsApiEnabled &&
+          currentStoreSettings?.facebookPixelId &&
+          facebookAccessToken
+        ) {
+          // Get user data if not a guest order
+          let customerUser = null;
+          if (finalUserId) {
+            customerUser = await storage.getUser(finalUserId);
+          }
+
+          const fbOrderData: FacebookOrderData = {
+            orderId: order.id,
+            email: customerUser?.email || undefined,
+            phone: clientType === 'guest' ? guestData.phone : customerUser?.phone,
+            firstName: clientType === 'guest' ? guestData.firstName : customerUser?.firstName,
+            lastName: clientType === 'guest' ? guestData.lastName : customerUser?.lastName,
+            totalAmount: totalAmount,
+            currency: 'ILS',
+            items: items.map((item: any) => ({
+              productId: typeof item.productId === 'string' ? parseInt(item.productId) : item.productId,
+              quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
+              price: typeof item.unitPrice === 'string' ? parseFloat(item.unitPrice) : item.unitPrice,
+            })),
+            eventSourceUrl: req.get('origin') || req.get('referer') || `${req.protocol}://${req.get('host')}`,
+            clientIp: req.ip || req.headers['x-forwarded-for'] as string,
+            clientUserAgent: req.headers['user-agent'],
+            fbp: req.cookies?._fbp,
+            fbc: req.cookies?._fbc || (req.query?.fbclid ? `fb.1.${Date.now()}.${req.query.fbclid}` : undefined),
+          };
+
+          await sendFacebookPurchaseEvent(
+            currentStoreSettings.facebookPixelId,
+            facebookAccessToken,
+            fbOrderData
+          );
+        }
+      } catch (fbError) {
+        console.error('Error sending Facebook Conversions API event:', fbError);
+        // Don't interrupt order creation if Facebook event fails
+      }
       
       res.json({ 
         success: true, 
