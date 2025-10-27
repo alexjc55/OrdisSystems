@@ -1806,4 +1806,20 @@ html[lang="ar"] .whatsapp-button {
   unicode-bidi: isolate;
 }
 
+/* Swiper equal height slides for special offers */
+.swiper-wrapper {
+  align-items: stretch !important;
+}
+
+.swiper-slide {
+  height: auto !important;
+  display: flex !important;
+}
+
+.swiper-slide > div {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
 /* Cache bust: 1751412738 */

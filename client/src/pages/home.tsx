@@ -738,8 +738,8 @@ export default function Home() {
                         className="w-full pb-12"
                       >
                         {specialOffers.map((product) => (
-                          <SwiperSlide key={product.id}>
-                            <div className="p-1">
+                          <SwiperSlide key={product.id} className="h-auto">
+                            <div className="p-1 h-full">
                               <ProductCard 
                                 product={product} 
                                 onCategoryClick={handleCategorySelect}
