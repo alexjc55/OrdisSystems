@@ -9228,6 +9228,94 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 </FormItem>
               )}
             />
+
+            {/* Facebook Conversions API Settings */}
+            <div className="border-t pt-6 mt-6">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-900 mb-2">{adminT('facebookCapi.title')}</h4>
+                    <p className="text-sm text-blue-800 mb-3">
+                      {adminT('facebookCapi.description')}
+                    </p>
+                    <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50 space-y-2">
+                      <div className="font-semibold text-blue-900 mb-2">{adminT('facebookCapi.advantages')}</div>
+                      <ul className="space-y-1 text-blue-700">
+                        <li className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>{adminT('facebookCapi.advantage1')}</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>{adminT('facebookCapi.advantage2')}</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span>{adminT('facebookCapi.advantage3')}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="facebookConversionsApiEnabled"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          {adminT('facebookCapi.enableLabel')}
+                        </FormLabel>
+                        <FormDescription>
+                          {adminT('facebookCapi.enableDescription')}
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="facebookPixelId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">
+                        {adminT('facebookCapi.pixelIdLabel')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="123456789012345" 
+                          className="text-sm font-mono"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        {adminT('facebookCapi.pixelIdDescription')}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="text-xs bg-amber-50 rounded p-3 border border-amber-200">
+                  <div className="font-semibold text-amber-900 mb-2">{adminT('facebookCapi.accessTokenNote')}</div>
+                  <p className="text-amber-800">{adminT('facebookCapi.accessTokenInstructions')}</p>
+                </div>
+              </div>
+            </div>
           </CollapsibleContent>
         </Collapsible>
 
