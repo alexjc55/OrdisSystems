@@ -12,13 +12,14 @@ const Switch = React.forwardRef<
   return (
     <SwitchPrimitives.Root
       className={cn(
-        "peer inline-flex h-[24px] w-[44px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-all duration-200",
+        "peer relative h-[24px] w-[44px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-all duration-200",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-orange-500",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       style={{
         backgroundColor: checked ? '#FF6600' : '#D1D5DB',
+        position: 'relative',
       }}
       checked={checked}
       {...props}
@@ -26,13 +27,16 @@ const Switch = React.forwardRef<
     >
       <SwitchPrimitives.Thumb
         className={cn(
-          "pointer-events-none block h-[20px] w-[20px] rounded-full ring-0 transition-all duration-200 ease-in-out",
+          "block h-[20px] w-[20px] rounded-full ring-0 transition-all duration-200 ease-in-out",
         )}
         style={{
           backgroundColor: '#FFFFFF',
-          transform: checked 
-            ? (isRTL ? 'translateX(-20px)' : 'translateX(20px)')
-            : 'translateX(2px)',
+          position: 'absolute',
+          top: '50%',
+          left: isRTL ? undefined : (checked ? '22px' : '2px'),
+          right: isRTL ? (checked ? '22px' : '2px') : undefined,
+          transform: 'translateY(-50%)',
+          pointerEvents: 'none',
         }}
       />
     </SwitchPrimitives.Root>
