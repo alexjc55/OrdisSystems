@@ -736,32 +736,3 @@ button:hover, [role="button"]:hover, .btn:hover {
 .hover\:bg-blue-600:hover {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1)) !important;
 }
-
-/* Switch component styles */
-button[role="switch"][data-state="checked"] {
-  background-color: #FF6600 !important;
-}
-
-button[role="switch"][data-state="unchecked"] {
-  background-color: rgb(209, 213, 219) !important;
-}
-
-button[role="switch"] [data-radix-switch-thumb] {
-  background-color: #FFFFFF !important;
-}
-
-/* LTR: move thumb to the right when checked */
-[dir="ltr"] button[role="switch"][data-state="checked"] [data-radix-switch-thumb],
-button[role="switch"][data-state="checked"] [data-radix-switch-thumb] {
-  transform: translateX(20px) !important;
-}
-
-/* RTL: move thumb to the left when checked */
-[dir="rtl"] button[role="switch"][data-state="checked"] [data-radix-switch-thumb] {
-  transform: translateX(-20px) !important;
-}
-
-/* Unchecked state - no movement */
-button[role="switch"][data-state="unchecked"] [data-radix-switch-thumb] {
-  transform: translateX(0px) !important;
-}
