@@ -33,8 +33,8 @@ const Switch = React.forwardRef<
           backgroundColor: '#FFFFFF',
           position: 'absolute',
           top: '50%',
-          left: isRTL ? undefined : (checked ? '22px' : '2px'),
-          right: isRTL ? (checked ? '22px' : '2px') : undefined,
+          left: isRTL ? undefined : (checked ? '20px' : '2px'),
+          right: isRTL ? (checked ? '20px' : '2px') : undefined,
           transform: 'translateY(-50%)',
           pointerEvents: 'none',
         }}

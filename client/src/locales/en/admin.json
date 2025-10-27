@@ -1250,7 +1250,9 @@
     "enableDescription": "Automatically send Purchase events from server when orders are created",
     "pixelIdLabel": "Facebook Pixel ID",
     "pixelIdDescription": "Your pixel ID from Events Manager (15-digit number)",
-    "accessTokenNote": "⚠️ Access Token Required",
+    "accessTokenLabel": "Access Token",
+    "accessTokenFieldDescription": "Token is stored in server environment variables (FACEBOOK_ACCESS_TOKEN) and not displayed in interface",
+    "accessTokenNote": "Access Token Required",
     "accessTokenInstructions": "To use Conversions API, add the FACEBOOK_ACCESS_TOKEN environment variable. Get the token from Business Manager → System Users → Generate Token with ads_management permission."
   },
   "analytics": {

@@ -1255,7 +1255,9 @@
     "enableDescription": "Автоматически отправлять события Purchase с сервера при создании заказов",
     "pixelIdLabel": "Facebook Pixel ID",
     "pixelIdDescription": "ID вашего пикселя из Events Manager (15-значное число)",
-    "accessTokenNote": "⚠️ Требуется Access Token",
+    "accessTokenLabel": "Access Token",
+    "accessTokenFieldDescription": "Токен хранится в переменных окружения сервера (FACEBOOK_ACCESS_TOKEN) и не отображается в интерфейсе",
+    "accessTokenNote": "Требуется Access Token",
     "accessTokenInstructions": "Для работы Conversions API необходимо добавить переменную окружения FACEBOOK_ACCESS_TOKEN. Получите токен в Business Manager → System Users → Generate Token с правами ads_management."
   },
   "analytics": {

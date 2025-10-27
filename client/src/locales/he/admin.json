@@ -1339,7 +1339,9 @@
     "enableDescription": "שלח אוטומטית אירועי Purchase מהשרת כאשר נוצרות הזמנות",
     "pixelIdLabel": "Facebook Pixel ID",
     "pixelIdDescription": "מזהה הפיקסל שלך מ-Events Manager (מספר בן 15 ספרות)",
-    "accessTokenNote": "⚠️ נדרש Access Token",
+    "accessTokenLabel": "Access Token",
+    "accessTokenFieldDescription": "הטוקן מאוחסן במשתני סביבה של השרת (FACEBOOK_ACCESS_TOKEN) ואינו מוצג בממשק",
+    "accessTokenNote": "נדרש Access Token",
     "accessTokenInstructions": "לשימוש ב-Conversions API, הוסף את משתנה הסביבה FACEBOOK_ACCESS_TOKEN. קבל את הטוקן מ-Business Manager → System Users → Generate Token עם הרשאת ads_management."
   },
   "analytics": {
