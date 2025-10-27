@@ -1280,12 +1280,11 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Send Facebook Conversions API Purchase event
       try {
         const currentStoreSettings = await storage.getStoreSettings();
-        const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
         
         if (
           currentStoreSettings?.facebookConversionsApiEnabled &&
           currentStoreSettings?.facebookPixelId &&
-          facebookAccessToken
+          currentStoreSettings?.facebookAccessToken
         ) {
           const fbOrderData: FacebookOrderData = {
             orderId: order.id,
@@ -1309,7 +1308,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
           await sendFacebookPurchaseEvent(
             currentStoreSettings.facebookPixelId,
-            facebookAccessToken,
+            currentStoreSettings.facebookAccessToken,
             fbOrderData
           );
         }
@@ -1563,12 +1562,11 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Send Facebook Conversions API Purchase event
       try {
         const currentStoreSettings = await storage.getStoreSettings();
-        const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
         
         if (
           currentStoreSettings?.facebookConversionsApiEnabled &&
           currentStoreSettings?.facebookPixelId &&
-          facebookAccessToken
+          currentStoreSettings?.facebookAccessToken
         ) {
           const fbOrderData: FacebookOrderData = {
             orderId: order.id,
@@ -1592,7 +1590,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
           await sendFacebookPurchaseEvent(
             currentStoreSettings.facebookPixelId,
-            facebookAccessToken,
+            currentStoreSettings.facebookAccessToken,
             fbOrderData
           );
         }
@@ -2042,12 +2040,11 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Send Facebook Conversions API Purchase event
       try {
         const currentStoreSettings = await storage.getStoreSettings();
-        const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
         
         if (
           currentStoreSettings?.facebookConversionsApiEnabled &&
           currentStoreSettings?.facebookPixelId &&
-          facebookAccessToken
+          currentStoreSettings?.facebookAccessToken
         ) {
           // Get user data if not a guest order
           let customerUser = null;
@@ -2077,7 +2074,7 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
           await sendFacebookPurchaseEvent(
             currentStoreSettings.facebookPixelId,
-            facebookAccessToken,
+            currentStoreSettings.facebookAccessToken,
             fbOrderData
           );
         }

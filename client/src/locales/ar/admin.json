@@ -1149,8 +1149,6 @@
     "pixelIdLabel": "Facebook Pixel ID",
     "pixelIdDescription": "معرّف البكسل الخاص بك من Events Manager (رقم مكون من 15 رقمًا)",
     "accessTokenLabel": "Access Token",
-    "accessTokenFieldDescription": "يتم تخزين الرمز في متغيرات بيئة الخادم (FACEBOOK_ACCESS_TOKEN) ولا يظهر في الواجهة",
-    "accessTokenNote": "مطلوب Access Token",
-    "accessTokenInstructions": "لاستخدام Conversions API، أضف متغير البيئة FACEBOOK_ACCESS_TOKEN. احصل على الرمز من Business Manager → System Users → Generate Token مع إذن ads_management."
+    "accessTokenDescription": "احصل على الرمز من Business Manager → System Users → Generate Token مع إذن ads_management. يتم تخزين الرمز بشكل آمن في قاعدة البيانات."
   }
 }

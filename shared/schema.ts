@@ -437,6 +437,7 @@ export const storeSettings = pgTable("store_settings", {
   // Facebook Conversions API settings
   facebookPixelId: varchar("facebook_pixel_id", { length: 50 }),
   facebookConversionsApiEnabled: boolean("facebook_conversions_api_enabled").default(false),
+  facebookAccessToken: varchar("facebook_access_token", { length: 500 }), // Store access token in DB
   
   updatedAt: timestamp("updated_at").defaultNow(),
 });

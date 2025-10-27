@@ -9310,28 +9310,30 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   )}
                 />
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    {adminT('facebookCapi.accessTokenLabel')}
-                  </label>
-                  <Input 
-                    placeholder="EAAG..." 
-                    className="text-sm font-mono bg-gray-50"
-                    disabled
-                    value=""
-                  />
-                  <p className="text-xs text-gray-500">
-                    {adminT('facebookCapi.accessTokenFieldDescription')}
-                  </p>
-                </div>
-
-                <div className="text-xs bg-amber-50 rounded p-3 border border-amber-200">
-                  <div className="flex items-center gap-2 font-semibold text-amber-900 mb-2">
-                    <span>⚠️</span>
-                    <span>{adminT('facebookCapi.accessTokenNote')}</span>
-                  </div>
-                  <p className="text-amber-800">{adminT('facebookCapi.accessTokenInstructions')}</p>
-                </div>
+                <FormField
+                  control={form.control}
+                  name="facebookAccessToken"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">
+                        {adminT('facebookCapi.accessTokenLabel')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="password"
+                          placeholder="EAAG..." 
+                          className="text-sm font-mono"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        {adminT('facebookCapi.accessTokenDescription')}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
           </CollapsibleContent>
