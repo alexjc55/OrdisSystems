@@ -434,6 +434,10 @@ export const storeSettings = pgTable("store_settings", {
   sendgridApiKey: varchar("sendgrid_api_key", { length: 255 }),
   useSendgrid: boolean("use_sendgrid").default(false),
   
+  // Facebook Conversions API settings
+  facebookPixelId: varchar("facebook_pixel_id", { length: 50 }),
+  facebookConversionsApiEnabled: boolean("facebook_conversions_api_enabled").default(false),
+  
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
