@@ -1,0 +1,58 @@
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ # 1. Посмотри что в dist
+ls -la dist/
+
+# 2. Посмотри конфиг для production
+cat ecosystem.production.config.cjs
+
+# 3. Запусти через production конфиг
+pm2 start ecosystem.production.config.cjs
+
+# 4. Проверь статус
+pm2 status
+
+# 5. Если запустился - посмотри логи
+pm2 logs edahouse --lines 50
+total 368
+drwxr-xr-x  3 ordis_co_il_usr ordis_co_il_usr   4096 Sep 14 16:18 .
+drwxr-xr-x 14 ordis_co_il_usr ordis_co_il_usr  16384 Oct 16 14:04 ..
+-rw-r--r--  1 ordis_co_il_usr ordis_co_il_usr 350433 Oct 16 14:05 index.js
+drwxr-xr-x  4 ordis_co_il_usr ordis_co_il_usr   4096 Oct 16 14:05 public
+module.exports = {
+  apps: [{
+    name: 'edahouse',
+    script: 'server/index.js',
+    cwd: '/var/www/edahouse.ordis.co.il',
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: '1G',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000,
+      HOST: '0.0.0.0',
+      DATABASE_URL: 'postgresql://edahouse_usr:edahouse_password@localhost:5432/edahouse',
+      PGHOST: 'localhost',
+      PGPORT: 5432,
+      PGDATABASE: 'edahouse',
+      PGUSER: 'edahouse_usr',
+      PGPASSWORD: 'edahouse_password',
+      SESSION_SECRET: 'WAVl58TU5MAzQkQa6w8YTsuFYyyCwIl24D2j5BNsX4reNv1iYPdNQHtog2Y0CYQ39U1HGYYG1cNQhLIGfxPVNg==',
+      ENABLE_REGISTRATION: 'true',
+      ENABLE_GUEST_ORDERS: 'true',
+      MAX_FILE_SIZE: '5242880',
+      UPLOAD_PATH: './uploads',
+      ALLOWED_ORIGINS: 'https://edahouse.ordis.co.il',
+      STORE_NAME: 'edahouse',
+      STORE_DESCRIPTION: 'Food delivery service'
+    },
+    error_file: './logs/err.log',
+    out_file: './logs/out.log',
+    log_file: './logs/combined.log',
+    time: true
+  }]
+};[PM2][WARN] Applications edahouse not running, starting...
+[PM2][ERROR] Error: Script not found: /var/www/edahouse.ordis.co.il/server/index.js
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[TAILING] Tailing last 50 lines for [edahouse] process (change the value with --lines option)

@@ -1,0 +1,64 @@
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error.log last 30 lines:
+0|edahouse |       at Socket.emit (node:events:524:28)
+0|edahouse |       at TCP.<anonymous> (node:net:343:12)
+0|edahouse | }
+0|edahouse | Error fetching categories: Error: Database connection failed after 3 attempts
+0|edahouse |     at getDB (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:964:19)
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse |     at async DatabaseStorage.getDatabase (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:1472:12)
+0|edahouse |     at async DatabaseStorage.getCategories (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:1536:17)
+0|edahouse |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:4243:27
+0|edahouse | 🔥 Database connection test failed: Error: Connection terminated due to connection timeout
+0|edahouse |     at /var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg-pool/index.js:45:11
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse |     at async getDB (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:955:13)
+0|edahouse |     at async DatabaseStorage.getDatabase (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:1472:12)
+0|edahouse |     at async DatabaseStorage.getStoreSettings (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:2391:17)
+0|edahouse |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:5067:24 {
+0|edahouse |   [cause]: Error: Connection terminated unexpectedly
+0|edahouse |       at Connection.<anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg/lib/client.js:136:73)
+0|edahouse |       at Object.onceWrapper (node:events:638:28)
+0|edahouse |       at Connection.emit (node:events:524:28)
+0|edahouse |       at Socket.<anonymous> (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/pg/lib/connection.js:62:12)
+0|edahouse |       at Socket.emit (node:events:524:28)
+0|edahouse |       at TCP.<anonymous> (node:net:343:12)
+0|edahouse | }
+0|edahouse | Error fetching store settings: Error: Database connection failed after 3 attempts
+0|edahouse |     at getDB (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:964:19)
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|edahouse |     at async DatabaseStorage.getDatabase (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:1472:12)
+0|edahouse |     at async DatabaseStorage.getStoreSettings (file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:2391:17)
+0|edahouse |     at async file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:5067:24
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out.log last 30 lines:
+0|edahouse | 11:26:37 AM [express] GET /api/version 200 in 3ms :: {"version":"1.0.0","appHash":"497001d4","buildTi…
+0|edahouse | 11:26:37 AM [express] GET /api/categories 200 in 18ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 11:26:38 AM [express] GET /api/products 200 in 24ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+0|edahouse | 11:26:42 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:42 AM [express] GET /api/settings 200 in 26ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 11:26:42 AM [express] GET /api/categories 200 in 11ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 11:26:42 AM [express] GET /api/products 200 in 22ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+0|edahouse | 11:26:42 AM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"497001d4","buildTi…
+0|edahouse | 11:26:42 AM [express] GET /api/favicon 301 in 11ms
+0|edahouse | 11:26:43 AM [express] GET /api/favicon 301 in 12ms
+0|edahouse | 11:26:43 AM [express] GET /api/favicon 301 in 7ms
+0|edahouse | 11:26:43 AM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"497001d4","buildTi…
+0|edahouse | 11:26:45 AM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"497001d4","buildTi…
+0|edahouse | 11:26:45 AM [express] GET /api/settings 200 in 12ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 11:26:45 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:45 AM [express] GET /api/favicon 301 in 11ms
+0|edahouse | 11:26:45 AM [express] GET /api/favicon 301 in 7ms
+0|edahouse | 11:26:45 AM [express] GET /api/favicon 301 in 24ms
+0|edahouse | 11:26:46 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:46 AM [express] GET /api/categories 200 in 9ms :: [{"id":47,"name":"Салаты","name_en":"","name_…
+0|edahouse | 11:26:46 AM [express] GET /api/products 200 in 14ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+0|edahouse | 11:26:47 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:53 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:53 AM [express] GET /api/products 200 in 16ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+0|edahouse | 11:26:53 AM [express] GET /api/categories 200 in 26ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 11:26:54 AM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:57 AM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 11:26:57 AM [express] GET /api/products 200 in 11ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+0|edahouse | 11:26:57 AM [express] GET /api/categories 200 in 23ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 11:27:08 AM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"497001d4","buildTi…
