@@ -1239,6 +1239,20 @@
     "googleSetup": "Google Analytics 4",
     "googleInstructions": "Events purchase, page_view and custom events will appear automatically in reports. Set up conversions in 'Events' section"
   },
+  "facebookCapi": {
+    "title": "Facebook Conversions API (Server-side Tracking)",
+    "description": "Conversions API sends purchase data directly from the server to Facebook, bypassing ad blockers and browser limitations for more accurate conversion tracking.",
+    "advantages": "Server-side tracking advantages:",
+    "advantage1": "Not blocked by ad blockers and browser privacy settings",
+    "advantage2": "More accurate data — 36% more reach compared to pixel alone",
+    "advantage3": "Works independently of iOS ATT restrictions and cookies",
+    "enableLabel": "Enable Facebook Conversions API",
+    "enableDescription": "Automatically send Purchase events from server when orders are created",
+    "pixelIdLabel": "Facebook Pixel ID",
+    "pixelIdDescription": "Your pixel ID from Events Manager (15-digit number)",
+    "accessTokenNote": "⚠️ Access Token Required",
+    "accessTokenInstructions": "To use Conversions API, add the FACEBOOK_ACCESS_TOKEN environment variable. Get the token from Business Manager → System Users → Generate Token with ads_management permission."
+  },
   "analytics": {
     "title": "Analytics",
     "description": "Order statistics and revenue for various periods",

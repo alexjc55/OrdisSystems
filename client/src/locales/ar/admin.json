@@ -1116,5 +1116,39 @@
     "error": "خطأ",
     "addError": "فشل في إضافة يوم الإغلاق",
     "deleteError": "فشل في حذف يوم الإغلاق"
+  },
+  "analyticsTracking": {
+    "eventsInfo": "نظام تتبع التحليلات",
+    "eventsDescription": "يرسل المتجر تلقائيًا أحداث التحليلات إلى Yandex Metrika و Facebook Pixel و Google Analytics",
+    "automaticEvents": "أحداث تلقائية",
+    "purchaseEvent": "حدث الشراء (التحويل الرئيسي)",
+    "orderCompletedEvent": "اكتمال الطلب",
+    "thankYouPageEvent": "زيارة صفحة الشكر",
+    "eventParameters": "معاملات الحدث",
+    "orderIdParam": "معرّف الطلب",
+    "orderPriceParam": "مبلغ الطلب",
+    "currencyParam": "العملة",
+    "isGuestParam": "طلب ضيف",
+    "setupNote": "💡 إعداد الأهداف في جميع المنصات",
+    "yandexSetup": "Yandex Metrika",
+    "yandexInstructions": "إنشاء أهداف من نوع 'حدث JavaScript'",
+    "facebookSetup": "Facebook Pixel",
+    "facebookInstructions": "إعداد التحويلات في مدير الأحداث",
+    "googleSetup": "Google Analytics 4",
+    "googleInstructions": "إعداد التحويلات في قسم 'الأحداث'"
+  },
+  "facebookCapi": {
+    "title": "Facebook Conversions API (التتبع من الخادم)",
+    "description": "يرسل Conversions API بيانات الشراء مباشرة من الخادم إلى Facebook، متجاوزًا حاجبات الإعلانات وقيود المتصفح لتتبع تحويلات أكثر دقة.",
+    "advantages": "مزايا التتبع من الخادم:",
+    "advantage1": "غير محظور بواسطة حاجبات الإعلانات وإعدادات خصوصية المتصفح",
+    "advantage2": "بيانات أكثر دقة — وصول أكبر بنسبة 36٪ مقارنة بالبكسل وحده",
+    "advantage3": "يعمل بشكل مستقل عن قيود iOS ATT وملفات تعريف الارتباط",
+    "enableLabel": "تفعيل Facebook Conversions API",
+    "enableDescription": "إرسال أحداث الشراء تلقائيًا من الخادم عند إنشاء الطلبات",
+    "pixelIdLabel": "Facebook Pixel ID",
+    "pixelIdDescription": "معرّف البكسل الخاص بك من Events Manager (رقم مكون من 15 رقمًا)",
+    "accessTokenNote": "⚠️ مطلوب Access Token",
+    "accessTokenInstructions": "لاستخدام Conversions API، أضف متغير البيئة FACEBOOK_ACCESS_TOKEN. احصل على الرمز من Business Manager → System Users → Generate Token مع إذن ads_management."
   }
 }
