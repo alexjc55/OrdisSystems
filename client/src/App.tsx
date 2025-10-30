@@ -35,6 +35,7 @@ import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
+import { FacebookPixel } from "@/components/FacebookPixel";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
@@ -282,6 +283,9 @@ function Router() {
       
       {/* Analytics Tracker - Automatically tracks route changes for all analytics services */}
       <AnalyticsTracker debug={true} />
+      
+      {/* Facebook Pixel - Automatically initializes Facebook Pixel if configured */}
+      <FacebookPixel />
       
       {/* PWA Status Bar */}
       <PWAStatusBar />
