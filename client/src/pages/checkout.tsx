@@ -20,7 +20,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
+import { useUTMNavigate } from "@/hooks/use-utm-navigate";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -200,7 +200,7 @@ const generateDeliveryTimes = (
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
   const { items, getTotalPrice, clearCart } = useCartStore();
-  const [, setLocation] = useLocation();
+  const navigate = useUTMNavigate();
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
@@ -438,7 +438,7 @@ export default function Checkout() {
       const currentLang = localStorage.getItem('language') || 'ru';
       const hasEmail = !!(variables.email && variables.email.trim());
       const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&claimToken=${order.guestClaimToken}&guest=true&hasEmail=${hasEmail}&lang=${currentLang}`;
-      setLocation(thanksUrl);
+      navigate(thanksUrl);
     },
     onError: (error: Error) => {
       toast({
@@ -518,7 +518,7 @@ export default function Checkout() {
       // Redirect to thanks page for registered user order
       const currentLang = localStorage.getItem('language') || 'ru';
       const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
-      setLocation(thanksUrl);
+      navigate(thanksUrl);
     },
     onError: (error: Error) => {
       toast({
@@ -598,7 +598,7 @@ export default function Checkout() {
       // Redirect to thanks page for authenticated user order
       const currentLang = localStorage.getItem('language') || 'ru';
       const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
-      setLocation(thanksUrl);
+      navigate(thanksUrl);
     },
     onError: (error: Error) => {
       toast({
@@ -617,7 +617,7 @@ export default function Checkout() {
             <ShoppingCart className="h-12 w-12 text-gray-400 mb-4" />
             <h2 className="text-xl font-semibold mb-2">{tCommon('cart.empty')}</h2>
             <p className="text-gray-600 mb-4">{tCommon('cart.emptyDescription')}</p>
-            <Button onClick={() => setLocation("/")}>
+            <Button onClick={() => navigate("/")}>
               {tCommon('navigation.goShopping')}
             </Button>
           </CardContent>
@@ -632,7 +632,7 @@ export default function Checkout() {
       <div className="mb-6">
         <Button
           variant="ghost"
-          onClick={() => setLocation("/")}
+          onClick={() => navigate("/")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
         >
           <ArrowLeft className="h-4 w-4" />

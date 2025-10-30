@@ -6,11 +6,16 @@ export function useUTMNavigate() {
   const [, setLocation] = useLocation();
   const { addParamsToURL } = useUTMParams();
   
-  const navigate = useCallback((path: string, options?: { replace?: boolean; preserveParams?: boolean }) => {
+  const navigate = useCallback((path: string, options?: { replace?: boolean; preserveParams?: boolean; state?: unknown }) => {
     const preserveParams = options?.preserveParams !== false; // По умолчанию true
     const enhancedPath = preserveParams ? addParamsToURL(path) : path;
     
-    setLocation(enhancedPath, options);
+    // Wouter's setLocation can accept either boolean or { replace, state }
+    if (options?.state !== undefined) {
+      setLocation(enhancedPath, { replace: options.replace ?? false, state: options.state });
+    } else {
+      setLocation(enhancedPath, options?.replace ?? false);
+    }
   }, [setLocation, addParamsToURL]);
   
   return navigate;
