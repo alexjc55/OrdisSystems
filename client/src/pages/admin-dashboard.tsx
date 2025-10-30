@@ -352,6 +352,9 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   cartBannerImage: z.string().optional(),
   cartBannerText: z.string().optional(),
   cartBannerBgColor: z.string().default("#f97316"),
+  facebookConversionsApiEnabled: z.boolean().default(false),
+  facebookPixelId: z.string().optional(),
+  facebookAccessToken: z.string().optional(),
 });
 
 
