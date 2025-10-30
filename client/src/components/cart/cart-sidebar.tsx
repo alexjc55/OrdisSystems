@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency";
 import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
-import { useLocation } from "wouter";
+import { useUTMNavigate } from "@/hooks/use-utm-navigate";
 import { useState } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -23,7 +23,7 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
 
 export default function CartSidebar() {
   const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
-  const [, setLocation] = useLocation();
+  const navigate = useUTMNavigate();
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
@@ -98,7 +98,7 @@ export default function CartSidebar() {
 
   const handleCheckout = () => {
     setCartOpen(false);
-    setLocation("/checkout");
+    navigate("/checkout");
   };
 
   if (!isOpen) return null;
