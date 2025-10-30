@@ -13,6 +13,7 @@
 import { useState, useMemo, useRef, useCallback, memo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
+import { useUTMNavigate } from "@/hooks/use-utm-navigate";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -239,7 +240,8 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
 
 export default function Home() {
   const params = useParams();
-  const [location, navigate] = useLocation();
+  const [location] = useLocation();
+  const navigate = useUTMNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);

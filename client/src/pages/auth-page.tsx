@@ -18,7 +18,7 @@ import { getLocalizedField } from "@shared/localization";
 import { getReturnTo, clearReturnTo } from "@/lib/auth-redirect";
 
 export default function AuthPage() {
-  const [, setLocation] = useLocation();
+  const navigate = useUTMNavigate();
   const { user, loginMutation, registerMutation } = useAuth();
   const { storeSettings } = useStoreSettings();
   const { t } = useCommonTranslation();
@@ -267,9 +267,9 @@ export default function AuthPage() {
     if (user) {
       const returnUrl = getReturnTo();
       clearReturnTo(); // Clean up
-      setLocation(returnUrl);
+      navigate(returnUrl);
     }
-  }, [user, setLocation]);
+  }, [user, navigate]);
 
   // Preserve language selection when navigating to auth page
   useEffect(() => {
@@ -323,7 +323,7 @@ export default function AuthPage() {
       <div className="p-4">
         <Button
           variant="ghost"
-          onClick={() => setLocation("/")}
+          onClick={() => navigate("/")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-4 w-4" />
