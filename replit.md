@@ -15,6 +15,14 @@ Translation management: Always ensure all changes are applied to all 4 languages
 - **Framework**: React 18 with TypeScript
 - **State Management**: TanStack React Query for server state, Zustand for cart management
 - **Routing**: Wouter for client-side routing
+- **Navigation System with UTM Preservation**: 
+  - **CRITICAL**: Always use UTM-aware navigation components to preserve advertising attribution parameters
+  - For links: Use `UTMLink` from `@/components/UTMLink` instead of wouter's `Link`
+  - For programmatic navigation: Use `useUTMNavigate()` from `@/hooks/use-utm-navigate` instead of wouter's `useLocation`
+  - System automatically preserves UTM parameters (utm_source, utm_medium, utm_campaign, utm_term, utm_content) and tracking IDs (fbclid, gclid, yclid) across all navigation
+  - Parameters stored in localStorage for 30 days and automatically attached to analytics events
+  - Implementation files: `client/src/hooks/use-utm-params.tsx`, `client/src/hooks/use-utm-navigate.tsx`, `client/src/components/UTMLink.tsx`
+  - When adding new pages: Always use UTMLink/useUTMNavigate to maintain parameter preservation throughout user journey
 - **UI Components**: Radix UI primitives with custom styling system
 - **Styling**: Tailwind CSS with custom CSS variables for theming. Strict rules for color styles: always use thematic classes, manage colors via `/client/src/lib/design-system.css`, and create CSS variables for new colors.
 - **Internationalization**: React i18next with support for RTL languages (Hebrew, Arabic). All textual elements must use translation keys and be available in all four languages. RTL compatibility must be checked for UI changes.
@@ -28,6 +36,7 @@ Translation management: Always ensure all changes are applied to all 4 languages
 - **Data Flow**: Defined flows for order processing (browsing, cart, checkout, admin processing), admin management (product, order, user, store settings, theme configuration), and authentication (registration, login, session management, role-based protection).
 
 ### Recent Critical Updates
+- **October 2025 - UTM Parameter Preservation System**: Implemented comprehensive system for preserving advertising attribution parameters (UTM, fbclid, gclid, yclid) throughout user journey. Created UTMLink component and useUTMNavigate hook as mandatory replacements for wouter's standard navigation. All existing navigation updated to use UTM-aware components. Parameters stored in localStorage for 30 days and automatically integrated with all analytics platforms (Yandex Metrica, Facebook Pixel, Google Analytics).
 - **October 2025 - Delivery Time Mode Feature**: Implemented flexible delivery time selection system with three modes: hours-based (2-hour intervals from working hours), half-day (first/second half of day), and disabled (no time selection). Feature includes full multilingual support across all 4 languages and integration with checkout flow, admin panel, and order displays.
 - **August 2025 - VPS Database Synchronization COMPLETED**: Successfully resolved major database schema mismatch between local and VPS environments. Added 32 missing slider columns to VPS database (33 total), fixing critical slider functionality error "Failed to execute 'text' on 'Response': body stream already read".
 - **August 2025 - PM2 Process Configuration Fixed**: Corrected VPS deployment process to use `dist/index.js` with proper startup commands.
