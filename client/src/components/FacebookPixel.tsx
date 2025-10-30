@@ -5,9 +5,19 @@ export function FacebookPixel() {
   const { storeSettings } = useStoreSettings();
 
   useEffect(() => {
+    console.log('🔍 FacebookPixel: useEffect triggered', {
+      storeSettings,
+      pixelId: storeSettings?.facebookPixelId,
+      enabled: storeSettings?.facebookConversionsApiEnabled
+    });
+    
     const pixelId = storeSettings?.facebookPixelId;
     
     if (!pixelId || !storeSettings?.facebookConversionsApiEnabled) {
+      console.log('❌ FacebookPixel: Pixel not configured or disabled', {
+        hasPixelId: !!pixelId,
+        enabled: storeSettings?.facebookConversionsApiEnabled
+      });
       return;
     }
 
