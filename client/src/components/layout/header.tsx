@@ -38,7 +38,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3 } from "lucide-react";
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
+import { UTMLink as Link } from "@/components/UTMLink";
 import type { User as UserType } from "@shared/schema";
 
 interface HeaderProps {

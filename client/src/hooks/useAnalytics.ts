@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useUTMParams } from './use-utm-params';
 
 // Function to check if analytics should be tracked for current path/user
 export function shouldTrackAnalytics(path?: string, userRole?: string): boolean {
@@ -25,6 +26,7 @@ interface PageViewEvent {
   path: string;
   title?: string;
   referrer?: string;
+  utmParams?: Record<string, string>; // Add UTM parameters
 }
 
 interface PurchaseEvent {
@@ -49,6 +51,8 @@ declare global {
 }
 
 export function useAnalytics() {
+  const { utmParams } = useUTMParams();
+  
   // Helper to get Yandex Metrika counter ID
   const getYandexCounterId = useCallback(() => {
     // Try to find counter ID from window._ym_counter or window.yaCounter* globals first
@@ -104,6 +108,9 @@ export function useAnalytics() {
   const sendPageView = useCallback((event: PageViewEvent) => {
     const { path, title, referrer } = event;
     
+    // Use UTM params from event or from hook
+    const effectiveUtmParams = event.utmParams || utmParams;
+    
     try {
       // Yandex Metrika
       if (typeof window.ym === 'function') {
@@ -111,9 +118,10 @@ export function useAnalytics() {
         if (counterId) {
           window.ym(counterId, 'hit', path, {
             referer: referrer || document.referrer,
-            title: title || document.title
+            title: title || document.title,
+            params: effectiveUtmParams // Add UTM parameters
           });
-          if (import.meta.env.DEV) console.log('[Analytics] Yandex Metrika pageview sent:', path, 'Counter:', counterId);
+          if (import.meta.env.DEV) console.log('[Analytics] Yandex Metrika pageview sent:', path, 'UTM:', effectiveUtmParams, 'Counter:', counterId);
         } else {
           if (import.meta.env.DEV) console.warn('[Analytics] Yandex Metrika counter ID not found - pageview skipped');
         }
@@ -127,8 +135,9 @@ export function useAnalytics() {
     try {
       // Facebook Pixel
       if (typeof window.fbq === 'function') {
-        window.fbq('track', 'PageView');
-        if (import.meta.env.DEV) console.log('[Analytics] Facebook Pixel pageview sent:', path);
+        // Facebook Pixel accepts custom parameters
+        window.fbq('track', 'PageView', effectiveUtmParams);
+        if (import.meta.env.DEV) console.log('[Analytics] Facebook Pixel pageview sent:', path, 'UTM:', effectiveUtmParams);
       } else {
         if (import.meta.env.DEV) console.warn('[Analytics] Facebook Pixel not available - pageview skipped');
       }
@@ -142,9 +151,10 @@ export function useAnalytics() {
         window.gtag('event', 'page_view', {
           page_path: path,
           page_title: title || document.title,
-          page_location: window.location.origin + path
+          page_location: window.location.origin + path,
+          ...effectiveUtmParams // Add UTM parameters as custom dimensions
         });
-        if (import.meta.env.DEV) console.log('[Analytics] Google Analytics pageview sent:', path);
+        if (import.meta.env.DEV) console.log('[Analytics] Google Analytics pageview sent:', path, 'UTM:', effectiveUtmParams);
       } else {
         if (import.meta.env.DEV) console.warn('[Analytics] Google Analytics not available - pageview skipped');
       }
@@ -159,16 +169,17 @@ export function useAnalytics() {
           event: 'pageview',
           page_path: path,
           page_title: title || document.title,
-          page_location: window.location.origin + path
+          page_location: window.location.origin + path,
+          ...effectiveUtmParams // Add UTM parameters
         });
-        if (import.meta.env.DEV) console.log('[Analytics] GTM dataLayer pageview sent:', path);
+        if (import.meta.env.DEV) console.log('[Analytics] GTM dataLayer pageview sent:', path, 'UTM:', effectiveUtmParams);
       } else {
         if (import.meta.env.DEV) console.warn('[Analytics] GTM dataLayer not available - pageview skipped');
       }
     } catch (error) {
       if (import.meta.env.DEV) console.warn('[Analytics] GTM dataLayer pageview error:', error);
     }
-  }, [getYandexCounterId]);
+  }, [getYandexCounterId, utmParams]);
 
   // Send purchase conversion event
   const sendPurchase = useCallback((event: PurchaseEvent) => {
