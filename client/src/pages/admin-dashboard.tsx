@@ -7748,6 +7748,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       smtpPassword: storeSettings?.smtpPassword || "",
       sendgridApiKey: storeSettings?.sendgridApiKey || "",
       useSendgrid: storeSettings?.useSendgrid || false,
+      // Facebook Conversions API settings
+      facebookConversionsApiEnabled: storeSettings?.facebookConversionsApiEnabled || false,
+      facebookPixelId: storeSettings?.facebookPixelId || "",
+      facebookAccessToken: storeSettings?.facebookAccessToken || "",
     } as any,
   });
 
@@ -7852,6 +7856,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         smtpPassword: storeSettings?.smtpPassword || "",
         sendgridApiKey: storeSettings?.sendgridApiKey || "",
         useSendgrid: storeSettings?.useSendgrid || false,
+        // Facebook Conversions API settings
+        facebookConversionsApiEnabled: storeSettings?.facebookConversionsApiEnabled || false,
+        facebookPixelId: storeSettings?.facebookPixelId || "",
+        facebookAccessToken: storeSettings?.facebookAccessToken || "",
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
