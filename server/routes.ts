@@ -1078,8 +1078,17 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       clearCachePattern('products');
       
       res.json({ message: "Product deleted successfully" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting product:", error);
+      
+      // Check for foreign key constraint violation
+      if (error.code === '23503' && error.constraint === 'order_items_product_id_products_id_fk') {
+        return res.status(409).json({ 
+          message: "Cannot delete product: it is used in existing orders",
+          errorCode: "PRODUCT_IN_USE"
+        });
+      }
+      
       res.status(500).json({ message: "Failed to delete product" });
     }
   });

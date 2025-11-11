@@ -3364,7 +3364,25 @@ export default function AdminDashboard() {
   const deleteProductMutation = useMutation({
     mutationFn: async (productId: number) => {
       const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete product');
+      if (!response.ok) {
+        let errorData: any = {};
+        
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // JSON parsing failed - might be HTML error page or empty body
+          console.error('Failed to parse error response:', e);
+        }
+        
+        // Check if it's a foreign key constraint error (by status code or errorCode)
+        if (response.status === 409 || errorData.errorCode === 'PRODUCT_IN_USE') {
+          const error: any = new Error(errorData.message || 'Product is used in existing orders');
+          error.errorCode = 'PRODUCT_IN_USE';
+          throw error;
+        }
+        
+        throw new Error(errorData.message || 'Failed to delete product');
+      }
       return await response.json();
     },
     onSuccess: () => {
@@ -3374,7 +3392,22 @@ export default function AdminDashboard() {
     },
     onError: (error: any) => {
       console.error("Product deletion error:", error);
-      toast({ title: adminT('actions.error'), description: adminT('products.notifications.deleteError'), variant: "destructive" });
+      
+      // Check if it's a product-in-use error
+      if (error.errorCode === 'PRODUCT_IN_USE') {
+        toast({ 
+          title: adminT('productDeletion.cannotDelete'),
+          description: adminT('productDeletion.usedInOrders') + '\n\n' + adminT('productDeletion.suggestion'),
+          variant: "destructive",
+          duration: 10000 // Show longer for this important message
+        });
+      } else {
+        toast({ 
+          title: adminT('actions.error'),
+          description: adminT('products.notifications.deleteError'),
+          variant: "destructive" 
+        });
+      }
     }
   });
 

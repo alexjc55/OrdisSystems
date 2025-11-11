@@ -1306,6 +1306,11 @@
       "byStatus": "Active Orders by Status"
     }
   },
+  "productDeletion": {
+    "cannotDelete": "Cannot delete product",
+    "usedInOrders": "This product is used in existing orders and cannot be deleted",
+    "suggestion": "Instead of deleting, you can set the product as 'Completely Unavailable' in product settings"
+  },
   "closedDates": {
     "title": "Closed Dates & Holidays",
     "description": "Manage dates when the store is closed for delivery",
