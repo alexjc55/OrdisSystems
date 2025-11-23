@@ -1,7 +1,7 @@
 // Dynamic cache names with automatic versioning
 const APP_VERSION = '1.0.0';
 // Build timestamp is now generated automatically from file changes
-const BUILD_TIMESTAMP = '20250114-1315'; // Updated for iOS cache fixes
+const BUILD_TIMESTAMP = '20250123-1800'; // Added controllerchange listener for auto-reload
 const CACHE_NAME = `edahouse-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;

@@ -40,6 +40,13 @@ export function usePWA() {
             scope: '/'
           });
           
+          // CRITICAL: Auto-reload when new service worker takes control
+          // This prevents white screen issues when SW updates but page runs old JS
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('🔄 [PWA] New service worker activated - reloading to prevent white screen');
+            window.location.reload();
+          }, { once: true });
+          
           // Check for updates
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
