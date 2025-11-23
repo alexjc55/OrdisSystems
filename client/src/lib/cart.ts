@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product } from '@shared/schema';
 import { calculateTotal, roundUpToNearestTenAgorot, type ProductUnit } from './currency';
+import { triggerPushRequestAfterAction } from './prompt-utils';
 
 export interface CartItem {
   product: Product;
@@ -53,6 +54,9 @@ export const useCartStore = create<CartStore>()(
           };
           set({ items: [...validItems, newItem] });
         }
+        
+        // Trigger push notification request after adding to cart (contextual moment)
+        triggerPushRequestAfterAction('cart-add');
       },
       
       removeItem: (productId) => {

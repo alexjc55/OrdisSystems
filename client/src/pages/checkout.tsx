@@ -30,6 +30,7 @@ import { getPaymentMethodName as getLocalizedPaymentMethodName } from "@shared/m
 import { format } from "date-fns";
 import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { triggerPushRequestAfterAction } from "@/lib/prompt-utils";
 
 const getDateLocale = (language: string) => {
   switch (language) {
@@ -430,6 +431,10 @@ export default function Checkout() {
     },
     onSuccess: (order, variables) => {
       clearCart();
+      
+      // Trigger push notification request after successful checkout (contextual moment)
+      triggerPushRequestAfterAction('checkout');
+      
       toast({
         title: "Заказ оформлен!",
         description: `Заказ №${order.orderId} принят в обработку. Мы свяжемся с вами для подтверждения.`,
@@ -511,6 +516,10 @@ export default function Checkout() {
     onSuccess: (order) => {
       clearCart();
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      
+      // Trigger push notification request after successful checkout (contextual moment)
+      triggerPushRequestAfterAction('checkout');
+      
       toast({
         title: tShop('checkout.registrationAndOrderCompleted'),
         description: `Заказ №${order.id} принят в обработку`,
@@ -591,6 +600,10 @@ export default function Checkout() {
     },
     onSuccess: (order) => {
       clearCart();
+      
+      // Trigger push notification request after successful checkout (contextual moment)
+      triggerPushRequestAfterAction('checkout');
+      
       toast({
         title: tShop('checkout.orderPlaced'),
         description: `Заказ №${order.id} принят в обработку`,

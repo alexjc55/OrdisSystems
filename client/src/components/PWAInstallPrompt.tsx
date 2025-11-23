@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { X, Download, Smartphone, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { 
+  isIOSDevice, 
+  isStandaloneMode, 
+  shouldShowPWAInstallPrompt, 
+  markPWAPromptDismissed,
+  setPWAPromptShowing,
+  trackVisit
+} from '@/lib/prompt-utils';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -14,35 +22,28 @@ export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
-
-  // Push notifications are handled by separate PushNotificationRequest component
 
   useEffect(() => {
-    // Check if app is already installed (standalone mode)
-    const checkStandalone = () => {
-      return window.matchMedia('(display-mode: standalone)').matches ||
-             (window.navigator as any).standalone ||
-             document.referrer.includes('android-app://');
-    };
-
-    // Check if device is iOS
-    const checkIOS = () => {
-      return /iPad|iPhone|iPod/.test(navigator.userAgent);
-    };
-
-    setIsStandalone(checkStandalone());
-    setIsIOS(checkIOS());
-    setIsInstalled(checkStandalone());
+    // Track user visit
+    trackVisit();
+    
+    const checkIOS = isIOSDevice();
+    const checkStandalone = isStandaloneMode();
+    
+    setIsIOS(checkIOS);
+    setIsInstalled(checkStandalone);
 
     // Listen for beforeinstallprompt event (Android/Chrome)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       
-      // Don't show if already installed
-      if (!checkStandalone()) {
-        setShowPrompt(true);
+      // Check if we should show the prompt (includes desktop check, visit count, etc.)
+      if (shouldShowPWAInstallPrompt()) {
+        setTimeout(() => {
+          setShowPrompt(true);
+          setPWAPromptShowing(true);
+        }, 3000); // 3 second delay
       }
     };
 
@@ -51,19 +52,21 @@ export default function PWAInstallPrompt() {
       setIsInstalled(true);
       setShowPrompt(false);
       setDeferredPrompt(null);
+      setPWAPromptShowing(false);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // For iOS, show install prompt after some time if not standalone
-    if (checkIOS() && !checkStandalone()) {
-      setTimeout(() => {
-        setShowPrompt(true);
-      }, 3000);
+    // For iOS, show install prompt after delay if conditions are met
+    if (checkIOS && !checkStandalone) {
+      if (shouldShowPWAInstallPrompt()) {
+        setTimeout(() => {
+          setShowPrompt(true);
+          setPWAPromptShowing(true);
+        }, 5000); // 5 second delay for iOS to give user time to explore
+      }
     }
-    
-
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -79,45 +82,46 @@ export default function PWAInstallPrompt() {
       const choiceResult = await deferredPrompt.userChoice;
       
       if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted PWA install');
-        // After successful install, automatically request push permissions
+        console.log('✅ User accepted PWA install');
+        setPWAPromptShowing(false);
+        
+        // After successful install, trigger push notification request after delay
         setTimeout(() => {
-          // Trigger push notification request after PWA installation
           window.dispatchEvent(new CustomEvent('pwa-installed'));
-        }, 1000);
+        }, 15000); // 15 second delay before showing push request
       } else {
-        console.log('User dismissed PWA install');
-        localStorage.setItem('pwa-dismissed', Date.now().toString());
+        console.log('❌ User dismissed PWA install');
+        markPWAPromptDismissed(false);
+        setPWAPromptShowing(false);
       }
       
       setDeferredPrompt(null);
       setShowPrompt(false);
     } catch (error) {
       console.error('Error during PWA install:', error);
+      setPWAPromptShowing(false);
     }
   };
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    if (isIOS) {
-      localStorage.setItem('ios-prompt-shown', 'true');
-    } else {
-      localStorage.setItem('pwa-dismissed', Date.now().toString());
-    }
+    setPWAPromptShowing(false);
+    markPWAPromptDismissed(isIOS);
   };
 
   const handleIOSInstall = () => {
     setShowPrompt(false);
-    localStorage.setItem('ios-prompt-shown', 'true');
-    // Trigger push notification request after iOS "installation"
+    setPWAPromptShowing(false);
+    markPWAPromptDismissed(true);
+    
+    // Trigger push notification request after iOS "installation" with longer delay
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('pwa-installed'));
-    }, 2000); // Longer delay for iOS
-    // For iOS, we can't auto-request push permission, user needs to do it manually
+    }, 20000); // 20 second delay for iOS - give user time to add to home screen
   };
 
   // Don't show if already installed
-  if (isInstalled || isStandalone) {
+  if (isInstalled) {
     return null;
   }
 

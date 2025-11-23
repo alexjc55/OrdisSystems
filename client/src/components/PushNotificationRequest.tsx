@@ -3,6 +3,11 @@ import { Bell, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/use-auth';
+import { 
+  shouldShowPushRequest, 
+  markPushRequestShown,
+  isStandaloneMode 
+} from '@/lib/prompt-utils';
 
 // Helper function to convert ArrayBuffer to base64
 function arrayBufferToBase64(buffer: ArrayBuffer | null): string {
@@ -22,44 +27,52 @@ export default function PushNotificationRequest() {
   const [permission, setPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
-    // Check current permission status
-    if ('Notification' in window) {
-      setPermission(Notification.permission);
+    // Early exit if Notification API is not supported
+    if (!('Notification' in window)) {
+      console.log('🚫 Push notifications not supported in this browser');
+      return;
     }
+    
+    // Check current permission status
+    setPermission(Notification.permission);
 
-    // Show request after shorter delay if permission not granted
+    // Show request after 30 second delay if conditions are met
     const timer = setTimeout(() => {
-      if (Notification.permission === 'default') {
-        const lastRequested = localStorage.getItem('push-permission-requested');
-        const daysSinceRequest = lastRequested ? 
-          (Date.now() - parseInt(lastRequested)) / (1000 * 60 * 60 * 24) : 999;
-        
-        // Show request if not asked in last 24 hours (reduced from 7 days)
-        // or if user is admin (for testing)
-        if (daysSinceRequest > 1 || (user && user.role === 'admin')) {
-          setShowRequest(true);
-        }
-      }
-    }, 5000); // 5 seconds (reduced from 30 seconds)
-
-    // Listen for PWA installation event
-    const handlePWAInstalled = () => {
-      if (Notification.permission === 'default') {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default' && shouldShowPushRequest(user?.role)) {
         setShowRequest(true);
+      }
+    }, 30000); // 30 seconds - give user time to explore the site
+
+    // Listen for PWA installation event (triggered 15-20 seconds after install)
+    const handlePWAInstalled = () => {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default' && shouldShowPushRequest(user?.role)) {
+        // Short delay since user just installed PWA
+        setTimeout(() => setShowRequest(true), 2000);
       }
     };
 
+    // Listen for context-based triggers (cart add, checkout)
+    const handleTriggerPushRequest = ((event: CustomEvent) => {
+      if (!('Notification' in window)) return;
+      if (Notification.permission === 'default' && shouldShowPushRequest(user?.role)) {
+        console.log(`🔔 Showing push request triggered by: ${event.detail.action}`);
+        setTimeout(() => setShowRequest(true), 3000); // 3 second delay
+      }
+    }) as EventListener;
+
     window.addEventListener('pwa-installed', handlePWAInstalled);
+    window.addEventListener('trigger-push-request', handleTriggerPushRequest);
 
     // Check if running in standalone mode (PWA already installed)
     const checkStandaloneMode = () => {
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                          (window.navigator as any).standalone ||
-                          document.referrer.includes('android-app://');
-      
-      if (isStandalone && Notification.permission === 'default') {
-        // Delay showing the request in standalone mode
-        setTimeout(() => setShowRequest(true), 3000);
+      if (!('Notification' in window)) return;
+      if (isStandaloneMode() && Notification.permission === 'default') {
+        if (shouldShowPushRequest(user?.role)) {
+          // Delay showing the request in standalone mode
+          setTimeout(() => setShowRequest(true), 5000);
+        }
       }
     };
 
@@ -73,17 +86,10 @@ export default function PushNotificationRequest() {
       setShowRequest(true);
     };
 
-    (window as any).clearPushCache = () => {
-      console.log('🧪 Clearing push notification cache');
-      localStorage.removeItem('push-permission-requested');
-      localStorage.removeItem('pwa-dismissed');
-      localStorage.removeItem('ios-prompt-shown');
-      setShowRequest(true);
-    };
-
     return () => {
       clearTimeout(timer);
       window.removeEventListener('pwa-installed', handlePWAInstalled);
+      window.removeEventListener('trigger-push-request', handleTriggerPushRequest);
       window.removeEventListener('focus', checkStandaloneMode);
       delete (window as any).showPushRequest;
     };
@@ -144,7 +150,7 @@ export default function PushNotificationRequest() {
         }
         
         // Mark as requested
-        localStorage.setItem('push-permission-requested', Date.now().toString());
+        markPushRequestShown();
         setShowRequest(false);
       }
     } catch (error) {
@@ -154,7 +160,7 @@ export default function PushNotificationRequest() {
 
   const handleDismiss = () => {
     setShowRequest(false);
-    localStorage.setItem('push-permission-requested', Date.now().toString());
+    markPushRequestShown();
   };
 
   // Don't show if permission already granted/denied 
