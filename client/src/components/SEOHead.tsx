@@ -88,15 +88,21 @@ export function SEOHead({
       hreflangLink.setAttribute('hreflang', HREFLANG_MAP[lang]);
       const langPath = lang === 'ru' ? '' : `/${lang}`;
       const currentPath = window.location.pathname.replace(/^\/(en|he|ar)/, '');
-      hreflangLink.setAttribute('href', window.location.origin + langPath + currentPath);
+      // CRITICAL: Preserve query string and hash for proper multilingual targeting
+      const searchParams = window.location.search; // ?category=X, ?product=Y
+      const hashParams = window.location.hash; // #section
+      hreflangLink.setAttribute('href', window.location.origin + langPath + currentPath + searchParams + hashParams);
       document.head.appendChild(hreflangLink);
     });
 
-    // Add x-default hreflang
+    // Add x-default hreflang (points to Russian version with query params)
     const defaultHreflang = document.createElement('link');
     defaultHreflang.setAttribute('rel', 'alternate');
     defaultHreflang.setAttribute('hreflang', 'x-default');
-    defaultHreflang.setAttribute('href', window.location.origin + '/');
+    const searchParams = window.location.search;
+    const hashParams = window.location.hash;
+    const defaultPath = window.location.pathname.replace(/^\/(en|he|ar)/, '');
+    defaultHreflang.setAttribute('href', window.location.origin + defaultPath + searchParams + hashParams);
     document.head.appendChild(defaultHreflang);
 
     // Update Open Graph tags
@@ -231,9 +237,10 @@ export function SEOHead({
     }
 
     // Add/Update structured data for local business
-    const existingScript = document.querySelector('script[type="application/ld+json"]');
-    if (existingScript) {
-      existingScript.remove();
+    // CRITICAL: Only remove the Restaurant script, not Product/Breadcrumb scripts
+    const existingRestaurantScript = document.querySelector('script[type="application/ld+json"][data-restaurant]');
+    if (existingRestaurantScript) {
+      existingRestaurantScript.remove();
     }
 
     if (settings && typeof settings === 'object') {
@@ -274,6 +281,7 @@ export function SEOHead({
 
       const script = document.createElement('script');
       script.type = 'application/ld+json';
+      script.setAttribute('data-restaurant', 'true'); // Mark for selective removal
       script.textContent = JSON.stringify(structuredData);
       document.head.appendChild(script);
     }

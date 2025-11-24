@@ -392,7 +392,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 
       // Add category pages with multilingual support
       categories.forEach(category => {
-        const categoryLastMod = category.updatedAt || category.createdAt || now;
+        // Convert to ISO format to comply with W3C datetime standard
+        const categoryLastMod = category.updatedAt 
+          ? new Date(category.updatedAt).toISOString() 
+          : (category.createdAt ? new Date(category.createdAt).toISOString() : now);
         
         // Russian (default) category page
         sitemap += `
@@ -415,7 +418,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       // Add active product pages with multilingual support
       const activeProducts = products.filter(p => p.isActive !== false);
       activeProducts.forEach(product => {
-        const productLastMod = product.updatedAt || product.createdAt || now;
+        // Convert to ISO format to comply with W3C datetime standard
+        const productLastMod = product.updatedAt 
+          ? new Date(product.updatedAt).toISOString() 
+          : (product.createdAt ? new Date(product.createdAt).toISOString() : now);
         
         // Note: Products use query params in current implementation
         sitemap += `
