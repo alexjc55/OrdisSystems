@@ -397,10 +397,10 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
           ? new Date(category.updatedAt).toISOString() 
           : (category.createdAt ? new Date(category.createdAt).toISOString() : now);
         
-        // Russian (default) category page
+        // Category pages use path segments: /category/{id}
         sitemap += `
   <url>
-    <loc>${baseUrl}/?category=${category.id}</loc>
+    <loc>${baseUrl}/category/${category.id}</loc>
     <lastmod>${categoryLastMod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>`;
@@ -408,38 +408,29 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
         languages.forEach(lang => {
           const langPath = lang === 'ru' ? '' : `/${lang}`;
           sitemap += `
-    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/?category=${category.id}" />`;
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/category/${category.id}" />`;
         });
         sitemap += `
-    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/?category=${category.id}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/category/${category.id}" />
   </url>`;
       });
 
-      // Add active product pages with multilingual support
-      const activeProducts = products.filter(p => p.isActive !== false);
-      activeProducts.forEach(product => {
-        // Convert to ISO format to comply with W3C datetime standard
-        const productLastMod = product.updatedAt 
-          ? new Date(product.updatedAt).toISOString() 
-          : (product.createdAt ? new Date(product.createdAt).toISOString() : now);
-        
-        // Note: Products use query params in current implementation
-        sitemap += `
+      // Add "all products" page with multilingual support
+      sitemap += `
   <url>
-    <loc>${baseUrl}/?product=${product.id}</loc>
-    <lastmod>${productLastMod}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>`;
-        
-        languages.forEach(lang => {
-          const langPath = lang === 'ru' ? '' : `/${lang}`;
-          sitemap += `
-    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/?product=${product.id}" />`;
-        });
+    <loc>${baseUrl}/all-products</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>`;
+      
+      languages.forEach(lang => {
+        const langPath = lang === 'ru' ? '' : `/${lang}`;
         sitemap += `
-    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/?product=${product.id}" />
-  </url>`;
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/all-products" />`;
       });
+      sitemap += `
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/all-products" />
+  </url>`;
 
       // Add static pages with multilingual support
       const staticPages = [
