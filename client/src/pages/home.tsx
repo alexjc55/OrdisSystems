@@ -14,6 +14,7 @@ import { useState, useMemo, useRef, useCallback, memo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
+import { UTMLink } from "@/components/UTMLink";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -633,51 +634,57 @@ export default function Home() {
                     </div>
                     <div className="flex justify-start md:justify-end mt-6 md:mt-0">
                       <Button
-                        onClick={() => handleCategorySelect(0)}
                         className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                        asChild
                       >
-                        <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
-                        {t('allProducts')}
+                        <UTMLink href="/all-products" onClick={() => handleCategorySelect(0)}>
+                          <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
+                          {t('allProducts')}
+                        </UTMLink>
                       </Button>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-w-0">
                     {categories.map((category) => (
-                      <Card 
-                        key={category.id} 
-                        className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
+                      <UTMLink 
+                        key={category.id}
+                        href={`/category/${category.id}`}
                         onClick={() => handleCategorySelect(category.id)}
                       >
-                        <CardContent className="p-4 h-32 relative">
-                          <div className="flex items-start gap-3 h-full">
-                            <div className="flex-1 flex flex-col h-full overflow-hidden">
-                              <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
-                                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                              </h3>
+                        <Card 
+                          className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
+                        >
+                          <CardContent className="p-4 h-32 relative">
+                            <div className="flex items-start gap-3 h-full">
+                              <div className="flex-1 flex flex-col h-full overflow-hidden">
+                                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
+                                  {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                                </h3>
+                                
+                                <p className="text-gray-600 text-sm leading-tight truncate">
+                                  {(() => {
+                                    const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
+                                    return text.length > 40 ? text.substring(0, 40) + '...' : text;
+                                  })()}
+                                </p>
+                                
+                                <div className="mt-auto">
+                                  <Badge className="px-3 py-1 bg-primary text-white font-semibold text-sm shadow-md">
+                                    {(category as any).productCount || 0} {t('dishesCount')}
+                                  </Badge>
+                                </div>
+                              </div>
                               
-                              <p className="text-gray-600 text-sm leading-tight truncate">
-                                {(() => {
-                                  const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
-                                  return text.length > 40 ? text.substring(0, 40) + '...' : text;
-                                })()}
-                              </p>
-                              
-                              <div className="mt-auto">
-                                <Badge className="px-3 py-1 bg-primary text-white font-semibold text-sm shadow-md">
-                                  {(category as any).productCount || 0} {t('dishesCount')}
-                                </Badge>
+                              <div className="flex-shrink-0 w-16 flex justify-center">
+                                <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                                  {category.icon || '📦'}
+                                </div>
                               </div>
                             </div>
-                            
-                            <div className="flex-shrink-0 w-16 flex justify-center">
-                              <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
-                                {category.icon || '📦'}
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                          </CardContent>
+                        </Card>
+                      </UTMLink>
                     ))}
                   </div>
                 </div>
