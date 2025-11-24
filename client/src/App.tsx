@@ -1,6 +1,7 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ErrorBoundary from "@/components/error-boundary";
@@ -59,6 +60,9 @@ function Router() {
 
   // Initialize language and direction on app start
   useEffect(() => {
+    // Browser-only: localStorage and document access
+    if (typeof window === 'undefined') return;
+    
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage && Object.keys({ru: 1, en: 1, he: 1, ar: 1}).includes(savedLanguage)) {
       if (savedLanguage !== i18n.language) {
@@ -327,15 +331,17 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <LanguageInitializer />
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <LanguageInitializer />
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 

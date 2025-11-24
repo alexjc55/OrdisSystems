@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
@@ -29,6 +29,36 @@ const HREFLANG_MAP: { [key: string]: string } = {
   'ar': 'ar'
 };
 
+// Helper to check if we're in browser environment
+const isBrowser = typeof window !== 'undefined';
+
+// Helper to get full URL for images
+function getFullImageUrl(imageUrl: string): string {
+  if (!isBrowser) return imageUrl;
+  return imageUrl.startsWith('http') ? imageUrl : window.location.origin + imageUrl;
+}
+
+// Helper to get current URL components (SSR-safe)
+function getUrlComponents() {
+  if (!isBrowser) {
+    return {
+      origin: '',
+      pathname: '/',
+      search: '',
+      hash: '',
+      href: ''
+    };
+  }
+  
+  return {
+    origin: window.location.origin,
+    pathname: window.location.pathname,
+    search: window.location.search,
+    hash: window.location.hash,
+    href: window.location.href
+  };
+}
+
 export function SEOHead({ 
   title, 
   description, 
@@ -42,252 +72,147 @@ export function SEOHead({
   });
   const { i18n } = useTranslation();
   const currentLanguage = i18n.language || 'ru';
+  const languages = ['ru', 'en', 'he', 'ar'];
+  
+  // Get URL components (SSR-safe)
+  const { origin, pathname, search, hash, href } = getUrlComponents();
+  
+  // Optimize description length (SEO best practice: 155 chars)
+  const optimizedDescription = description && description.length > 155 
+    ? description.substring(0, 152) + '...' 
+    : description;
 
-  useEffect(() => {
-    // Update document title
-    if (title) {
-      document.title = title;
-    } else if (settings && typeof settings === 'object' && settings !== null && 'storeName' in settings && settings.storeName) {
-      document.title = `${settings.storeName} - Доставка готовой еды`;
-    }
+  // Build full title
+  const settingsData = settings as any;
+  const fullTitle = title || (settingsData?.storeName 
+    ? `${settingsData.storeName} - Доставка готовой еды` 
+    : 'eDAHouse - Доставка готовой еды');
 
-    // Update meta description with optimal length (155 chars)
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription && description) {
-      const optimizedDescription = description.length > 155 
-        ? description.substring(0, 152) + '...' 
-        : description;
-      metaDescription.setAttribute('content', optimizedDescription);
-    }
+  // Build canonical URL
+  const canonicalUrl = canonical ? origin + canonical : href;
 
-    // Update meta keywords
-    const metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (metaKeywords && keywords) {
-      metaKeywords.setAttribute('content', keywords);
-    }
+  // Build hreflang links
+  const currentPath = pathname.replace(/^\/(en|he|ar)/, '');
+  const hreflangLinks = languages.map(lang => {
+    const langPath = lang === 'ru' ? '' : `/${lang}`;
+    return {
+      rel: 'alternate',
+      hreflang: HREFLANG_MAP[lang],
+      href: origin + langPath + currentPath + search + hash
+    };
+  });
 
-    // Update canonical URL
-    let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (!canonicalLink) {
-      canonicalLink = document.createElement('link');
-      canonicalLink.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalLink);
-    }
-    if (canonical) {
-      canonicalLink.setAttribute('href', window.location.origin + canonical);
-    }
+  // Add x-default hreflang
+  hreflangLinks.push({
+    rel: 'alternate',
+    hreflang: 'x-default',
+    href: origin + currentPath + search + hash
+  });
 
-    // Update hreflang tags for multilingual support
-    const languages = ['ru', 'en', 'he', 'ar'];
-    const existingHreflangs = document.querySelectorAll('link[rel="alternate"]');
-    existingHreflangs.forEach(link => link.remove());
+  // Determine og:image URL
+  let ogImageUrl = '';
+  if (ogImage) {
+    ogImageUrl = getFullImageUrl(ogImage);
+  } else if (settingsData?.logoUrl) {
+    ogImageUrl = getFullImageUrl(settingsData.logoUrl);
+  }
 
-    languages.forEach(lang => {
-      const hreflangLink = document.createElement('link');
-      hreflangLink.setAttribute('rel', 'alternate');
-      hreflangLink.setAttribute('hreflang', HREFLANG_MAP[lang]);
-      const langPath = lang === 'ru' ? '' : `/${lang}`;
-      const currentPath = window.location.pathname.replace(/^\/(en|he|ar)/, '');
-      // CRITICAL: Preserve query string and hash for proper multilingual targeting
-      const searchParams = window.location.search; // ?category=X, ?product=Y
-      const hashParams = window.location.hash; // #section
-      hreflangLink.setAttribute('href', window.location.origin + langPath + currentPath + searchParams + hashParams);
-      document.head.appendChild(hreflangLink);
-    });
+  // Build og:locale alternates
+  const ogLocaleAlternates = languages
+    .filter(lang => lang !== currentLanguage)
+    .map(lang => LOCALE_MAP[lang]);
 
-    // Add x-default hreflang (points to Russian version with query params)
-    const defaultHreflang = document.createElement('link');
-    defaultHreflang.setAttribute('rel', 'alternate');
-    defaultHreflang.setAttribute('hreflang', 'x-default');
-    const searchParams = window.location.search;
-    const hashParams = window.location.hash;
-    const defaultPath = window.location.pathname.replace(/^\/(en|he|ar)/, '');
-    defaultHreflang.setAttribute('href', window.location.origin + defaultPath + searchParams + hashParams);
-    document.head.appendChild(defaultHreflang);
+  // Build structured data for Restaurant
+  const structuredData = settingsData ? {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": settingsData.storeName || "eDAHouse",
+    "description": settingsData.welcomeTitle || "Доставка готовой еды на дом",
+    "url": origin,
+    "telephone": settingsData.contactPhone || "",
+    "email": settingsData.contactEmail || "",
+    "address": settingsData.address ? {
+      "@type": "PostalAddress",
+      "streetAddress": settingsData.address
+    } : undefined,
+    "servesCuisine": "Домашняя кухня",
+    "priceRange": "$$",
+    "serviceType": "Доставка еды",
+    "areaServed": "Местная доставка",
+    "openingHours": settingsData.workingHours ? 
+      Object.entries(settingsData.workingHours)
+        .filter(([_, hours]: [string, any]) => hours.isOpen)
+        .map(([day, hours]: [string, any]) => {
+          const dayMap: { [key: string]: string } = {
+            'monday': 'Mo',
+            'tuesday': 'Tu', 
+            'wednesday': 'We',
+            'thursday': 'Th',
+            'friday': 'Fr',
+            'saturday': 'Sa',
+            'sunday': 'Su'
+          };
+          return `${dayMap[day]} ${hours.open}-${hours.close}`;
+        }) : undefined,
+    "image": ogImageUrl || undefined
+  } : null;
 
-    // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle && title) {
-      ogTitle.setAttribute('content', title);
-    }
-
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription && description) {
-      ogDescription.setAttribute('content', description);
-    }
-
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) {
-      ogUrl.setAttribute('content', window.location.href);
-    }
-
-    // Update og:locale dynamically based on current language
-    let ogLocale = document.querySelector('meta[property="og:locale"]');
-    if (!ogLocale) {
-      ogLocale = document.createElement('meta');
-      ogLocale.setAttribute('property', 'og:locale');
-      document.head.appendChild(ogLocale);
-    }
-    ogLocale.setAttribute('content', LOCALE_MAP[currentLanguage] || 'ru_RU');
-
-    // Add og:locale:alternate for other languages
-    const existingAlternates = document.querySelectorAll('meta[property="og:locale:alternate"]');
-    existingAlternates.forEach(meta => meta.remove());
-    
-    languages.forEach(lang => {
-      if (lang !== currentLanguage) {
-        const altLocale = document.createElement('meta');
-        altLocale.setAttribute('property', 'og:locale:alternate');
-        altLocale.setAttribute('content', LOCALE_MAP[lang]);
-        document.head.appendChild(altLocale);
-      }
-    });
-
-    // Update og:image (CRITICAL for social sharing)
-    let ogImageTag = document.querySelector('meta[property="og:image"]');
-    if (!ogImageTag) {
-      ogImageTag = document.createElement('meta');
-      ogImageTag.setAttribute('property', 'og:image');
-      document.head.appendChild(ogImageTag);
-    }
-    if (ogImage) {
-      const imageUrl = ogImage.startsWith('http') ? ogImage : window.location.origin + ogImage;
-      ogImageTag.setAttribute('content', imageUrl);
-    } else if (settings && typeof settings === 'object' && settings !== null && 'logoUrl' in settings && settings.logoUrl) {
-      const logoUrl = settings.logoUrl as string;
-      const imageUrl = logoUrl.startsWith('http') ? logoUrl : window.location.origin + logoUrl;
-      ogImageTag.setAttribute('content', imageUrl);
-    }
-
-    // Add og:image:width and og:image:height
-    let ogImageWidth = document.querySelector('meta[property="og:image:width"]');
-    if (!ogImageWidth) {
-      ogImageWidth = document.createElement('meta');
-      ogImageWidth.setAttribute('property', 'og:image:width');
-      ogImageWidth.setAttribute('content', '1200');
-      document.head.appendChild(ogImageWidth);
-    }
-
-    let ogImageHeight = document.querySelector('meta[property="og:image:height"]');
-    if (!ogImageHeight) {
-      ogImageHeight = document.createElement('meta');
-      ogImageHeight.setAttribute('property', 'og:image:height');
-      ogImageHeight.setAttribute('content', '630');
-      document.head.appendChild(ogImageHeight);
-    }
-
-    // Update Twitter Card tags
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle && title) {
-      twitterTitle.setAttribute('content', title);
-    }
-
-    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription && description) {
-      twitterDescription.setAttribute('content', description);
-    }
-
-    // Update twitter:image (CRITICAL for Twitter sharing)
-    let twitterImage = document.querySelector('meta[name="twitter:image"]');
-    if (!twitterImage) {
-      twitterImage = document.createElement('meta');
-      twitterImage.setAttribute('name', 'twitter:image');
-      document.head.appendChild(twitterImage);
-    }
-    if (ogImage) {
-      const imageUrl = ogImage.startsWith('http') ? ogImage : window.location.origin + ogImage;
-      twitterImage.setAttribute('content', imageUrl);
-    } else if (settings && typeof settings === 'object' && settings !== null && 'logoUrl' in settings && settings.logoUrl) {
-      const logoUrl = settings.logoUrl as string;
-      const imageUrl = logoUrl.startsWith('http') ? logoUrl : window.location.origin + logoUrl;
-      twitterImage.setAttribute('content', imageUrl);
-    }
-
-    // Update GEO meta tags for local business
-    if (geo) {
-      let geoRegion = document.querySelector('meta[name="geo.region"]');
-      if (!geoRegion && geo.region) {
-        geoRegion = document.createElement('meta');
-        geoRegion.setAttribute('name', 'geo.region');
-        document.head.appendChild(geoRegion);
-      }
-      if (geoRegion && geo.region) {
-        geoRegion.setAttribute('content', geo.region);
-      }
-
-      let geoPlacename = document.querySelector('meta[name="geo.placename"]');
-      if (!geoPlacename && geo.placename) {
-        geoPlacename = document.createElement('meta');
-        geoPlacename.setAttribute('name', 'geo.placename');
-        document.head.appendChild(geoPlacename);
-      }
-      if (geoPlacename && geo.placename) {
-        geoPlacename.setAttribute('content', geo.placename);
-      }
-
-      let geoPosition = document.querySelector('meta[name="geo.position"]');
-      if (!geoPosition && geo.position) {
-        geoPosition = document.createElement('meta');
-        geoPosition.setAttribute('name', 'geo.position');
-        document.head.appendChild(geoPosition);
-      }
-      if (geoPosition && geo.position) {
-        geoPosition.setAttribute('content', geo.position);
-      }
-    }
-
-    // Add/Update structured data for local business
-    // CRITICAL: Only remove the Restaurant script, not Product/Breadcrumb scripts
-    const existingRestaurantScript = document.querySelector('script[type="application/ld+json"][data-restaurant]');
-    if (existingRestaurantScript) {
-      existingRestaurantScript.remove();
-    }
-
-    if (settings && typeof settings === 'object') {
-      const settingsData = settings as any;
-      const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "Restaurant",
-        "name": settingsData.storeName || "eDAHouse",
-        "description": settingsData.welcomeTitle || "Доставка готовой еды на дом",
-        "url": window.location.origin,
-        "telephone": settingsData.contactPhone || "",
-        "email": settingsData.contactEmail || "",
-        "address": settingsData.address ? {
-          "@type": "PostalAddress",
-          "streetAddress": settingsData.address
-        } : undefined,
-        "servesCuisine": "Домашняя кухня",
-        "priceRange": "$$",
-        "serviceType": "Доставка еды",
-        "areaServed": "Местная доставка",
-        "openingHours": settingsData.workingHours ? 
-          Object.entries(settingsData.workingHours)
-            .filter(([_, hours]: [string, any]) => hours.isOpen)
-            .map(([day, hours]: [string, any]) => {
-              const dayMap: { [key: string]: string } = {
-                'monday': 'Mo',
-                'tuesday': 'Tu', 
-                'wednesday': 'We',
-                'thursday': 'Th',
-                'friday': 'Fr',
-                'saturday': 'Sa',
-                'sunday': 'Su'
-              };
-              return `${dayMap[day]} ${hours.open}-${hours.close}`;
-            }) : undefined,
-        "image": ogImage || settingsData.logoUrl || undefined
-      };
-
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.setAttribute('data-restaurant', 'true'); // Mark for selective removal
-      script.textContent = JSON.stringify(structuredData);
-      document.head.appendChild(script);
-    }
-  }, [title, description, keywords, canonical, ogImage, geo, settings, currentLanguage]);
-
-  return null;
+  return (
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{fullTitle}</title>
+      {optimizedDescription && <meta name="description" content={optimizedDescription} />}
+      {keywords && <meta name="keywords" content={keywords} />}
+      <html lang={currentLanguage} />
+      
+      {/* Canonical URL */}
+      <link rel="canonical" href={canonicalUrl} />
+      
+      {/* Hreflang Links for Multilingual SEO */}
+      {hreflangLinks.map((link, index) => (
+        <link key={index} {...link} />
+      ))}
+      
+      {/* Open Graph Tags */}
+      <meta property="og:type" content="website" />
+      {title && <meta property="og:title" content={title} />}
+      {optimizedDescription && <meta property="og:description" content={optimizedDescription} />}
+      <meta property="og:url" content={href} />
+      <meta property="og:locale" content={LOCALE_MAP[currentLanguage] || 'ru_RU'} />
+      
+      {/* og:locale:alternate for other languages */}
+      {ogLocaleAlternates.map((locale, index) => (
+        <meta key={index} property="og:locale:alternate" content={locale} />
+      ))}
+      
+      {/* og:image (CRITICAL for social sharing) */}
+      {ogImageUrl && (
+        <>
+          <meta property="og:image" content={ogImageUrl} />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+        </>
+      )}
+      
+      {/* Twitter Card Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      {title && <meta name="twitter:title" content={title} />}
+      {optimizedDescription && <meta name="twitter:description" content={optimizedDescription} />}
+      {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+      
+      {/* GEO Meta Tags for Local Business */}
+      {geo?.region && <meta name="geo.region" content={geo.region} />}
+      {geo?.placename && <meta name="geo.placename" content={geo.placename} />}
+      {geo?.position && <meta name="geo.position" content={geo.position} />}
+      
+      {/* Structured Data (JSON-LD) */}
+      {structuredData && (
+        <script type="application/ld+json" data-restaurant="true">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
+    </Helmet>
+  );
 }
 
 // Hook for easy SEO management
@@ -309,7 +234,7 @@ export function useSEO({
   />;
 }
 
-// Add Product structured data for product pages
+// Add Product structured data for product pages (browser-only)
 export function addProductStructuredData(product: {
   id: number;
   name: string;
@@ -319,6 +244,8 @@ export function addProductStructuredData(product: {
   category?: string;
   isAvailable?: boolean;
 }) {
+  if (!isBrowser) return;
+  
   const existingProductScript = document.querySelector('script[type="application/ld+json"][data-product]');
   if (existingProductScript) {
     existingProductScript.remove();
@@ -329,7 +256,7 @@ export function addProductStructuredData(product: {
     "@type": "Product",
     "name": product.name,
     "description": product.description || product.name,
-    "image": product.imageUrl ? (product.imageUrl.startsWith('http') ? product.imageUrl : window.location.origin + product.imageUrl) : undefined,
+    "image": product.imageUrl ? getFullImageUrl(product.imageUrl) : undefined,
     "category": product.category || "Готовая еда",
     "offers": {
       "@type": "Offer",
@@ -351,8 +278,10 @@ export function addProductStructuredData(product: {
   document.head.appendChild(script);
 }
 
-// Add BreadcrumbList structured data
+// Add BreadcrumbList structured data (browser-only)
 export function addBreadcrumbStructuredData(items: Array<{ name: string; url: string }>) {
+  if (!isBrowser) return;
+  
   const existingBreadcrumbScript = document.querySelector('script[type="application/ld+json"][data-breadcrumb]');
   if (existingBreadcrumbScript) {
     existingBreadcrumbScript.remove();
