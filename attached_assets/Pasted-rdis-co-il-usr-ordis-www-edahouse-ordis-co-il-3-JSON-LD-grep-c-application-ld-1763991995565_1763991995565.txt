@@ -1,0 +1,75 @@
+rdis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ # 3. Поищем JSON-LD в файле
+grep -c "application/ld+json" /tmp/bot-test.html
+
+# 4. Проверим как определяется production в коде
+grep -A5 "app.get.*env.*==.*production" dist/index.js
+0
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ 3:44:44 PM [express] GET /api/version 200 in 3ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+^C
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ 3:45:14 PM [express] GET /api/version 200 in 3ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+# Поищем строку где решается использовать ли middleware                       # Поищем строку где решается использовать ли middleware:45:15 PM [express] GET /apgrep -B2 -A2 "metaInjectionMiddleware" dist/index.js:"7821dafd","buildTi…
+
+// server/meta-injection-middleware.ts
+function metaInjectionMiddleware() {
+  return async (req, res, next) => {
+    if (req.method !== "GET") {
+--
+    await setupVite(app, server);
+  } else {
+    app.use(metaInjectionMiddleware());
+    serveStatic(app);
+  }
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ 3:45:19 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+^C
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ 3:45:26 PM [express] GET /api/auth/user 401 in 4ms :: {"message":"Unauthorized"}
+3:45:26 PM [express] GET /api/settings 200 in 52ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+3:45:26 PM [express] GET /api/categories 200 in 32ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+3:45:26 PM [express] GET /api/products 200 in 74ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+3:45:28 PM [express] GET /api/settings 200 in 15ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+3:45:28 PM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+3:45:28 PM [express] GET /api/products 200 in 23ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+3:45:28 PM [express] GET /api/categories 200 in 42ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+3:45:28 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+3:45:29 PM [express] GET /api/favicon 301 in 13ms
+3:45:29 PM [express] GET /api/manifest 200 in 16ms :: {"name":"eDAHouse","short_name":"eDAHouse","de…
+3:45:29 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+3:45:29 PM [express] GET /api/favicon 301 in 27ms
+3:45:29 PM [express] GET /api/favicon 301 in 15ms
+3:45:45 PM [express] GET /api/version 200 in 8ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+3:45:46 PM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+3:45:46 PM [express] GET /api/products 200 in 23ms :: [{"id":382,"name":"Баклажаны по-азиатски","nam…
+3:45:46 PM [express] GET /api/categories 200 in 41ms :: [{"id":47,"name":"Салаты","name_en":"","name…                             # Посмотрим на всю проверку окружениятрим на всю проверку окружения
+grep -B5 "setupVite" dist/index.js | grep -A5 "if"
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ ^C
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ 3:45:59 PM [express] GET /api/version 200 in 3ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+3:46:14 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+3:46:16 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+^C
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ # Создайте тестовый файл
+cat > test-env.js << 'EOF'
+const express = require('express');
+const app = express();
+
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+console.log('app.get("env"):', app.get('env'));
+console.log('Is production?:', app.get('env') !== 'development');
+EOF
+
+# Запустите с NODE_ENV
+NODE_ENV=production node test-env.js
+file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/test-env.js:1
+const express = require('express');
+                ^
+
+ReferenceError: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension and '/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+    at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/test-env.js:1:17
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v20.19.3
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ 3:46:29 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+3:46:29 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
