@@ -481,18 +481,25 @@ export default function Home() {
 
   // URL parameters handling
   useEffect(() => {
-    const pathParts = location.split('/');
-    if (pathParts[1] === 'category' && pathParts[2]) {
-      const categoryId = parseInt(pathParts[2]);
+    const pathParts = location.split('/').filter(p => p);
+    
+    // Find category index (works with or without language prefix)
+    const categoryIndex = pathParts.indexOf('category');
+    if (categoryIndex !== -1 && pathParts[categoryIndex + 1]) {
+      const categoryId = parseInt(pathParts[categoryIndex + 1]);
       if (!isNaN(categoryId) && categoryId !== selectedCategoryId) {
         setSelectedCategoryId(categoryId);
         setCategoryFilter(categoryId.toString());
-
       }
-    } else if (pathParts[1] === 'all-products' && selectedCategoryId !== 0) {
+    } else if (pathParts.includes('all-products') && selectedCategoryId !== 0) {
       setSelectedCategoryId(0);
       setCategoryFilter("all");
-    } else if (pathParts[1] === '' && selectedCategoryId !== null) {
+    } else if (pathParts.length === 0 && selectedCategoryId !== null) {
+      // Root path without category
+      setSelectedCategoryId(null);
+      setCategoryFilter("all");
+    } else if (pathParts.length === 1 && ['en', 'he', 'ar', 'ru'].includes(pathParts[0]) && selectedCategoryId !== null) {
+      // Just language code, no category
       setSelectedCategoryId(null);
       setCategoryFilter("all");
     }

@@ -42,7 +42,7 @@ export default memo(function CategoryNav({
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-40 lg:hidden">
       <div className="flex items-center space-x-2 overflow-x-auto pb-2">
         <Button
-          variant={selectedCategoryId === null ? "default" : "secondary"}
+          variant={selectedCategoryId === null || selectedCategoryId === 0 ? "default" : "secondary"}
           size="sm"
           className="flex-shrink-0"
           asChild
