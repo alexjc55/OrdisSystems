@@ -366,22 +366,96 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
       const categories = await storage.getCategories();
       const products = await storage.getProducts();
       const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const languages = ['ru', 'en', 'he', 'ar'];
+      const now = new Date().toISOString();
       
       let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">`;
+
+      // Main page with multilingual alternatives
+      sitemap += `
   <url>
-    <loc>${baseUrl}</loc>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${now}</lastmod>
     <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    <priority>1.0</priority>`;
+      
+      languages.forEach(lang => {
+        const langPath = lang === 'ru' ? '' : `/${lang}`;
+        sitemap += `
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/" />`;
+      });
+      sitemap += `
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/" />
   </url>`;
 
-      // Add category pages
+      // Add category pages with multilingual support
       categories.forEach(category => {
+        const categoryLastMod = category.updatedAt || category.createdAt || now;
+        
+        // Russian (default) category page
         sitemap += `
   <url>
     <loc>${baseUrl}/?category=${category.id}</loc>
+    <lastmod>${categoryLastMod}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.8</priority>`;
+        
+        languages.forEach(lang => {
+          const langPath = lang === 'ru' ? '' : `/${lang}`;
+          sitemap += `
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/?category=${category.id}" />`;
+        });
+        sitemap += `
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/?category=${category.id}" />
+  </url>`;
+      });
+
+      // Add active product pages with multilingual support
+      const activeProducts = products.filter(p => p.isActive !== false);
+      activeProducts.forEach(product => {
+        const productLastMod = product.updatedAt || product.createdAt || now;
+        
+        // Note: Products use query params in current implementation
+        sitemap += `
+  <url>
+    <loc>${baseUrl}/?product=${product.id}</loc>
+    <lastmod>${productLastMod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>`;
+        
+        languages.forEach(lang => {
+          const langPath = lang === 'ru' ? '' : `/${lang}`;
+          sitemap += `
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}/?product=${product.id}" />`;
+        });
+        sitemap += `
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/?product=${product.id}" />
+  </url>`;
+      });
+
+      // Add static pages with multilingual support
+      const staticPages = [
+        { path: '/profile', priority: '0.5', changefreq: 'monthly' },
+        { path: '/auth', priority: '0.4', changefreq: 'monthly' }
+      ];
+
+      staticPages.forEach(page => {
+        sitemap += `
+  <url>
+    <loc>${baseUrl}${page.path}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>`;
+        
+        languages.forEach(lang => {
+          const langPath = lang === 'ru' ? '' : `/${lang}`;
+          sitemap += `
+    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}${page.path}" />`;
+        });
+        sitemap += `
+    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${page.path}" />
   </url>`;
       });
 
