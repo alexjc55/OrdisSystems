@@ -47,7 +47,7 @@ export function SEOHead({
     // Update document title
     if (title) {
       document.title = title;
-    } else if (settings?.storeName) {
+    } else if (settings && typeof settings === 'object' && settings !== null && 'storeName' in settings && settings.storeName) {
       document.title = `${settings.storeName} - Доставка готовой еды`;
     }
 
@@ -147,8 +147,9 @@ export function SEOHead({
     if (ogImage) {
       const imageUrl = ogImage.startsWith('http') ? ogImage : window.location.origin + ogImage;
       ogImageTag.setAttribute('content', imageUrl);
-    } else if (settings?.logoUrl) {
-      const imageUrl = settings.logoUrl.startsWith('http') ? settings.logoUrl : window.location.origin + settings.logoUrl;
+    } else if (settings && typeof settings === 'object' && settings !== null && 'logoUrl' in settings && settings.logoUrl) {
+      const logoUrl = settings.logoUrl as string;
+      const imageUrl = logoUrl.startsWith('http') ? logoUrl : window.location.origin + logoUrl;
       ogImageTag.setAttribute('content', imageUrl);
     }
 
@@ -190,8 +191,9 @@ export function SEOHead({
     if (ogImage) {
       const imageUrl = ogImage.startsWith('http') ? ogImage : window.location.origin + ogImage;
       twitterImage.setAttribute('content', imageUrl);
-    } else if (settings?.logoUrl) {
-      const imageUrl = settings.logoUrl.startsWith('http') ? settings.logoUrl : window.location.origin + settings.logoUrl;
+    } else if (settings && typeof settings === 'object' && settings !== null && 'logoUrl' in settings && settings.logoUrl) {
+      const logoUrl = settings.logoUrl as string;
+      const imageUrl = logoUrl.startsWith('http') ? logoUrl : window.location.origin + logoUrl;
       twitterImage.setAttribute('content', imageUrl);
     }
 
@@ -234,25 +236,26 @@ export function SEOHead({
       existingScript.remove();
     }
 
-    if (settings) {
+    if (settings && typeof settings === 'object') {
+      const settingsData = settings as any;
       const structuredData = {
         "@context": "https://schema.org",
         "@type": "Restaurant",
-        "name": settings.storeName || "eDAHouse",
-        "description": settings.welcomeTitle || "Доставка готовой еды на дом",
+        "name": settingsData.storeName || "eDAHouse",
+        "description": settingsData.welcomeTitle || "Доставка готовой еды на дом",
         "url": window.location.origin,
-        "telephone": settings.contactPhone || "",
-        "email": settings.contactEmail || "",
-        "address": settings.address ? {
+        "telephone": settingsData.contactPhone || "",
+        "email": settingsData.contactEmail || "",
+        "address": settingsData.address ? {
           "@type": "PostalAddress",
-          "streetAddress": settings.address
+          "streetAddress": settingsData.address
         } : undefined,
         "servesCuisine": "Домашняя кухня",
         "priceRange": "$$",
         "serviceType": "Доставка еды",
         "areaServed": "Местная доставка",
-        "openingHours": settings.workingHours ? 
-          Object.entries(settings.workingHours)
+        "openingHours": settingsData.workingHours ? 
+          Object.entries(settingsData.workingHours)
             .filter(([_, hours]: [string, any]) => hours.isOpen)
             .map(([day, hours]: [string, any]) => {
               const dayMap: { [key: string]: string } = {
@@ -266,7 +269,7 @@ export function SEOHead({
               };
               return `${dayMap[day]} ${hours.open}-${hours.close}`;
             }) : undefined,
-        "image": ogImage || settings.logoUrl || undefined
+        "image": ogImage || settingsData.logoUrl || undefined
       };
 
       const script = document.createElement('script');
@@ -296,4 +299,71 @@ export function useSEO({
     ogImage={ogImage}
     geo={geo}
   />;
+}
+
+// Add Product structured data for product pages
+export function addProductStructuredData(product: {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  imageUrl?: string;
+  category?: string;
+  isAvailable?: boolean;
+}) {
+  const existingProductScript = document.querySelector('script[type="application/ld+json"][data-product]');
+  if (existingProductScript) {
+    existingProductScript.remove();
+  }
+
+  const productData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description || product.name,
+    "image": product.imageUrl ? (product.imageUrl.startsWith('http') ? product.imageUrl : window.location.origin + product.imageUrl) : undefined,
+    "category": product.category || "Готовая еда",
+    "offers": {
+      "@type": "Offer",
+      "price": product.price,
+      "priceCurrency": "ILS",
+      "availability": product.isAvailable !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "url": window.location.href,
+      "seller": {
+        "@type": "Restaurant",
+        "name": "eDAHouse"
+      }
+    }
+  };
+
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.setAttribute('data-product', 'true');
+  script.textContent = JSON.stringify(productData);
+  document.head.appendChild(script);
+}
+
+// Add BreadcrumbList structured data
+export function addBreadcrumbStructuredData(items: Array<{ name: string; url: string }>) {
+  const existingBreadcrumbScript = document.querySelector('script[type="application/ld+json"][data-breadcrumb]');
+  if (existingBreadcrumbScript) {
+    existingBreadcrumbScript.remove();
+  }
+
+  const breadcrumbData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name,
+      "item": window.location.origin + item.url
+    }))
+  };
+
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.setAttribute('data-breadcrumb', 'true');
+  script.textContent = JSON.stringify(breadcrumbData);
+  document.head.appendChild(script);
 }
