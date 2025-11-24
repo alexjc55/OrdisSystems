@@ -290,10 +290,25 @@ export default function Home() {
     return categories.find(cat => cat.id === selectedCategoryId);
   }, [categories, selectedCategoryId]);
 
-  // Generate SEO data for home page
+  // Fetch products for selected category
+  const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
+    queryKey: ["/api/products", selectedCategoryId],
+    queryFn: () => fetch(`/api/products?categoryId=${selectedCategoryId}`).then(res => res.json()),
+    enabled: selectedCategoryId !== null,
+    staleTime: 0, // Always refetch when category changes
+  });
+
+  // Search products
+  const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategories[]>({
+    queryKey: ["/api/products/search", searchQuery],
+    queryFn: () => fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
+    enabled: searchQuery.length > 2,
+  });
+
+  // Generate SEO data for home page (after all data fetched)
   const seoData = useMemo(() => {
     if (selectedCategory) {
-      // Category page SEO
+      // Category page SEO with products ItemList
       const categoryName = getLocalizedField(selectedCategory, 'name', currentLanguage);
       const categoryDescription = getLocalizedField(selectedCategory, 'description', currentLanguage);
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -305,13 +320,25 @@ export default function Home() {
       const description = categoryDescription || 
         `Просмотр товаров в категории ${categoryName} в магазине ${storeName}`;
       
+      // Prepare products of this category for ItemList
+      const categoryProducts = (products || [])
+        .filter((p: ProductWithCategories) => p.availabilityStatus === 'available')
+        .slice(0, 12) // Show up to 12 products in structured data
+        .map((p: ProductWithCategories) => ({
+          id: p.id,
+          name: getLocalizedField(p, 'name', currentLanguage),
+          description: getLocalizedField(p, 'description', currentLanguage),
+          url: currentLanguage === 'ru' ? `/?product=${p.id}` : `/${currentLanguage}/?product=${p.id}`
+        }));
+      
       return {
         title,
         description,
         keywords: generateKeywords(title, description),
         ogTitle: title,
         ogDescription: description,
-        canonical: currentLanguage === 'ru' ? `/category/${selectedCategory.id}` : `/${currentLanguage}/category/${selectedCategory.id}`
+        canonical: currentLanguage === 'ru' ? `/category/${selectedCategory.id}` : `/${currentLanguage}/category/${selectedCategory.id}`,
+        products: categoryProducts.length > 0 ? categoryProducts : undefined
       };
     } else if (selectedCategoryId === 0) {
       // All products page SEO
@@ -342,7 +369,7 @@ export default function Home() {
         canonical: currentLanguage === 'ru' ? `/search?q=${searchQuery}` : `/${currentLanguage}/search?q=${searchQuery}`
       };
     } else {
-      // Home page SEO
+      // Home page SEO with categories and products for sitelinks
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
       const welcomeTitle = getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage);
       const welcomeSubtitle = getLocalizedField(storeSettings, 'welcomeSubtitle', currentLanguage);
@@ -355,34 +382,43 @@ export default function Home() {
         getLocalizedField(storeSettings, 'description', currentLanguage) ||
         'Система доставки готовой еды с многоязычной поддержкой';
       
+      // Prepare categories for sitelinks (active categories only)
+      const categoriesForSEO = categories
+        .filter(cat => cat.isActive)
+        .slice(0, 8) // Google typically shows max 6-8 sitelinks
+        .map(cat => ({
+          id: cat.id,
+          name: getLocalizedField(cat, 'name', currentLanguage),
+          description: getLocalizedField(cat, 'description', currentLanguage),
+          url: currentLanguage === 'ru' ? `/category/${cat.id}` : `/${currentLanguage}/category/${cat.id}`
+        }));
+      
+      // Prepare special offer products for sitelinks (use allProducts for home page)
+      const specialProducts = (allProducts || [])
+        .filter((p: ProductWithCategories) => p.isSpecialOffer && p.availabilityStatus === 'available')
+        .slice(0, 6) // Show top 6 special offers
+        .map((p: ProductWithCategories) => ({
+          id: p.id,
+          name: getLocalizedField(p, 'name', currentLanguage),
+          description: getLocalizedField(p, 'description', currentLanguage),
+          url: currentLanguage === 'ru' ? `/?product=${p.id}` : `/${currentLanguage}/?product=${p.id}`
+        }));
+      
       return {
         title,
         description,
         keywords: generateKeywords(title, description),
         ogTitle: title,
         ogDescription: description,
-        canonical: currentLanguage === 'ru' ? '/' : `/${currentLanguage}/`
+        canonical: currentLanguage === 'ru' ? '/' : `/${currentLanguage}/`,
+        categories: categoriesForSEO.length > 0 ? categoriesForSEO : undefined,
+        products: specialProducts.length > 0 ? specialProducts : undefined
       };
     }
-  }, [storeSettings, selectedCategory, selectedCategoryId, searchQuery, currentLanguage, t]);
+  }, [storeSettings, selectedCategory, selectedCategoryId, searchQuery, currentLanguage, t, categories, allProducts, products]);
 
   // Apply SEO data
   useSEO(seoData);
-
-  // Fetch products for selected category
-  const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products", selectedCategoryId],
-    queryFn: () => fetch(`/api/products?categoryId=${selectedCategoryId}`).then(res => res.json()),
-    enabled: selectedCategoryId !== null,
-    staleTime: 0, // Always refetch when category changes
-  });
-
-  // Search products
-  const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products/search", searchQuery],
-    queryFn: () => fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
-    enabled: searchQuery.length > 2,
-  });
 
   const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);

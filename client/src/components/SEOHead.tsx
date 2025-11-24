@@ -13,6 +13,18 @@ interface SEOHeadProps {
     placename?: string;
     position?: string;
   };
+  categories?: Array<{
+    id: number;
+    name: string;
+    description?: string;
+    url: string;
+  }>;
+  products?: Array<{
+    id: number;
+    name: string;
+    description?: string;
+    url: string;
+  }>;
 }
 
 const LOCALE_MAP: { [key: string]: string } = {
@@ -65,7 +77,9 @@ export function SEOHead({
   keywords, 
   canonical,
   ogImage,
-  geo 
+  geo,
+  categories,
+  products
 }: SEOHeadProps) {
   const { data: settings } = useQuery({
     queryKey: ['/api/settings'],
@@ -122,7 +136,7 @@ export function SEOHead({
     .filter(lang => lang !== currentLanguage)
     .map(lang => LOCALE_MAP[lang]);
 
-  // Build structured data for Restaurant
+  // Build structured data for Restaurant with delivery info
   const structuredData = settingsData ? {
     "@context": "https://schema.org",
     "@type": "Restaurant",
@@ -154,7 +168,52 @@ export function SEOHead({
           };
           return `${dayMap[day]} ${hours.open}-${hours.close}`;
         }) : undefined,
-    "image": ogImageUrl || undefined
+    "image": ogImageUrl || undefined,
+    // Delivery information
+    "hasDeliveryMethod": settingsData.deliveryFee || settingsData.freeDeliveryFrom ? {
+      "@type": "DeliveryMethod",
+      "name": "Доставка на дом",
+      "deliveryTime": settingsData.deliveryInfo || "В соответствии с расписанием работы",
+      "deliveryCharge": settingsData.deliveryFee ? {
+        "@type": "MonetaryAmount",
+        "value": parseFloat(settingsData.deliveryFee),
+        "currency": "ILS"
+      } : undefined
+    } : undefined,
+    // Payment methods
+    "paymentAccepted": settingsData.paymentMethods && Array.isArray(settingsData.paymentMethods) 
+      ? settingsData.paymentMethods.filter((pm: any) => pm.enabled).map((pm: any) => pm.name)
+      : ["Наличные", "Кредитная карта"]
+  } : null;
+
+  // Build ItemList for categories (for sitelinks in Google)
+  const categoriesListData = categories && categories.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Категории товаров",
+    "description": "Категории блюд для доставки",
+    "itemListElement": categories.map((category, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": category.name,
+      "description": category.description || category.name,
+      "url": origin + category.url
+    }))
+  } : null;
+
+  // Build ItemList for products (for special offers/featured products)
+  const productsListData = products && products.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Специальные предложения",
+    "description": "Популярные блюда с доставкой",
+    "itemListElement": products.map((product, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": product.name,
+      "description": product.description || product.name,
+      "url": origin + product.url
+    }))
   } : null;
 
   return (
@@ -211,6 +270,20 @@ export function SEOHead({
           {JSON.stringify(structuredData)}
         </script>
       )}
+      
+      {/* Categories ItemList for Sitelinks */}
+      {categoriesListData && (
+        <script type="application/ld+json" data-categories="true">
+          {JSON.stringify(categoriesListData)}
+        </script>
+      )}
+      
+      {/* Products ItemList for Featured Products */}
+      {productsListData && (
+        <script type="application/ld+json" data-products="true">
+          {JSON.stringify(productsListData)}
+        </script>
+      )}
     </Helmet>
   );
 }
@@ -222,7 +295,9 @@ export function useSEO({
   keywords,
   canonical,
   ogImage,
-  geo
+  geo,
+  categories,
+  products
 }: SEOHeadProps) {
   return <SEOHead 
     title={title}
@@ -231,6 +306,8 @@ export function useSEO({
     canonical={canonical}
     ogImage={ogImage}
     geo={geo}
+    categories={categories}
+    products={products}
   />;
 }
 
