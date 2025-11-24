@@ -41,15 +41,10 @@ const BOT_USER_AGENTS = [
   // SEO Tools
   'Ahrefs',
   'Semrush',
-  'Moz',
+  'rogerbot',     // Moz SEO tool
+  'dotbot',       // Moz SEO tool
   'Screaming Frog',
-  'SiteAuditBot',
-  
-  // General bots
-  'bot',
-  'crawler',
-  'spider',
-  'crawling'
+  'SiteAuditBot'
 ];
 
 /**

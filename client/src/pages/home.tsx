@@ -312,6 +312,20 @@ export default function Home() {
         ogDescription: description,
         canonical: currentLanguage === 'ru' ? `/category/${selectedCategory.id}` : `/${currentLanguage}/category/${selectedCategory.id}`
       };
+    } else if (selectedCategoryId === 0) {
+      // All products page SEO
+      const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
+      const title = `${t('allProducts')} - ${storeName || 'eDAHouse'}`;
+      const description = `Просмотр всех товаров в магазине ${storeName}`;
+      
+      return {
+        title,
+        description,
+        keywords: generateKeywords(title, description),
+        ogTitle: title,
+        ogDescription: description,
+        canonical: currentLanguage === 'ru' ? '/all-products' : `/${currentLanguage}/all-products`
+      };
     } else if (searchQuery.length > 2) {
       // Search results SEO
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -349,7 +363,7 @@ export default function Home() {
         canonical: currentLanguage === 'ru' ? '/' : `/${currentLanguage}/`
       };
     }
-  }, [storeSettings, selectedCategory, searchQuery, currentLanguage, t]);
+  }, [storeSettings, selectedCategory, selectedCategoryId, searchQuery, currentLanguage, t]);
 
   // Apply SEO data
   useSEO(seoData);

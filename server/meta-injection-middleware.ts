@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { shouldUseSSR } from './bot-detection';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Simple Meta Tag Injection for Bots
  * Injects dynamic meta tags into HTML for search engines
  * without full React SSR overhead
  */
-export function metaInjectionMiddleware(getHTML: () => Promise<string>) {
+export function metaInjectionMiddleware() {
   return async (req: Request, res: Response, next: NextFunction) => {
     // Only handle GET requests for HTML pages
     if (req.method !== 'GET') {
@@ -24,7 +26,11 @@ export function metaInjectionMiddleware(getHTML: () => Promise<string>) {
 
     // Check if this is a bot
     const userAgent = req.headers['user-agent'];
-    if (!shouldUseSSR(userAgent, req.query)) {
+    const isBot = shouldUseSSR(userAgent, req.query);
+    
+    console.log(`[Meta Injection] Request: ${req.path}, UA: ${userAgent?.substring(0, 50)}..., Is Bot: ${isBot}`);
+    
+    if (!isBot) {
       return next(); // Regular user - let normal flow handle it
     }
 
@@ -32,14 +38,15 @@ export function metaInjectionMiddleware(getHTML: () => Promise<string>) {
       console.log('[Meta Injection] Bot detected:', userAgent);
       console.log('[Meta Injection] Path:', req.path);
 
-      // Get base HTML
-      let html = await getHTML();
+      // Read index.html from disk
+      const htmlPath = path.resolve(process.cwd(), 'client/index.html');
+      let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
       // Inject additional meta tags based on route
       const injectedMeta = generateMetaTags(req.path, req.query);
       
       // Inject before </head>
-      html = html.replace('</head>', `${injectedMeta}</head>`);
+      html = html.replace('</head>', `${injectedMeta}\n  </head>`);
 
       res.status(200).set({ 'Content-Type': 'text/html' }).send(html);
     } catch (error) {
@@ -51,24 +58,35 @@ export function metaInjectionMiddleware(getHTML: () => Promise<string>) {
 
 /**
  * Generate dynamic meta tags based on route
+ * Supports path segments: /, /category/:id, /all-products, /en/category/:id, etc.
  */
 function generateMetaTags(path: string, query: any): string {
   const tags: string[] = [];
 
-  // Product page detection
-  if (query.product) {
-    tags.push(`<!-- Enhanced meta for product page -->`);
-    tags.push(`<meta name="product-id" content="${query.product}" />`);
+  // Extract language from path (e.g., /en/category/47 -> en)
+  const langMatch = path.match(/^\/(en|he|ar)\//);
+  const lang = query.lang || (langMatch ? langMatch[1] : 'ru');
+  
+  // Remove language prefix from path for canonical
+  const cleanPath = path.replace(/^\/(en|he|ar)/, '');
+  
+  // Determine canonical URL based on path
+  let canonicalPath = cleanPath || '/';
+  
+  // Normalize path (remove trailing slash except for root)
+  if (canonicalPath !== '/' && canonicalPath.endsWith('/')) {
+    canonicalPath = canonicalPath.slice(0, -1);
   }
 
-  // Category page detection
-  if (query.category) {
-    tags.push(`<!-- Enhanced meta for category page -->`);
-    tags.push(`<meta name="category-id" content="${query.category}" />`);
-  }
+  // Build full canonical URL with language prefix if needed
+  const fullCanonical = lang === 'ru' 
+    ? canonicalPath 
+    : `/${lang}${canonicalPath}`;
+
+  tags.push(`<!-- Canonical URL for bots -->`);
+  tags.push(`<link rel="canonical" href="${fullCanonical}" />`);
 
   // Language detection
-  const lang = query.lang || 'ru';
   tags.push(`<meta http-equiv="content-language" content="${lang}" />`);
 
   // Add structured data hint
