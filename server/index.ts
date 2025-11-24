@@ -67,10 +67,6 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Meta injection middleware for bots (before Vite/static)
-  // Injects canonical tags and other SEO meta for search engine crawlers
-  app.use(metaInjectionMiddleware());
-
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
@@ -79,6 +75,10 @@ app.use((req, res, next) => {
   } else {
     serveStatic(app);
   }
+  
+  // Meta injection middleware for bots (AFTER static files)
+  // This ensures static assets are served first, then bot meta injection
+  // app.use(metaInjectionMiddleware());
 
   // Use PORT environment variable with fallback to 5000 for Replit compatibility
   const port = parseInt(process.env.PORT || "5000", 10);
