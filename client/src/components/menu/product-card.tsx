@@ -211,7 +211,6 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                   <UTMLink 
                     key={category.id}
                     href={`/category/${category.id}`}
-                    onClick={() => onCategoryClick?.(category.id)}
                   >
                     <Badge 
                       variant="secondary" 
