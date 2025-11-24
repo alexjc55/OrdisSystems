@@ -432,30 +432,6 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
     <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}/all-products" />
   </url>`;
 
-      // Add static pages with multilingual support
-      const staticPages = [
-        { path: '/profile', priority: '0.5', changefreq: 'monthly' },
-        { path: '/auth', priority: '0.4', changefreq: 'monthly' }
-      ];
-
-      staticPages.forEach(page => {
-        sitemap += `
-  <url>
-    <loc>${baseUrl}${page.path}</loc>
-    <lastmod>${now}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>`;
-        
-        languages.forEach(lang => {
-          const langPath = lang === 'ru' ? '' : `/${lang}`;
-          sitemap += `
-    <xhtml:link rel="alternate" hreflang="${lang}" href="${baseUrl}${langPath}${page.path}" />`;
-        });
-        sitemap += `
-    <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${page.path}" />
-  </url>`;
-      });
-
       sitemap += `
 </urlset>`;
 
