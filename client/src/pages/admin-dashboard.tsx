@@ -5496,8 +5496,8 @@ export default function AdminDashboard() {
                       </div>
                     )}
 
-                    {/* Orders Pagination */}
-                    {ordersResponse?.totalPages > 1 && (
+                    {/* Kanban view pagination - only show if in kanban mode */}
+                    {ordersViewMode === "kanban" && ordersResponse?.totalPages > 1 && (
                       <div className="px-4 py-3 border-t bg-gray-50 mt-4">
                         {/* Mobile: Stack info and controls */}
                         <div className="sm:hidden space-y-2 px-4 py-3">
@@ -5709,6 +5709,7 @@ export default function AdminDashboard() {
 
                 {/* All filtering is handled by backend */}
                 {(() => {
+                  // Backend already returns paginated data, no need for frontend slicing
                   const filteredUsers = usersData as any[] || [];
 
                   const usersTotal = usersResponse?.total || 0;
@@ -5729,7 +5730,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {filteredUsers.slice((usersPage - 1) * itemsPerPage, usersPage * itemsPerPage).map((user: any) => (
+                          {filteredUsers.map((user: any) => (
                             <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
                               <TableCell className="px-3 py-3 text-sm rtl-cell">
                                 <span 
