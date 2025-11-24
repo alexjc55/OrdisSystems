@@ -1,0 +1,38 @@
+sw.js:644 🔔 [SW] PWA Service Worker loaded with enhanced push notification support
+index-DbGDutir.js:575 Applied --color-tomorrow: hsl(262, 83%, 58%)
+index-DbGDutir.js:575 Applied --color-out-of-stock: hsl(0, 84%, 60%)
+index-DbGDutir.js:673 [AnalyticsTracker] Initial page load, skipping analytics: /
+popup.js:1097 URL does not match any enabled patterns
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+index-DbGDutir.js:673 📨 [App] Received message from Service Worker: __ym__promise_670915876_255995143
+general.js:205 [LaunchDarkly] LaunchDarkly client initialized
+sw.js:568 Service Worker: Request failed TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at handleStaticRequest (sw.js:563:26)
+handleStaticRequest @ sw.js:568Understand this error
+The FetchEvent for "chrome-extension://ddlbpiadoechcolndfeaonajmngmhblj/assets/Inter-Regular.ttf" resulted in a network error response: the promise was rejected.Understand this warning
+sw.js:563 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at handleStaticRequest (sw.js:563:26)Understand this error
+sw.js:568 Service Worker: Request failed TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at handleStaticRequest (sw.js:563:26)
+handleStaticRequest @ sw.js:568Understand this error
+The FetchEvent for "chrome-extension://ddlbpiadoechcolndfeaonajmngmhblj/assets/Inter-SemiBold.ttf" resulted in a network error response: the promise was rejected.Understand this warning
+sw.js:563 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at handleStaticRequest (sw.js:563:26)Understand this error
+sw.js:568 Service Worker: Request failed TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at handleStaticRequest (sw.js:563:26)
+handleStaticRequest @ sw.js:568Understand this error
+The FetchEvent for "chrome-extension://ddlbpiadoechcolndfeaonajmngmhblj/assets/Inter-Black.ttf" resulted in a network error response: the promise was rejected.Understand this warning
+sw.js:563 Uncaught (in promise) TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported
+    at handleStaticRequest (sw.js:563:26)Understand this error
+Inter-Regular.ttf:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+Inter-SemiBold.ttf:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+Inter-Black.ttf:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+fbevents.js:168 [Meta Pixel] - Duplicate Pixel ID: 1905318000327986.
+v @ fbevents.js:168Understand this warning
+index-DbGDutir.js:673 📨 [App] Received message from Service Worker: Object
+index-DbGDutir.js:518 🚫 PWA install: Skipped (desktop device)
+(index):1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+index-DbGDutir.js:673 📨 [App] Received message from Service Worker: __ym__promise_353457498_612938124
+index-DbGDutir.js:673 📨 [App] Received message from Service Worker: __ym__promise_662762796_865318881
+index-DbGDutir.js:673 📨 [App] Received message from Service Worker: __ym__promise_85823899_178055058
+index-DbGDutir.js:673 📨 [App] Received message from Service Worker: __ym__promise_1015679974_585416874
