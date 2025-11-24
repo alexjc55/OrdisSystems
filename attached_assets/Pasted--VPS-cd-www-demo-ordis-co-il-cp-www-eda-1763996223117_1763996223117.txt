@@ -1,0 +1,52 @@
+# На VPS выполните:
+cd ~/www/demo.ordis.co.il
+
+# Скопируйте конфиг из основного проекта
+cp ~/www/edahouse.ordis.co.il/ecosystem.demo.config.cjs .
+
+# Скопируйте client директорию (нужна для middleware!)
+cp -r ~/www/edahouse.ordis.co.il/client .
+cp: cannot stat '/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/ecosystem.demo.config.cjs': No such file or directory
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ # Остановите текущий процесс
+pm2 stop demo
+pm2 delete demo
+
+# Запустите с новым конфигом
+pm2 start ecosystem.demo.config.cjs --env production
+
+# Сохраните
+pm2 save
+
+# Проверьте
+pm2 list
+[PM2] Applying action stopProcessId on app [demo](ids: [ 1 ])
+[PM2] [demo](1) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 1  │ demo               │ fork     │ 7    │ stopped   │ 0%       │ 0b       │
+│ 3  │ edahouse           │ fork     │ 0    │ online    │ 7.7%     │ 138.4mb  │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Applying action deleteProcessId on app [demo](ids: [ 1 ])
+[PM2] [demo](1) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 3  │ edahouse           │ fork     │ 0    │ online    │ 0%       │ 137.9mb  │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2][ERROR] File ecosystem.demo.config.cjs not found
+[PM2] Saving current process list...
+[PM2] Successfully saved in /var/www/ordis_co_il_usr/data/.pm2/dump.pm2
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 3  │ edahouse           │ fork     │ 0    │ online    │ 0%       │ 137.9mb  │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ # Тест middleware
+curl -A "Googlebot" -H "Accept: text/html" http://localhost:5001/ 2>/dev/null | grep '"@type"'
+
+# Проверьте логи
+pm2 logs edahouse-demo --lines 5
+[TAILING] Tailing last 5 lines for [edahouse-demo] process (change the value with --lines option)
+^C
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$
