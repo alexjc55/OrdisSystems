@@ -25,6 +25,7 @@ interface SEOHeadProps {
     description?: string;
     url: string;
   }>;
+  productsListTitle?: string; // Custom title for products ItemList
 }
 
 const LOCALE_MAP: { [key: string]: string } = {
@@ -79,7 +80,8 @@ export function SEOHead({
   ogImage,
   geo,
   categories,
-  products
+  products,
+  productsListTitle
 }: SEOHeadProps) {
   const { data: settings } = useQuery({
     queryKey: ['/api/settings'],
@@ -178,6 +180,15 @@ export function SEOHead({
         "@type": "MonetaryAmount",
         "value": parseFloat(settingsData.deliveryFee),
         "currency": "ILS"
+      } : undefined,
+      "offers": settingsData.freeDeliveryFrom ? {
+        "@type": "Offer",
+        "name": "Бесплатная доставка",
+        "eligibleTransactionVolume": {
+          "@type": "PriceSpecification",
+          "price": parseFloat(settingsData.freeDeliveryFrom),
+          "priceCurrency": "ILS"
+        }
       } : undefined
     } : undefined,
     // Payment methods
@@ -205,7 +216,7 @@ export function SEOHead({
   const productsListData = products && products.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Специальные предложения",
+    "name": productsListTitle || "Специальные предложения",
     "description": "Популярные блюда с доставкой",
     "itemListElement": products.map((product, index) => ({
       "@type": "ListItem",
@@ -297,7 +308,8 @@ export function useSEO({
   ogImage,
   geo,
   categories,
-  products
+  products,
+  productsListTitle
 }: SEOHeadProps) {
   return <SEOHead 
     title={title}
@@ -308,6 +320,7 @@ export function useSEO({
     geo={geo}
     categories={categories}
     products={products}
+    productsListTitle={productsListTitle}
   />;
 }
 

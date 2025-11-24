@@ -338,7 +338,8 @@ export default function Home() {
         ogTitle: title,
         ogDescription: description,
         canonical: currentLanguage === 'ru' ? `/category/${selectedCategory.id}` : `/${currentLanguage}/category/${selectedCategory.id}`,
-        products: categoryProducts.length > 0 ? categoryProducts : undefined
+        products: categoryProducts.length > 0 ? categoryProducts : undefined,
+        productsListTitle: categoryName // Use category name as ItemList title
       };
     } else if (selectedCategoryId === 0) {
       // All products page SEO
