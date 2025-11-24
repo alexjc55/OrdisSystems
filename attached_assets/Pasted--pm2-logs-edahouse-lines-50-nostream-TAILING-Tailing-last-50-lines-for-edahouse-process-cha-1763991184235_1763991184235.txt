@@ -1,0 +1,46 @@
+
+pm2 logs edahouse --lines 50 --nostream
+[TAILING] Tailing last 50 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error-2.log last 50 lines:
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out-2.log last 50 lines:
+2|edahouse | 🔍 Environment check - USE_NEON: false
+2|edahouse | 🔍 Environment check - DATABASE_URL exists: true
+2|edahouse | 🔄 Initializing PostgreSQL connection...
+2|edahouse | 📧 Nodemailer initialized successfully
+2|edahouse | 🔄 Database initialization already in progress...
+2|edahouse | ✅ PostgreSQL Database initialized
+2|edahouse | ✅ Database connection verified
+2|edahouse | 🌱 Seeding database...
+2|edahouse | ✅ Database already contains data, skipping seed
+2|edahouse | 3:27:54 PM [express] serving on port 5000
+2|edahouse | 3:27:55 PM [express] GET /api/version 200 in 7ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:28:19 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:28:26 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:28:29 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:28:56 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:29:19 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:29:27 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:29:29 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:29:57 PM [express] GET /api/version 200 in 3ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:30:00 PM [express] GET /api/feed/facebook 200 in 186ms
+2|edahouse | 3:30:19 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:30:28 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:30:29 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:30:59 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 🔍 Environment check - USE_NEON: false
+2|edahouse | 🔍 Environment check - DATABASE_URL exists: true
+2|edahouse | 🔄 Initializing PostgreSQL connection...
+2|edahouse | 📧 Nodemailer initialized successfully
+2|edahouse | 🔄 Database initialization already in progress...
+2|edahouse | ✅ PostgreSQL Database initialized
+2|edahouse | ✅ Database connection verified
+2|edahouse | 🌱 Seeding database...
+2|edahouse | ✅ Database already contains data, skipping seed
+2|edahouse | 3:31:17 PM [express] serving on port 5000
+2|edahouse | 3:31:19 PM [express] GET /api/version 200 in 7ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:31:29 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:31:30 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:32:01 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:32:19 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:32:29 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
+2|edahouse | 3:32:32 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"7821dafd","buildTi…
