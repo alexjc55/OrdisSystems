@@ -33,11 +33,16 @@ pm2 env edahouse | grep NODE_ENV
 ### Проверка что работает:
 
 ```bash
-# На вашем компьютере (не на VPS):
-curl -A "Googlebot" https://edahouse.ordis.co.il/ 2>/dev/null | grep -o '"@type":"Restaurant"'
+# На VPS выполните:
+curl -A "Googlebot" -H "Accept: text/html" http://localhost:5000/ 2>/dev/null | grep '"@type"'
 
-# Если видите "@type":"Restaurant" - всё работает! ✅
+# Должны увидеть:
+# "@type": "Restaurant"
+# "@type": "ItemList"
+# Значит всё работает! ✅
 ```
+
+**ВАЖНО**: Флаг `-H "Accept: text/html"` обязателен! Middleware проверяет этот заголовок. Настоящий Googlebot всегда его отправляет.
 
 ### Тест в Google Rich Results:
 
