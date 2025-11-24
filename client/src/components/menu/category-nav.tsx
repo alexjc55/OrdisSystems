@@ -5,6 +5,7 @@ import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useQuery } from "@tanstack/react-query";
 import type { CategoryWithCount } from "@shared/schema";
+import { UTMLink } from "@/components/UTMLink";
 
 interface CategoryNavProps {
   categories: CategoryWithCount[];
@@ -43,11 +44,13 @@ export default memo(function CategoryNav({
         <Button
           variant={selectedCategoryId === null ? "default" : "secondary"}
           size="sm"
-          onClick={handleAllCategoriesClick}
           className="flex-shrink-0"
+          asChild
         >
-          <span className="mr-2 rtl:mr-0 rtl:ml-2">🛍️</span>
-          {t('allCategories')}
+          <UTMLink href="/" onClick={handleAllCategoriesClick}>
+            <span className="mr-2 rtl:mr-0 rtl:ml-2">🛍️</span>
+            {t('allCategories')}
+          </UTMLink>
         </Button>
         
         {categories.map((category) => (
@@ -55,11 +58,16 @@ export default memo(function CategoryNav({
             key={category.id}
             variant={selectedCategoryId === category.id ? "default" : "secondary"}
             size="sm"
-            onClick={() => handleCategoryClick(category.id)}
             className="flex-shrink-0"
+            asChild
           >
-            <span className="mr-2 rtl:mr-0 rtl:ml-2">{category.icon || '📦'}</span>
-            {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
+            <UTMLink 
+              href={`/category/${category.id}`}
+              onClick={() => handleCategoryClick(category.id)}
+            >
+              <span className="mr-2 rtl:mr-0 rtl:ml-2">{category.icon || '📦'}</span>
+              {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
+            </UTMLink>
           </Button>
         ))}
       </div>

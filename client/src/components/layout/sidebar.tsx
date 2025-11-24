@@ -6,6 +6,7 @@ import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import type { CategoryWithCount } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import { UTMLink } from "@/components/UTMLink";
 
 interface SidebarProps {
   categories: CategoryWithCount[];
@@ -67,19 +68,24 @@ export default function Sidebar({
               <Button
                 key={category.id}
                 variant="ghost"
-                onClick={() => onCategorySelect(category.id)}
                 className={cn(
                   "w-full justify-start text-left h-auto px-3 py-2 font-normal",
                   selectedCategoryId === category.id
                     ? "text-primary bg-primary/10 border-r-2 border-primary"
                     : "text-gray-700 hover:bg-gray-50 hover:text-primary"
                 )}
+                asChild
               >
-                <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
-                {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettings as any)}
-                <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
-                  {category.productCount}
-                </Badge>
+                <UTMLink
+                  href={`/category/${category.id}`}
+                  onClick={() => onCategorySelect(category.id)}
+                >
+                  <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
+                  {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettings as any)}
+                  <Badge variant="secondary" className="ml-auto text-xs bg-gray-200 text-gray-700">
+                    {category.productCount}
+                  </Badge>
+                </UTMLink>
               </Button>
             ))}
           </nav>

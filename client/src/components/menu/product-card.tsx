@@ -14,6 +14,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useQuery } from "@tanstack/react-query";
+import { UTMLink } from "@/components/UTMLink";
 
 interface ProductCardProps {
   product: ProductWithCategories;
@@ -207,14 +208,18 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             {product.categories && product.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {product.categories.slice(0, 2).map((category) => (
-                  <Badge 
+                  <UTMLink 
                     key={category.id}
-                    variant="secondary" 
-                    className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
+                    href={`/category/${category.id}`}
                     onClick={() => onCategoryClick?.(category.id)}
                   >
-                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
-                  </Badge>
+                    <Badge 
+                      variant="secondary" 
+                      className="cursor-pointer bg-gray-100 text-gray-700 hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
+                    >
+                      {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}
+                    </Badge>
+                  </UTMLink>
                 ))}
                 {product.categories.length > 2 && (
                   <Badge variant="secondary" className="bg-gray-100 text-gray-500 text-xs">

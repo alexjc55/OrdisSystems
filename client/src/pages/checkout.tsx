@@ -21,6 +21,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
+import { UTMLink } from "@/components/UTMLink";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -630,8 +631,10 @@ export default function Checkout() {
             <ShoppingCart className="h-12 w-12 text-gray-400 mb-4" />
             <h2 className="text-xl font-semibold mb-2">{tCommon('cart.empty')}</h2>
             <p className="text-gray-600 mb-4">{tCommon('cart.emptyDescription')}</p>
-            <Button onClick={() => navigate("/")}>
-              {tCommon('navigation.goShopping')}
+            <Button asChild>
+              <UTMLink href="/">
+                {tCommon('navigation.goShopping')}
+              </UTMLink>
             </Button>
           </CardContent>
         </Card>
@@ -645,11 +648,13 @@ export default function Checkout() {
       <div className="mb-6">
         <Button
           variant="ghost"
-          onClick={() => navigate("/")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+          asChild
         >
-          <ArrowLeft className="h-4 w-4" />
-          {tCommon('navigation.backToShopping')}
+          <UTMLink href="/">
+            <ArrowLeft className="h-4 w-4" />
+            {tCommon('navigation.backToShopping')}
+          </UTMLink>
         </Button>
       </div>
 
