@@ -78,7 +78,6 @@ export default function Sidebar({
               >
                 <UTMLink
                   href={`/category/${category.id}`}
-                  onClick={() => onCategorySelect(category.id)}
                 >
                   <span className="mr-3 rtl:mr-0 rtl:ml-3">{category.icon || '📦'}</span>
                   {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettings as any)}

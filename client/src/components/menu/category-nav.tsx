@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { memo, useCallback } from "react";
+import { memo } from "react";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useQuery } from "@tanstack/react-query";
@@ -29,14 +29,6 @@ export default memo(function CategoryNav({
     queryKey: ['/api/settings'],
     staleTime: 5 * 60 * 1000,
   });
-  
-  const handleAllCategoriesClick = useCallback(() => {
-    onCategorySelect(null);
-  }, [onCategorySelect]);
-
-  const handleCategoryClick = useCallback((categoryId: number) => {
-    onCategorySelect(categoryId);
-  }, [onCategorySelect]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-40 lg:hidden">
@@ -47,7 +39,7 @@ export default memo(function CategoryNav({
           className="flex-shrink-0"
           asChild
         >
-          <UTMLink href="/" onClick={handleAllCategoriesClick}>
+          <UTMLink href="/">
             <span className="mr-2 rtl:mr-0 rtl:ml-2">🛍️</span>
             {t('allCategories')}
           </UTMLink>
@@ -63,7 +55,6 @@ export default memo(function CategoryNav({
           >
             <UTMLink 
               href={`/category/${category.id}`}
-              onClick={() => handleCategoryClick(category.id)}
             >
               <span className="mr-2 rtl:mr-0 rtl:ml-2">{category.icon || '📦'}</span>
               {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any)}

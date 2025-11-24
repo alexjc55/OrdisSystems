@@ -644,7 +644,7 @@ export default function Home() {
                         className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                         asChild
                       >
-                        <UTMLink href="/all-products" onClick={() => handleCategorySelect(0)}>
+                        <UTMLink href="/all-products">
                           <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
                           {t('allProducts')}
                         </UTMLink>
@@ -657,7 +657,6 @@ export default function Home() {
                       <UTMLink 
                         key={category.id}
                         href={`/category/${category.id}`}
-                        onClick={() => handleCategorySelect(category.id)}
                       >
                         <Card 
                           className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
