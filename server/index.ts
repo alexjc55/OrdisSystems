@@ -67,16 +67,17 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Meta injection middleware for bots (BEFORE Vite/static to intercept bot requests)
-  // Uses strict filtering (file extension + Accept header) to avoid breaking static files
-  app.use(metaInjectionMiddleware());
-
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
+    // Note: SEO bot middleware is disabled in development to avoid conflicts with Vite
+    // It will be enabled on VPS in production mode
   } else {
+    // PRODUCTION MODE: Enable SEO bot middleware BEFORE static serving
+    // This allows bots to get HTML with structured data while users get static files
+    app.use(metaInjectionMiddleware());
     serveStatic(app);
   }
 

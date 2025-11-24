@@ -23,21 +23,23 @@ export function metaInjectionMiddleware() {
       return next();
     }
 
-    // More strict filtering: check both file extension AND Accept header
-    const hasFileExtension = req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|xml|txt|map)$/);
-    const acceptsHtml = req.headers.accept?.includes('text/html');
-    
-    // Skip if:
-    // 1. Has file extension (likely a static asset)
-    // 2. API routes
-    // 3. Upload routes
-    // 4. Doesn't accept HTML (AJAX/fetch requests)
+    // CRITICAL: Very strict filtering to avoid breaking static assets
+    // Skip ALL static asset paths first
     if (
-      hasFileExtension ||
       req.path.startsWith('/api/') ||
       req.path.startsWith('/uploads/') ||
-      (!acceptsHtml && req.headers.accept)
+      req.path.startsWith('/assets/') ||  // Vite bundled assets
+      req.path.startsWith('/src/') ||     // Dev mode source files
+      req.path.startsWith('/@') ||        // Vite special paths
+      req.path.startsWith('/node_modules/') || // Dependencies
+      req.path.match(/\.(js|jsx|ts|tsx|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|xml|txt|map)$/) // File extensions
     ) {
+      return next();
+    }
+    
+    // Only proceed if Accept header explicitly includes HTML
+    const acceptsHtml = req.headers.accept?.includes('text/html');
+    if (!acceptsHtml) {
       return next();
     }
 
