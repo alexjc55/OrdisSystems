@@ -2,10 +2,18 @@ import { Request, Response, NextFunction } from 'express';
 import { shouldUseSSR } from './bot-detection';
 import * as fs from 'fs';
 import * as path from 'path';
+import { storage } from './storage';
+import {
+  generateRestaurantSchema,
+  generateCategoriesItemListSchema,
+  generateProductsItemListSchema,
+  getFullImageUrl
+} from '../shared/seo-schemas';
+import type { CategoryWithCount, ProductWithCategories } from '@shared/schema';
 
 /**
  * Simple Meta Tag Injection for Bots
- * Injects dynamic meta tags into HTML for search engines
+ * Injects dynamic meta tags AND structured data (JSON-LD) into HTML for search engines
  * without full React SSR overhead
  */
 export function metaInjectionMiddleware() {
@@ -15,11 +23,20 @@ export function metaInjectionMiddleware() {
       return next();
     }
 
-    // Skip API routes and static assets
+    // More strict filtering: check both file extension AND Accept header
+    const hasFileExtension = req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|xml|txt|map)$/);
+    const acceptsHtml = req.headers.accept?.includes('text/html');
+    
+    // Skip if:
+    // 1. Has file extension (likely a static asset)
+    // 2. API routes
+    // 3. Upload routes
+    // 4. Doesn't accept HTML (AJAX/fetch requests)
     if (
+      hasFileExtension ||
       req.path.startsWith('/api/') ||
       req.path.startsWith('/uploads/') ||
-      req.path.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|xml|txt)$/)
+      (!acceptsHtml && req.headers.accept)
     ) {
       return next();
     }
@@ -28,29 +45,97 @@ export function metaInjectionMiddleware() {
     const userAgent = req.headers['user-agent'];
     const isBot = shouldUseSSR(userAgent, req.query);
     
-    console.log(`[Meta Injection] Request: ${req.path}, UA: ${userAgent?.substring(0, 50)}..., Is Bot: ${isBot}`);
-    
     if (!isBot) {
       return next(); // Regular user - let normal flow handle it
     }
 
     try {
-      console.log('[Meta Injection] Bot detected:', userAgent);
-      console.log('[Meta Injection] Path:', req.path);
+      console.log('[SEO Bot] Detected:', userAgent?.substring(0, 60));
+      console.log('[SEO Bot] Path:', req.path);
 
       // Read index.html from disk
       const htmlPath = path.resolve(process.cwd(), 'client/index.html');
       let html = await fs.promises.readFile(htmlPath, 'utf-8');
 
-      // Inject additional meta tags based on route
-      const injectedMeta = generateMetaTags(req.path, req.query);
+      // Load data from database
+      const settings = await storage.getStoreSettings();
+      const allCategories = await storage.getCategories(false); // Only active categories
+      const allProducts = await storage.getProducts();
+
+      // Determine origin URL
+      const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+      const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:5000';
+      const origin = `${protocol}://${host}`;
+
+      // Get logo URL
+      const logoUrl = settings?.logoUrl ? getFullImageUrl(settings.logoUrl, origin) : undefined;
+
+      // Generate structured data using shared functions
+      const structuredDataParts: string[] = [];
+
+      // 1. Restaurant schema
+      const restaurantSchema = generateRestaurantSchema(settings as any || null, origin, logoUrl);
+      if (restaurantSchema) {
+        structuredDataParts.push(`
+    <script type="application/ld+json" data-restaurant="true">
+      ${JSON.stringify(restaurantSchema, null, 2)}
+    </script>`);
+      }
+
+      // 2. Categories ItemList (limit to top 8 for Google sitelinks)
+      const topCategories = allCategories.slice(0, 8).map((cat: CategoryWithCount) => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description || undefined,
+        url: `/category/${cat.id}`
+      }));
       
-      // Inject before </head>
-      html = html.replace('</head>', `${injectedMeta}\n  </head>`);
+      const categoriesSchema = generateCategoriesItemListSchema(topCategories, origin);
+      if (categoriesSchema) {
+        structuredDataParts.push(`
+    <script type="application/ld+json" data-categories="true">
+      ${JSON.stringify(categoriesSchema, null, 2)}
+    </script>`);
+      }
+
+      // 3. Products ItemList (limit to 6-12 special offers/featured products)
+      const featuredProducts = allProducts
+        .filter((p: ProductWithCategories) => p.isSpecialOffer)
+        .slice(0, 12)
+        .map((p: ProductWithCategories) => ({
+          id: p.id,
+          name: p.name,
+          description: p.description || undefined,
+          url: `/product/${p.id}`
+        }));
+      
+      const productsSchema = generateProductsItemListSchema(
+        featuredProducts, 
+        origin, 
+        'Специальные предложения'
+      );
+      if (productsSchema) {
+        structuredDataParts.push(`
+    <script type="application/ld+json" data-products="true">
+      ${JSON.stringify(productsSchema, null, 2)}
+    </script>`);
+      }
+
+      // Inject canonical and structured data before </head>
+      const injectedContent = generateMetaTags(req.path, req.query) + 
+        structuredDataParts.join('\n');
+      
+      html = html.replace('</head>', `${injectedContent}\n  </head>`);
+
+      console.log('[SEO Bot] Injected structured data:', {
+        restaurant: !!restaurantSchema,
+        categories: topCategories.length,
+        products: featuredProducts.length
+      });
 
       res.status(200).set({ 'Content-Type': 'text/html' }).send(html);
     } catch (error) {
-      console.error('[Meta Injection] Error:', error);
+      console.error('[SEO Bot] Error:', error);
       next(error);
     }
   };

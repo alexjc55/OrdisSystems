@@ -1,6 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import {
+  generateRestaurantSchema,
+  generateCategoriesItemListSchema,
+  generateProductsItemListSchema,
+  generateProductSchema,
+  generateBreadcrumbSchema,
+  getFullImageUrl as sharedGetFullImageUrl
+} from '@shared/seo-schemas';
 
 interface SEOHeadProps {
   title?: string;
@@ -138,94 +146,20 @@ export function SEOHead({
     .filter(lang => lang !== currentLanguage)
     .map(lang => LOCALE_MAP[lang]);
 
-  // Build structured data for Restaurant with delivery info
-  const structuredData = settingsData ? {
-    "@context": "https://schema.org",
-    "@type": "Restaurant",
-    "name": settingsData.storeName || "eDAHouse",
-    "description": settingsData.welcomeTitle || "Доставка готовой еды на дом",
-    "url": origin,
-    "telephone": settingsData.contactPhone || "",
-    "email": settingsData.contactEmail || "",
-    "address": settingsData.address ? {
-      "@type": "PostalAddress",
-      "streetAddress": settingsData.address
-    } : undefined,
-    "servesCuisine": "Домашняя кухня",
-    "priceRange": "$$",
-    "serviceType": "Доставка еды",
-    "areaServed": "Местная доставка",
-    "openingHours": settingsData.workingHours ? 
-      Object.entries(settingsData.workingHours)
-        .filter(([_, hours]: [string, any]) => hours.isOpen)
-        .map(([day, hours]: [string, any]) => {
-          const dayMap: { [key: string]: string } = {
-            'monday': 'Mo',
-            'tuesday': 'Tu', 
-            'wednesday': 'We',
-            'thursday': 'Th',
-            'friday': 'Fr',
-            'saturday': 'Sa',
-            'sunday': 'Su'
-          };
-          return `${dayMap[day]} ${hours.open}-${hours.close}`;
-        }) : undefined,
-    "image": ogImageUrl || undefined,
-    // Delivery information
-    "hasDeliveryMethod": settingsData.deliveryFee || settingsData.freeDeliveryFrom ? {
-      "@type": "DeliveryMethod",
-      "name": "Доставка на дом",
-      "deliveryTime": settingsData.deliveryInfo || "В соответствии с расписанием работы",
-      "deliveryCharge": settingsData.deliveryFee ? {
-        "@type": "MonetaryAmount",
-        "value": parseFloat(settingsData.deliveryFee),
-        "currency": "ILS"
-      } : undefined,
-      "offers": settingsData.freeDeliveryFrom ? {
-        "@type": "Offer",
-        "name": "Бесплатная доставка",
-        "eligibleTransactionVolume": {
-          "@type": "PriceSpecification",
-          "price": parseFloat(settingsData.freeDeliveryFrom),
-          "priceCurrency": "ILS"
-        }
-      } : undefined
-    } : undefined,
-    // Payment methods
-    "paymentAccepted": settingsData.paymentMethods && Array.isArray(settingsData.paymentMethods) 
-      ? settingsData.paymentMethods.filter((pm: any) => pm.enabled).map((pm: any) => pm.name)
-      : ["Наличные", "Кредитная карта"]
-  } : null;
+  // Build structured data using shared schema generators
+  const structuredData = generateRestaurantSchema(
+    settingsData || null, 
+    origin, 
+    ogImageUrl || undefined
+  );
 
   // Build ItemList for categories (for sitelinks in Google)
-  const categoriesListData = categories && categories.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "Категории товаров",
-    "description": "Категории блюд для доставки",
-    "itemListElement": categories.map((category, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": category.name,
-      "description": category.description || category.name,
-      "url": origin + category.url
-    }))
-  } : null;
+  const categoriesListData = categories ? 
+    generateCategoriesItemListSchema(categories, origin) : null;
 
   // Build ItemList for products (for special offers/featured products)
-  const productsListData = products && products.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": productsListTitle || "Специальные предложения",
-    "description": "Популярные блюда с доставкой",
-    "itemListElement": products.map((product, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": product.name,
-      "description": product.description || product.name,
-      "url": origin + product.url
-    }))
-  } : null;
+  const productsListData = products ? 
+    generateProductsItemListSchema(products, origin, productsListTitle) : null;
 
   return (
     <Helmet>
@@ -341,25 +275,14 @@ export function addProductStructuredData(product: {
     existingProductScript.remove();
   }
 
-  const productData = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": product.name,
-    "description": product.description || product.name,
-    "image": product.imageUrl ? getFullImageUrl(product.imageUrl) : undefined,
-    "category": product.category || "Готовая еда",
-    "offers": {
-      "@type": "Offer",
-      "price": product.price,
-      "priceCurrency": "ILS",
-      "availability": product.isAvailable !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      "url": window.location.href,
-      "seller": {
-        "@type": "Restaurant",
-        "name": "eDAHouse"
-      }
-    }
-  };
+  const productData = generateProductSchema(
+    {
+      ...product,
+      url: window.location.href
+    },
+    window.location.origin,
+    window.location.href
+  );
 
   const script = document.createElement('script');
   script.type = 'application/ld+json';
@@ -377,16 +300,7 @@ export function addBreadcrumbStructuredData(items: Array<{ name: string; url: st
     existingBreadcrumbScript.remove();
   }
 
-  const breadcrumbData = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": items.map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": item.name,
-      "item": window.location.origin + item.url
-    }))
-  };
+  const breadcrumbData = generateBreadcrumbSchema(items, window.location.origin);
 
   const script = document.createElement('script');
   script.type = 'application/ld+json';

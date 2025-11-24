@@ -67,6 +67,10 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Meta injection middleware for bots (BEFORE Vite/static to intercept bot requests)
+  // Uses strict filtering (file extension + Accept header) to avoid breaking static files
+  app.use(metaInjectionMiddleware());
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
@@ -75,10 +79,6 @@ app.use((req, res, next) => {
   } else {
     serveStatic(app);
   }
-  
-  // Meta injection middleware for bots (AFTER static files)
-  // This ensures static assets are served first, then bot meta injection
-  // app.use(metaInjectionMiddleware());
 
   // Use PORT environment variable with fallback to 5000 for Replit compatibility
   const port = parseInt(process.env.PORT || "5000", 10);
