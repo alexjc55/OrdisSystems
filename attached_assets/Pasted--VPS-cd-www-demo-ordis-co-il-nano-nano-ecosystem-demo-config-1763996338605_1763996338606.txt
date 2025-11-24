@@ -1,0 +1,60 @@
+# На VPS выполните:
+cd ~/www/demo.ordis.co.il
+
+# Создайте файл через nano
+nano ecosystem.demo.config.cjs
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ # Скопируйте client директорию (нужна для middleware!)
+cp -r ~/www/edahouse.ordis.co.il/client .
+
+# Проверьте что файлы на месте
+ls -la ecosystem.demo.config.cjs
+ls -la client/index.html
+
+# Запустите PM2
+pm2 start ecosystem.demo.config.cjs --env production
+
+# Сохраните
+pm2 save
+
+# Проверьте
+pm2 list
+-rw-r--r-- 1 ordis_co_il_usr ordis_co_il_usr 1190 Nov 24 16:57 ecosystem.demo.config.cjs
+-rw-r--r-- 1 ordis_co_il_usr ordis_co_il_usr 4587 Nov 24 16:58 client/index.html
+[PM2][WARN] Applications edahouse-demo not running, starting...
+[PM2][WARN] Folder does not exist: /var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/logs
+[PM2] Creating folder: /var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/logs
+[PM2] App [edahouse-demo] launched (1 instances)
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 3  │ edahouse           │ fork     │ 0    │ online    │ 0%       │ 137.9mb  │
+│ 4  │ edahouse-demo      │ fork     │ 0    │ online    │ 0%       │ 18.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+[PM2] Saving current process list...
+[PM2] Successfully saved in /var/www/ordis_co_il_usr/data/.pm2/dump.pm2
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 3  │ edahouse           │ fork     │ 0    │ online    │ 0%       │ 138.4mb  │
+│ 4  │ edahouse-demo      │ fork     │ 0    │ online    │ 100%     │ 79.5mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ # Тест middleware
+curl -A "Googlebot" -H "Accept: text/html" http://localhost:5001/ 2>/dev/null | grep '"@type"'
+
+# Логи
+pm2 logs edahouse-demo --lines 10 --nostream
+[TAILING] Tailing last 10 lines for [edahouse-demo] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/logs/demo-err-4.log last 10 lines:
+/var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/logs/demo-out-4.log last 10 lines:
+4|edahouse | 2025-11-24T16:58:13: 🔍 Environment check - USE_NEON: false
+4|edahouse | 2025-11-24T16:58:13: 🔍 Environment check - DATABASE_URL exists: true
+4|edahouse | 2025-11-24T16:58:13: 🔄 Initializing PostgreSQL connection...
+4|edahouse | 2025-11-24T16:58:13: 📧 Nodemailer initialized successfully
+4|edahouse | 2025-11-24T16:58:13: 🔄 Database initialization already in progress...
+4|edahouse | 2025-11-24T16:58:13: ✅ PostgreSQL Database initialized
+4|edahouse | 2025-11-24T16:58:13: ✅ Database connection verified
+4|edahouse | 2025-11-24T16:58:13: 🌱 Seeding database...
+4|edahouse | 2025-11-24T16:58:13: ✅ Database already contains data, skipping seed
+4|edahouse | 2025-11-24T16:58:13: 4:58:13 PM [express] serving on port 5001
+
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$
