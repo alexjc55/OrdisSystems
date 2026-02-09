@@ -48,6 +48,12 @@ export function BottomNav() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [setCartOpen]);
 
+  const isActive = (path: string) => {
+    if (path === "/" && (location === "/" || location.startsWith("/category/") || location === "/all-products")) return true;
+    if (path !== "/" && location.startsWith(path)) return true;
+    return false;
+  };
+
   const allLanguages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', name: string }> = [
     { code: 'ru', name: 'Русский' },
     { code: 'en', name: 'English' },
@@ -181,7 +187,9 @@ export function BottomNav() {
           <UTMLink
             href="/"
             onClick={handleNavClick}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors text-gray-500"
+            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none ${
+              isActive("/") ? "text-orange-500" : "text-gray-500"
+            }`}
           >
             <Home className="h-5 w-5" />
             <span>{t("navigation.home")}</span>
@@ -190,7 +198,9 @@ export function BottomNav() {
           <UTMLink
             href="/profile"
             onClick={handleNavClick}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors text-gray-500"
+            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none ${
+              isActive("/profile") || isActive("/auth") ? "text-orange-500" : "text-gray-500"
+            }`}
           >
             <User className="h-5 w-5" />
             <span>{t("navigation.profile")}</span>
@@ -201,7 +211,7 @@ export function BottomNav() {
               setIsMenuOpen(false);
               toggleCart();
             }}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-gray-500 transition-colors relative"
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-gray-500 transition-colors relative outline-none"
           >
             <div className="relative">
               <ShoppingCart className="h-5 w-5" />
@@ -220,7 +230,9 @@ export function BottomNav() {
               setCartOpen(false);
               setIsMenuOpen(prev => !prev);
             }}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors text-gray-500"
+            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none ${
+              isMenuOpen ? "text-orange-500" : "text-gray-500"
+            }`}
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             <span>{t("navigation.menu")}</span>
