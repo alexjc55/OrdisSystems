@@ -1750,15 +1750,15 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
 /* Ensure proper positioning for mobile devices */
 @media (max-width: 767px) {
   .whatsapp-button {
-    bottom: 130px !important;
+    bottom: 80px !important;
     right: 1rem !important;
     width: 3rem !important; /* 48px */
     height: 3rem !important; /* 48px */
     min-width: 3rem;
-    min-height: 3.5rem;
-    max-width: 3.5rem;
-    max-height: 3.5rem;
-    padding: 0.75rem;
+    min-height: 3rem;
+    max-width: 3rem;
+    max-height: 3rem;
+    padding: 0.625rem;
     box-sizing: border-box;
     border-radius: 50% !important;
   }
