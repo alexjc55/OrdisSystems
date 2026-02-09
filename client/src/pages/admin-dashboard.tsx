@@ -1312,7 +1312,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   </div>
 
   <div class="info-grid">
-    <div class="info-item"><span class="info-label">${l('customer')}:</span> <span>${order.customerName || ''}</span></div>
+    <div class="info-item"><span class="info-label">${l('customer')}:</span> <span>${order.user ? (order.user.firstName && order.user.lastName ? order.user.firstName + ' ' + order.user.lastName : order.user.email || '') : order.guestName || ''}</span></div>
     <div class="info-item"><span class="info-label">${l('status')}:</span> <span>${getStatusLabel(editedOrder.status)}</span></div>
     ${editedOrder.customerPhone ? `<div class="info-item"><span class="info-label">${l('phone')}:</span> <span>${editedOrder.customerPhone}</span></div>` : ''}
     ${editedOrder.deliveryDate ? `<div class="info-item"><span class="info-label">${l('deliveryDate')}:</span> <span>${editedOrder.deliveryDate}</span></div>` : ''}
