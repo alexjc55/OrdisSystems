@@ -484,6 +484,14 @@
     "allow": "אפשר",
     "dismiss": "לא עכשיו"
   },
+  "bell": {
+    "enableNotifications": "הפעל התראות",
+    "enableNotificationsDesc": "קבל עדכונים על הזמנות ומבצעים",
+    "installApp": "התקן את האפליקציה",
+    "installAppDesc": "גישה מהירה ממסך הבית",
+    "enable": "הפעל",
+    "install": "התקן"
+  },
   "pwa": {
     "installTitle": "התקן אפליקציה",
     "installDescription": "התקן את eDAHouse לגישה נוחה ללא דפדפן",

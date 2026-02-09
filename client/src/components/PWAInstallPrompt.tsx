@@ -132,10 +132,10 @@ export default function PWAInstallPrompt() {
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]" />
       
       {/* Install Prompt */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-gray-200 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 z-[61] p-4 bg-white border-t border-gray-200 shadow-lg">
         <div className="max-w-md mx-auto">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-10 h-10 bg-primary rounded-lg flex items-center justify-center">

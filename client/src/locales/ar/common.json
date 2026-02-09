@@ -582,6 +582,14 @@
     "allow": "السماح",
     "dismiss": "ليس الآن"
   },
+  "bell": {
+    "enableNotifications": "تفعيل الإشعارات",
+    "enableNotificationsDesc": "احصل على تحديثات الطلبات والعروض",
+    "installApp": "تثبيت التطبيق",
+    "installAppDesc": "وصول سريع من الشاشة الرئيسية",
+    "enable": "تفعيل",
+    "install": "تثبيت"
+  },
   "pwa": {
     "installTitle": "تثبيت التطبيق",
     "installDescription": "ثبت تطبيقنا للوصول السريع وتجربة تسوق أفضل",

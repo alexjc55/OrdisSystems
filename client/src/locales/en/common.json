@@ -503,6 +503,14 @@
     "iosStep2": "Select 'Add to Home Screen'",
     "gotIt": "Got it"
   },
+  "bell": {
+    "enableNotifications": "Enable notifications",
+    "enableNotificationsDesc": "Get updates on orders and special offers",
+    "installApp": "Install the app",
+    "installAppDesc": "Quick access from your home screen",
+    "enable": "Enable",
+    "install": "Install"
+  },
   "error": "Error",
   "cart": {
     "cart": "Cart",

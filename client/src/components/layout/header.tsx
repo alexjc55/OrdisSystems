@@ -7,8 +7,8 @@ import type { SupportedLanguage } from '@shared/localization';
 import { getLocalizedImageField } from '@shared/multilingual-helpers';
 import { Button } from "@/components/ui/button";
 import { usePWA } from "@/hooks/usePWA";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
-// Import multilingual helper function with fallback to default language
 function getMultilingualValue(
   storeSettings: any,
   baseField: string,
@@ -24,20 +24,18 @@ function getMultilingualValue(
     langField = `${baseField}${capitalizedLang}`;
   }
   
-  // Try to get value for current language, fallback to default language if empty
   const currentValue = storeSettings?.[langField];
   if (currentValue && currentValue.trim() !== '') {
     return currentValue;
   }
   
-  // Fallback to default language (Russian)
   return storeSettings?.[baseField] || '';
 }
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3 } from "lucide-react";
+import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3, Bell } from "lucide-react";
 import { useLocation } from "wouter";
 import { UTMLink as Link } from "@/components/UTMLink";
 import type { User as UserType } from "@shared/schema";
@@ -50,27 +48,33 @@ export default function Header({ onResetView }: HeaderProps) {
   const { user, logoutMutation } = useAuth();
   const { items, toggleCart } = useCartStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isBellOpen, setIsBellOpen] = useState(false);
   const { t } = useCommonTranslation();
   const { t: adminT } = useAdminTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
+  const bellBtnRef = useRef<HTMLButtonElement>(null);
   const { isInstalled, installApp, isStandalone } = usePWA();
+  const { isSubscribed, permission: pushPermission, isSupported: pushSupported } = usePushNotifications();
   
-  // Detect device types for PWA install button visibility
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
   const isTablet = typeof window !== 'undefined' && window.matchMedia('(min-width: 768px) and (max-width: 1023px)').matches;
   const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
 
-  const cartItemsCount = items.length; // Count unique products, not total quantity
+  const cartItemsCount = items.length;
 
-  // Close mobile menu when clicking outside (but not on toggle button)
+  const needsPush = pushSupported && pushPermission === 'default' && !isSubscribed;
+  const needsInstall = !isInstalled && !isStandalone && isMobile;
+  const bellCount = (needsPush ? 1 : 0) + (needsInstall ? 1 : 0);
+
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
       if (!isMobileMenuOpen) return;
       if (mobileMenuRef.current?.contains(event.target as Node)) return;
-      if (toggleBtnRef.current?.contains(event.target as Node)) return; // ignore toggle button
+      if (toggleBtnRef.current?.contains(event.target as Node)) return;
       setIsMobileMenuOpen(false);
     };
 
@@ -82,18 +86,44 @@ export default function Header({ onResetView }: HeaderProps) {
     }
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    if (!isBellOpen) return;
+    const handleClickOutside = (event: PointerEvent) => {
+      if (bellRef.current?.contains(event.target as Node)) return;
+      if (bellBtnRef.current?.contains(event.target as Node)) return;
+      setIsBellOpen(false);
+    };
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  }, [isBellOpen]);
+
+  const handlePushEnable = () => {
+    setIsBellOpen(false);
+    setTimeout(() => {
+      if ('Notification' in window) {
+        if ((window as any).showPushRequest) {
+          (window as any).showPushRequest();
+        } else {
+          window.dispatchEvent(new CustomEvent('trigger-push-request', { detail: { action: 'bell-click' } }));
+        }
+      }
+    }, 100);
+  };
+
+  const handleInstallApp = () => {
+    setIsBellOpen(false);
+    installApp();
+  };
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
       <div className="max-w-[1023px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Left side - Logo and Title */}
           <div className="flex items-center min-w-0 flex-1">
             <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
                 {(() => {
                   const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage);
-                  
-                  // Use the logoUrl only if it's a valid non-empty string
                   const validLogoUrl = logoUrl && logoUrl.trim() !== '' ? logoUrl : null;
                   
                   return validLogoUrl ? (
@@ -117,7 +147,6 @@ export default function Header({ onResetView }: HeaderProps) {
               </div>
             </Link>
             
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex ml-8 rtl:ml-0 rtl:mr-8 space-x-8 rtl:space-x-reverse">
               <Link href="/" onClick={() => onResetView?.()} className="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                 {t('menu')}
@@ -135,37 +164,92 @@ export default function Header({ onResetView }: HeaderProps) {
             </nav>
           </div>
 
-          {/* Right side - Actions */}
           <div className="flex items-center gap-1 md:gap-4 rtl:space-x-reverse flex-shrink-0">
-            {/* Language Switcher - Desktop only, multiple languages only */}
             {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
               <div className="hidden md:block">
                 <LanguageSwitcher variant="compact" />
               </div>
             )}
             
-            {/* Cart Button - Always visible */}
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={toggleCart}
-              className={`relative p-2 transition-all duration-200 ${
-                cartItemsCount > 0 
-                  ? "text-primary hover:text-primary-hover" 
-                  : "text-gray-600 hover:text-primary"
-              }`}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartItemsCount > 0 && (
-                <Badge 
-                  className="cart-badge absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-primary hover:bg-primary-hover text-white border-2 border-white animate-pulse font-bold"
-                >
-                  {Math.round(cartItemsCount)}
-                </Badge>
-              )}
-            </Button>
+            {/* Cart Button - Desktop only */}
+            <div className="hidden md:block">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={toggleCart}
+                className={`relative p-2 transition-all duration-200 ${
+                  cartItemsCount > 0 
+                    ? "text-primary hover:text-primary-hover" 
+                    : "text-gray-600 hover:text-primary"
+                }`}
+              >
+                <ShoppingCart className="h-5 w-5" />
+                {cartItemsCount > 0 && (
+                  <Badge 
+                    className="cart-badge absolute -top-1 -right-1 h-5 w-5 md:h-6 md:w-6 flex items-center justify-center text-xs p-0 bg-primary hover:bg-primary-hover text-white border-2 border-white animate-pulse font-bold"
+                  >
+                    {Math.round(cartItemsCount)}
+                  </Badge>
+                )}
+              </Button>
+            </div>
 
-            {/* PWA Install Button for Tablets - Show only on tablet, not mobile or desktop */}
+            {/* Bell Button - Mobile only, shows when there are pending actions */}
+            {isMobile && bellCount > 0 && (
+              <div className="relative md:hidden">
+                <Button
+                  ref={bellBtnRef}
+                  variant="ghost"
+                  size="sm"
+                  className="relative p-2 text-gray-600 hover:text-primary outline-none"
+                  onClick={() => setIsBellOpen(prev => !prev)}
+                >
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 animate-pulse">
+                    {bellCount}
+                  </span>
+                </Button>
+
+                {isBellOpen && (
+                  <div
+                    ref={bellRef}
+                    className="absolute top-full right-0 rtl:right-auto rtl:left-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-[59]"
+                  >
+                    <div className="p-3 space-y-2">
+                      {needsPush && (
+                        <div
+                          className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
+                          onClick={handlePushEnable}
+                        >
+                          <div className="flex-shrink-0 w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center">
+                            <Bell className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900">{t('bell.enableNotifications')}</p>
+                            <p className="text-xs text-gray-500">{t('bell.enableNotificationsDesc')}</p>
+                          </div>
+                        </div>
+                      )}
+                      {needsInstall && (
+                        <div
+                          className="flex items-center gap-3 p-3 rounded-lg bg-green-50 hover:bg-green-100 cursor-pointer transition-colors"
+                          onClick={handleInstallApp}
+                        >
+                          <div className="flex-shrink-0 w-9 h-9 bg-green-500 rounded-full flex items-center justify-center">
+                            <Download className="w-4 h-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900">{t('bell.installApp')}</p>
+                            <p className="text-xs text-gray-500">{t('bell.installAppDesc')}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {!isInstalled && isTablet && (
               <Button
                 variant="ghost"
@@ -257,175 +341,9 @@ export default function Header({ onResetView }: HeaderProps) {
               </div>
             )}
                 
-            {/* Mobile Menu Button */}
-            <div className="block md:hidden">
-              <Button
-                ref={toggleBtnRef}
-                variant="ghost"
-                size="sm"
-                className="p-2 text-gray-600 hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(prev => !prev)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            </div>
+            {/* Mobile Menu Button - REMOVED, now in bottom nav */}
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div ref={mobileMenuRef} className="md:hidden border-t border-gray-200 py-4 bg-gradient-to-b from-gray-50 to-white">
-            <div className="flex flex-col space-y-3">
-              {/* Navigation Links - First Row */}
-              {!user ? (
-                /* Not logged in - Menu button and PWA install button */
-                <div className="flex flex-col space-y-3 px-4">
-                  <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }}>
-                    <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
-                      <Utensils className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                      <span className="font-semibold">{t('menu')}</span>
-                    </div>
-                  </Link>
-                  
-
-                </div>
-              ) : (
-                /* All users - Menu and Profile buttons, plus Admin for admin/worker */
-                <div className="flex flex-col space-y-3 px-4">
-                  {/* First row - Menu and Profile for everyone */}
-                  <div className="flex space-x-4 rtl:space-x-reverse">
-                    <Link href="/" onClick={() => { onResetView?.(); setIsMobileMenuOpen(false); }} className="flex-1">
-                      <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
-                        <Utensils className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                        <span className="font-semibold text-sm">{t('menu')}</span>
-                      </div>
-                    </Link>
-                    <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                      <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white transition-colors cursor-pointer">
-                        <User className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                        <span className="font-semibold text-sm">{t('profile.title')}</span>
-                      </div>
-                    </Link>
-                  </div>
-                  
-                  {/* Second row - Admin button for admin/worker + Analytics for admin only */}
-                  {(user?.role === 'admin' || user?.role === 'worker') && (
-                    <div className="flex space-x-4 rtl:space-x-reverse">
-                      <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                        <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
-                          <Settings className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                          <span className="font-semibold text-sm">{t('admin')}</span>
-                        </div>
-                      </Link>
-                      {user?.role === 'admin' && (
-                        <Link href="/admin/analytics" onClick={() => setIsMobileMenuOpen(false)} className="flex-1">
-                          <div className="flex items-center justify-center px-4 py-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors cursor-pointer">
-                            <BarChart3 className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
-                            <span className="font-semibold text-sm">{adminT('analytics.title')}</span>
-                          </div>
-                        </Link>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-              
-              {/* Language Switcher */}
-              {(() => {
-                // ИСПРАВЛЕНИЕ: Используем только включенные языки из настроек магазина
-                const allLanguages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', flag: string, name: string }> = [
-                  { code: 'ru', flag: '🇷🇺', name: 'Русский' },
-                  { code: 'en', flag: '🇺🇸', name: 'English' },
-                  { code: 'he', flag: '🇮🇱', name: 'עברית' },
-                  { code: 'ar', flag: '🇸🇦', name: 'العربية' }
-                ];
-                
-                // Фильтруем языки по настройкам магазина
-                const enabledLanguageCodes = storeSettings?.enabledLanguages || ['ru'];
-                const languages = allLanguages.filter(lang => enabledLanguageCodes.includes(lang.code));
-                
-                // Don't show language switcher if only 1 language
-                if (languages.length <= 1) return null;
-                
-                // Layout logic: 
-                // 1 language = hidden (not shown)
-                // 2 languages = flex row
-                // 3 languages = flex row  
-                // 4+ languages = flex wrap (will wrap to new lines automatically)
-                
-                return (
-                  <div className="border-t border-gray-200 pt-4 mt-4">
-                    <div className="px-4">
-                      <span className="text-sm font-medium text-gray-700 block mb-3">{t('language')}</span>
-                      <div className={`flex ${languages.length >= 4 ? 'flex-wrap' : 'flex-nowrap'} gap-2 w-full`}>
-                        {languages.map((lang) => (
-                          <button
-                            key={lang.code}
-                            onClick={() => {
-                              changeLanguage(lang.code);
-                              setIsMobileMenuOpen(false);
-                            }}
-                            className={`flex items-center justify-center px-2 py-2 rounded-lg transition-colors text-xs flex-1 ${
-                              currentLanguage === lang.code 
-                                ? 'bg-blue-50 text-blue-600 font-medium' 
-                                : 'text-gray-700 hover:bg-gray-50'
-                            }`}
-                          >
-                            <span className="text-xs whitespace-nowrap">{lang.name}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-              
-              {/* PWA Install Button - Show on mobile/tablet but not desktop */}
-              {!isInstalled && (isMobile || isTablet) && (
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <div 
-                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
-                    onClick={() => {
-                      installApp();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Download className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                    <span className="font-medium">{t('pwa.installApp')}</span>
-                  </div>
-                </div>
-              )}
-              
-              {/* Login Button for non-logged in users */}
-              {!user && (
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <Link href="/auth" onClick={() => setIsMobileMenuOpen(false)}>
-                    <div className="flex items-center px-4 py-3 mx-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors cursor-pointer">
-                      <User className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                      <span className="font-medium">{t('login')}</span>
-                    </div>
-                  </Link>
-                </div>
-              )}
-              
-              {/* Logout Button - Only for logged in users */}
-              {user && (
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <div 
-                    className="flex items-center justify-center px-4 py-3 mx-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors cursor-pointer"
-                    onClick={() => {
-                      logoutMutation.mutate();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="mr-3 h-5 w-5 rtl:ml-3 rtl:mr-0" />
-                    <span className="font-medium">{t('logout')}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );

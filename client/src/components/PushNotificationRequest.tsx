@@ -171,10 +171,10 @@ export default function PushNotificationRequest() {
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[60]" />
       
       {/* Notification Request */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-sm mx-4">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[61] w-full max-w-sm mx-4">
         <div className="bg-white rounded-lg shadow-xl border border-gray-200 p-6">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
