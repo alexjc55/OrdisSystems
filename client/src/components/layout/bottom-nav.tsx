@@ -20,7 +20,7 @@ export function BottomNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = items.length;
 
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
 
@@ -49,7 +49,7 @@ export function BottomNav() {
   }, [setCartOpen]);
 
   const isActive = (path: string) => {
-    if (path === "/" && (location === "/" || location.startsWith("/category/") || location === "/all-products")) return true;
+    if (path === "/" && location === "/") return true;
     if (path !== "/" && location.startsWith(path)) return true;
     return false;
   };
