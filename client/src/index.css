@@ -1750,11 +1750,11 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
 /* Ensure proper positioning for mobile devices */
 @media (max-width: 767px) {
   .whatsapp-button {
-    bottom: 1.5rem !important;
-    right: 1.5rem !important;
-    width: 3.5rem !important; /* 56px */
-    height: 3.5rem !important; /* 56px */
-    min-width: 3.5rem;
+    bottom: 130px !important;
+    right: 1rem !important;
+    width: 3rem !important; /* 48px */
+    height: 3rem !important; /* 48px */
+    min-width: 3rem;
     min-height: 3.5rem;
     max-width: 3.5rem;
     max-height: 3.5rem;
@@ -1788,7 +1788,7 @@ html[lang="ar"] .slider-container .space-x-reverse > :not([hidden]) ~ :not([hidd
 html[lang="he"] .whatsapp-button,
 html[lang="ar"] .whatsapp-button {
   right: auto !important;
-  left: 1.5rem !important;
+  left: 1rem !important;
 }
 
 @media (min-width: 768px) {
