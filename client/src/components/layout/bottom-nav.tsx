@@ -24,7 +24,7 @@ export function BottomNav() {
 
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
 
-  const hiddenPaths = ["/admin", "/landing"];
+  const hiddenPaths = ["/landing"];
   if (hiddenPaths.some(p => location.startsWith(p))) return null;
 
   useEffect(() => {
