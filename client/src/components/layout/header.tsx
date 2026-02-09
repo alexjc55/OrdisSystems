@@ -112,7 +112,9 @@ export default function Header({ onResetView }: HeaderProps) {
 
   const handleInstallApp = () => {
     setIsBellOpen(false);
-    installApp();
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('trigger-pwa-install'));
+    }, 100);
   };
 
   return (

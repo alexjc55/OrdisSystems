@@ -55,8 +55,16 @@ export default function PWAInstallPrompt() {
       setPWAPromptShowing(false);
     };
 
+    const handleTriggerInstall = () => {
+      if (!checkStandalone) {
+        setShowPrompt(true);
+        setPWAPromptShowing(true);
+      }
+    };
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener('trigger-pwa-install', handleTriggerInstall);
 
     // For iOS, show install prompt after delay if conditions are met
     if (checkIOS && !checkStandalone) {
@@ -71,6 +79,7 @@ export default function PWAInstallPrompt() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener('trigger-pwa-install', handleTriggerInstall);
     };
   }, []);
 
