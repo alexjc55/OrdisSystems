@@ -38,6 +38,7 @@ import { ProtectedRoute } from "@/lib/protected-route";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { FacebookPixel } from "@/components/FacebookPixel";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import CartSidebar from "@/components/cart/cart-sidebar";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
@@ -318,6 +319,9 @@ function Router() {
       
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
+      
+      {/* Cart Sidebar - Global */}
+      <CartSidebar />
       
       {/* Bottom Navigation Bar - Mobile only */}
       <BottomNav />

@@ -31,7 +31,6 @@ import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
 import ProductCard from "@/components/menu/product-card";
-import CartSidebar from "@/components/cart/cart-sidebar";
 import { HeaderVariant } from "@/components/layout/header-variants";
 import SearchInput from "@/components/SearchInput";
 import StickyFilters from "@/components/filters/sticky-filters";
@@ -956,8 +955,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Cart Sidebar */}
-      <CartSidebar />
     </div>
   );
 }

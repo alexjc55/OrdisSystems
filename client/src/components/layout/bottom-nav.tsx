@@ -6,12 +6,12 @@ import { useLocation, Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { usePWA } from "@/hooks/usePWA";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export function BottomNav() {
   const { t } = useCommonTranslation();
   const { t: adminT } = useAdminTranslation();
-  const { items, toggleCart } = useCartStore();
+  const { items, toggleCart, setCartOpen } = useCartStore();
   const [location] = useLocation();
   const { user, logoutMutation } = useAuth();
   const { currentLanguage, changeLanguage } = useLanguage();
@@ -19,6 +19,7 @@ export function BottomNav() {
   const { isInstalled, installApp } = usePWA();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches;
@@ -34,6 +35,7 @@ export function BottomNav() {
     if (!isMenuOpen) return;
     const handleClick = (e: PointerEvent) => {
       if (menuRef.current?.contains(e.target as Node)) return;
+      if (menuBtnRef.current?.contains(e.target as Node)) return;
       setIsMenuOpen(false);
     };
     document.addEventListener('pointerdown', handleClick);
@@ -45,6 +47,11 @@ export function BottomNav() {
     if (path !== "/" && location.startsWith(path)) return true;
     return false;
   };
+
+  const handleNavClick = useCallback(() => {
+    setCartOpen(false);
+    setIsMenuOpen(false);
+  }, [setCartOpen]);
 
   const allLanguages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', name: string }> = [
     { code: 'ru', name: 'Русский' },
@@ -58,7 +65,7 @@ export function BottomNav() {
   return (
     <>
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black/30 z-[55] md:hidden" onClick={() => setIsMenuOpen(false)} />
+        <div className="fixed inset-0 bg-black/30 z-[55] md:hidden" />
       )}
 
       {isMenuOpen && (
@@ -178,6 +185,7 @@ export function BottomNav() {
         <div className="max-w-[1023px] mx-auto flex items-center justify-around h-[60px]">
           <UTMLink
             href="/"
+            onClick={handleNavClick}
             className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors ${
               isActive("/") ? "text-orange-500" : "text-gray-500"
             }`}
@@ -188,6 +196,7 @@ export function BottomNav() {
 
           <UTMLink
             href="/profile"
+            onClick={handleNavClick}
             className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors ${
               isActive("/profile") || isActive("/auth") ? "text-orange-500" : "text-gray-500"
             }`}
@@ -197,7 +206,10 @@ export function BottomNav() {
           </UTMLink>
 
           <button
-            onClick={toggleCart}
+            onClick={() => {
+              setIsMenuOpen(false);
+              toggleCart();
+            }}
             className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs text-gray-500 transition-colors relative"
           >
             <div className="relative">
@@ -212,7 +224,11 @@ export function BottomNav() {
           </button>
 
           <button
-            onClick={() => setIsMenuOpen(prev => !prev)}
+            ref={menuBtnRef}
+            onClick={() => {
+              setCartOpen(false);
+              setIsMenuOpen(prev => !prev);
+            }}
             className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors ${
               isMenuOpen ? "text-orange-500" : "text-gray-500"
             }`}
