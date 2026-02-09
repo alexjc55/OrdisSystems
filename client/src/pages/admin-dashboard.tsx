@@ -2306,6 +2306,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
           onClick={handleSave}
           disabled={updateOrderMutation.isPending}
           variant="success"
+          className="whitespace-nowrap text-sm"
         >
           {updateOrderMutation.isPending ? adminT('common.saving') : adminT('common.saveChanges')}
         </Button>
