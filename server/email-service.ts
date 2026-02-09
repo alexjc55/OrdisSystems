@@ -341,6 +341,19 @@ export async function sendNewOrderEmail(
   // Get translated status
   const statusText = template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status || 'pending';
 
+  // Translate delivery time keys (half_day_first, half_day_second, morning, afternoon)
+  const formatDeliveryTime = (time: string): string => {
+    if (!time) return time;
+    const translations: Record<string, Record<string, string>> = {
+      half_day_first: { ru: 'Первая половина дня', en: 'First half of the day', he: 'חצי יום ראשון', ar: 'النصف الأول من اليوم' },
+      half_day_second: { ru: 'Вторая половина дня', en: 'Second half of the day', he: 'חצי יום שני', ar: 'النصف الثاني من اليوم' },
+      morning: { ru: 'Первая половина дня', en: 'First half of the day', he: 'חצי יום ראשון', ar: 'النصف الأول من اليوم' },
+      afternoon: { ru: 'Вторая половина дня', en: 'Second half of the day', he: 'חצי יום שני', ar: 'النصف الثاني من اليوم' },
+    };
+    return translations[time]?.[language] || translations[time]?.['en'] || time;
+  };
+  const deliveryTimeFormatted = formatDeliveryTime(orderDetails.deliveryTime || '');
+
   // Function to format quantity with units
   const formatQuantityWithUnit = (quantity: number, unit: string, language: string): string => {
     const unitTranslations: { [key: string]: { [lang: string]: string } } = {
@@ -415,7 +428,7 @@ export async function sendNewOrderEmail(
             </tr>` : ''}
             ${orderDetails.deliveryTime ? `<tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.deliveryTimeLabel}</td>
-              <td style="padding: 10px 0; color: #666;">${orderDetails.deliveryTime}</td>
+              <td style="padding: 10px 0; color: #666;">${deliveryTimeFormatted}</td>
             </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
@@ -486,7 +499,7 @@ ${template.customerLabel} ${customerName}
 ${orderDetails.customerPhone ? `${template.phoneLabel} ${orderDetails.customerPhone}` : ''}
 ${orderDetails.deliveryAddress ? `${template.addressLabel} ${orderDetails.deliveryAddress}` : ''}
 ${orderDetails.deliveryDate ? `${template.deliveryDateLabel} ${orderDetails.deliveryDate}` : ''}
-${orderDetails.deliveryTime ? `${template.deliveryTimeLabel} ${orderDetails.deliveryTime}` : ''}
+${orderDetails.deliveryTime ? `${template.deliveryTimeLabel} ${deliveryTimeFormatted}` : ''}
 ${template.totalLabel} ${totalAmount}₪
 ${orderDetails.paymentMethod ? `${template.paymentLabel} ${orderDetails.paymentMethod}` : ''}
 ${template.statusLabel} ${statusText}
