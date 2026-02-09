@@ -42,12 +42,6 @@ export function BottomNav() {
     return () => document.removeEventListener('pointerdown', handleClick);
   }, [isMenuOpen]);
 
-  const isActive = (path: string) => {
-    if (path === "/" && (location === "/" || location.startsWith("/category/") || location === "/all-products")) return true;
-    if (path !== "/" && location.startsWith(path)) return true;
-    return false;
-  };
-
   const handleNavClick = useCallback(() => {
     setCartOpen(false);
     setIsMenuOpen(false);
@@ -187,9 +181,7 @@ export function BottomNav() {
           <UTMLink
             href="/"
             onClick={handleNavClick}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors ${
-              isActive("/") ? "text-orange-500" : "text-gray-500"
-            }`}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors text-gray-500"
           >
             <Home className="h-5 w-5" />
             <span>{t("navigation.home")}</span>
@@ -198,9 +190,7 @@ export function BottomNav() {
           <UTMLink
             href="/profile"
             onClick={handleNavClick}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors ${
-              isActive("/profile") || isActive("/auth") ? "text-orange-500" : "text-gray-500"
-            }`}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors text-gray-500"
           >
             <User className="h-5 w-5" />
             <span>{t("navigation.profile")}</span>
@@ -230,9 +220,7 @@ export function BottomNav() {
               setCartOpen(false);
               setIsMenuOpen(prev => !prev);
             }}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors ${
-              isMenuOpen ? "text-orange-500" : "text-gray-500"
-            }`}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors text-gray-500"
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             <span>{t("navigation.menu")}</span>
