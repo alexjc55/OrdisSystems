@@ -468,6 +468,7 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
   };
 
   const { t: adminT } = useAdminTranslation();
+  const { t: commonT } = useCommonTranslation();
   const { i18n } = useTranslation();
   
   const getStatusLabel = (status: string) => {
@@ -631,7 +632,7 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
               </div>
               <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {formatDeliveryTimeRange(order.deliveryTime)}
+                {formatDeliveryTimeRange(order.deliveryTime, commonT)}
               </div>
               {order.deliveryAddress && (
                 <div className="flex items-center gap-1">
@@ -1317,7 +1318,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     ${editedOrder.customerPhone ? `<div class="info-item"><span class="info-label">${l('phone')}:</span> <span>${editedOrder.customerPhone}</span></div>` : ''}
     ${editedOrder.deliveryDate ? `<div class="info-item"><span class="info-label">${l('deliveryDate')}:</span> <span>${editedOrder.deliveryDate}</span></div>` : ''}
     ${editedOrder.deliveryAddress ? `<div class="info-item"><span class="info-label">${l('address')}:</span> <span>${editedOrder.deliveryAddress}</span></div>` : ''}
-    ${editedOrder.deliveryTime ? `<div class="info-item"><span class="info-label">${l('deliveryTime')}:</span> <span>${editedOrder.deliveryTime}</span></div>` : ''}
+    ${editedOrder.deliveryTime ? `<div class="info-item"><span class="info-label">${l('deliveryTime')}:</span> <span>${formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon)}</span></div>` : ''}
     ${order.paymentMethod ? `<div class="info-item"><span class="info-label">${l('payment')}:</span> <span>${order.paymentMethod}</span></div>` : ''}
   </div>
 
@@ -5304,7 +5305,7 @@ export default function AdminDashboard() {
                                             <span className="font-medium text-blue-600">{adminT('orders.deliveryDate')}:</span>
                                           </div>
                                           <div className={`text-sm text-blue-600 ${isRTL ? 'text-right' : 'text-center'}`}>
-                                            {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {order.deliveryTime || ''}
+                                            {new Date(order.deliveryDate).toLocaleDateString('ru-RU')} {formatDeliveryTimeRange(order.deliveryTime || '', commonT)}
                                           </div>
                                         </>
                                       )}
