@@ -509,7 +509,8 @@
     "installApp": "Install the app",
     "installAppDesc": "Quick access from your home screen",
     "enable": "Enable",
-    "install": "Install"
+    "install": "Install",
+    "noNotifications": "No new notifications"
   },
   "error": "Error",
   "cart": {

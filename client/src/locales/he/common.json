@@ -490,7 +490,8 @@
     "installApp": "התקן את האפליקציה",
     "installAppDesc": "גישה מהירה ממסך הבית",
     "enable": "הפעל",
-    "install": "התקן"
+    "install": "התקן",
+    "noNotifications": "אין התראות חדשות"
   },
   "pwa": {
     "installTitle": "התקן אפליקציה",

@@ -196,8 +196,8 @@ export default function Header({ onResetView }: HeaderProps) {
               </Button>
             </div>
 
-            {/* Bell Button - Mobile only, shows when there are pending actions */}
-            {isMobile && bellCount > 0 && (
+            {/* Bell Button - Mobile only, always visible */}
+            {isMobile && (
               <div className="relative md:hidden">
                 <Button
                   ref={bellBtnRef}
@@ -207,9 +207,11 @@ export default function Header({ onResetView }: HeaderProps) {
                   onClick={() => setIsBellOpen(prev => !prev)}
                 >
                   <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 animate-pulse">
-                    {bellCount}
-                  </span>
+                  {bellCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 animate-pulse">
+                      {bellCount}
+                    </span>
+                  )}
                 </Button>
 
                 {isBellOpen && (
@@ -244,6 +246,14 @@ export default function Header({ onResetView }: HeaderProps) {
                             <p className="text-sm font-medium text-gray-900">{t('bell.installApp')}</p>
                             <p className="text-xs text-gray-500">{t('bell.installAppDesc')}</p>
                           </div>
+                        </div>
+                      )}
+                      {bellCount === 0 && (
+                        <div className="flex items-center gap-3 p-4 text-center">
+                          <div className="flex-shrink-0 w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Bell className="w-4 h-4 text-gray-400" />
+                          </div>
+                          <p className="text-sm text-gray-500">{t('bell.noNotifications')}</p>
                         </div>
                       )}
                     </div>

@@ -588,7 +588,8 @@
     "installApp": "تثبيت التطبيق",
     "installAppDesc": "وصول سريع من الشاشة الرئيسية",
     "enable": "تفعيل",
-    "install": "تثبيت"
+    "install": "تثبيت",
+    "noNotifications": "لا توجد إشعارات جديدة"
   },
   "pwa": {
     "installTitle": "تثبيت التطبيق",
