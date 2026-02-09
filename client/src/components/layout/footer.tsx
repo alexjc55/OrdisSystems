@@ -10,7 +10,7 @@ export function Footer() {
 
   return (
     <footer 
-      className="full-width-footer bg-[#333333] py-4" 
+      className="bg-[#333333] py-4 w-full" 
       dir="ltr"
     >
       <div className="max-w-[1023px] mx-auto px-4 flex flex-row items-center justify-center gap-2 sm:gap-3">
