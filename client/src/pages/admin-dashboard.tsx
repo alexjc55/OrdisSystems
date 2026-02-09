@@ -304,7 +304,8 @@ import {
   Camera,
   Menu,
   Mail,
-  BarChart3
+  BarChart3,
+  Printer
 } from "lucide-react";
 
 // Validation schemas
@@ -1209,6 +1210,151 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
   const handleAddItemFromBarcode = (product: any, weight: number) => {
     addItem(product, weight);
+  };
+
+  const handlePrint = () => {
+    const currentLang = i18n.language as SupportedLanguage;
+    const isRTLPrint = currentLang === 'he' || currentLang === 'ar';
+    const storeName = storeSettings?.storeName || 'Store';
+    const currency = '₪';
+    
+    const statusLabels: Record<string, Record<string, string>> = {
+      pending: { ru: 'Ожидает', en: 'Pending', he: 'ממתין', ar: 'قيد الانتظار' },
+      confirmed: { ru: 'Подтвержден', en: 'Confirmed', he: 'מאושר', ar: 'مؤكد' },
+      preparing: { ru: 'Готовится', en: 'Preparing', he: 'בהכנה', ar: 'يتم التحضير' },
+      ready: { ru: 'Готов', en: 'Ready', he: 'מוכן', ar: 'جاهز' },
+      delivered: { ru: 'Доставлен', en: 'Delivered', he: 'נמסר', ar: 'تم التسليم' },
+      cancelled: { ru: 'Отменен', en: 'Cancelled', he: 'בוטל', ar: 'ملغي' },
+    };
+
+    const labels: Record<string, Record<string, string>> = {
+      order: { ru: 'Заказ', en: 'Order', he: 'הזמנה', ar: 'طلب' },
+      customer: { ru: 'Клиент', en: 'Customer', he: 'לקוח', ar: 'العميل' },
+      phone: { ru: 'Телефон', en: 'Phone', he: 'טלפון', ar: 'الهاتف' },
+      address: { ru: 'Адрес', en: 'Address', he: 'כתובת', ar: 'العنوان' },
+      deliveryDate: { ru: 'Дата доставки', en: 'Delivery Date', he: 'תאריך משלוח', ar: 'تاريخ التسليم' },
+      deliveryTime: { ru: 'Время доставки', en: 'Delivery Time', he: 'שעת משלוח', ar: 'وقت التسليم' },
+      status: { ru: 'Статус', en: 'Status', he: 'סטטוס', ar: 'الحالة' },
+      product: { ru: 'Товар', en: 'Product', he: 'מוצר', ar: 'المنتج' },
+      qty: { ru: 'Кол-во', en: 'Qty', he: 'כמות', ar: 'الكمية' },
+      price: { ru: 'Цена', en: 'Price', he: 'מחיר', ar: 'السعر' },
+      check: { ru: '✓', en: '✓', he: '✓', ar: '✓' },
+      notes: { ru: 'Заметки', en: 'Notes', he: 'הערות', ar: 'ملاحظات' },
+      subtotal: { ru: 'Подитог', en: 'Subtotal', he: 'סיכום ביניים', ar: 'المجموع الفرعي' },
+      delivery: { ru: 'Доставка', en: 'Delivery', he: 'משלוח', ar: 'توصيل' },
+      discount: { ru: 'Скидка', en: 'Discount', he: 'הנחה', ar: 'خصم' },
+      total: { ru: 'Итого', en: 'Total', he: 'סה"כ', ar: 'المجموع' },
+      orderNotes: { ru: 'Комментарии к заказу', en: 'Order Notes', he: 'הערות להזמנה', ar: 'ملاحظات الطلب' },
+      generalComments: { ru: 'Общие комментарии', en: 'General Comments', he: 'הערות כלליות', ar: 'تعليقات عامة' },
+      payment: { ru: 'Оплата', en: 'Payment', he: 'תשלום', ar: 'الدفع' },
+    };
+
+    const l = (key: string) => labels[key]?.[currentLang] || labels[key]?.['en'] || key;
+    const getStatusLabel = (s: string) => statusLabels[s]?.[currentLang] || statusLabels[s]?.['en'] || s;
+
+    const subtotal = calculateSubtotal();
+    const discountAmount = calculateOrderDiscount(subtotal);
+    const deliveryFee = calculateCorrectDeliveryFee();
+    const finalTotal = calculateFinalTotal();
+
+    const itemsRows = editedOrderItems.map((item: any, index: number) => {
+      const productName = getLocalizedField(item.product, 'name', currentLang) || item.product?.name || `Product #${item.productId}`;
+      const quantity = item.quantity;
+      const unit = item.product?.unit || 'piece';
+      const unitDisplay = getUnitDisplay(unit, quantity);
+      const price = parseFloat(item.totalPrice || 0).toFixed(2);
+      const hasDiscount = itemDiscounts[index] && itemDiscounts[index].value > 0;
+      
+      return `<tr>
+        <td style="padding:6px 8px;border:1px solid #ccc;text-align:center;width:40px;">
+          <div style="width:18px;height:18px;border:2px solid #333;display:inline-block;"></div>
+        </td>
+        <td style="padding:6px 8px;border:1px solid #ccc;">${productName}${hasDiscount ? ' <span style="color:#e53e3e;font-size:11px;">(' + l('discount') + ')</span>' : ''}</td>
+        <td style="padding:6px 8px;border:1px solid #ccc;text-align:center;white-space:nowrap;">${unitDisplay}</td>
+        <td style="padding:6px 8px;border:1px solid #ccc;text-align:center;">${price}${currency}</td>
+        <td style="padding:6px 8px;border:1px solid #ccc;width:120px;">&nbsp;</td>
+      </tr>`;
+    }).join('');
+
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    if (!printWindow) return;
+
+    const html = `<!DOCTYPE html>
+<html dir="${isRTLPrint ? 'rtl' : 'ltr'}" lang="${currentLang}">
+<head>
+  <meta charset="UTF-8">
+  <title>${l('order')} #${order.id}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; font-size: 13px; padding: 20px; color: #333; direction: ${isRTLPrint ? 'rtl' : 'ltr'}; }
+    .header { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #333; }
+    .header h1 { font-size: 18px; margin-bottom: 4px; }
+    .header .store-name { font-size: 14px; color: #666; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-bottom: 15px; font-size: 12px; }
+    .info-item { display: flex; gap: 6px; }
+    .info-label { font-weight: bold; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    th { padding: 6px 8px; border: 1px solid #ccc; background: #f5f5f5; font-size: 12px; text-align: ${isRTLPrint ? 'right' : 'left'}; }
+    .totals { margin-bottom: 15px; }
+    .totals-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+    .totals-row.total-final { font-weight: bold; font-size: 15px; border-top: 2px solid #333; padding-top: 6px; margin-top: 4px; }
+    .comments-section { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 60px; }
+    .comments-section h3 { font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+    .order-notes { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
+    .order-notes strong { display: block; margin-bottom: 4px; }
+    @media print { body { padding: 10px; } @page { margin: 10mm; } }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="store-name">${storeName}</div>
+    <h1>${l('order')} #${order.id}</h1>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-item"><span class="info-label">${l('customer')}:</span> <span>${order.customerName || ''}</span></div>
+    <div class="info-item"><span class="info-label">${l('status')}:</span> <span>${getStatusLabel(editedOrder.status)}</span></div>
+    ${editedOrder.customerPhone ? `<div class="info-item"><span class="info-label">${l('phone')}:</span> <span>${editedOrder.customerPhone}</span></div>` : ''}
+    ${editedOrder.deliveryDate ? `<div class="info-item"><span class="info-label">${l('deliveryDate')}:</span> <span>${editedOrder.deliveryDate}</span></div>` : ''}
+    ${editedOrder.deliveryAddress ? `<div class="info-item"><span class="info-label">${l('address')}:</span> <span>${editedOrder.deliveryAddress}</span></div>` : ''}
+    ${editedOrder.deliveryTime ? `<div class="info-item"><span class="info-label">${l('deliveryTime')}:</span> <span>${editedOrder.deliveryTime}</span></div>` : ''}
+    ${order.paymentMethod ? `<div class="info-item"><span class="info-label">${l('payment')}:</span> <span>${order.paymentMethod}</span></div>` : ''}
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:40px;text-align:center;">${l('check')}</th>
+        <th>${l('product')}</th>
+        <th style="text-align:center;">${l('qty')}</th>
+        <th style="text-align:center;">${l('price')}</th>
+        <th style="width:120px;">${l('notes')}</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${itemsRows}
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div class="totals-row"><span>${l('subtotal')}:</span> <span>${subtotal.toFixed(2)}${currency}</span></div>
+    ${discountAmount > 0 ? `<div class="totals-row" style="color:#e53e3e;"><span>${l('discount')}:</span> <span>-${discountAmount.toFixed(2)}${currency}</span></div>` : ''}
+    ${deliveryFee > 0 ? `<div class="totals-row"><span>${l('delivery')}:</span> <span>${deliveryFee.toFixed(2)}${currency}</span></div>` : ''}
+    <div class="totals-row total-final"><span>${l('total')}:</span> <span>${finalTotal.toFixed(2)}${currency}</span></div>
+  </div>
+
+  ${editedOrder.notes ? `<div class="order-notes"><strong>${l('orderNotes')}:</strong> ${editedOrder.notes}</div>` : ''}
+
+  <div class="comments-section">
+    <h3>${l('generalComments')}</h3>
+  </div>
+
+  <script>window.onload = function() { window.print(); };</script>
+</body>
+</html>`;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
   };
 
   const handleSave = () => {
@@ -2145,6 +2291,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       <div className="flex justify-center gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onClose}>
           {adminT('actions.cancel')}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={handlePrint}
+          title={adminT('orders.print') || 'Print'}
+        >
+          <Printer className="h-4 w-4 mr-1" />
+          {adminT('orders.print') || 'Print'}
         </Button>
         <Button 
           onClick={handleSave}

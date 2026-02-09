@@ -233,6 +233,8 @@ export async function sendNewOrderEmail(
       paymentLabel: 'Способ оплаты:',
       notesLabel: 'Комментарии:',
       itemsLabel: 'Товары:',
+      deliveryDateLabel: 'Дата доставки:',
+      deliveryTimeLabel: 'Время доставки:',
       footer: 'Обработайте заказ в админ-панели',
       viewOrderButton: 'Посмотреть заказ',
       quantityLabel: 'Кол-во',
@@ -259,6 +261,8 @@ export async function sendNewOrderEmail(
       paymentLabel: 'Payment method:',
       notesLabel: 'Notes:',
       itemsLabel: 'Items:',
+      deliveryDateLabel: 'Delivery date:',
+      deliveryTimeLabel: 'Delivery time:',
       footer: 'Process the order in admin panel',
       viewOrderButton: 'View order',
       quantityLabel: 'Quantity',
@@ -285,6 +289,8 @@ export async function sendNewOrderEmail(
       paymentLabel: 'אמצעי תשלום:',
       notesLabel: 'הערות:',
       itemsLabel: 'פריטים:',
+      deliveryDateLabel: 'תאריך משלוח:',
+      deliveryTimeLabel: 'שעת משלוח:',
       footer: 'עבד על ההזמנה בפאנל הניהול',
       viewOrderButton: 'צפה בהזמנה',
       quantityLabel: 'כמות',
@@ -311,6 +317,8 @@ export async function sendNewOrderEmail(
       paymentLabel: 'طريقة الدفع:',
       notesLabel: 'الملاحظات:',
       itemsLabel: 'العناصر:',
+      deliveryDateLabel: 'تاريخ التسليم:',
+      deliveryTimeLabel: 'وقت التسليم:',
       footer: 'قم بمعالجة الطلب في لوحة الإدارة',
       viewOrderButton: 'عرض الطلب',
       quantityLabel: 'الكمية',
@@ -401,6 +409,14 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.addressLabel}</td>
               <td style="padding: 10px 0; color: #666;">${orderDetails.deliveryAddress}</td>
             </tr>` : ''}
+            ${orderDetails.deliveryDate ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.deliveryDateLabel}</td>
+              <td style="padding: 10px 0; color: #666;">${orderDetails.deliveryDate}</td>
+            </tr>` : ''}
+            ${orderDetails.deliveryTime ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.deliveryTimeLabel}</td>
+              <td style="padding: 10px 0; color: #666;">${orderDetails.deliveryTime}</td>
+            </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
               <td style="padding: 10px 0; color: #f97316; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
@@ -469,6 +485,8 @@ ${template.title}
 ${template.customerLabel} ${customerName}
 ${orderDetails.customerPhone ? `${template.phoneLabel} ${orderDetails.customerPhone}` : ''}
 ${orderDetails.deliveryAddress ? `${template.addressLabel} ${orderDetails.deliveryAddress}` : ''}
+${orderDetails.deliveryDate ? `${template.deliveryDateLabel} ${orderDetails.deliveryDate}` : ''}
+${orderDetails.deliveryTime ? `${template.deliveryTimeLabel} ${orderDetails.deliveryTime}` : ''}
 ${template.totalLabel} ${totalAmount}₪
 ${orderDetails.paymentMethod ? `${template.paymentLabel} ${orderDetails.paymentMethod}` : ''}
 ${template.statusLabel} ${statusText}

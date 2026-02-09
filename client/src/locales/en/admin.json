@@ -329,6 +329,7 @@
     "activeOrders": "Active orders",
     "deliveredOrders": "Delivered orders",
     "cancelledOrders": "Cancelled orders",
+    "print": "Print",
     "orderNumber": "Order #",
     "customer": "Customer",
     "orderTotal": "Order total",

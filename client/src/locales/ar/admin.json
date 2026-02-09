@@ -556,6 +556,7 @@
     "updated": "تم التحديث",
     "updateSuccess": "تم تحديث الطلب بنجاح",
     "updateError": "فشل في تحديث الطلب",
+    "print": "طباعة",
     "orderNumber": "رقم الطلب",
     "customer": "العميل",
     "orderTotal": "إجمالي الطلب",

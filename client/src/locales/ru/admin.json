@@ -688,6 +688,7 @@
     "activeOrders": "Активные заказы",
     "deliveredOrders": "Доставленные заказы",
     "cancelledOrders": "Отмененные заказы",
+    "print": "Печать",
     "orderNumber": "Заказ №",
     "customer": "Клиент",
     "orderTotal": "Сумма заказа",
