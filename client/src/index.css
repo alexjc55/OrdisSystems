@@ -1822,4 +1822,11 @@ html[lang="ar"] .whatsapp-button {
   width: 100% !important;
 }
 
+/* Bottom navigation bar spacing on mobile - use class to scope to customer pages */
+@media (max-width: 767px) {
+  body:has(.bottom-nav) {
+    padding-bottom: 64px;
+  }
+}
+
 /* Cache bust: 1751412738 */

@@ -37,6 +37,7 @@ import NotFound from "@/pages/not-found";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { FacebookPixel } from "@/components/FacebookPixel";
+import { BottomNav } from "@/components/layout/bottom-nav";
 
 function Router() {
   const { storeSettings } = useStoreSettings();
@@ -317,6 +318,9 @@ function Router() {
       
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
+      
+      {/* Bottom Navigation Bar - Mobile only */}
+      <BottomNav />
       
       {/* Render custom footer HTML/JS */}
       {storeSettings?.footerHtml && (
