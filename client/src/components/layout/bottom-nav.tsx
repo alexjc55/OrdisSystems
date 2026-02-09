@@ -51,6 +51,7 @@ export function BottomNav() {
   const handleNavClick = useCallback(() => {
     setCartOpen(false);
     setIsMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [setCartOpen]);
 
   const allLanguages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', name: string }> = [
@@ -82,7 +83,7 @@ export function BottomNav() {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex-1 min-w-[45%]">
+              <Link href="/" onClick={() => { setIsMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} className="flex-1 min-w-[45%]">
                 <div className="flex items-center justify-center px-3 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
                   <Utensils className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
                   <span className="font-medium text-sm">{t('menu')}</span>

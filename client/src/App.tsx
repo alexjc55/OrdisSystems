@@ -317,6 +317,14 @@ function Router() {
         type={notificationModal.type}
       />
       
+      {/* Render custom footer HTML/JS */}
+      {storeSettings?.footerHtml && (
+        <CustomHtml html={storeSettings.footerHtml} type="footer" />
+      )}
+      
+      {/* Ordis Footer */}
+      <Footer />
+
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
       
@@ -325,14 +333,6 @@ function Router() {
       
       {/* Bottom Navigation Bar - Mobile only */}
       <BottomNav />
-      
-      {/* Render custom footer HTML/JS */}
-      {storeSettings?.footerHtml && (
-        <CustomHtml html={storeSettings.footerHtml} type="footer" />
-      )}
-      
-      {/* Ordis Footer */}
-      <Footer />
     </ErrorBoundary>
   );
 }
