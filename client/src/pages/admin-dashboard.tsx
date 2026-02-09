@@ -2297,9 +2297,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
           variant="outline"
           onClick={handlePrint}
           title={adminT('orders.print') || 'Print'}
+          className="px-3"
         >
-          <Printer className="h-4 w-4 mr-1" />
-          {adminT('orders.print') || 'Print'}
+          <Printer className="h-4 w-4 sm:mr-1" />
+          <span className="hidden sm:inline">{adminT('orders.print') || 'Print'}</span>
         </Button>
         <Button 
           onClick={handleSave}
