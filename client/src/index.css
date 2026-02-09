@@ -1829,4 +1829,13 @@ html[lang="ar"] .whatsapp-button {
   }
 }
 
+/* Remove focus ring from bottom nav buttons */
+.bottom-nav a:focus,
+.bottom-nav a:focus-visible,
+.bottom-nav button:focus,
+.bottom-nav button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Cache bust: 1751412738 */
