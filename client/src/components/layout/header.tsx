@@ -65,13 +65,6 @@ export default function Header({ onResetView }: HeaderProps) {
 
   const cartItemsCount = items.length; // Count unique products, not total quantity
 
-  // Listen for external toggle event (from bottom nav)
-  useEffect(() => {
-    const handleToggle = () => setIsMobileMenuOpen(prev => !prev);
-    window.addEventListener('toggle-mobile-menu', handleToggle);
-    return () => window.removeEventListener('toggle-mobile-menu', handleToggle);
-  }, []);
-
   // Close mobile menu when clicking outside (but not on toggle button)
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
