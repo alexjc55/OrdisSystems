@@ -510,7 +510,13 @@
     "installAppDesc": "Quick access from your home screen",
     "enable": "Enable",
     "install": "Install",
-    "noNotifications": "No new notifications"
+    "noNotifications": "No new notifications",
+    "notifications": "Notifications",
+    "markAllRead": "Mark all read",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} h ago",
+    "daysAgo": "{{count}} d ago"
   },
   "error": "Error",
   "cart": {

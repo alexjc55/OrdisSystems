@@ -17,6 +17,7 @@ import PWAStatusBar from "@/components/PWAStatusBar";
 import PushNotificationRequest from "@/components/PushNotificationRequest";
 import NotificationModal from "@/components/NotificationModal";
 import { CacheBuster } from "@/components/cache-buster";
+import { addNotification } from "@/lib/notification-storage";
 import { IOSCacheBuster } from "@/components/ios-cache-buster";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -151,6 +152,10 @@ function Router() {
         const notification = JSON.parse(decodeURIComponent(notificationData));
 
         
+        const nType = notification.type || 'marketing';
+        const mappedType = nType === 'order_status' || nType === 'order' ? 'order' : nType === 'system' ? 'system' : 'marketing';
+        addNotification(notification.title || 'Уведомление', notification.body || '', mappedType);
+
         setNotificationModal({
           isOpen: true,
           title: notification.title || 'Уведомление',
@@ -158,7 +163,6 @@ function Router() {
           type: notification.type || 'marketing'
         });
         
-        // Clean URL after processing notification
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
         
@@ -173,6 +177,13 @@ function Router() {
       // Handle different message types from Service Worker
       if (event.data?.type === 'notification-shown') {
         console.log('✅ [App] Notification was shown successfully:', event.data.title);
+        try {
+          const nType = event.data.notificationType || 'marketing';
+          const mappedType = nType === 'order_status' || nType === 'order' ? 'order' : nType === 'system' ? 'system' : 'marketing';
+          addNotification(event.data.title, event.data.body, mappedType);
+        } catch (e) {
+          console.error('Failed to store notification:', e);
+        }
       } else if (event.data?.type === 'notification-error') {
         console.error('❌ [App] Notification failed to show:', event.data.error);
         alert(`Push notification error: ${event.data.error}`);

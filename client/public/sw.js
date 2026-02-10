@@ -238,13 +238,13 @@ self.addEventListener('push', function(event) {
       self.registration.showNotification(data.title, options)
         .then(() => {
           console.log('✅ [SW] Notification shown successfully:', data.title);
-          // Broadcast to main thread for debugging
           self.clients.matchAll().then(clients => {
             clients.forEach(client => {
               client.postMessage({
                 type: 'notification-shown',
                 title: data.title,
-                body: data.body
+                body: data.body,
+                notificationType: data.data?.type || 'marketing'
               });
             });
           });

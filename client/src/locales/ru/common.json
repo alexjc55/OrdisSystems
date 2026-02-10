@@ -533,7 +533,13 @@
     "installAppDesc": "Быстрый доступ с домашнего экрана",
     "enable": "Включить",
     "install": "Установить",
-    "noNotifications": "Нет новых уведомлений"
+    "noNotifications": "Нет новых уведомлений",
+    "notifications": "Уведомления",
+    "markAllRead": "Прочитать все",
+    "justNow": "Только что",
+    "minutesAgo": "{{count}} мин. назад",
+    "hoursAgo": "{{count}} ч. назад",
+    "daysAgo": "{{count}} дн. назад"
   },
   "error": "Ошибка",
   "cart": {

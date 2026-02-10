@@ -491,7 +491,13 @@
     "installAppDesc": "גישה מהירה ממסך הבית",
     "enable": "הפעל",
     "install": "התקן",
-    "noNotifications": "אין התראות חדשות"
+    "noNotifications": "אין התראות חדשות",
+    "notifications": "התראות",
+    "markAllRead": "סמן הכל כנקרא",
+    "justNow": "עכשיו",
+    "minutesAgo": "לפני {{count}} דק׳",
+    "hoursAgo": "לפני {{count}} שע׳",
+    "daysAgo": "לפני {{count}} ימים"
   },
   "pwa": {
     "installTitle": "התקן אפליקציה",

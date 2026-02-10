@@ -589,7 +589,13 @@
     "installAppDesc": "وصول سريع من الشاشة الرئيسية",
     "enable": "تفعيل",
     "install": "تثبيت",
-    "noNotifications": "لا توجد إشعارات جديدة"
+    "noNotifications": "لا توجد إشعارات جديدة",
+    "notifications": "الإشعارات",
+    "markAllRead": "قراءة الكل",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} دقيقة",
+    "hoursAgo": "منذ {{count}} ساعة",
+    "daysAgo": "منذ {{count}} يوم"
   },
   "pwa": {
     "installTitle": "تثبيت التطبيق",

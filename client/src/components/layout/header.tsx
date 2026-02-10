@@ -35,7 +35,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3, Bell } from "lucide-react";
+import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3, Bell, CheckCheck, Package, Megaphone, Info } from "lucide-react";
+import { getNotifications, getUnreadCount, markAllAsRead, type StoredNotification } from "@/lib/notification-storage";
 import { useLocation } from "wouter";
 import { UTMLink as Link } from "@/components/UTMLink";
 import type { User as UserType } from "@shared/schema";
@@ -66,9 +67,23 @@ export default function Header({ onResetView }: HeaderProps) {
 
   const cartItemsCount = items.length;
 
+  const [notifications, setNotifications] = useState<StoredNotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
   const needsPush = pushSupported && pushPermission === 'default' && !isSubscribed;
   const needsInstall = !isInstalled && !isStandalone && isMobile;
-  const bellCount = (needsPush ? 1 : 0) + (needsInstall ? 1 : 0);
+  const actionCount = (needsPush ? 1 : 0) + (needsInstall ? 1 : 0);
+  const bellCount = actionCount + unreadCount;
+
+  useEffect(() => {
+    const refreshNotifications = () => {
+      setNotifications(getNotifications());
+      setUnreadCount(getUnreadCount());
+    };
+    refreshNotifications();
+    window.addEventListener('notifications-updated', refreshNotifications);
+    return () => window.removeEventListener('notifications-updated', refreshNotifications);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: PointerEvent) => {
@@ -115,6 +130,37 @@ export default function Header({ onResetView }: HeaderProps) {
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent('trigger-pwa-install'));
     }, 100);
+  };
+
+  const handleMarkAllRead = () => {
+    markAllAsRead();
+  };
+
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'order': return <Package className="w-4 h-4 text-white" />;
+      case 'marketing': return <Megaphone className="w-4 h-4 text-white" />;
+      default: return <Info className="w-4 h-4 text-white" />;
+    }
+  };
+
+  const getNotificationBg = (type: string) => {
+    switch (type) {
+      case 'order': return 'bg-orange-500';
+      case 'marketing': return 'bg-purple-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const formatTimeAgo = (timestamp: number): string => {
+    const diff = Date.now() - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (minutes < 1) return t('bell.justNow');
+    if (minutes < 60) return (t as any)('bell.minutesAgo', { count: minutes });
+    if (hours < 24) return (t as any)('bell.hoursAgo', { count: hours });
+    return (t as any)('bell.daysAgo', { count: days });
   };
 
   return (
@@ -217,41 +263,81 @@ export default function Header({ onResetView }: HeaderProps) {
                 {isBellOpen && (
                   <div
                     ref={bellRef}
-                    className="absolute top-full right-0 rtl:right-auto rtl:left-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-[59]"
+                    className="absolute top-full right-0 rtl:right-auto rtl:left-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-[59]"
                   >
-                    <div className="p-3 space-y-2">
-                      {needsPush && (
-                        <div
-                          className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
-                          onClick={handlePushEnable}
-                        >
-                          <div className="flex-shrink-0 w-9 h-9 bg-blue-500 rounded-full flex items-center justify-center">
-                            <Bell className="w-4 h-4 text-white" />
+                    {(needsPush || needsInstall) && (
+                      <div className="p-3 space-y-2 border-b border-gray-100">
+                        {needsPush && (
+                          <div
+                            className="flex items-center gap-3 p-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 cursor-pointer transition-colors"
+                            onClick={handlePushEnable}
+                          >
+                            <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                              <Bell className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900">{t('bell.enableNotifications')}</p>
+                              <p className="text-xs text-gray-500">{t('bell.enableNotificationsDesc')}</p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900">{t('bell.enableNotifications')}</p>
-                            <p className="text-xs text-gray-500">{t('bell.enableNotificationsDesc')}</p>
+                        )}
+                        {needsInstall && (
+                          <div
+                            className="flex items-center gap-3 p-2.5 rounded-lg bg-green-50 hover:bg-green-100 cursor-pointer transition-colors"
+                            onClick={handleInstallApp}
+                          >
+                            <div className="flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                              <Download className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-gray-900">{t('bell.installApp')}</p>
+                              <p className="text-xs text-gray-500">{t('bell.installAppDesc')}</p>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                      {needsInstall && (
-                        <div
-                          className="flex items-center gap-3 p-3 rounded-lg bg-green-50 hover:bg-green-100 cursor-pointer transition-colors"
-                          onClick={handleInstallApp}
-                        >
-                          <div className="flex-shrink-0 w-9 h-9 bg-green-500 rounded-full flex items-center justify-center">
-                            <Download className="w-4 h-4 text-white" />
+                        )}
+                      </div>
+                    )}
+
+                    <div className="max-h-72 overflow-y-auto">
+                      {notifications.length > 0 ? (
+                        <>
+                          {unreadCount > 0 && (
+                            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
+                              <span className="text-xs font-medium text-gray-500">{t('bell.notifications')}</span>
+                              <button
+                                className="flex items-center gap-1 text-xs text-primary hover:underline"
+                                onClick={handleMarkAllRead}
+                              >
+                                <CheckCheck className="w-3 h-3" />
+                                {t('bell.markAllRead')}
+                              </button>
+                            </div>
+                          )}
+                          <div className="divide-y divide-gray-50">
+                            {notifications.slice(0, 20).map(n => (
+                              <div
+                                key={n.id}
+                                className={`flex items-start gap-3 p-3 transition-colors ${!n.read ? 'bg-blue-50/50' : ''}`}
+                              >
+                                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5 ${getNotificationBg(n.type)}`}>
+                                  {getNotificationIcon(n.type)}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-sm ${!n.read ? 'font-semibold text-gray-900' : 'font-medium text-gray-700'}`}>{n.title}</p>
+                                  {n.body && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.body}</p>}
+                                  <p className="text-[10px] text-gray-400 mt-1">{formatTimeAgo(n.timestamp)}</p>
+                                </div>
+                                {!n.read && (
+                                  <div className="flex-shrink-0 w-2 h-2 bg-primary rounded-full mt-2" />
+                                )}
+                              </div>
+                            ))}
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900">{t('bell.installApp')}</p>
-                            <p className="text-xs text-gray-500">{t('bell.installAppDesc')}</p>
-                          </div>
-                        </div>
-                      )}
-                      {bellCount === 0 && (
-                        <div className="flex items-center gap-3 p-4 text-center">
-                          <div className="flex-shrink-0 w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center">
-                            <Bell className="w-4 h-4 text-gray-400" />
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 py-6 px-4">
+                          <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Bell className="w-5 h-5 text-gray-400" />
                           </div>
                           <p className="text-sm text-gray-500">{t('bell.noNotifications')}</p>
                         </div>
