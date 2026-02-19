@@ -257,7 +257,7 @@ export default function CartOverlay() {
     <div className="fixed inset-0 z-[58] overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
       
-      <div className="absolute top-0 h-[calc(100%-60px)] md:h-full w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0">
+      <div className="absolute top-0 h-[calc(100%_-_60px)] md:h-full w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
