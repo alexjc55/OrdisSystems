@@ -254,7 +254,7 @@ export default function CartOverlay() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-[58] overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
       
       <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0">
@@ -653,7 +653,7 @@ export default function CartOverlay() {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t p-6 pb-24 space-y-4">
+            <div className="border-t p-6 space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>{t('cart.items')}:</span>
