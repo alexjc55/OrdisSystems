@@ -653,7 +653,7 @@ export default function CartOverlay() {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t p-6 space-y-4">
+            <div className="border-t p-6 pb-24 space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>{t('cart.items')}:</span>
