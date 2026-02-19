@@ -1257,6 +1257,16 @@ body, html {
   padding-inline-end: 1rem;
 }
   
+  /* Cart panel height - account for bottom nav on mobile */
+  .cart-panel-height {
+    height: 100%;
+  }
+  @media (max-width: 767px) {
+    .cart-panel-height {
+      height: calc(100% - 60px);
+    }
+  }
+
   /* RTL Cart Sidebar */
   html[dir="rtl"] .cart-sidebar {
     left: 0;
