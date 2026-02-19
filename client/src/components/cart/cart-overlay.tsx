@@ -257,7 +257,7 @@ export default function CartOverlay() {
     <div className="fixed inset-0 z-[58] overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
       
-      <div className="absolute top-0 w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0 cart-panel-height">
+      <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl right-0 rtl:right-auto rtl:left-0">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
@@ -649,58 +649,58 @@ export default function CartOverlay() {
                 </div>
               </div>
             )}
-          </ScrollArea>
 
-          {/* Footer */}
-          {items.length > 0 && (
-            <div className="border-t p-6 space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>{t('cart.items')}:</span>
-                  <span>{formatCurrency(subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>{t('cart.delivery')}:</span>
-                  <span>
-                    {deliveryFeeAmount === 0 ? (
-                      <span className="text-green-600 font-medium">{t('checkout.free')}</span>
-                    ) : (
-                      formatCurrency(deliveryFeeAmount)
-                    )}
-                  </span>
-                </div>
-                {deliveryFeeAmount > 0 && (
-                  <div className="text-xs text-gray-500 text-center">
-                    {t('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+            {/* Order Summary & Checkout */}
+            {items.length > 0 && (
+              <div className="border-t mt-4 pt-4 space-y-4 pb-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>{t('cart.items')}:</span>
+                    <span>{formatCurrency(subtotal)}</span>
                   </div>
-                )}
-                <Separator />
-                <div className="flex justify-between text-lg font-bold">
-                  <span>{t('cart.total')}:</span>
-                  <span>{formatCurrency(total)}</span>
+                  <div className="flex justify-between text-sm">
+                    <span>{t('cart.delivery')}:</span>
+                    <span>
+                      {deliveryFeeAmount === 0 ? (
+                        <span className="text-green-600 font-medium">{t('checkout.free')}</span>
+                      ) : (
+                        formatCurrency(deliveryFeeAmount)
+                      )}
+                    </span>
+                  </div>
+                  {deliveryFeeAmount > 0 && (
+                    <div className="text-xs text-gray-500 text-center">
+                      {t('cart.freeDeliveryFrom')} {formatCurrency(parseFloat(storeSettings?.freeDeliveryFrom || "50.00"))}
+                    </div>
+                  )}
+                  <Separator />
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>{t('cart.total')}:</span>
+                    <span>{formatCurrency(total)}</span>
+                  </div>
                 </div>
+                
+                <Button
+                  onClick={handleCheckout}
+                  disabled={createOrderMutation.isPending || !deliveryAddress.trim() || !customerPhone.trim()}
+                  className="w-full bg-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none"
+                  style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
+                >
+                  {createOrderMutation.isPending ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('cart.processing')}
+                    </div>
+                  ) : (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      {t('cart.checkout')}
+                    </>
+                  )}
+                </Button>
               </div>
-              
-              <Button
-                onClick={handleCheckout}
-                disabled={createOrderMutation.isPending || !deliveryAddress.trim() || !customerPhone.trim()}
-                className="w-full bg-primary hover:bg-primary hover:shadow-lg hover:shadow-black/30 transition-shadow duration-200 text-white font-medium py-3 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:shadow-none"
-                style={{ backgroundColor: 'hsl(16, 100%, 60%)', color: 'white' }}
-              >
-                {createOrderMutation.isPending ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    {t('cart.processing')}
-                  </div>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    {t('cart.checkout')}
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
+            )}
+          </ScrollArea>
         </div>
       </div>
     </div>
