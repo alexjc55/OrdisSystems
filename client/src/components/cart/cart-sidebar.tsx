@@ -104,7 +104,7 @@ export default function CartSidebar() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-[70] overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
       
       <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl cart-sidebar">
@@ -115,14 +115,13 @@ export default function CartSidebar() {
               <ShoppingCart className="h-5 w-5" />
               {t('cart.title')} ({items.length})
             </h2>
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => setCartOpen(false)}
-              className="h-8 w-8 p-0"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-colors"
+              aria-label="Close cart"
             >
-              <X className="h-4 w-4" />
-            </Button>
+              <X className="h-5 w-5" strokeWidth={2.5} />
+            </button>
           </div>
 
           {/* Content */}
