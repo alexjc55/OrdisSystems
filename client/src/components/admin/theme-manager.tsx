@@ -566,6 +566,8 @@ export default function ThemeManager() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/themes"] });
       // Invalidate store settings to refresh header style for all users
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      // Invalidate active theme cache so home/product-card pick up new categoryGridStyle and cardStyle
+      queryClient.invalidateQueries({ queryKey: ['/api/themes/active'] });
       setEditingTheme(null);
       
       // Apply theme immediately if it's the active theme
@@ -830,6 +832,17 @@ export default function ThemeManager() {
       };
       
       applyTheme(theme);
+
+      // Apply new layout/background CSS variables immediately
+      const rootEl = document.documentElement;
+      const cvtHsl = (c: string) => c && c.startsWith('#') ? hexToHsl(c) : c;
+      if (activatedTheme.backgroundColor) rootEl.style.setProperty('--color-background', cvtHsl(activatedTheme.backgroundColor));
+      if (activatedTheme.cardBackgroundColor) rootEl.style.setProperty('--color-card', cvtHsl(activatedTheme.cardBackgroundColor));
+      if (activatedTheme.textPrimaryColor) rootEl.style.setProperty('--color-text-primary', cvtHsl(activatedTheme.textPrimaryColor));
+      if (activatedTheme.textSecondaryColor) rootEl.style.setProperty('--color-text-secondary', cvtHsl(activatedTheme.textSecondaryColor));
+
+      // Invalidate active theme cache so home/product-card pick up new categoryGridStyle and cardStyle
+      queryClient.invalidateQueries({ queryKey: ['/api/themes/active'] });
       
       toast({
         title: adminT("themes.success"),
