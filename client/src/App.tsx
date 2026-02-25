@@ -22,6 +22,7 @@ import { IOSCacheBuster } from "@/components/ios-cache-buster";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
+import { useApplyActiveTheme } from "@/hooks/useApplyActiveTheme";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import AdminDashboard from "@/pages/admin-dashboard";
@@ -44,6 +45,9 @@ import CartSidebar from "@/components/cart/cart-sidebar";
 function Router() {
   const { storeSettings } = useStoreSettings();
   const { i18n } = useTranslation();
+  
+  // Apply active theme CSS variables on every page (fetches from /api/themes/active)
+  useApplyActiveTheme();
   
   // Handle URL-based language switching
   useUrlLanguage();

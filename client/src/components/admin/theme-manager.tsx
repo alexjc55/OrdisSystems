@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Palette, Eye, Trash2, Plus, Save, Paintbrush, Settings, RotateCcw, Info, Briefcase, AlertCircle, Layers, Upload, EyeOff } from "lucide-react";
-import { applyTheme, defaultTheme, type Theme } from "@/lib/theme-system";
+import { applyThemeVars } from "@/lib/apply-theme-vars";
 import { ModernStyleSettings } from "./modern-style-settings";
 import { SliderSettings } from "./slider-settings";
 import { createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
@@ -576,149 +576,9 @@ export default function ThemeManager() {
         const cachedThemes = queryClient.getQueryData<ThemeData[]>(["/api/admin/themes"]);
         const fullTheme = cachedThemes?.find(t => t.id === updatedTheme.id);
         const themeToApply = fullTheme || updatedTheme;
-        // Apply colors directly to CSS custom properties
-        const root = document.documentElement;
-        
-        // Update primary colors which are most commonly used
-        const convertColorToHsl = (color: string) => {
-          return color.startsWith('#') ? hexToHsl(color) : color;
-        };
-        
-        // Apply layout/background colors
-        if (themeToApply.backgroundColor) {
-          root.style.setProperty('--color-background', convertColorToHsl(themeToApply.backgroundColor));
-        }
-        if (themeToApply.cardBackgroundColor) {
-          root.style.setProperty('--color-card', convertColorToHsl(themeToApply.cardBackgroundColor));
-        }
-        if (themeToApply.textPrimaryColor) {
-          root.style.setProperty('--color-text-primary', convertColorToHsl(themeToApply.textPrimaryColor));
-        }
-        if (themeToApply.textSecondaryColor) {
-          root.style.setProperty('--color-text-secondary', convertColorToHsl(themeToApply.textSecondaryColor));
-        }
 
-        root.style.setProperty('--color-primary', convertColorToHsl(themeToApply.primaryColor));
-        root.style.setProperty('--color-primary-dark', convertColorToHsl(themeToApply.primaryDarkColor));
-        root.style.setProperty('--color-primary-light', convertColorToHsl(themeToApply.primaryLightColor));
-        root.style.setProperty('--color-secondary', convertColorToHsl(themeToApply.secondaryColor));
-        root.style.setProperty('--color-accent', convertColorToHsl(themeToApply.accentColor));
-        
-        // Auto-determine contrasting text color for primary background
-        const isLightPrimary = (() => {
-          const color = updatedTheme.primaryColor;
-          if (color.includes('hsl')) {
-            const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-            if (hslMatch) {
-              const l = parseInt(hslMatch[3]);
-              return l > 60;
-            }
-          }
-          if (color.includes('#')) {
-            const hex = color.replace('#', '');
-            const r = parseInt(hex.substr(0, 2), 16);
-            const g = parseInt(hex.substr(2, 2), 16);
-            const b = parseInt(hex.substr(4, 2), 16);
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-            return luminance > 0.6;
-          }
-          return false;
-        })();
-        
-        // Use the custom primary text color from theme settings
-        root.style.setProperty('--color-primary-foreground', convertColorToHsl(themeToApply.primaryTextColor));
-        
-        // Update status colors
-        root.style.setProperty('--color-success', convertColorToHsl(themeToApply.successColor));
-        root.style.setProperty('--color-success-light', convertColorToHsl(themeToApply.successLightColor));
-        root.style.setProperty('--color-warning', convertColorToHsl(themeToApply.warningColor));
-        root.style.setProperty('--color-warning-light', convertColorToHsl(themeToApply.warningLightColor));
-        root.style.setProperty('--color-error', convertColorToHsl(themeToApply.errorColor));
-        root.style.setProperty('--color-error-light', convertColorToHsl(themeToApply.errorLightColor));
-        root.style.setProperty('--color-info', convertColorToHsl(themeToApply.infoColor));
-        root.style.setProperty('--color-info-light', convertColorToHsl(themeToApply.infoLightColor));
-        
-        // Update special colors
-        if (themeToApply.tomorrowColor) {
-          root.style.setProperty('--color-tomorrow', convertColorToHsl(themeToApply.tomorrowColor));
-        }
-        if (themeToApply.tomorrowDarkColor) {
-          root.style.setProperty('--color-tomorrow-dark', convertColorToHsl(themeToApply.tomorrowDarkColor));
-          console.log('Applied --color-tomorrow-dark:', convertColorToHsl(themeToApply.tomorrowDarkColor));
-        }
-        if (themeToApply.tomorrowLightColor) {
-          root.style.setProperty('--color-tomorrow-light', convertColorToHsl(themeToApply.tomorrowLightColor));
-        }
-        if (themeToApply.outOfStockColor) {
-          root.style.setProperty('--color-out-of-stock', convertColorToHsl(themeToApply.outOfStockColor));
-        }
-        
-        // Update shadows for special colors
-        const tomorrowRgb = (() => {
-          const color = updatedTheme.tomorrowColor;
-          if (color.includes('hsl')) {
-            const hslMatch = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-            if (hslMatch) {
-              const h = parseInt(hslMatch[1]) / 360;
-              const s = parseInt(hslMatch[2]) / 100;
-              const l = parseInt(hslMatch[3]) / 100;
-              
-              const c = (1 - Math.abs(2 * l - 1)) * s;
-              const x = c * (1 - Math.abs((h * 6) % 2 - 1));
-              const m = l - c / 2;
-              
-              let r = 0, g = 0, b = 0;
-              if (h >= 0 && h < 1/6) { r = c; g = x; b = 0; }
-              else if (h >= 1/6 && h < 2/6) { r = x; g = c; b = 0; }
-              else if (h >= 2/6 && h < 3/6) { r = 0; g = c; b = x; }
-              else if (h >= 3/6 && h < 4/6) { r = 0; g = x; b = c; }
-              else if (h >= 4/6 && h < 5/6) { r = x; g = 0; b = c; }
-              else if (h >= 5/6 && h < 1) { r = c; g = 0; b = x; }
-              
-              return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
-            }
-          }
-          if (color.includes('#')) {
-            const hex = color.replace('#', '');
-            const r = parseInt(hex.substr(0, 2), 16);
-            const g = parseInt(hex.substr(2, 2), 16);
-            const b = parseInt(hex.substr(4, 2), 16);
-            return [r, g, b];
-          }
-          return [239, 68, 68]; // fallback red
-        })();
-        
-        root.style.setProperty('--shadow-tomorrow', `0 4px 14px 0 rgba(${tomorrowRgb[0]}, ${tomorrowRgb[1]}, ${tomorrowRgb[2]}, 0.3)`);
-        
-        // Update neutral colors
-        root.style.setProperty('--color-white', convertColorToHsl(updatedTheme.whiteColor));
-        root.style.setProperty('--color-gray-50', convertColorToHsl(updatedTheme.gray50Color));
-        root.style.setProperty('--color-gray-100', convertColorToHsl(updatedTheme.gray100Color));
-        root.style.setProperty('--color-gray-200', convertColorToHsl(updatedTheme.gray200Color));
-        root.style.setProperty('--color-gray-300', convertColorToHsl(updatedTheme.gray300Color));
-        root.style.setProperty('--color-gray-400', convertColorToHsl(updatedTheme.gray400Color));
-        root.style.setProperty('--color-gray-500', convertColorToHsl(updatedTheme.gray500Color));
-        root.style.setProperty('--color-gray-600', convertColorToHsl(updatedTheme.gray600Color));
-        root.style.setProperty('--color-gray-700', convertColorToHsl(updatedTheme.gray700Color));
-        root.style.setProperty('--color-gray-800', convertColorToHsl(updatedTheme.gray800Color));
-        root.style.setProperty('--color-gray-900', convertColorToHsl(updatedTheme.gray900Color));
-        
-        // Update Tailwind CSS variables for hover:text-primary and other Tailwind classes
-        root.style.setProperty('--primary', convertColorToHsl(updatedTheme.primaryColor));
-        root.style.setProperty('--primary-foreground', convertColorToHsl(updatedTheme.primaryTextColor));
-        
-        // Update info block icon colors
-        if (updatedTheme.workingHoursIconColor) {
-          root.style.setProperty('--color-working-hours-icon', convertColorToHsl(updatedTheme.workingHoursIconColor));
-        }
-        if (updatedTheme.contactsIconColor) {
-          root.style.setProperty('--color-contacts-icon', convertColorToHsl(updatedTheme.contactsIconColor));
-        }
-        if (updatedTheme.paymentDeliveryIconColor) {
-          root.style.setProperty('--color-payment-delivery-icon', convertColorToHsl(updatedTheme.paymentDeliveryIconColor));
-        }
-        
-        console.log('Applied theme colors to CSS variables');
+        // Apply all CSS variables at once (including --background, --card, --foreground for shadcn)
+        applyThemeVars(themeToApply);
       }
 
       // Don't automatically activate theme after save - only apply visual changes if it's already active
@@ -760,86 +620,8 @@ export default function ThemeManager() {
       // Invalidate store settings to refresh header style for all users
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
       
-      // Apply the theme immediately to the UI
-      const theme: Theme = {
-        id: activatedTheme.id,
-        name: activatedTheme.name,
-        description: activatedTheme.description,
-        colors: {
-          primary: activatedTheme.primaryColor,
-          primaryText: activatedTheme.primaryTextColor,
-          primaryDark: activatedTheme.primaryDarkColor,
-          primaryLight: activatedTheme.primaryLightColor,
-          secondary: activatedTheme.secondaryColor,
-          accent: activatedTheme.accentColor,
-          success: activatedTheme.successColor,
-          successLight: activatedTheme.successLightColor,
-          warning: activatedTheme.warningColor,
-          warningLight: activatedTheme.warningLightColor,
-          error: activatedTheme.errorColor,
-          errorLight: activatedTheme.errorLightColor,
-          info: activatedTheme.infoColor,
-          infoLight: activatedTheme.infoLightColor,
-          tomorrow: activatedTheme.tomorrowColor,
-          tomorrowLight: activatedTheme.tomorrowLightColor,
-          outOfStock: activatedTheme.outOfStockColor,
-          white: activatedTheme.whiteColor,
-          gray50: activatedTheme.gray50Color,
-          gray100: activatedTheme.gray100Color,
-          gray200: activatedTheme.gray200Color,
-          gray300: activatedTheme.gray300Color,
-          gray400: activatedTheme.gray400Color,
-          gray500: activatedTheme.gray500Color,
-          gray600: activatedTheme.gray600Color,
-          gray700: activatedTheme.gray700Color,
-          gray800: activatedTheme.gray800Color,
-          gray900: activatedTheme.gray900Color,
-        },
-        typography: {
-          fontFamilyPrimary: activatedTheme.fontFamilyPrimary,
-          fontFamilySecondary: activatedTheme.fontFamilySecondary,
-          fontSizeXs: defaultTheme.typography.fontSizeXs,
-          fontSizeSm: defaultTheme.typography.fontSizeSm,
-          fontSizeBase: defaultTheme.typography.fontSizeBase,
-          fontSizeLg: defaultTheme.typography.fontSizeLg,
-          fontSizeXl: defaultTheme.typography.fontSizeXl,
-          fontSize2xl: defaultTheme.typography.fontSize2xl,
-          fontSize3xl: defaultTheme.typography.fontSize3xl,
-          fontSize4xl: defaultTheme.typography.fontSize4xl,
-          fontSize5xl: defaultTheme.typography.fontSize5xl,
-          fontSize6xl: defaultTheme.typography.fontSize6xl,
-          fontWeightLight: defaultTheme.typography.fontWeightLight,
-          fontWeightNormal: defaultTheme.typography.fontWeightNormal,
-          fontWeightMedium: defaultTheme.typography.fontWeightMedium,
-          fontWeightSemibold: defaultTheme.typography.fontWeightSemibold,
-          fontWeightBold: defaultTheme.typography.fontWeightBold,
-        },
-        spacing: defaultTheme.spacing,
-        borderRadius: defaultTheme.borderRadius,
-        shadows: {
-          sm: defaultTheme.shadows.sm,
-          md: defaultTheme.shadows.md,
-          lg: defaultTheme.shadows.lg,
-          xl: defaultTheme.shadows.xl,
-          primary: activatedTheme.primaryShadow,
-          success: activatedTheme.successShadow,
-          warning: activatedTheme.warningShadow,
-          error: activatedTheme.errorShadow,
-          info: activatedTheme.infoShadow,
-          tomorrow: activatedTheme.tomorrowShadow,
-          gray: activatedTheme.grayShadow,
-        },
-      };
-      
-      applyTheme(theme);
-
-      // Apply new layout/background CSS variables immediately
-      const rootEl = document.documentElement;
-      const cvtHsl = (c: string) => c && c.startsWith('#') ? hexToHsl(c) : c;
-      if (activatedTheme.backgroundColor) rootEl.style.setProperty('--color-background', cvtHsl(activatedTheme.backgroundColor));
-      if (activatedTheme.cardBackgroundColor) rootEl.style.setProperty('--color-card', cvtHsl(activatedTheme.cardBackgroundColor));
-      if (activatedTheme.textPrimaryColor) rootEl.style.setProperty('--color-text-primary', cvtHsl(activatedTheme.textPrimaryColor));
-      if (activatedTheme.textSecondaryColor) rootEl.style.setProperty('--color-text-secondary', cvtHsl(activatedTheme.textSecondaryColor));
+      // Apply all CSS variables at once (including shadcn --background, --card, --foreground)
+      applyThemeVars(activatedTheme);
 
       // Invalidate active theme cache so home/product-card pick up new categoryGridStyle and cardStyle
       queryClient.invalidateQueries({ queryKey: ['/api/themes/active'] });
