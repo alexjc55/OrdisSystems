@@ -36,16 +36,23 @@ export function usePWA() {
     const registerServiceWorker = async () => {
       if ('serviceWorker' in navigator) {
         try {
+          // Track whether there was already a controller BEFORE registration
+          // to distinguish between first install (no reload) and updates (reload)
+          const hadControllerBeforeRegister = !!navigator.serviceWorker.controller;
+
           const registration = await navigator.serviceWorker.register('/sw.js', {
             scope: '/'
           });
           
-          // CRITICAL: Auto-reload when new service worker takes control
-          // This prevents white screen issues when SW updates but page runs old JS
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            console.log('🔄 [PWA] New service worker activated - reloading to prevent white screen');
-            window.location.reload();
-          }, { once: true });
+          // Auto-reload ONLY when a service worker UPDATE takes control (not first install)
+          // On first install: hadControllerBeforeRegister is false → skip reload
+          // On update: hadControllerBeforeRegister is true → reload to get fresh JS
+          if (hadControllerBeforeRegister) {
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              console.log('🔄 [PWA] SW update activated - reloading to get fresh JS');
+              window.location.reload();
+            }, { once: true });
+          }
           
           // Check for updates
           registration.addEventListener('updatefound', () => {

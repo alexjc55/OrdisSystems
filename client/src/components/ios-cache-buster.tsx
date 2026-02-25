@@ -107,9 +107,22 @@ export function IOSCacheBuster() {
         });
         const data = await response.json();
         
-        const currentVersion = localStorage.getItem('app-version') || '0';
-        const currentHash = localStorage.getItem('app-hash') || '0';
+        const currentVersion = localStorage.getItem('app-version');
+        const currentHash = localStorage.getItem('app-hash');
         
+        // First visit: no stored version yet — just save and don't reload
+        if (!currentVersion || !currentHash) {
+          localStorage.setItem('app-version', data.version);
+          localStorage.setItem('app-hash', data.appHash);
+          localStorage.setItem('last_processed_hash', data.appHash);
+          const processedHashes = JSON.parse(localStorage.getItem('processed_hashes') || '[]');
+          if (!processedHashes.includes(data.appHash)) {
+            processedHashes.push(data.appHash);
+            localStorage.setItem('processed_hashes', JSON.stringify(processedHashes));
+          }
+          return;
+        }
+
         // Проверяем последнее обновление
         const lastUpdate = localStorage.getItem('last_update');
         const recentlyUpdated = lastUpdate && (Date.now() - parseInt(lastUpdate)) < 300000; // 5 минут
