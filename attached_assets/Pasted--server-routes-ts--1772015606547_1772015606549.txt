@@ -1,0 +1,167 @@
+ТЕХНИЧЕСКОЕ ЗАДАНИЕ
+Рефакторинг server/routes.ts и сопутствующие улучшения
+
+Цель:
+Повысить поддерживаемость backend-кода без изменения публичного API и бизнес-логики.
+
+Ограничения:
+
+❌ не менять URL эндпоинтов
+
+❌ не вводить микросервисы
+
+❌ не менять схему БД
+
+❌ не переписывать storage-layer
+
+✅ допускается перемещение файлов и функций
+
+ЧАСТЬ 1. Рефакторинг routes.ts
+1.1 Текущее состояние
+
+Один файл server/routes.ts
+
+~90 REST эндпоинтов
+
+Смешаны:
+
+аутентификация
+
+профиль
+
+каталог
+
+заказы
+
+admin
+
+push / feeds / barcode / translations
+
+системные роуты (health, sitemap, robots)
+
+1.2 Проблемы
+
+Высокая когнитивная нагрузка
+
+Сложность навигации по коду
+
+Повышенный риск регрессий
+
+Невозможность параллельной разработки
+
+1.3 Целевая структура файлов
+server/routes/
+├── index.ts                  # Регистрация всех роутеров
+├── system.routes.ts          # health, version, robots, sitemap
+├── auth.routes.ts            # login, register, logout, auth/*
+├── profile.routes.ts         # profile, addresses
+├── catalog.routes.ts         # categories, products, upload
+├── orders.routes.ts          # orders, guest orders
+├── admin/
+│   ├── users.routes.ts
+│   ├── settings.routes.ts
+│   ├── themes.routes.ts
+│   ├── analytics.routes.ts
+│   ├── orders.routes.ts
+│   └── push.routes.ts
+└── integrations/
+    ├── feeds.routes.ts
+    ├── translations.routes.ts
+    └── barcode.routes.ts
+1.4 Требования к реализации
+1.4.1 API-контракты
+
+Все пути (/api/...) должны остаться без изменений
+
+HTTP-методы должны сохраниться
+
+Форматы request/response — без изменений
+
+1.4.2 Express Router
+
+Каждый файл:
+
+экспортирует Router
+
+не создаёт app
+
+Пример:
+
+const router = Router();
+router.post("/login", ...);
+export default router;
+1.4.3 index.ts (агрегатор)
+
+server/routes/index.ts обязан:
+
+подключать все роутеры
+
+монтировать их на /api
+
+быть единственной точкой подключения маршрутов
+
+Пример:
+
+app.use("/api", authRoutes);
+app.use("/api", profileRoutes);
+1.5 Вынос бизнес-логики (минимальный)
+Разрешено:
+
+выносить обработчики в *.handlers.ts
+
+Запрещено:
+
+ввод service / usecase / repository слоёв
+
+менять storage.ts
+
+Пример:
+
+router.post("/orders", createOrder);
+export async function createOrder(req, res) {
+  ...
+}
+1.6 Критерии готовности
+
+❌ В проекте нет routes.ts с логикой
+
+✅ Каждый домен — отдельный файл
+
+✅ Проект компилируется без ошибок
+
+✅ Все существующие API работают без изменений
+
+ЧАСТЬ 2. ОБЯЗАТЕЛЬНЫЕ ХВОСТЫ (РЕКОМЕНДУЕТСЯ СДЕЛАТЬ СЕЙЧАС)
+2.1 Rate Limiting (КРИТИЧНО)
+
+Проблема:
+Публичные эндпоинты не защищены от brute-force.
+
+Что сделать:
+
+Добавить express-rate-limit
+
+Ограничить:
+
+Эндпоинт	Лимит
+/api/login	5–10 / мин
+/api/auth/forgot-password	3–5 / час
+/api/orders/guest	10–20 / час
+
+Критерий готовности:
+При превышении лимита возвращается 429.
+
+2.2 Secure cookies в production (КРИТИЧНО)
+
+Проблема:
+secure: false у session cookie.
+
+Что сделать:
+
+Включить:
+
+app.set("trust proxy", 1);
+cookie: { secure: true }
+
+Критерий готовности:
+Cookie connect.sid не отправляется по HTTP.
