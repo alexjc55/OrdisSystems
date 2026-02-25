@@ -153,4 +153,59 @@ router.get('/sitemap.xml', async (req, res) => {
   }
 });
 
+router.get('/clear-sw', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Очистка кеша...</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px; background: #fff; }
+    h2 { color: #333; }
+    p { color: #666; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top-color: #f97316; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .done { color: #22c55e; font-size: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="spinner" id="spinner"></div>
+  <h2 id="status">Очищаем кеш...</h2>
+  <p id="msg">Подождите несколько секунд</p>
+  <script>
+    async function clearAll() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        }
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        sessionStorage.clear();
+        const keep = ['i18nextLng', 'language'];
+        const saved = {};
+        keep.forEach(k => { if (localStorage.getItem(k)) saved[k] = localStorage.getItem(k); });
+        localStorage.clear();
+        keep.forEach(k => { if (saved[k]) localStorage.setItem(k, saved[k]); });
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('spinner').textContent = '';
+        document.getElementById('status').innerHTML = '<span class="done">✓</span> Кеш очищен!';
+        document.getElementById('msg').textContent = 'Перенаправляем на главную...';
+        setTimeout(() => { window.location.replace('/'); }, 1500);
+      } catch (e) {
+        document.getElementById('status').textContent = 'Готово. Перенаправляем...';
+        setTimeout(() => { window.location.replace('/'); }, 1000);
+      }
+    }
+    clearAll();
+  </script>
+</body>
+</html>`);
+});
+
 export default router;
