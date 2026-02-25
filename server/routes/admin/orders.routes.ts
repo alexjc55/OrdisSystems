@@ -16,8 +16,15 @@ router.get('/admin/orders', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Admin access required" });
     }
 
-    const orders = await storage.getOrders();
-    res.json(orders);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || '';
+    const status = (req.query.status as string) || 'all';
+    const sortField = (req.query.sortField as string) || 'createdAt';
+    const sortDirection = (req.query.sortDirection as string) || 'desc';
+
+    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection });
+    res.json(result);
   } catch (error) {
     console.error("Error fetching admin orders:", error);
     res.status(500).json({ message: "Failed to fetch orders" });
