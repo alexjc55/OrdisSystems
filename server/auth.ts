@@ -42,7 +42,7 @@ export function setupAuth(app: Express) {
       createTableIfMissing: false // Don't create table, it already exists
     }),
     cookie: {
-      secure: false, // Set to true in production with HTTPS
+      secure: process.env.NODE_ENV === "production", // T009: Use HTTPS cookies in production
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     },
