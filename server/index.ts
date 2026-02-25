@@ -3,7 +3,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes/index";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
-import { ensurePresetThemes } from "./preset-themes";
 import { getDB } from "./db";
 import { metaInjectionMiddleware } from "./meta-injection-middleware";
 
@@ -56,13 +55,6 @@ app.use((req, res, next) => {
     await seedDatabase();
   } catch (error) {
     console.log("Database already seeded or error occurred:", error);
-  }
-
-  // Ensure preset themes exist in database
-  try {
-    await ensurePresetThemes();
-  } catch (error) {
-    console.log("Failed to ensure preset themes:", error);
   }
 
   const server = await registerRoutes(app);

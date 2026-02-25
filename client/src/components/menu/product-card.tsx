@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,13 +32,6 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
     queryKey: ['/api/settings'],
     staleTime: 5 * 60 * 1000,
   });
-
-  // Get active theme for cardStyle
-  const { data: activeTheme } = useQuery<any>({
-    queryKey: ['/api/themes/active'],
-    staleTime: 5 * 60 * 1000,
-  });
-  const cardStyle = activeTheme?.cardStyle || 'classic';
   
   // Get localized product fields
   const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any);
@@ -180,15 +172,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   };
 
   return (
-    <Card
-      className={cn(
-        "overflow-hidden transition-shadow h-full flex flex-col",
-        cardStyle === 'modern'
-          ? "rounded-2xl border border-gray-200 hover:border-primary"
-          : "hover:shadow-lg"
-      )}
-      style={{ backgroundColor: 'var(--color-card)' }}
-    >
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       <div className="relative">
         <img
           src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
