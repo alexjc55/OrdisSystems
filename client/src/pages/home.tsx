@@ -284,6 +284,13 @@ export default function Home() {
   // Get header style from store settings (accessible to all users)
   const headerStyle = storeSettings?.headerStyle || 'classic';
 
+  // Get active theme for categoryGridStyle and cardStyle
+  const { data: activeTheme } = useQuery<any>({
+    queryKey: ['/api/themes/active'],
+    staleTime: 5 * 60 * 1000,
+  });
+  const categoryGridStyle = activeTheme?.categoryGridStyle || 'cards';
+
   // Calculate selected category first
   const selectedCategory = useMemo(() => {
     return categories.find(cat => cat.id === selectedCategoryId);
@@ -556,7 +563,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden pt-16">
+    <div className="min-h-screen overflow-x-hidden pt-16" style={{ backgroundColor: 'var(--color-background)' }}>
       <Header onResetView={handleResetView} />
       
       {/* Header Variant - Full width banners - only show on main page */}
@@ -662,74 +669,106 @@ export default function Home() {
             <div>
               {/* Category Overview */}
               {categories && categories.length > 0 && (
-                <div id="categories" className="mb-8">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-primary rounded-xl shadow-lg">
-                        <Package className="h-7 w-7 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                          {t('categoriesText')}
-                        </h2>
-                        <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-start md:justify-end mt-6 md:mt-0">
-                      <Button
-                        className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                        asChild
-                      >
-                        <UTMLink href="/all-products">
-                          <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
-                          {t('allProducts')}
-                        </UTMLink>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-w-0">
-                    {categories.map((category) => (
-                      <UTMLink 
-                        key={category.id}
-                        href={`/category/${category.id}`}
-                      >
-                        <Card 
-                          className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
+                categoryGridStyle === 'pills' ? (
+                  /* Pills mode: horizontal scrollable pills row */
+                  <div id="categories" className="mb-8">
+                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                      {categories.map((category) => (
+                        <UTMLink
+                          key={category.id}
+                          href={`/category/${category.id}`}
                         >
-                          <CardContent className="p-4 h-32 relative">
-                            <div className="flex items-start gap-3 h-full">
-                              <div className="flex-1 flex flex-col h-full overflow-hidden">
-                                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
-                                  {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                                </h3>
-                                
-                                <p className="text-gray-600 text-sm leading-tight truncate">
-                                  {(() => {
-                                    const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
-                                    return text.length > 40 ? text.substring(0, 40) + '...' : text;
-                                  })()}
-                                </p>
-                                
-                                <div className="mt-auto">
-                                  <Badge className="px-3 py-1 bg-primary text-white font-semibold text-sm shadow-md">
-                                    {(category as any).productCount || 0} {t('dishesCount')}
-                                  </Badge>
-                                </div>
-                              </div>
-                              
-                              <div className="flex-shrink-0 w-16 flex justify-center">
-                                <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
-                                  {category.icon || '📦'}
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </UTMLink>
-                    ))}
+                          <button
+                            onClick={() => handleCategorySelect(category.id)}
+                            className={`flex-shrink-0 flex items-center gap-2 rounded-full px-4 py-2 border transition-all duration-200 text-sm font-medium whitespace-nowrap ${
+                              selectedCategoryId === category.id
+                                ? 'bg-primary text-white border-primary shadow-md'
+                                : 'border-gray-200 hover:border-primary hover:text-primary'
+                            }`}
+                            style={selectedCategoryId !== category.id ? { backgroundColor: 'var(--color-card)' } : undefined}
+                          >
+                            <span>{category.icon || '📦'}</span>
+                            <span>{getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}</span>
+                            <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600 ml-1">
+                              {(category as any).productCount || 0}
+                            </Badge>
+                          </button>
+                        </UTMLink>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  /* Cards mode: default grid view */
+                  <div id="categories" className="mb-8">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-primary rounded-xl shadow-lg">
+                          <Package className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                            {t('categoriesText')}
+                          </h2>
+                          <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-start md:justify-end mt-6 md:mt-0">
+                        <Button
+                          className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          asChild
+                        >
+                          <UTMLink href="/all-products">
+                            <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
+                            {t('allProducts')}
+                          </UTMLink>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-w-0">
+                      {categories.map((category) => (
+                        <UTMLink 
+                          key={category.id}
+                          href={`/category/${category.id}`}
+                        >
+                          <Card 
+                            className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg overflow-hidden transform hover:scale-105"
+                            style={{ backgroundColor: 'var(--color-card)' }}
+                          >
+                            <CardContent className="p-4 h-32 relative">
+                              <div className="flex items-start gap-3 h-full">
+                                <div className="flex-1 flex flex-col h-full overflow-hidden">
+                                  <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
+                                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                                  </h3>
+                                  
+                                  <p className="text-gray-600 text-sm leading-tight truncate">
+                                    {(() => {
+                                      const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
+                                      return text.length > 40 ? text.substring(0, 40) + '...' : text;
+                                    })()}
+                                  </p>
+                                  
+                                  <div className="mt-auto">
+                                    <Badge className="px-3 py-1 bg-primary text-white font-semibold text-sm shadow-md">
+                                      {(category as any).productCount || 0} {t('dishesCount')}
+                                    </Badge>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex-shrink-0 w-16 flex justify-center">
+                                  <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                                    {category.icon || '📦'}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </UTMLink>
+                      ))}
+                    </div>
+                  </div>
+                )
               )}
 
               {/* Special Offers Section - hide on all products page */}

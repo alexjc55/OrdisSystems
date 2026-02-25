@@ -107,7 +107,7 @@ export default function CartSidebar() {
     <div className="fixed inset-0 z-[70] overflow-hidden">
       <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
       
-      <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl cart-sidebar">
+      <div className="absolute top-0 h-full w-full max-w-md shadow-xl cart-sidebar" style={{ backgroundColor: 'var(--color-card)' }}>
         <div className="flex h-full flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b p-4">
@@ -257,7 +257,7 @@ export default function CartSidebar() {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t bg-white p-4 space-y-4">
+            <div className="border-t p-4 space-y-4" style={{ backgroundColor: 'var(--color-card)' }}>
               <div className="bg-gradient-to-r from-primary-light to-yellow-50 rounded-xl p-4 border border-primary">
                 {(() => {
                   const subtotal = getTotalPrice();

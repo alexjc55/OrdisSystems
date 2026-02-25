@@ -582,6 +582,14 @@ export const themes = pgTable("themes", {
   tomorrowShadow: varchar("tomorrow_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(147, 51, 234, 0.3)"),
   grayShadow: varchar("gray_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(107, 114, 128, 0.3)"),
   
+  // Layout and style fields
+  backgroundColor: varchar("background_color", { length: 20 }).default("hsl(210, 40%, 98%)"),
+  cardBackgroundColor: varchar("card_background_color", { length: 20 }).default("hsl(0, 0%, 100%)"),
+  textPrimaryColor: varchar("text_primary_color", { length: 20 }).default("hsl(222, 47%, 11%)"),
+  textSecondaryColor: varchar("text_secondary_color", { length: 20 }).default("hsl(215, 16%, 47%)"),
+  cardStyle: varchar("card_style", { length: 20 }).default("classic"),
+  categoryGridStyle: varchar("category_grid_style", { length: 20 }).default("cards"),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -809,7 +817,15 @@ export const insertThemeSchema = z.object({
   
   // WhatsApp settings
   whatsappPhone: z.string().nullable().transform(val => val || ""),
-  whatsappMessage: z.string().nullable().transform(val => val || "Здравствуйте! У меня есть вопрос по заказу.")
+  whatsappMessage: z.string().nullable().transform(val => val || "Здравствуйте! У меня есть вопрос по заказу."),
+  
+  // Layout and style fields
+  backgroundColor: z.string().nullable().transform(val => val || "hsl(210, 40%, 98%)"),
+  cardBackgroundColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
+  textPrimaryColor: z.string().nullable().transform(val => val || "hsl(222, 47%, 11%)"),
+  textSecondaryColor: z.string().nullable().transform(val => val || "hsl(215, 16%, 47%)"),
+  cardStyle: z.string().nullable().transform(val => val || "classic"),
+  categoryGridStyle: z.string().nullable().transform(val => val || "cards")
 });
 
 export const updateThemeSchema = baseThemeSchema.partial().omit({

@@ -298,6 +298,10 @@ router.delete('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
 
     const { id } = req.params;
 
+    if (id.startsWith('preset_')) {
+      return res.status(403).json({ message: "Предустановленные темы нельзя удалить" });
+    }
+
     const theme = await storage.getThemeById(id);
     if (theme?.isActive) {
       return res.status(400).json({ message: "Cannot delete active theme" });

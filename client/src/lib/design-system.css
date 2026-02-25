@@ -1,5 +1,11 @@
 /* Theme variables for consistent styling */
 :root {
+  /* Layout and background colors */
+  --color-background: hsl(210, 40%, 98%);
+  --color-card: hsl(0, 0%, 100%);
+  --color-text-primary: hsl(222, 47%, 11%);
+  --color-text-secondary: hsl(215, 16%, 47%);
+
   /* Brand colors */
   --color-primary: hsl(24.6, 95%, 53.1%);
   --color-primary-dark: hsl(20.5, 90%, 48%);

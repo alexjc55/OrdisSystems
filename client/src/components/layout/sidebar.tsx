@@ -35,7 +35,7 @@ export default function Sidebar({
   });
   if (isLoading) {
     return (
-      <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
+      <aside className="hidden lg:block w-64 shadow-sm border-r border-gray-200" style={{ backgroundColor: 'var(--color-card)' }}>
         <div className="p-6">
           <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
 {t('categoriesText')}
@@ -57,7 +57,7 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="hidden lg:block w-64 bg-white shadow-sm border-r border-gray-200">
+    <aside className="hidden lg:block w-64 shadow-sm border-r border-gray-200" style={{ backgroundColor: 'var(--color-card)' }}>
       <div className="p-6">
         <h2 className="text-lg font-poppins font-semibold text-gray-900 mb-4">
 {t('categoriesText')}

@@ -216,6 +216,14 @@ interface ThemeData {
   tomorrowShadow: string;
   grayShadow: string;
   
+  // Layout and style fields
+  cardStyle?: string;
+  categoryGridStyle?: string;
+  backgroundColor?: string;
+  cardBackgroundColor?: string;
+  textPrimaryColor?: string;
+  textSecondaryColor?: string;
+  
   // Visual display settings
   showBannerImage?: boolean;
   showTitleDescription?: boolean;
@@ -574,6 +582,20 @@ export default function ThemeManager() {
           return color.startsWith('#') ? hexToHsl(color) : color;
         };
         
+        // Apply layout/background colors
+        if (themeToApply.backgroundColor) {
+          root.style.setProperty('--color-background', convertColorToHsl(themeToApply.backgroundColor));
+        }
+        if (themeToApply.cardBackgroundColor) {
+          root.style.setProperty('--color-card', convertColorToHsl(themeToApply.cardBackgroundColor));
+        }
+        if (themeToApply.textPrimaryColor) {
+          root.style.setProperty('--color-text-primary', convertColorToHsl(themeToApply.textPrimaryColor));
+        }
+        if (themeToApply.textSecondaryColor) {
+          root.style.setProperty('--color-text-secondary', convertColorToHsl(themeToApply.textSecondaryColor));
+        }
+
         root.style.setProperty('--color-primary', convertColorToHsl(themeToApply.primaryColor));
         root.style.setProperty('--color-primary-dark', convertColorToHsl(themeToApply.primaryDarkColor));
         root.style.setProperty('--color-primary-light', convertColorToHsl(themeToApply.primaryLightColor));
@@ -946,6 +968,13 @@ export default function ThemeManager() {
       infoShadow: formData.get("infoShadow") as string,
       tomorrowShadow: formData.get("tomorrowShadow") as string || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
       grayShadow: formData.get("grayShadow") as string,
+      // Layout and style fields
+      cardStyle: formData.get("cardStyle") as string || "classic",
+      categoryGridStyle: formData.get("categoryGridStyle") as string || "cards",
+      backgroundColor: convertColorToHsl(formData.get("backgroundColor") as string || "hsl(210, 40%, 98%)"),
+      cardBackgroundColor: convertColorToHsl(formData.get("cardBackgroundColor") as string || "hsl(0, 0%, 100%)"),
+      textPrimaryColor: convertColorToHsl(formData.get("textPrimaryColor") as string || "hsl(222, 47%, 11%)"),
+      textSecondaryColor: convertColorToHsl(formData.get("textSecondaryColor") as string || "hsl(215, 16%, 47%)"),
       sliderAutoplay: formData.get("sliderAutoplay") === "true",
       sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
       sliderEffect: formData.get("sliderEffect") as string || "fade",
@@ -1089,6 +1118,13 @@ export default function ThemeManager() {
       infoShadow: formData.get("infoShadow") as string,
       tomorrowShadow: formData.get("tomorrowShadow") as string || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
       grayShadow: formData.get("grayShadow") as string,
+      // Layout and style fields
+      cardStyle: formData.get("cardStyle") as string || "classic",
+      categoryGridStyle: formData.get("categoryGridStyle") as string || "cards",
+      backgroundColor: convertColorToHsl(formData.get("backgroundColor") as string || "hsl(210, 40%, 98%)"),
+      cardBackgroundColor: convertColorToHsl(formData.get("cardBackgroundColor") as string || "hsl(0, 0%, 100%)"),
+      textPrimaryColor: convertColorToHsl(formData.get("textPrimaryColor") as string || "hsl(222, 47%, 11%)"),
+      textSecondaryColor: convertColorToHsl(formData.get("textSecondaryColor") as string || "hsl(215, 16%, 47%)"),
       sliderAutoplay: formData.get("sliderAutoplay") === "true",
       sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
       sliderEffect: formData.get("sliderEffect") as string || "fade",
@@ -1849,7 +1885,14 @@ export default function ThemeManager() {
           <Card key={theme.id} className={`relative ${theme.isActive ? 'ring-2 ring-primary' : ''}`}>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{getThemeName(theme)}</CardTitle>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <CardTitle className="text-lg">{getThemeName(theme)}</CardTitle>
+                  {theme.id.startsWith('preset_') && (
+                    <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700 border-blue-200">
+                      Предустановлена
+                    </Badge>
+                  )}
+                </div>
                 {theme.isActive && (
                   <Badge variant="default" className="bg-primary text-white">
                     {adminT('themes.active')}
@@ -1931,7 +1974,7 @@ export default function ThemeManager() {
                   <RotateCcw className="h-4 w-4" />
                 </Button>
 
-                {!theme.isActive && !theme.id.includes('default_theme') && (
+                {!theme.isActive && !theme.id.includes('default_theme') && !theme.id.startsWith('preset_') && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button size="sm" variant="outline" className="text-destructive">
@@ -2140,6 +2183,94 @@ export default function ThemeManager() {
                       </select>
                       <div className="text-sm text-gray-500">
                         {adminT("themes.headerStyleImpact")}
+                      </div>
+                    </div>
+
+                    {/* Card Style */}
+                    <div className="space-y-2">
+                      <Label htmlFor="cardStyleEdit">Стиль карточек товаров</Label>
+                      <select
+                        name="cardStyle"
+                        id="cardStyleEdit"
+                        defaultValue={editingTheme.cardStyle || "classic"}
+                        className="w-full px-3 py-2 border rounded-md bg-white"
+                      >
+                        <option value="classic">Классический</option>
+                        <option value="modern">Современный</option>
+                      </select>
+                      <div className="text-sm text-gray-500">
+                        Современный — скруглённые углы, без тени, круглая кнопка добавления
+                      </div>
+                    </div>
+
+                    {/* Category Grid Style */}
+                    <div className="space-y-2">
+                      <Label htmlFor="categoryGridStyleEdit">Стиль блока категорий</Label>
+                      <select
+                        name="categoryGridStyle"
+                        id="categoryGridStyleEdit"
+                        defaultValue={editingTheme.categoryGridStyle || "cards"}
+                        className="w-full px-3 py-2 border rounded-md bg-white"
+                      >
+                        <option value="cards">Карточки (сетка)</option>
+                        <option value="pills">Таблетки (горизонтальная прокрутка)</option>
+                      </select>
+                      <div className="text-sm text-gray-500">
+                        Таблетки — компактная строка с горизонтальной прокруткой вместо сетки
+                      </div>
+                    </div>
+
+                    {/* Background Colors */}
+                    <div className="space-y-2">
+                      <Label>Цвета фона и текста</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <Label htmlFor="backgroundColorEdit" className="text-xs text-gray-600">Фон страницы</Label>
+                          <input
+                            type="text"
+                            name="backgroundColor"
+                            id="backgroundColorEdit"
+                            defaultValue={editingTheme.backgroundColor || "hsl(210, 40%, 98%)"}
+                            placeholder="hsl(210, 40%, 98%)"
+                            className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="cardBackgroundColorEdit" className="text-xs text-gray-600">Фон карточек</Label>
+                          <input
+                            type="text"
+                            name="cardBackgroundColor"
+                            id="cardBackgroundColorEdit"
+                            defaultValue={editingTheme.cardBackgroundColor || "hsl(0, 0%, 100%)"}
+                            placeholder="hsl(0, 0%, 100%)"
+                            className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="textPrimaryColorEdit" className="text-xs text-gray-600">Основной текст</Label>
+                          <input
+                            type="text"
+                            name="textPrimaryColor"
+                            id="textPrimaryColorEdit"
+                            defaultValue={editingTheme.textPrimaryColor || "hsl(222, 47%, 11%)"}
+                            placeholder="hsl(222, 47%, 11%)"
+                            className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label htmlFor="textSecondaryColorEdit" className="text-xs text-gray-600">Вторичный текст</Label>
+                          <input
+                            type="text"
+                            name="textSecondaryColor"
+                            id="textSecondaryColorEdit"
+                            defaultValue={editingTheme.textSecondaryColor || "hsl(215, 16%, 47%)"}
+                            placeholder="hsl(215, 16%, 47%)"
+                            className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Формат: hsl(H, S%, L%) или hex (#rrggbb)
                       </div>
                     </div>
                     
