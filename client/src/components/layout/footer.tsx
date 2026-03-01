@@ -1,4 +1,3 @@
-import ordisLogo from "@assets/logo-white_1750456267684.png";
 import { useCommonTranslation } from "@/hooks/use-language";
 
 export function Footer() {
@@ -15,7 +14,7 @@ export function Footer() {
     >
       <div className="max-w-[1023px] mx-auto px-4 flex flex-row items-center justify-center gap-2 sm:gap-3">
         <img 
-          src={ordisLogo} 
+          src="/uploads/images/logo-ordis-white.png" 
           alt="Ordis" 
           className="h-5 sm:h-8 w-auto cursor-pointer hover:opacity-80 transition-opacity flex-shrink-0"
           onClick={handleClick}
