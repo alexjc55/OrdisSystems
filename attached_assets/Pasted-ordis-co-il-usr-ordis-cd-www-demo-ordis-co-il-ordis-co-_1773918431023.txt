@@ -1,0 +1,60 @@
+ordis_co_il_usr@ordis:~$ cd www/demo.ordis.co.il/
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ npm install
+npm run build
+pm2 restart demo --update-env
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.                                                                                                                                                             is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.                                                                                                                                                             is
+
+added 669 packages, and audited 670 packages in 26s
+
+81 packages are looking for funding
+  run `npm fund` for details
+
+43 vulnerabilities (6 low, 10 moderate, 25 high, 2 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.12.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.12.0
+npm notice To update run: npm install -g npm@11.12.0
+npm notice
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 3853 modules transformed.
+../dist/public/index.html                     4.25 kB │ gzip:   1.47 kB
+../dist/public/assets/index-BZVQE9iW.css    167.79 kB │ gzip:  28.81 kB
+../dist/public/assets/index-Bvvmhhqf.js   2,657.30 kB │ gzip: 723.05 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 30.04s
+
+  dist/index.js  349.2kb
+
+⚡ Done in 52ms
+
+>>>> In-memory PM2 is out-of-date, do:
+>>>> $ pm2 update
+In memory PM2 version: 6.0.8
+Local PM2 version: 6.0.14
+
+[PM2] Applying action restartProcessId on app [demo](ids: [ 5 ])
+[PM2][ERROR] Process 5 not found
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$
