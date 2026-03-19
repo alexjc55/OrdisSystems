@@ -2897,8 +2897,8 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
-  const { currentLanguage, isCurrentRTL } = useLanguage();
-  const isRTL = isCurrentRTL;
+  const { currentLanguage } = useLanguage();
+  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const isAdmin = user?.role === 'admin';
   const queryClient = useQueryClient();
 
