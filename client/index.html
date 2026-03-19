@@ -4,33 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
     
-    <!-- Cache Control - Force refresh -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#f97316" />
     <meta name="background-color" content="#ffffff" />
     <!-- SEO Meta Tags -->
-    <meta name="description" content="eDAHouse - доставка готовой еды на дом. Свежие салаты, горячие блюда, супы, выпечка. Быстрая доставка качественных домашних блюд." />
-    <meta name="keywords" content="доставка еды, готовая еда, домашняя еда, салаты, горячие блюда, супы, пирожки, заказ еды онлайн, доставка на дом" />
-    <meta name="author" content="eDAHouse" />
+    <meta name="description" content="Ordis - доставка готовой еды на дом. Свежие салаты, горячие блюда, супы, выпечка. Быстрая доставка качественных домашних блюд." />
     <meta name="robots" content="index, follow" />
-    <!-- Canonical URL is dynamically set by SEOHead component based on current page -->
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="eDAHouse - Доставка готовой еды на дом" />
-    <meta property="og:description" content="Свежие салаты, горячие блюда, супы и выпечка с доставкой на дом. Качественная домашняя еда от eDAHouse." />
-    <meta property="og:url" content="/" />
-    <meta property="og:site_name" content="eDAHouse" />
     <meta property="og:locale" content="ru_RU" />
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="eDAHouse - Доставка готовой еды на дом" />
-    <meta name="twitter:description" content="Свежие салаты, горячие блюда, супы и выпечка с доставкой на дом. Качественная домашняя еда от eDAHouse." />
     
     <!-- Additional SEO tags -->
     <meta name="format-detection" content="telephone=no" />
@@ -44,37 +27,69 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/api/favicon" />
     <link rel="shortcut icon" href="/api/favicon" />
     
-    <!-- Apple Touch Icons - using dynamic PWA icon -->
+    <!-- Apple Touch Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/api/favicon" />
     <link rel="apple-touch-icon" sizes="152x152" href="/api/favicon" />
     <link rel="apple-touch-icon" sizes="144x144" href="/api/favicon" />
     <link rel="apple-touch-icon" sizes="120x120" href="/api/favicon" />
-    <link rel="apple-touch-icon" sizes="114x114" href="/api/favicon" />
-    <link rel="apple-touch-icon" sizes="76x76" href="/api/favicon" />
-    <link rel="apple-touch-icon" sizes="72x72" href="/api/favicon" />
-    <link rel="apple-touch-icon" sizes="60x60" href="/api/favicon" />
-    <link rel="apple-touch-icon" sizes="57x57" href="/api/favicon" />
     
     <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="eDAHouse" />
+    <meta name="apple-mobile-web-app-title" content="Ordis" />
     
     <!-- Microsoft -->
-    <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
     <meta name="msapplication-TileColor" content="#f97316" />
-    <meta name="msapplication-config" content="/browserconfig.xml" />
     
     <!-- Android -->
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="application-name" content="eDAHouse" />
+    <meta name="application-name" content="Ordis" />
     
-    <title>eDAHouse - Доставка готовой еды на дом | Свежие салаты, горячие блюда, супы</title>
+    <title>Ordis</title>
+
+    <style>
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        transition: opacity 0.3s ease;
+      }
+      #splash-screen.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .splash-spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #fed7aa;
+        border-top-color: #f97316;
+        border-radius: 50%;
+        animation: splash-spin 0.8s linear infinite;
+      }
+      .splash-logo-text {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #f97316;
+        letter-spacing: -0.5px;
+      }
+      @keyframes splash-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
+    <div id="splash-screen">
+      <div class="splash-logo-text">Ordis</div>
+      <div class="splash-spinner"></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>

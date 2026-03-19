@@ -19,27 +19,30 @@ import NotificationModal from "@/components/NotificationModal";
 import { CacheBuster } from "@/components/cache-buster";
 import { addNotification } from "@/lib/notification-storage";
 import { IOSCacheBuster } from "@/components/ios-cache-buster";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
-import AdminDashboard from "@/pages/admin-dashboard";
-import AdminAnalytics from "@/pages/admin-analytics";
-import Profile from "@/pages/profile";
-import ChangePasswordPage from "@/pages/change-password";
-import ForgotPasswordPage from "@/pages/forgot-password";
-import ResetPasswordPage from "@/pages/reset-password";
-import Checkout from "@/pages/checkout";
-import ThanksPage from "@/pages/thanks";
-import GuestOrderPage from "@/pages/guest-order";
-import AuthPage from "@/pages/auth-page";
-import NotFound from "@/pages/not-found";
+
 import { ProtectedRoute } from "@/lib/protected-route";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { FacebookPixel } from "@/components/FacebookPixel";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import CartSidebar from "@/components/cart/cart-sidebar";
+
+// Heavy pages loaded on demand — reduces initial bundle size
+const AdminDashboard = lazy(() => import("@/pages/admin-dashboard"));
+const AdminAnalytics = lazy(() => import("@/pages/admin-analytics"));
+const Profile = lazy(() => import("@/pages/profile"));
+const ChangePasswordPage = lazy(() => import("@/pages/change-password"));
+const ForgotPasswordPage = lazy(() => import("@/pages/forgot-password"));
+const ResetPasswordPage = lazy(() => import("@/pages/reset-password"));
+const Checkout = lazy(() => import("@/pages/checkout"));
+const ThanksPage = lazy(() => import("@/pages/thanks"));
+const GuestOrderPage = lazy(() => import("@/pages/guest-order"));
+const AuthPage = lazy(() => import("@/pages/auth-page"));
+const NotFound = lazy(() => import("@/pages/not-found"));
 
 function Router() {
   const { storeSettings } = useStoreSettings();
@@ -280,23 +283,30 @@ function Router() {
         <CustomHtml html={storeSettings.headerHtml} type="head" />
       )}
       
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/category/:categoryId" component={Home} />
-        <Route path="/all-products" component={Home} />
-        <Route path="/auth" component={AuthPage} />
-        <ProtectedRoute path="/admin/analytics" component={() => <AdminAnalytics />} />
-        <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
-        <ProtectedRoute path="/profile" component={() => <Profile />} />
-        <Route path="/checkout" component={Checkout} />
-        <Route path="/thanks" component={ThanksPage} />
-        <Route path="/guest-order/:token" component={GuestOrderPage} />
-        <Route path="/change-password" component={ChangePasswordPage} />
-        <Route path="/forgot-password" component={ForgotPasswordPage} />
-        <Route path="/reset-password" component={ResetPasswordPage} />
-        <Route path="/landing" component={Landing} />
-        <Route component={NotFound} />
-      </Switch>
+      <Suspense fallback={
+        <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
+          <div style={{ width: 40, height: 40, border: '4px solid #fed7aa', borderTopColor: '#f97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      }>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/category/:categoryId" component={Home} />
+          <Route path="/all-products" component={Home} />
+          <Route path="/auth" component={AuthPage} />
+          <ProtectedRoute path="/admin/analytics" component={() => <AdminAnalytics />} />
+          <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
+          <ProtectedRoute path="/profile" component={() => <Profile />} />
+          <Route path="/checkout" component={Checkout} />
+          <Route path="/thanks" component={ThanksPage} />
+          <Route path="/guest-order/:token" component={GuestOrderPage} />
+          <Route path="/change-password" component={ChangePasswordPage} />
+          <Route path="/forgot-password" component={ForgotPasswordPage} />
+          <Route path="/reset-password" component={ResetPasswordPage} />
+          <Route path="/landing" component={Landing} />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
       
       {/* Analytics Tracker - Automatically tracks route changes for all analytics services */}
       <AnalyticsTracker debug={true} />

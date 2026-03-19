@@ -66,4 +66,17 @@ window.ResizeObserver = class extends OriginalResizeObserver {
   }
 };
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = createRoot(document.getElementById("root")!);
+root.render(<App />);
+
+// Hide the splash screen once React has rendered
+const splash = document.getElementById('splash-screen');
+if (splash) {
+  // Use requestAnimationFrame to ensure React has painted at least one frame
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      splash.classList.add('hide');
+      setTimeout(() => splash.remove(), 350);
+    });
+  });
+}
