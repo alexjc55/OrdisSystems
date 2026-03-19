@@ -1,0 +1,245 @@
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ git pull origin main
+npm install
+npm run build
+pm2 restart demo --update-env
+remote: Enumerating objects: 47, done.
+remote: Counting objects: 100% (47/47), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 33 (delta 31), reused 33 (delta 31), pack-reused 0 (from 0)
+Unpacking objects: 100% (33/33), 10.62 KiB | 201.00 KiB/s, done.
+From https://github.com/alexjc55/OrdisSystems
+ * branch              main       -> FETCH_HEAD
+   5705b3f2..13902a0c  main       -> origin/main
+Updating 370f8a7a..13902a0c
+error: Your local changes to the following files would be overwritten by merge:
+        .replit
+        client/public/sw.js
+        client/src/App.tsx
+        client/src/components/NotificationModal.tsx
+        client/src/components/PWAInstallPrompt.tsx
+        client/src/components/PushNotificationRequest.tsx
+        client/src/components/SEOHead.tsx
+        client/src/components/cart/cart-overlay.tsx
+        client/src/components/cart/cart-sidebar.tsx
+        client/src/components/ios-cache-buster.tsx
+        client/src/components/layout/footer.tsx
+        client/src/components/layout/header.tsx
+        client/src/components/layout/whatsapp-chat.tsx
+        client/src/hooks/usePWA.ts
+        client/src/index.css
+        client/src/locales/ar/admin.json
+        client/src/locales/ar/common.json
+        client/src/locales/en/admin.json
+        client/src/locales/en/common.json
+        client/src/locales/he/admin.json
+        client/src/locales/he/common.json
+        client/src/locales/ru/admin.json
+        client/src/locales/ru/common.json
+        client/src/pages/admin-dashboard.tsx
+        client/src/pages/home.tsx
+        package-lock.json
+        package.json
+        server/auth.ts
+        server/email-service.ts
+        server/index.ts
+        server/meta-injection-middleware.ts
+        server/seed.ts
+Please commit your changes or stash them before you merge.
+error: The following untracked working tree files would be overwritten by merge:
+        client/src/components/layout/bottom-nav.tsx
+        client/src/lib/notification-storage.ts
+        server/middleware/auth-guard.ts
+        server/middleware/cache.ts
+        server/middleware/upload.ts
+        server/routes/admin/analytics.routes.ts
+        server/routes/admin/orders.routes.ts
+        server/routes/admin/push.routes.ts
+        server/routes/admin/settings.routes.ts
+        server/routes/admin/themes.routes.ts
+        server/routes/admin/users.routes.ts
+        server/routes/auth.routes.ts
+        server/routes/catalog.routes.ts
+        server/routes/index.ts
+        server/routes/integrations/barcode.routes.ts
+        server/routes/integrations/feeds.routes.ts
+        server/routes/integrations/translations.routes.ts
+        server/routes/orders.routes.ts
+        server/routes/profile.routes.ts
+        server/routes/system.routes.ts
+        server/utils/app-hash.ts
+        shared/seo-schemas.ts
+        vite-plugin-sw-version.ts
+Please move or remove them before you merge.
+Aborting
+
+up to date, audited 670 packages in 14s
+
+81 packages are looking for funding
+  run `npm fund` for details
+
+43 vulnerabilities (6 low, 10 moderate, 25 high, 2 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+Browserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 3853 modules transformed.
+../dist/public/index.html                     4.25 kB │ gzip:   1.47 kB
+../dist/public/assets/index-BZVQE9iW.css    167.79 kB │ gzip:  28.81 kB
+../dist/public/assets/index-Bvvmhhqf.js   2,657.30 kB │ gzip: 723.05 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 28.98s
+
+  dist/index.js  349.2kb
+
+⚡ Done in 33ms
+[PM2] Applying action restartProcessId on app [demo](ids: [ 3 ])
+[PM2] [demo](3) ✓
+┌────┬──────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name         │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼──────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 2  │ api.clini    │ default     │ N/A     │ fork    │ 3602725  │ 2h     │ 0    │ online    │ 0%       │ 54.8mb   │ ord… │ disabled │
+│ 3  │ demo         │ default     │ 1.0.0   │ fork    │ 3610191  │ 0s     │ 2    │ online    │ 0%       │ 24.4mb   │ ord… │ disabled │
+│ 0  │ edahouse     │ default     │ 1.0.0   │ fork    │ 3602719  │ 2h     │ 0    │ online    │ 0%       │ 138.1mb  │ ord… │ disabled │
+└────┴──────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$ git pull origin main
+npm install
+npm run build
+pm2 restart demo --update-env
+remote: Enumerating objects: 19, done.
+remote: Counting objects: 100% (19/19), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 10 (delta 9), reused 10 (delta 9), pack-reused 0 (from 0)
+Unpacking objects: 100% (10/10), 1.67 KiB | 95.00 KiB/s, done.
+From https://github.com/alexjc55/OrdisSystems
+ * branch              main       -> FETCH_HEAD
+   13902a0c..f9bd981e  main       -> origin/main
+Updating 370f8a7a..f9bd981e
+error: Your local changes to the following files would be overwritten by merge:
+        .replit
+        client/public/sw.js
+        client/src/App.tsx
+        client/src/components/NotificationModal.tsx
+        client/src/components/PWAInstallPrompt.tsx
+        client/src/components/PushNotificationRequest.tsx
+        client/src/components/SEOHead.tsx
+        client/src/components/cart/cart-overlay.tsx
+        client/src/components/cart/cart-sidebar.tsx
+        client/src/components/ios-cache-buster.tsx
+        client/src/components/layout/footer.tsx
+        client/src/components/layout/header.tsx
+        client/src/components/layout/whatsapp-chat.tsx
+        client/src/hooks/usePWA.ts
+        client/src/index.css
+        client/src/locales/ar/admin.json
+        client/src/locales/ar/common.json
+        client/src/locales/en/admin.json
+        client/src/locales/en/common.json
+        client/src/locales/he/admin.json
+        client/src/locales/he/common.json
+        client/src/locales/ru/admin.json
+        client/src/locales/ru/common.json
+        client/src/pages/admin-dashboard.tsx
+        client/src/pages/home.tsx
+        package-lock.json
+        package.json
+        server/auth.ts
+        server/email-service.ts
+        server/index.ts
+        server/meta-injection-middleware.ts
+        server/seed.ts
+Please commit your changes or stash them before you merge.
+error: The following untracked working tree files would be overwritten by merge:
+        client/src/components/layout/bottom-nav.tsx
+        client/src/lib/notification-storage.ts
+        server/middleware/auth-guard.ts
+        server/middleware/cache.ts
+        server/middleware/upload.ts
+        server/routes/admin/analytics.routes.ts
+        server/routes/admin/orders.routes.ts
+        server/routes/admin/push.routes.ts
+        server/routes/admin/settings.routes.ts
+        server/routes/admin/themes.routes.ts
+        server/routes/admin/users.routes.ts
+        server/routes/auth.routes.ts
+        server/routes/catalog.routes.ts
+        server/routes/index.ts
+        server/routes/integrations/barcode.routes.ts
+        server/routes/integrations/feeds.routes.ts
+        server/routes/integrations/translations.routes.ts
+        server/routes/orders.routes.ts
+        server/routes/profile.routes.ts
+        server/routes/system.routes.ts
+        server/utils/app-hash.ts
+        shared/seo-schemas.ts
+        vite-plugin-sw-version.ts
+Please move or remove them before you merge.
+Aborting
+
+up to date, audited 670 packages in 13s
+
+81 packages are looking for funding
+  run `npm fund` for details
+
+43 vulnerabilities (6 low, 10 moderate, 25 high, 2 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (49) ../node_modules/react/index.jsBrowserslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 3853 modules transformed.
+../dist/public/index.html                     4.25 kB │ gzip:   1.47 kB
+../dist/public/assets/index-BZVQE9iW.css    167.79 kB │ gzip:  28.81 kB
+../dist/public/assets/index-Bvvmhhqf.js   2,657.30 kB │ gzip: 723.05 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 28.59s
+
+  dist/index.js  349.2kb
+
+⚡ Done in 36ms
+[PM2] Applying action restartProcessId on app [demo](ids: [ 3 ])
+[PM2] [demo](3) ✓
+┌────┬──────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name         │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼──────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 2  │ api.clini    │ default     │ N/A     │ fork    │ 3602725  │ 2h     │ 0    │ online    │ 0%       │ 55.3mb   │ ord… │ disabled │
+│ 3  │ demo         │ default     │ 1.0.0   │ fork    │ 3610846  │ 0s     │ 3    │ online    │ 0%       │ 10.8mb   │ ord… │ disabled │
+│ 0  │ edahouse     │ default     │ 1.0.0   │ fork    │ 3602719  │ 2h     │ 0    │ online    │ 0%       │ 137.7mb  │ ord… │ disabled │
+└────┴──────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+ordis_co_il_usr@ordis:~/www/demo.ordis.co.il$
