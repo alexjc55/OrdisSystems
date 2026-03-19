@@ -129,8 +129,8 @@ export function usePushNotifications() {
     }
   };
 
-  const sendTestNotification = async () => {
-    if (!user || user.role !== 'admin') return false;
+  const sendTestNotification = async (): Promise<{ ok: boolean; message?: string; detail?: string }> => {
+    if (!user || user.role !== 'admin') return { ok: false, message: 'not_admin' };
     
     try {
       const response = await fetch('/api/admin/push/test', {
@@ -138,10 +138,15 @@ export function usePushNotifications() {
         credentials: 'include'
       });
       
-      return response.ok;
+      const data = await response.json().catch(() => ({}));
+      
+      if (!response.ok) {
+        return { ok: false, message: data.message, detail: data.detail };
+      }
+      return { ok: true, message: data.message, detail: data.detail };
     } catch (error) {
       console.error('Error sending test notification:', error);
-      return false;
+      return { ok: false, message: 'network_error' };
     }
   };
 

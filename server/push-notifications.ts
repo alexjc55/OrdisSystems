@@ -29,13 +29,17 @@ export interface PushNotification {
 
 export class PushNotificationService {
   // Отправить уведомление конкретному пользователю
-  static async sendToUser(userId: string, notification: PushNotification) {
+  static async sendToUser(userId: string, notification: PushNotification): Promise<{ sent: number; failed: number; expired: number; total: number }> {
     try {
       const db = await getDB();
       const subscriptions = await db
         .select()
         .from(pushSubscriptions)
         .where(eq(pushSubscriptions.userId, userId));
+
+      if (subscriptions.length === 0) {
+        return { sent: 0, failed: 0, expired: 0, total: 0 };
+      }
 
       const payload = JSON.stringify({
         title: notification.title,
@@ -46,7 +50,9 @@ export class PushNotificationService {
         actions: notification.actions || []
       });
 
-      const promises = subscriptions.map((sub: any) => {
+      let sent = 0, failed = 0, expired = 0;
+
+      const promises = subscriptions.map(async (sub: any) => {
         const pushConfig = {
           endpoint: sub.endpoint,
           keys: {
@@ -55,19 +61,25 @@ export class PushNotificationService {
           }
         };
 
-        return webpush.sendNotification(pushConfig, payload)
-          .catch(error => {
-            console.error('Push notification failed:', error);
-            // Удаляем неработающие подписки
-            if (error.statusCode === 404 || error.statusCode === 410) {
-              return db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id));
-            }
-          });
+        try {
+          await webpush.sendNotification(pushConfig, payload);
+          sent++;
+        } catch (error: any) {
+          console.error('Push notification failed:', error);
+          if (error.statusCode === 404 || error.statusCode === 410) {
+            expired++;
+            await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, sub.id));
+          } else {
+            failed++;
+          }
+        }
       });
 
       await Promise.all(promises);
+      return { sent, failed, expired, total: subscriptions.length };
     } catch (error) {
       console.error('Error sending push notification:', error);
+      return { sent: 0, failed: 1, expired: 0, total: 0 };
     }
   }
 

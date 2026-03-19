@@ -224,13 +224,34 @@ router.post('/admin/push/test', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: 'Admin access required' });
     }
 
-    await PushNotificationService.sendToUser(user.id, {
+    const result = await PushNotificationService.sendToUser(user.id, {
       title: '🧪 Тестовое уведомление',
       body: 'Система push уведомлений работает корректно!',
       data: { type: 'test' }
     });
 
-    res.json({ message: 'Test notification sent' });
+    if (result.total === 0) {
+      return res.status(400).json({
+        message: 'no_subscriptions',
+        detail: 'Нет активных подписок. Откройте сайт в браузере и разрешите push-уведомления.'
+      });
+    }
+
+    if (result.expired > 0 && result.sent === 0) {
+      return res.status(400).json({
+        message: 'subscription_expired',
+        detail: `Подписка устарела и удалена (${result.expired}). Обновите страницу в браузере, чтобы переподписаться.`,
+        expired: result.expired
+      });
+    }
+
+    res.json({
+      message: 'Test notification sent',
+      sent: result.sent,
+      expired: result.expired,
+      failed: result.failed,
+      total: result.total
+    });
   } catch (error) {
     console.error('Error sending test notification:', error);
     res.status(500).json({ message: 'Failed to send test notification' });

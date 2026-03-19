@@ -10,6 +10,7 @@ import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 interface MarketingNotification {
   id: number;
@@ -25,6 +26,7 @@ export function PushNotificationsPanel() {
   const { isSupported, isSubscribed, subscribe, sendTestNotification, permission } = usePushNotifications();
   const queryClient = useQueryClient();
   const { t } = useTranslation('admin');
+  const { toast } = useToast();
   
   const [marketingForm, setMarketingForm] = useState({
     title: '',
@@ -74,9 +76,32 @@ export function PushNotificationsPanel() {
   };
 
   const handleTestNotification = async () => {
-    const success = await sendTestNotification();
-    if (success) {
-      console.log('Test notification sent successfully');
+    const result = await sendTestNotification();
+    if (result.ok) {
+      toast({
+        title: '✅ Уведомление отправлено',
+        description: 'Проверьте браузер — уведомление должно появиться.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/push/stats'] });
+    } else if (result.message === 'no_subscriptions') {
+      toast({
+        title: '⚠️ Нет подписчиков',
+        description: result.detail || 'Откройте сайт в браузере и разрешите push-уведомления.',
+        variant: 'destructive'
+      });
+    } else if (result.message === 'subscription_expired') {
+      toast({
+        title: '⚠️ Подписка устарела',
+        description: result.detail || 'Обновите страницу в браузере, чтобы переподписаться.',
+        variant: 'destructive'
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/push/stats'] });
+    } else {
+      toast({
+        title: '❌ Ошибка отправки',
+        description: result.detail || 'Не удалось отправить тестовое уведомление.',
+        variant: 'destructive'
+      });
     }
   };
 
