@@ -721,10 +721,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   };
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
-    queryFn: async () => {
-      const response = await apiRequest('GET', '/api/settings');
-      return await response.json();
-    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -1123,8 +1119,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   const calculateCorrectDeliveryFee = () => {
     const subtotal = calculateSubtotal();
     const deliveryFee = parseFloat(storeSettings?.deliveryFee || "15.00");
-    const freeDeliveryThreshold = (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") 
-      ? parseFloat(storeSettings.freeDeliveryFrom) 
+    const freeDeliveryRaw = storeSettings?.freeDeliveryFrom;
+    const freeDeliveryThreshold = (freeDeliveryRaw != null && String(freeDeliveryRaw).trim() !== "") 
+      ? parseFloat(String(freeDeliveryRaw)) 
       : null;
     
     // If no free delivery threshold is set or it's empty/invalid, always charge delivery fee
@@ -3752,10 +3749,7 @@ export default function AdminDashboard() {
       
       return response;
     },
-    onSuccess: (newData) => {
-      // Update cache with the new data returned from the server
-      queryClient.setQueryData(['/api/settings'], newData);
-      // Also invalidate the public settings cache to update header immediately
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
     },
@@ -5242,8 +5236,9 @@ export default function AdminDashboard() {
                                         
                                         const subtotal = orderItems.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
                                         const deliveryFee = parseFloat(storeSettings?.deliveryFee || "15.00");
-                                        const freeDeliveryThreshold = (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") 
-                                          ? parseFloat(storeSettings.freeDeliveryFrom) 
+                                        const freeDeliveryRaw2 = storeSettings?.freeDeliveryFrom;
+                                        const freeDeliveryThreshold = (freeDeliveryRaw2 != null && String(freeDeliveryRaw2).trim() !== "") 
+                                          ? parseFloat(String(freeDeliveryRaw2)) 
                                           : null;
                                         
                                         if (!freeDeliveryThreshold || isNaN(freeDeliveryThreshold) || freeDeliveryThreshold <= 0) {
