@@ -4493,7 +4493,7 @@ export default function AdminDashboard() {
                         <TableHeader>
                           <TableRow>
                             {/* Dynamically order columns for RTL */}
-                            {isRTL ? (
+                            {(isRTL || document.documentElement.lang === 'he' || document.documentElement.lang === 'ar') ? (
                               // RTL order: Status, Price, Category, Name (reversed)
                               <>
                                 <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>{adminT('products.productStatus')}</TableHead>
