@@ -7931,7 +7931,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       smtpPort: storeSettings?.smtpPort || 587,
       smtpSecure: storeSettings?.smtpSecure || false,
       smtpUser: storeSettings?.smtpUser || "",
-      smtpPassword: storeSettings?.smtpPassword || "",
+      smtpPassword: "",
       sendgridApiKey: storeSettings?.sendgridApiKey || "",
       useSendgrid: storeSettings?.useSendgrid || false,
       // Facebook Conversions API settings
@@ -8039,7 +8039,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         smtpPort: storeSettings?.smtpPort || 587,
         smtpSecure: storeSettings?.smtpSecure || false,
         smtpUser: storeSettings?.smtpUser || "",
-        smtpPassword: storeSettings?.smtpPassword || "",
+        smtpPassword: "",
         sendgridApiKey: storeSettings?.sendgridApiKey || "",
         useSendgrid: storeSettings?.useSendgrid || false,
         // Facebook Conversions API settings
@@ -9093,10 +9093,21 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                             <Input
                               placeholder="••••••••"
                               type="password"
+                              autoComplete="new-password"
                               className="text-sm"
                               {...field}
                             />
                           </FormControl>
+                          <FormDescription className={`text-xs text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {storeSettings?.smtpPassword
+                              ? ({
+                                  ru: 'Оставьте пустым, чтобы сохранить текущий пароль',
+                                  en: 'Leave blank to keep the current password',
+                                  he: 'השאר ריק כדי לשמור את הסיסמה הנוכחית',
+                                  ar: 'اتركه فارغاً للحفاظ على كلمة المرور الحالية',
+                                }[currentLanguage] || 'Leave blank to keep the current password')
+                              : ''}
+                          </FormDescription>
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}

@@ -33,9 +33,17 @@ router.put('/settings', isAuthenticated, async (req: any, res) => {
       return res.status(404).json({ message: "Store settings not found" });
     }
 
+    const bodyData = { ...req.body };
+
+    // Never overwrite the SMTP password with an empty string —
+    // keep the stored value if the incoming value is blank
+    if (!bodyData.smtpPassword || bodyData.smtpPassword.trim() === '') {
+      delete bodyData.smtpPassword;
+    }
+
     const mergedData = {
       ...currentSettings,
-      ...req.body,
+      ...bodyData,
       id: currentSettings.id
     };
 
