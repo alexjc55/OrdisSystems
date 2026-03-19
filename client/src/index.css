@@ -435,14 +435,9 @@ button:focus,
     direction: rtl !important;
   }
   
-  /* Force RTL for table components */
-  html[lang="ar"] table,
-  html[lang="ar"] thead,
-  html[lang="ar"] tbody,
-  html[lang="ar"] tr,
+  /* Table text alignment for Arabic - direction handled by container */
   html[lang="ar"] th,
   html[lang="ar"] td {
-    direction: rtl !important;
     text-align: right !important;
   }
   
@@ -540,11 +535,6 @@ button:focus,
     direction: rtl !important;
   }
   
-  /* CRITICAL: Universal RTL override for all Arabic content */
-  html[lang="ar"] * {
-    direction: inherit !important;
-  }
-  
   /* Root RTL enforcement */
   html[lang="ar"] {
     direction: rtl !important;
@@ -577,6 +567,23 @@ button:focus,
     text-align: right !important;
   }
   
+  /* Products table: force LTR so code-based RTL column ordering (isRTL branch) works correctly.
+     Spec 0-2-1 (html[lang] + .products) wins over all prior direction rules (max 0-2-1 by position).
+     Using * to cover table elements AND buttons inside headers. */
+  html[lang="ar"] .products,
+  html[lang="he"] .products,
+  html[lang="ar"] .products *,
+  html[lang="he"] .products * {
+    direction: ltr !important;
+  }
+
+  /* Sort buttons inside .products have direction:ltr now — restore row-reverse naturally.
+     Spec 0-3-1 beats global [dir="rtl"][lang] .flex-row-reverse rule (0-3-0). */
+  html[lang="ar"] .products .flex-row-reverse,
+  html[lang="he"] .products .flex-row-reverse {
+    flex-direction: row-reverse !important;
+  }
+
   /* Orders section RTL styling */
   .rtl {
     direction: rtl !important;
@@ -741,7 +748,7 @@ button:focus,
     margin-left: 0 !important;
   }
   
-  /* Unified RTL flex layouts */
+  /* Unified RTL flex layouts: direction:rtl containers need row instead of row-reverse (prevents double-reversal) */
   [dir="rtl"][lang="ar"] .flex-row-reverse,
   [dir="rtl"][lang="he"] .flex-row-reverse {
     flex-direction: row !important;
