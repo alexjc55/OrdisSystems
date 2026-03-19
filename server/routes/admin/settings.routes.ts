@@ -171,16 +171,17 @@ router.post("/test-email", isAuthenticated, async (req: any, res) => {
       smtpPassword: settingsData.smtpPassword
     });
 
+    const storeName = settingsData.storeName || 'Ordis';
     const emailSent = await emailService.sendEmail({
       to: toEmail,
       from: settingsData.orderNotificationFromEmail || 'noreply@ordis.co.il',
-      fromName: settingsData.storeName || 'eDAHouse',
-      subject: '🧪 Тест email - eDAHouse',
-      text: 'Тестовое письмо от системы eDAHouse',
+      fromName: settingsData.orderNotificationFromName || storeName,
+      subject: `🧪 Тест email - ${storeName}`,
+      text: `Тестовое письмо от системы ${storeName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <h2 style="color: #f97316;">🧪 Тест email уведомлений</h2>
-          <p>Это тестовое письмо от системы <strong>eDAHouse</strong>.</p>
+          <p>Это тестовое письмо от системы <strong>${storeName}</strong>.</p>
           <p>Если вы получили это письмо, значит email уведомления настроены правильно!</p>
           <p style="color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
             Отправлено: ${new Date().toLocaleString('ru-RU')}

@@ -483,7 +483,7 @@ export async function sendNewOrderEmail(
         <!-- Footer -->
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 14px;">
           <p>${template.footer}</p>
-          <p style="margin: 5px 0 0 0;">${storeName || fromName || 'eDAHouse'} - ${language === 'ru' ? 'Система управления заказами' : language === 'en' ? 'Order Management System' : language === 'he' ? 'מערכת ניהול הזמנות' : 'نظام إدارة الطلبات'}</p>
+          <p style="margin: 5px 0 0 0;">${storeName || fromName || 'Ordis'} - ${language === 'ru' ? 'Система управления заказами' : language === 'en' ? 'Order Management System' : language === 'he' ? 'מערכת ניהול הזמנות' : 'نظام إدارة الطلبات'}</p>
         </div>
 
       </div>
@@ -552,7 +552,7 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'Создайте аккаунт для удобства!',
       registrationText: 'Зарегистрируйтесь, чтобы легко отслеживать все ваши заказы, сохранить адрес доставки и получать персональные предложения.',
       registerButton: 'Зарегистрироваться и привязать заказ',
-      footer: `С уважением,<br>Команда ${storeName || 'eDAHouse'}`,
+      footer: `С уважением,<br>Команда ${storeName || 'Ordis'}`,
       quantityLabel: 'Кол-во',
       amountLabel: 'Сумма',
       productLabel: 'Товар',
@@ -582,7 +582,7 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'Create an account for convenience!',
       registrationText: 'Register to easily track all your orders, save delivery address, and receive personalized offers.',
       registerButton: 'Register and link order',
-      footer: `Best regards,<br>Team ${storeName || 'eDAHouse'}`,
+      footer: `Best regards,<br>Team ${storeName || 'Ordis'}`,
       quantityLabel: 'Quantity',
       amountLabel: 'Amount',
       productLabel: 'Product',
@@ -612,7 +612,7 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'צור חשבון לנוחות!',
       registrationText: 'הירשם כדי לעקוב בקלות אחר כל ההזמנות שלך, לשמור כתובת משלוח ולקבל הצעות אישיות.',
       registerButton: 'הירשם וקשר את ההזמנה',
-      footer: `בברכה,<br>צוות ${storeName || 'eDAHouse'}`,
+      footer: `בברכה,<br>צוות ${storeName || 'Ordis'}`,
       quantityLabel: 'כמות',
       amountLabel: 'סכום',
       productLabel: 'מוצר',
@@ -642,7 +642,7 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'أنشئ حساباً للراحة!',
       registrationText: 'سجل لتتبع جميع طلباتك بسهولة، واحفظ عنوان التسليم، واحصل على عروض شخصية.',
       registerButton: 'سجل وربط الطلب',
-      footer: `مع أطيب التحيات،<br>فريق ${storeName || 'eDAHouse'}`,
+      footer: `مع أطيب التحيات،<br>فريق ${storeName || 'Ordis'}`,
       quantityLabel: 'الكمية',
       amountLabel: 'المبلغ',
       productLabel: 'المنتج',

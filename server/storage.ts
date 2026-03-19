@@ -1405,7 +1405,7 @@ export class DatabaseStorage implements IStorage {
       const [newSettings] = await db
         .insert(storeSettings)
         .values([{
-          storeName: settings.storeName || 'eDAHouse',
+          storeName: settings.storeName || 'Ordis',
           defaultItemsPerPage: settings.defaultItemsPerPage || 10,
           ...settings
         }])
