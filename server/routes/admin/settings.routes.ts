@@ -172,19 +172,61 @@ router.post("/test-email", isAuthenticated, async (req: any, res) => {
     });
 
     const storeName = settingsData.storeName || 'Ordis';
+    const lang = settingsData.defaultLanguage || 'ru';
+    const isRTL = lang === 'he' || lang === 'ar';
+
+    const i18n: Record<string, { subject: string; heading: string; body: string; success: string; sent: string; locale: string }> = {
+      ru: {
+        subject: `🧪 Тест email - ${storeName}`,
+        heading: '🧪 Тест email уведомлений',
+        body: `Это тестовое письмо от системы <strong>${storeName}</strong>.`,
+        success: 'Если вы получили это письмо, значит email уведомления настроены правильно!',
+        sent: 'Отправлено',
+        locale: 'ru-RU'
+      },
+      en: {
+        subject: `🧪 Email test - ${storeName}`,
+        heading: '🧪 Email notification test',
+        body: `This is a test email from <strong>${storeName}</strong> system.`,
+        success: 'If you received this email, your email notifications are configured correctly!',
+        sent: 'Sent',
+        locale: 'en-US'
+      },
+      he: {
+        subject: `🧪 בדיקת אימייל - ${storeName}`,
+        heading: '🧪 בדיקת התראות אימייל',
+        body: `זוהי הודעת בדיקה ממערכת <strong>${storeName}</strong>.`,
+        success: 'אם קיבלת את המייל הזה, התראות האימייל מוגדרות כראוי!',
+        sent: 'נשלח',
+        locale: 'he-IL'
+      },
+      ar: {
+        subject: `🧪 اختبار البريد الإلكتروني - ${storeName}`,
+        heading: '🧪 اختبار إشعارات البريد الإلكتروني',
+        body: `هذه رسالة بريد إلكتروني تجريبية من نظام <strong>${storeName}</strong>.`,
+        success: 'إذا استلمت هذا البريد الإلكتروني، فإن إشعارات البريد الإلكتروني مُهيَّأة بشكل صحيح!',
+        sent: 'أُرسل',
+        locale: 'ar-SA'
+      }
+    };
+
+    const t = i18n[lang] || i18n.ru;
+    const dir = isRTL ? 'rtl' : 'ltr';
+    const textAlign = isRTL ? 'right' : 'left';
+
     const emailSent = await emailService.sendEmail({
       to: toEmail,
       from: settingsData.orderNotificationFromEmail || 'noreply@ordis.co.il',
       fromName: settingsData.orderNotificationFromName || storeName,
-      subject: `🧪 Тест email - ${storeName}`,
-      text: `Тестовое письмо от системы ${storeName}`,
+      subject: t.subject,
+      text: `${t.body.replace(/<[^>]+>/g, '')} ${t.success}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #f97316;">🧪 Тест email уведомлений</h2>
-          <p>Это тестовое письмо от системы <strong>${storeName}</strong>.</p>
-          <p>Если вы получили это письмо, значит email уведомления настроены правильно!</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; direction: ${dir}; text-align: ${textAlign};">
+          <h2 style="color: #f97316;">${t.heading}</h2>
+          <p>${t.body}</p>
+          <p>${t.success}</p>
           <p style="color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-            Отправлено: ${new Date().toLocaleString('ru-RU')}
+            ${t.sent}: ${new Date().toLocaleString(t.locale)}
           </p>
         </div>
       `
