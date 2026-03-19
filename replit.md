@@ -7,6 +7,12 @@ eDAHouse is a comprehensive, multi-language e-commerce food delivery system supp
 Preferred communication style: Simple, everyday language.
 Translation management: Always ensure all changes are applied to all 4 languages (Russian, English, Hebrew, Arabic) when working with translations. User expects consistent coverage across all supported languages.
 
+## RTL Architecture Notes (Critical)
+- **Admin products table RTL**: Column order is controlled by JS `isRTL` flag in `admin-dashboard.tsx`. `isRTL=true` → RTL branch renders [Status, Price, Category, Name] DOM order. CSS `direction: ltr !important` on `.products-container .table-container table` ensures visual left-to-right display so Status appears leftmost.
+- **isRTL detection**: Uses `useState` initialized from `document.documentElement.lang || localStorage.getItem('language')` + listens to both `window.languageChanged` and `i18n.languageChanged` events. DO NOT rely solely on `i18n.language` — it may not be reactive on first render.
+- **CSS specificity trap**: Arabic and Hebrew MUST have identical CSS rules for the products table. Never add asymmetric `direction:` rules for one language but not the other. The bug was: Hebrew got `direction: ltr !important` but Arabic got `direction: rtl !important` on `.products-container .table-container table` (index.css ~line 780).
+- **All RTL CSS is inside `@layer base`** (index.css line 250). The `html[lang="ar"] .products-container .table-container table` rule has highest specificity (0,3,2) and controls the table direction.
+
 ## System Architecture
 
 ### Frontend
