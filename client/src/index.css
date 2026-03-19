@@ -774,16 +774,12 @@ button:focus,
     direction: rtl !important;
   }
   
-  /* Hebrew table containers - LTR direction */
+  /* Hebrew and Arabic table containers - LTR direction (column order controlled by JS RTL branch) */
   html[lang="he"] .products-container .table-container table,
-  html[lang="he"] [data-tab="products"] .table-container table {
-    direction: ltr !important;
-  }
-  
-  /* Arabic table containers - RTL direction */
+  html[lang="he"] [data-tab="products"] .table-container table,
   html[lang="ar"] .products-container .table-container table,
   html[lang="ar"] [data-tab="products"] .table-container table {
-    direction: rtl !important;
+    direction: ltr !important;
   }
   
   html[lang="he"] .products-container table th,

@@ -4486,9 +4486,6 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Products Table */}
-                <div style={{background: isRTL ? 'green' : 'red', color:'white', padding:'4px', fontSize:'11px', marginBottom:'4px'}}>
-                  DEBUG: isRTL={String(isRTL)} | rtlLang={rtlLang} | docLang={document.documentElement.lang} | i18n={i18n.language}
-                </div>
                 {filteredProducts.length > 0 ? (
                   <div className="border rounded-lg bg-white overflow-hidden products" dir="ltr">
                     <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
