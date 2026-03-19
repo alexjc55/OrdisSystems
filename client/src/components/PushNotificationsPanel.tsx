@@ -75,6 +75,34 @@ export function PushNotificationsPanel() {
     }
   };
 
+  const handleShowSubscriptionRequest = async () => {
+    if (!isSupported) {
+      toast({ title: '❌ Не поддерживается', description: 'Этот браузер не поддерживает push-уведомления.', variant: 'destructive' });
+      return;
+    }
+    if (permission === 'denied') {
+      toast({ title: '⚠️ Доступ заблокирован', description: 'Разрешения заблокированы в настройках браузера. Откройте настройки сайта и разрешите уведомления вручную.', variant: 'destructive' });
+      return;
+    }
+    await subscribe();
+    queryClient.invalidateQueries({ queryKey: ['/api/admin/push/stats'] });
+    toast({ title: '✅ Готово', description: 'Запрос подписки выполнен. Если разрешения даны — подписка активирована.' });
+  };
+
+  const handleClearCache = async () => {
+    if (!('caches' in window)) {
+      toast({ title: '❌ Недоступно', description: 'Cache API не поддерживается этим браузером.', variant: 'destructive' });
+      return;
+    }
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+      toast({ title: '✅ Кэш очищен', description: `Удалено кэшей: ${keys.length}. Обновите страницу для применения.` });
+    } catch (err) {
+      toast({ title: '❌ Ошибка', description: 'Не удалось очистить кэш.', variant: 'destructive' });
+    }
+  };
+
   const handleTestNotification = async () => {
     const result = await sendTestNotification();
     if (result.ok) {
@@ -173,13 +201,13 @@ export function PushNotificationsPanel() {
               <div className="mt-2 pt-2 border-t space-y-1">
                 <div className="font-medium">Тестовые функции:</div>
                 <button 
-                  onClick={() => (window as any).showPushRequest?.()} 
+                  onClick={handleShowSubscriptionRequest}
                   className="text-blue-600 hover:underline mr-3"
                 >
                   Показать запрос подписки
                 </button>
                 <button 
-                  onClick={() => (window as any).clearPushCache?.()} 
+                  onClick={handleClearCache}
                   className="text-blue-600 hover:underline"
                 >
                   Очистить кэш
