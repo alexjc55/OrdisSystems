@@ -3928,12 +3928,9 @@ export default function AdminDashboard() {
           // Check if we're on mobile (screen width <= 768px)
           const isMobile = window.innerWidth <= 768;
           
-          if (isMobile && element.classList.contains('rtl-scroll-container')) {
-            // For RTL scroll containers on mobile, scroll to start (0) to show first column
-            element.scrollLeft = 0;
-          } else if (isMobile) {
-            // On mobile RTL, scroll to the leftmost position to show the first column (product name)
-            // In RTL direction, the leftmost content requires scrolling to the right edge
+          if (isMobile) {
+            // On mobile RTL: scroll to rightmost position so Name column is visible first.
+            // RTL reading starts from the right, user scrolls left to reach Status column.
             const maxScrollLeft = element.scrollWidth - element.clientWidth;
             element.scrollLeft = maxScrollLeft;
           } else {
@@ -5024,7 +5021,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Right side - Create Order + Filters */}
-                <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
                   {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
                     <Button 
                       onClick={() => setShowCreateOrderDialog(true)}
