@@ -2898,7 +2898,24 @@ export default function AdminDashboard() {
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
-  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+
+  // Reliable RTL detection: read directly from document lang + listen to language change events
+  const getDocLang = () => document.documentElement.lang || localStorage.getItem('language') || i18n.language || 'ru';
+  const [rtlLang, setRtlLang] = useState<string>(getDocLang);
+  useEffect(() => {
+    const handler = () => setRtlLang(getDocLang());
+    window.addEventListener('languageChanged', handler);
+    // Also update when i18n language changes
+    i18n.on('languageChanged', handler);
+    return () => {
+      window.removeEventListener('languageChanged', handler);
+      i18n.off('languageChanged', handler);
+    };
+  }, []);
+  // Keep in sync if i18n.language already reflects change before event fires
+  const activeLang = rtlLang || i18n.language || 'ru';
+  const isRTL = activeLang === 'he' || activeLang === 'ar';
+
   const isAdmin = user?.role === 'admin';
   const queryClient = useQueryClient();
 
