@@ -16,7 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
-import { useAdminTranslation, useCommonTranslation } from "@/hooks/use-language";
+import { useAdminTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/lib/i18n";
 import { useTranslationManager } from "@/hooks/useTranslationManager";
@@ -2897,9 +2897,9 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const { t: adminT } = useAdminTranslation();
   const { t: commonT, i18n } = useCommonTranslation();
-  const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const { currentLanguage, isCurrentRTL } = useLanguage();
+  const isRTL = isCurrentRTL;
   const isAdmin = user?.role === 'admin';
-  const currentLanguage = i18n.language;
   const queryClient = useQueryClient();
 
   // Force component remount key to prevent stale state issues
