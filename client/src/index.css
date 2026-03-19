@@ -1397,41 +1397,16 @@ body, html {
       scroll-snap-type: x mandatory;
     }
     
-    /* RTL scroll container specific behavior */
+    /* RTL scroll container: keep as LTR so scrollLeft=0 is leftmost, scrollLeft=max is rightmost.
+       JS handles scroll position on mobile (scrolls to max to show right side first).
+       Table cell text stays right-aligned for RTL languages. */
     .rtl-scroll-container {
-      /* Force scroll direction to be natural for RTL on mobile */
-      direction: rtl;
+      direction: ltr;
     }
-    
-    .rtl-scroll-container table {
-      /* Keep table content in RTL but ensure proper column order */
-      direction: rtl !important;
-      width: 100%;
-    }
-    
+
     .rtl-scroll-container table th,
     .rtl-scroll-container table td {
-      /* Ensure all table cells are RTL */
-      direction: rtl !important;
-      text-align: right !important;
-    }
-    
-    .rtl-scroll-container table thead tr,
-    .rtl-scroll-container table tbody tr {
-      /* Ensure table rows are RTL */
-      direction: rtl !important;
-    }
-    
-    /* Mobile RTL: container scrolls RTL but table content remains LTR */
-    @media (max-width: 768px) {
-      [dir="rtl"] .rtl-scroll-container table {
-        direction: ltr !important;
-      }
-      
-      [dir="rtl"] .rtl-scroll-container table th,
-      [dir="rtl"] .rtl-scroll-container table td {
-        text-align: right !important;
-      }
+      text-align: right;
     }
   }
 

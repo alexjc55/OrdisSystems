@@ -3917,55 +3917,33 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
-  // RTL table scroll fix - scroll to show leftmost content first for RTL tables on mobile
+  // RTL table scroll positioning.
+  // Container is LTR so: scrollLeft=0 → leftmost (Status), scrollLeft=max → rightmost (Name).
+  // Mobile RTL: start at rightmost (Name) — RTL users read right-to-left, scroll left to Status.
+  // Desktop RTL: start at leftmost (Status) — wide screen shows all columns anyway.
   useEffect(() => {
-    const handleTableScroll = () => {
-      if (isRTL) {
-        const tableContainers = document.querySelectorAll('.table-container');
-        tableContainers.forEach((container) => {
-          const element = container as HTMLElement;
-          
-          // Check if we're on mobile (screen width <= 768px)
-          const isMobile = window.innerWidth <= 768;
-          
-          if (isMobile) {
-            // On mobile RTL: scroll to rightmost position so Name column is visible first.
-            // RTL reading starts from the right, user scrolls left to reach Status column.
-            const maxScrollLeft = element.scrollWidth - element.clientWidth;
-            element.scrollLeft = maxScrollLeft;
-          } else {
-            // On desktop, keep the default RTL behavior
-            element.scrollLeft = 0;
-          }
-        });
-      }
+    if (!isRTL) return;
+
+    const positionScroll = () => {
+      const isMobile = window.innerWidth <= 768;
+      document.querySelectorAll('.rtl-scroll-container').forEach((container) => {
+        const el = container as HTMLElement;
+        if (isMobile) {
+          el.scrollLeft = el.scrollWidth - el.clientWidth; // rightmost (Name column)
+        } else {
+          el.scrollLeft = 0; // leftmost (Status column)
+        }
+      });
     };
 
-    // Initial scroll positioning
-    setTimeout(handleTableScroll, 100);
-
-    // Add resize listener for orientation changes
-    window.addEventListener('resize', handleTableScroll);
-    
+    // Wait for table to fully render before positioning
+    const timer = setTimeout(positionScroll, 200);
+    window.addEventListener('resize', positionScroll);
     return () => {
-      window.removeEventListener('resize', handleTableScroll);
+      clearTimeout(timer);
+      window.removeEventListener('resize', positionScroll);
     };
   }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
-
-  // Reset scroll position for RTL tables
-  useEffect(() => {
-    if (isRTL && (productsData || usersData || ordersResponse)) {
-      const resetScrollPosition = () => {
-        const rtlContainers = document.querySelectorAll('.rtl-scroll-container');
-        rtlContainers.forEach((container) => {
-          const element = container as HTMLElement;
-          element.scrollLeft = 0;
-        });
-      };
-      
-      setTimeout(resetScrollPosition, 100);
-    }
-  }, [isRTL, productsData, usersData, ordersResponse, activeTab]);
 
   // Enhanced loading state checks to prevent hanging
   const isStillLoading = (isLoading || !user || storeSettingsLoading || !storeSettings) && !loadingTimeout;
@@ -5021,7 +4999,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Right side - Create Order + Filters */}
-                <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
+                <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
                     <Button 
                       onClick={() => setShowCreateOrderDialog(true)}
@@ -5032,26 +5010,29 @@ export default function AdminDashboard() {
                       {adminT('orders.createOrder')}
                     </Button>
                   )}
-                  <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
-                    <SelectTrigger className="w-40 text-xs h-8">
-                      <SelectValue placeholder={adminT('orders.filterOrders')} />
-                    </SelectTrigger>
-                    <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
-                      <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
-                      <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
-                      <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
-                      <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {/* Filter + Search grouped so they always wrap together */}
+                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                      <SelectTrigger className="w-40 text-xs h-8">
+                        <SelectValue placeholder={adminT('orders.filterOrders')} />
+                      </SelectTrigger>
+                      <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
+                        <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
+                        <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
+                        <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
+                        <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
+                      </SelectContent>
+                    </Select>
 
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
-                    <Input
-                      placeholder={adminT('orders.searchOrders')}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9 text-xs h-8 w-48"
-                    />
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
+                      <Input
+                        placeholder={adminT('orders.searchOrders')}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 text-xs h-8 w-40"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
