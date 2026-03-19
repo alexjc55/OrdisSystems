@@ -64,13 +64,14 @@ export function useLanguage() {
 export function useCommonTranslation() {
   const { t, i18n } = useTranslation('common');
   
-  // Enhanced translation function with fallback
-  const enhancedT = (key: string, fallback?: string) => {
-    const translation = t(key);
+  // Enhanced translation function with fallback and interpolation support
+  const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
+    const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
+    const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
     
     // If translation returns the key itself, it means translation is missing
     if (translation === key) {
-      return fallback || key;
+      return typeof optionsOrFallback === 'string' ? optionsOrFallback : key;
     }
     return translation;
   };
@@ -82,15 +83,14 @@ export function useCommonTranslation() {
 export function useShopTranslation() {
   const { t, i18n } = useTranslation('shop');
   
-  // Enhanced translation function with fallback
-  const enhancedT = (key: string, fallback?: string) => {
-    const translation = t(key);
-    
-
+  // Enhanced translation function with fallback and interpolation support
+  const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
+    const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
+    const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
     
     // If translation returns the key itself, it means translation is missing
     if (translation === key) {
-      return fallback || key;
+      return typeof optionsOrFallback === 'string' ? optionsOrFallback : key;
     }
     return translation;
   };
@@ -141,15 +141,12 @@ export function useAdminTranslation() {
     }
   };
   
-  // Enhanced translation function with multilingual fallback
-  const enhancedT = (key: string, fallback?: string) => {
+  // Enhanced translation function with multilingual fallback and interpolation support
+  const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
     try {
-      const translation = t(key);
-      
-      // Temporary debugging for translation fix verification
-      if (key.startsWith('settings.') && i18n.language === 'he') {
-        console.log('✅ Translation Fixed - Key:', key, '→ Result:', translation !== key ? translation : 'KEY_NOT_FOUND');
-      }
+      const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
+      const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
+      const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
       
       // If translation returns the key itself or is empty, use fallback or multilingual fallback
       if (translation === key || !translation || translation.trim() === '') {
@@ -167,6 +164,7 @@ export function useAdminTranslation() {
       console.error('Translation error for key:', key, error);
       const currentLang = i18n.language;
       const langFallback = fallbackValues[key]?.[currentLang];
+      const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
       return langFallback || fallback || key.split('.').pop() || key;
     }
   };
