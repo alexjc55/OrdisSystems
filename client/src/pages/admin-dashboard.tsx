@@ -11,7 +11,7 @@
  * Последнее обновление: исправлены переводы ролей пользователей
  */
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -3917,32 +3917,33 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
-  // RTL table scroll positioning.
-  // Container is LTR so: scrollLeft=0 → leftmost (Status), scrollLeft=max → rightmost (Name).
-  // Mobile RTL: start at rightmost (Name) — RTL users read right-to-left, scroll left to Status.
-  // Desktop RTL: start at leftmost (Status) — wide screen shows all columns anyway.
-  useEffect(() => {
+  // RTL table scroll: on mobile start at rightmost column (Name), on desktop start at leftmost.
+  // useLayoutEffect fires before browser paint so user never sees the wrong initial position.
+  useLayoutEffect(() => {
     if (!isRTL) return;
 
-    const positionScroll = () => {
-      const isMobile = window.innerWidth <= 768;
+    const isMobile = window.innerWidth <= 768;
+    document.querySelectorAll('.rtl-scroll-container').forEach((container) => {
+      const el = container as HTMLElement;
+      if (isMobile) {
+        // scrollWidth may not be computed yet — use requestAnimationFrame to ensure layout is done
+        requestAnimationFrame(() => {
+          el.scrollLeft = el.scrollWidth - el.clientWidth;
+        });
+      } else {
+        el.scrollLeft = 0;
+      }
+    });
+
+    const onResize = () => {
+      const mobile = window.innerWidth <= 768;
       document.querySelectorAll('.rtl-scroll-container').forEach((container) => {
         const el = container as HTMLElement;
-        if (isMobile) {
-          el.scrollLeft = el.scrollWidth - el.clientWidth; // rightmost (Name column)
-        } else {
-          el.scrollLeft = 0; // leftmost (Status column)
-        }
+        el.scrollLeft = mobile ? el.scrollWidth - el.clientWidth : 0;
       });
     };
-
-    // Wait for table to fully render before positioning
-    const timer = setTimeout(positionScroll, 200);
-    window.addEventListener('resize', positionScroll);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', positionScroll);
-    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
 
   // Enhanced loading state checks to prevent hanging
@@ -4975,7 +4976,7 @@ export default function AdminDashboard() {
                 </div>
               
               {/* Controls Row */}
-              <div className={`flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+              <div className={`flex flex-col md:flex-row gap-3 items-start md:items-center justify-between ${isRTL ? 'md:flex-row-reverse' : ''}`}>
                 {/* Left side - View Mode Toggle */}
                 <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Button
