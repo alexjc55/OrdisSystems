@@ -15,6 +15,8 @@ export async function generateAppHash(): Promise<string> {
       'client/src/main.tsx',
       'client/public/sw.js',
       'server/index.ts',
+      'client/src/pages/admin-dashboard.tsx',
+      'client/src/index.css',
     ];
     for (const file of filesToCheck) {
       const fullPath = path.join(process.cwd(), file);
