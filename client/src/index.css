@@ -1392,18 +1392,8 @@ body, html {
 
   /* Mobile RTL table initial scroll position */
   @media (max-width: 768px) {
-    [dir="rtl"] .table-container {
-      /* On mobile, we want to show the leftmost content first for RTL tables */
-      scroll-snap-type: x mandatory;
-    }
-    
-    /* RTL scroll container: keep as LTR so scrollLeft=0 is leftmost, scrollLeft=max is rightmost.
-       JS handles scroll position on mobile (scrolls to max to show right side first).
+    /* RTL scroll containers inherit direction from their parent (dir="rtl").
        Table cell text stays right-aligned for RTL languages. */
-    .rtl-scroll-container {
-      direction: ltr;
-    }
-
     .rtl-scroll-container table th,
     .rtl-scroll-container table td {
       text-align: right;

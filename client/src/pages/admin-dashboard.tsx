@@ -11,7 +11,7 @@
  * Последнее обновление: исправлены переводы ролей пользователей
  */
 
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -3917,34 +3917,10 @@ export default function AdminDashboard() {
     setIsCancellationDialogOpen(true);
   };
 
-  // RTL table scroll: on mobile start at rightmost column (Name), on desktop start at leftmost.
-  // useLayoutEffect fires before browser paint so user never sees the wrong initial position.
-  useLayoutEffect(() => {
-    if (!isRTL) return;
-
-    const isMobile = window.innerWidth <= 768;
-    document.querySelectorAll('.rtl-scroll-container').forEach((container) => {
-      const el = container as HTMLElement;
-      if (isMobile) {
-        // scrollWidth may not be computed yet — use requestAnimationFrame to ensure layout is done
-        requestAnimationFrame(() => {
-          el.scrollLeft = el.scrollWidth - el.clientWidth;
-        });
-      } else {
-        el.scrollLeft = 0;
-      }
-    });
-
-    const onResize = () => {
-      const mobile = window.innerWidth <= 768;
-      document.querySelectorAll('.rtl-scroll-container').forEach((container) => {
-        const el = container as HTMLElement;
-        el.scrollLeft = mobile ? el.scrollWidth - el.clientWidth : 0;
-      });
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [isRTL, activeTab, productsData, usersData, ordersResponse]);
+  // RTL table scroll is handled purely by CSS:
+  // The scroll container has dir={isRTL ? 'rtl' : 'ltr'} which makes the browser
+  // automatically start scrolling from the right side for RTL languages.
+  // No JavaScript scroll manipulation needed.
 
   // Enhanced loading state checks to prevent hanging
   const isStillLoading = (isLoading || !user || storeSettingsLoading || !storeSettings) && !loadingTimeout;
@@ -4463,8 +4439,8 @@ export default function AdminDashboard() {
 
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
-                  <div className="border rounded-lg bg-white overflow-hidden products" dir="ltr">
-                    <div className={`overflow-x-auto table-container ${isRTL ? 'rtl-scroll-container' : ''}`}>
+                  <div className={`border rounded-lg bg-white overflow-x-auto products ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <div className="table-container min-w-[600px]">
                       <Table>
                         <TableHeader>
                           <TableRow>
