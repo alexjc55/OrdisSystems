@@ -4952,7 +4952,7 @@ export default function AdminDashboard() {
                 </div>
               
               {/* Controls Row - always column layout */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-y-3">
                 {/* Row 1: View Mode Toggle */}
                 <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg w-fit ${isRTL ? 'flex-row-reverse self-end' : 'self-start'}`}>
                   <Button
