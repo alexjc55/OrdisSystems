@@ -4439,8 +4439,8 @@ export default function AdminDashboard() {
 
                 {/* Products Table */}
                 {filteredProducts.length > 0 ? (
-                  <div className={`border rounded-lg bg-white overflow-x-auto products ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
-                    <div className="table-container min-w-[600px]">
+                  <div className={`border rounded-lg bg-white overflow-x-auto ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                    <div className="table-container min-w-[600px] products">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -4951,10 +4951,10 @@ export default function AdminDashboard() {
                   <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description')}</p>
                 </div>
               
-              {/* Controls Row */}
-              <div className={`flex flex-col md:flex-row gap-3 items-start md:items-center justify-between ${isRTL ? 'md:flex-row-reverse' : ''}`}>
-                {/* Left side - View Mode Toggle */}
-                <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
+              {/* Controls Row - always column layout */}
+              <div className="flex flex-col gap-3">
+                {/* Row 1: View Mode Toggle */}
+                <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg w-fit ${isRTL ? 'flex-row-reverse self-end' : 'self-start'}`}>
                   <Button
                     variant={ordersViewMode === "table" ? "default" : "ghost"}
                     size="sm"
@@ -4975,8 +4975,8 @@ export default function AdminDashboard() {
                   </Button>
                 </div>
 
-                {/* Right side - Create Order + Filters */}
-                <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                {/* Row 2: Create Order + Filters */}
+                <div className={`flex flex-wrap gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
                   {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
                     <Button 
                       onClick={() => setShowCreateOrderDialog(true)}
@@ -4990,7 +4990,7 @@ export default function AdminDashboard() {
                   {/* Filter + Search grouped so they always wrap together */}
                   <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
-                      <SelectTrigger className="w-40 text-xs h-8">
+                      <SelectTrigger className="w-36 text-xs h-8">
                         <SelectValue placeholder={adminT('orders.filterOrders')} />
                       </SelectTrigger>
                       <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
@@ -5007,7 +5007,7 @@ export default function AdminDashboard() {
                         placeholder={adminT('orders.searchOrders')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 text-xs h-8 w-40"
+                        className="pl-9 text-xs h-8 w-36"
                       />
                     </div>
                   </div>
