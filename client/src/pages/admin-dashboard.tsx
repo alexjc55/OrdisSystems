@@ -4951,66 +4951,66 @@ export default function AdminDashboard() {
                   <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description')}</p>
                 </div>
               
-              {/* Controls Row - always column layout */}
-              <div className="flex flex-col gap-y-3" style={isRTL ? { alignItems: 'flex-end' } : { alignItems: 'flex-start' }}>
-                {/* Row 1: View Mode Toggle */}
-                <div className={`flex items-center gap-2 p-1 bg-gray-100 rounded-lg w-fit ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <Button
-                    variant={ordersViewMode === "table" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setOrdersViewMode("table")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
-                  >
-                    <Grid3X3 className={`h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
-                    {adminT('common.table')}
-                  </Button>
-                  <Button
-                    variant={ordersViewMode === "kanban" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setOrdersViewMode("kanban")}
-                    className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
-                  >
-                    <Columns className={`h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
-                    {adminT('common.kanban')}
-                  </Button>
+              {/* Controls Row - same pattern as Users section: full-width stacked elements */}
+              <div className="flex flex-col gap-y-3">
+                {/* Row 1: View Mode Toggle - right-aligned for RTL via text-align trick */}
+                <div style={{ textAlign: isRTL ? 'right' : 'left' }}>
+                  <div style={{ display: 'inline-flex', gap: '4px', padding: '4px', backgroundColor: '#f3f4f6', borderRadius: '8px', flexDirection: isRTL ? 'row-reverse' : 'row' }}>
+                    <Button
+                      variant={ordersViewMode === "table" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setOrdersViewMode("table")}
+                      className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "table" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
+                    >
+                      <Grid3X3 className={`h-3 w-3 mr-1 ${ordersViewMode === "table" ? 'text-white' : ''}`} />
+                      {adminT('common.table')}
+                    </Button>
+                    <Button
+                      variant={ordersViewMode === "kanban" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setOrdersViewMode("kanban")}
+                      className={`text-xs px-3 py-1 h-8 ${ordersViewMode === "kanban" ? 'bg-primary text-white hover:bg-primary' : 'hover:bg-gray-200'}`}
+                    >
+                      <Columns className={`h-3 w-3 mr-1 ${ordersViewMode === "kanban" ? 'text-white' : ''}`} />
+                      {adminT('common.kanban')}
+                    </Button>
+                  </div>
                 </div>
 
-                {/* Row 2: Create Order + Filters */}
-                <div className={`flex flex-wrap gap-2 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
-                    <Button 
-                      onClick={() => setShowCreateOrderDialog(true)}
-                      className="btn-primary flex items-center gap-2 text-sm px-4 py-2 h-8"
-                      size="sm"
-                    >
-                      <Plus className="h-4 w-4" />
-                      {adminT('orders.createOrder')}
-                    </Button>
-                  )}
-                  {/* Filter + Search grouped so they always wrap together */}
-                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
-                      <SelectTrigger className="w-36 text-xs h-8">
-                        <SelectValue placeholder={adminT('orders.filterOrders')} />
-                      </SelectTrigger>
-                      <SelectContent className="min-w-[160px] max-w-[200px] bg-white border border-gray-200 shadow-lg z-50">
-                        <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
-                        <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
-                        <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
-                        <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
-                      </SelectContent>
-                    </Select>
+                {/* Row 2: Create Order - full width (like users section) */}
+                {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
+                  <Button 
+                    onClick={() => setShowCreateOrderDialog(true)}
+                    className={`w-full bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {adminT('orders.createOrder')}
+                  </Button>
+                )}
 
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3" />
-                      <Input
-                        placeholder={adminT('orders.searchOrders')}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 text-xs h-8 w-36"
-                      />
-                    </div>
-                  </div>
+                {/* Row 3: Status filter - full width */}
+                <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                  <SelectTrigger className="w-full text-xs h-9">
+                    <SelectValue placeholder={adminT('orders.filterOrders')} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                    <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
+                    <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
+                    <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
+                    <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Row 4: Search - full width */}
+                <div className="relative w-full">
+                  <Search className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 ${isRTL ? 'right-3' : 'left-3'}`} />
+                  <Input
+                    placeholder={adminT('orders.searchOrders')}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={`w-full h-9 ${isRTL ? 'pr-9 pl-3 text-right' : 'pl-9'}`}
+                  />
                 </div>
               </div>
             </div>
