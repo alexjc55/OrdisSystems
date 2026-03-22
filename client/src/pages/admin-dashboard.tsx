@@ -3772,7 +3772,10 @@ export default function AdminDashboard() {
       
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data) {
+        queryClient.setQueryData(['/api/settings'], data);
+      }
       queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
       toast({ title: adminT('settings.saved'), description: adminT('settings.saveSuccess') });
     },
