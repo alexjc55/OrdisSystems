@@ -157,6 +157,66 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
                   return <p className="text-gray-500 text-sm">{t('loadingError')}</p>;
                 }
               })()}
+
+              {/* Delivery hours subsection */}
+              {storeSettings?.deliveryHours && (() => {
+                try {
+                  const deliveryHours = storeSettings.deliveryHours as Record<string, string | null>;
+                  const dayOrder = storeSettings?.weekStartDay === 'sunday'
+                    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+                    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+                  const dayNames: Record<string, string> = {
+                    monday: t('days.mon'), tuesday: t('days.tue'), wednesday: t('days.wed'),
+                    thursday: t('days.thu'), friday: t('days.fri'), saturday: t('days.sat'), sunday: t('days.sun')
+                  };
+
+                  const deliveryEntries = dayOrder
+                    .filter(day => deliveryHours[day] !== null && deliveryHours[day] !== undefined)
+                    .map(day => ({ day, value: deliveryHours[day] }));
+
+                  if (deliveryEntries.length === 0) return null;
+
+                  const groupedDelivery: Array<{days: string[], value: string | null}> = [];
+                  let currentGroup: {days: string[], value: string | null} | null = null;
+                  deliveryEntries.forEach(({ day, value }) => {
+                    if (currentGroup && currentGroup.value === value) {
+                      currentGroup.days.push(day);
+                    } else {
+                      if (currentGroup) groupedDelivery.push(currentGroup);
+                      currentGroup = { days: [day], value };
+                    }
+                  });
+                  if (currentGroup) groupedDelivery.push(currentGroup);
+
+                  return (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{t('delivery')}</p>
+                      <div className="space-y-1.5">
+                        {groupedDelivery.map((group, index) => {
+                          const daysText = group.days.length === 1
+                            ? dayNames[group.days[0]]
+                            : group.days.length === 2
+                            ? `${dayNames[group.days[0]]}, ${dayNames[group.days[group.days.length - 1]]}`
+                            : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
+                          const isClosed = !group.value || group.value === 'closed';
+                          return (
+                            <div key={index} className="text-sm">
+                              <span className="font-semibold">{daysText}:</span>
+                              {isClosed
+                                ? <span className="text-red-500 ml-2">✕</span>
+                                : <span className="text-gray-700 ml-2">{group.value}</span>
+                              }
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                } catch (e) {
+                  return null;
+                }
+              })()}
               </div>
             </div>
           </Card>

@@ -8742,8 +8742,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
-                            const currentClose = closeTime || "18:00";
-                            form.setValue(`workingHours.${key}` as any, `${value}-${currentClose}`);
+                            const [cH, cM] = (closeTime || "18:00").split(":").map(Number);
+                            const [nH, nM] = value.split(":").map(Number);
+                            const closeMinutes = cH * 60 + cM;
+                            const newOpenMinutes = nH * 60 + nM;
+                            const newClose = newOpenMinutes >= closeMinutes ? `${(nH + 1).toString().padStart(2, "0")}:${closeTime?.split(":")[1] || "00"}` : (closeTime || "18:00");
+                            form.setValue(`workingHours.${key}` as any, `${value}-${newClose}`);
                           }}
                         >
                           <SelectTrigger className="text-xs h-8">
@@ -8777,16 +8781,22 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {Array.from({ length: 48 }, (_, i) => {
-                              const hour = Math.floor(i / 2);
-                              const minute = i % 2 === 0 ? "00" : "30";
-                              const time = `${hour.toString().padStart(2, "0")}:${minute}`;
-                              return (
-                                <SelectItem key={time} value={time}>
-                                  {time}
-                                </SelectItem>
-                              );
-                            })}
+                            {(() => {
+                              const [openH, openM] = (openTime || "09:00").split(":").map(Number);
+                              const openMinutes = openH * 60 + openM;
+                              return Array.from({ length: 48 }, (_, i) => {
+                                const hour = Math.floor(i / 2);
+                                const minute = i % 2 === 0 ? "00" : "30";
+                                const totalMinutes = hour * 60 + (i % 2 === 0 ? 0 : 30);
+                                if (totalMinutes <= openMinutes) return null;
+                                const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                                return (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                );
+                              }).filter(Boolean);
+                            })()}
                           </SelectContent>
                         </Select>
                       </div>
@@ -8842,7 +8852,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                               <Select
                                 value={deliveryOpen}
                                 onValueChange={(value) => {
-                                  form.setValue(`deliveryHours.${key}` as any, `${value}-${deliveryClose}`);
+                                  const [cH, cM] = (deliveryClose || "18:00").split(":").map(Number);
+                                  const [nH, nM] = value.split(":").map(Number);
+                                  const dCloseMin = cH * 60 + cM;
+                                  const dOpenMin = nH * 60 + nM;
+                                  const newClose = dOpenMin >= dCloseMin ? `${(nH + 1).toString().padStart(2, "0")}:${deliveryClose?.split(":")[1] || "00"}` : (deliveryClose || "18:00");
+                                  form.setValue(`deliveryHours.${key}` as any, `${value}-${newClose}`);
                                 }}
                               >
                                 <SelectTrigger className="text-xs h-8 border-blue-200">
@@ -8870,12 +8885,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {Array.from({ length: 48 }, (_, i) => {
-                                    const hour = Math.floor(i / 2);
-                                    const minute = i % 2 === 0 ? "00" : "30";
-                                    const time = `${hour.toString().padStart(2, "0")}:${minute}`;
-                                    return <SelectItem key={time} value={time}>{time}</SelectItem>;
-                                  })}
+                                  {(() => {
+                                    const [dOpenH, dOpenM] = (deliveryOpen || "10:00").split(":").map(Number);
+                                    const dOpenMinutes = dOpenH * 60 + dOpenM;
+                                    return Array.from({ length: 48 }, (_, i) => {
+                                      const hour = Math.floor(i / 2);
+                                      const minute = i % 2 === 0 ? "00" : "30";
+                                      const totalMinutes = hour * 60 + (i % 2 === 0 ? 0 : 30);
+                                      if (totalMinutes <= dOpenMinutes) return null;
+                                      const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                                      return <SelectItem key={time} value={time}>{time}</SelectItem>;
+                                    }).filter(Boolean);
+                                  })()}
                                 </SelectContent>
                               </Select>
                             </div>
