@@ -373,7 +373,7 @@ function useStatusChangeHandler() {
 }
 
 // Function to generate delivery times for admin dashboard (same logic as checkout)
-const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday') => {
+const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, weekStartDay: string = 'monday', deliveryHours?: any) => {
   if (!workingHours || !selectedDate) return [];
   
   const date = new Date(selectedDate + 'T00:00:00');
@@ -382,21 +382,24 @@ const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, wee
     : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   
   const dayName = dayNames[date.getDay()];
-  const daySchedule = workingHours[dayName];
-  
-  if (!daySchedule || daySchedule.trim() === '' || 
-      daySchedule.toLowerCase().includes('закрыто') || 
-      daySchedule.toLowerCase().includes('closed') ||
-      daySchedule.toLowerCase().includes('выходной')) {
+
+  // Determine effective schedule: deliveryHours override > workingHours fallback
+  const deliveryDayValue = deliveryHours?.[dayName];
+  const effectiveSchedule = (deliveryDayValue != null) ? deliveryDayValue : workingHours[dayName];
+
+  if (!effectiveSchedule || effectiveSchedule.trim() === '' || 
+      effectiveSchedule.toLowerCase().includes('закрыто') || 
+      effectiveSchedule.toLowerCase().includes('closed') ||
+      effectiveSchedule.toLowerCase().includes('выходной')) {
     return [{
       value: 'closed',
       label: 'Closed'
     }];
   }
   
-  // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+  // Parse schedule (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
   const timeSlots: { value: string; label: string }[] = [];
-  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  const scheduleRanges = effectiveSchedule.split(',').map((range: string) => range.trim());
   
   scheduleRanges.forEach((range: string) => {
     const [start, end] = range.split('-').map((time: string) => time.trim());
@@ -726,7 +729,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   });
 
   // Generate time slots based on store working hours for this component
-  const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday') => {
+  const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday', deliveryHours?: any) => {
     if (!selectedDate) return [];
     
     const date = new Date(selectedDate + 'T00:00:00');
@@ -735,8 +738,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     
     const dayName = dayNames[date.getDay()];
-    const daySchedule = workingHours[dayName];
-    
+
+    // Determine effective schedule: deliveryHours override > workingHours fallback
+    const deliveryDayValue = deliveryHours?.[dayName];
+    const daySchedule = (deliveryDayValue != null) ? deliveryDayValue : workingHours[dayName];
+
     if (!daySchedule || daySchedule.trim() === '' || 
         daySchedule.toLowerCase().includes('закрыто') || 
         daySchedule.toLowerCase().includes('closed') ||
@@ -747,7 +753,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       }];
     }
     
-    // Parse working hours (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
+    // Parse schedule (e.g., "09:00-18:00" or "09:00-14:00, 16:00-20:00")
     const timeSlots: { value: string; label: string }[] = [];
     const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
     
@@ -1669,7 +1675,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                         <SelectValue placeholder={adminT('orders.selectTime')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
+                        {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay, storeSettingsData?.deliveryHours).map((slot: any) => (
                           <SelectItem key={slot.value} value={slot.label}>
                             {slot.label}
                           </SelectItem>
@@ -1782,7 +1788,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                       <SelectValue placeholder={adminT('orders.selectTime')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay).map((slot: any) => (
+                      {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay, storeSettingsData?.deliveryHours).map((slot: any) => (
                         <SelectItem key={slot.value} value={slot.label}>
                           {slot.label}
                         </SelectItem>
@@ -7849,6 +7855,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         saturday: storeSettings?.workingHours?.saturday || "",
         sunday: storeSettings?.workingHours?.sunday || "",
       },
+      deliveryHours: {
+        monday: storeSettings?.deliveryHours?.monday ?? null,
+        tuesday: storeSettings?.deliveryHours?.tuesday ?? null,
+        wednesday: storeSettings?.deliveryHours?.wednesday ?? null,
+        thursday: storeSettings?.deliveryHours?.thursday ?? null,
+        friday: storeSettings?.deliveryHours?.friday ?? null,
+        saturday: storeSettings?.deliveryHours?.saturday ?? null,
+        sunday: storeSettings?.deliveryHours?.sunday ?? null,
+      },
       deliveryInfo: getLocalizedFieldForAdmin(storeSettings, 'deliveryInfo', currentLanguage, storeSettings) || "",
       paymentInfo: getLocalizedFieldForAdmin(storeSettings, 'paymentInfo', currentLanguage, storeSettings) || "",
       aboutText: getLocalizedFieldForAdmin(storeSettings, 'aboutText', currentLanguage, storeSettings) || "",
@@ -7954,6 +7969,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           friday: storeSettings?.workingHours?.friday || "",
           saturday: storeSettings?.workingHours?.saturday || "",
           sunday: storeSettings?.workingHours?.sunday || "",
+        },
+        deliveryHours: {
+          monday: storeSettings?.deliveryHours?.monday ?? null,
+          tuesday: storeSettings?.deliveryHours?.tuesday ?? null,
+          wednesday: storeSettings?.deliveryHours?.wednesday ?? null,
+          thursday: storeSettings?.deliveryHours?.thursday ?? null,
+          friday: storeSettings?.deliveryHours?.friday ?? null,
+          saturday: storeSettings?.deliveryHours?.saturday ?? null,
+          sunday: storeSettings?.deliveryHours?.sunday ?? null,
         },
         deliveryInfo: getLocalizedFieldForAdmin(storeSettings, 'deliveryInfo', currentLanguage, storeSettings) || "",
         aboutText: getLocalizedFieldForAdmin(storeSettings, 'aboutText', currentLanguage, storeSettings) || "",
@@ -8675,6 +8699,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
               const currentHours = form.watch(`workingHours.${key}` as any) || "";
               const isWorking = currentHours && currentHours !== adminT('storeSettings.closedDay');
               const [openTime, closeTime] = isWorking ? currentHours.split("-") : ["09:00", "18:00"];
+              const currentDeliveryHours = form.watch(`deliveryHours.${key}` as any);
+              const hasCustomDelivery = !!currentDeliveryHours && currentDeliveryHours !== "closed";
+              const isNoDelivery = currentDeliveryHours === "closed";
+              const [deliveryOpen, deliveryClose] = hasCustomDelivery ? currentDeliveryHours.split("-") : ["10:00", "18:00"];
 
               return (
                 <div key={key} className={`border rounded-lg p-3 space-y-2 ${isWorking ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
@@ -8761,6 +8789,98 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                             })}
                           </SelectContent>
                         </Select>
+                      </div>
+
+                      {/* Delivery hours section inside each working day card */}
+                      <div className="mt-2 pt-2 border-t border-dashed border-gray-300 space-y-2">
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{adminT('storeSettings.deliveryHoursTitle')}</div>
+                        <div className={`flex items-center gap-4 flex-wrap ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                          <label className={`flex items-center gap-1.5 cursor-pointer select-none ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <input
+                              type="checkbox"
+                              checked={hasCustomDelivery}
+                              disabled={isNoDelivery}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  form.setValue(`deliveryHours.${key}` as any, "10:00-18:00");
+                                } else {
+                                  form.setValue(`deliveryHours.${key}` as any, null);
+                                }
+                              }}
+                              className="h-3.5 w-3.5 accent-blue-500"
+                            />
+                            <span className={`text-xs ${isNoDelivery ? 'text-gray-300' : 'text-gray-600'}`}>
+                              {adminT('storeSettings.addDeliveryTime')}
+                            </span>
+                          </label>
+                          <label className={`flex items-center gap-1.5 cursor-pointer select-none ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <input
+                              type="checkbox"
+                              checked={isNoDelivery}
+                              disabled={hasCustomDelivery}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  form.setValue(`deliveryHours.${key}` as any, "closed");
+                                } else {
+                                  form.setValue(`deliveryHours.${key}` as any, null);
+                                }
+                              }}
+                              className="h-3.5 w-3.5 accent-red-500"
+                            />
+                            <span className={`text-xs ${hasCustomDelivery ? 'text-gray-300' : 'text-red-600'}`}>
+                              {adminT('storeSettings.noDelivery')}
+                            </span>
+                          </label>
+                        </div>
+                        {!hasCustomDelivery && !isNoDelivery && (
+                          <div className="text-xs text-gray-400 italic">{adminT('storeSettings.deliveryInherited')}</div>
+                        )}
+                        {hasCustomDelivery && (
+                          <div className="space-y-2">
+                            <div>
+                              <FormLabel className="text-xs text-blue-600 block mb-1">{adminT('storeSettings.deliveryOpenTime')}</FormLabel>
+                              <Select
+                                value={deliveryOpen}
+                                onValueChange={(value) => {
+                                  form.setValue(`deliveryHours.${key}` as any, `${value}-${deliveryClose}`);
+                                }}
+                              >
+                                <SelectTrigger className="text-xs h-8 border-blue-200">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {Array.from({ length: 48 }, (_, i) => {
+                                    const hour = Math.floor(i / 2);
+                                    const minute = i % 2 === 0 ? "00" : "30";
+                                    const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                                    return <SelectItem key={time} value={time}>{time}</SelectItem>;
+                                  })}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <FormLabel className="text-xs text-blue-600 block mb-1">{adminT('storeSettings.deliveryCloseTime')}</FormLabel>
+                              <Select
+                                value={deliveryClose}
+                                onValueChange={(value) => {
+                                  form.setValue(`deliveryHours.${key}` as any, `${deliveryOpen}-${value}`);
+                                }}
+                              >
+                                <SelectTrigger className="text-xs h-8 border-blue-200">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {Array.from({ length: 48 }, (_, i) => {
+                                    const hour = Math.floor(i / 2);
+                                    const minute = i % 2 === 0 ? "00" : "30";
+                                    const time = `${hour.toString().padStart(2, "0")}:${minute}`;
+                                    return <SelectItem key={time} value={time}>{time}</SelectItem>;
+                                  })}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

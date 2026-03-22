@@ -37,7 +37,7 @@ Translation management: Always ensure all changes are applied to all 4 languages
 
 ### Key Features
 - **Authentication & Authorization**: Role-based access control (admin, worker, customer).
-- **E-commerce**: Product catalog, persistent shopping cart, multi-status order management, configurable delivery scheduling, dynamic delivery fee calculation.
+- **E-commerce**: Product catalog, persistent shopping cart, multi-status order management, configurable delivery scheduling with per-day delivery hours independent from store working hours, dynamic delivery fee calculation.
 - **Admin Dashboard**: Comprehensive management for products, categories, orders (kanban-style), users, store settings, and multi-language content.
 - **Multi-language Support**: Dynamic language switching with RTL support, localized formatting, admin-configurable content, and URL parameter-based language selection.
 - **Automatic Updates**: Transparent, automatic update system with cache busting.

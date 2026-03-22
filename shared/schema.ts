@@ -170,6 +170,7 @@ export const storeSettings = pgTable("store_settings", {
   contactEmail: varchar("contact_email", { length: 255 }),
   address: text("address"),
   workingHours: jsonb("working_hours"), // Store as JSON object
+  deliveryHours: jsonb("delivery_hours"), // Per-day delivery hours: null=inherit from workingHours, "closed"=no delivery, "HH:MM-HH:MM"=custom window
   deliveryInfo: text("delivery_info"),
   paymentInfo: text("payment_info"),
   aboutUsPhotos: jsonb("about_us_photos"), // Array of photo URLs

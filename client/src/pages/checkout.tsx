@@ -111,7 +111,8 @@ const generateDeliveryTimes = (
   selectedDate: string, 
   weekStartDay: string = 'monday',
   deliveryTimeMode: 'hours' | 'half_day' | 'disabled' = 'hours',
-  t?: (key: string) => string
+  t?: (key: string) => string,
+  deliveryHours?: any
 ) => {
   // If delivery time selection is disabled, return empty array
   if (deliveryTimeMode === 'disabled') {
@@ -130,12 +131,18 @@ const generateDeliveryTimes = (
     : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   
   const dayName = dayNames[date.getDay()];
-  const daySchedule = workingHours[dayName];
-  
-  if (!daySchedule || daySchedule.trim() === '' || 
-      daySchedule.toLowerCase().includes('закрыто') || 
-      daySchedule.toLowerCase().includes('closed') ||
-      daySchedule.toLowerCase().includes('выходной')) {
+
+  // Determine effective schedule: deliveryHours override > workingHours fallback
+  let deliveryDayValue: string | null | undefined = deliveryHours?.[dayName];
+  // null/undefined means inherit from workingHours
+  const effectiveSchedule = (deliveryDayValue != null) ? deliveryDayValue : workingHours[dayName];
+
+  const isClosed = !effectiveSchedule || effectiveSchedule.trim() === '' || 
+      effectiveSchedule.toLowerCase().includes('закрыто') || 
+      effectiveSchedule.toLowerCase().includes('closed') ||
+      effectiveSchedule.toLowerCase().includes('выходной');
+
+  if (isClosed) {
     return [{
       value: 'closed',
       label: t ? t('checkout.closed') : 'Закрыто'
@@ -165,9 +172,9 @@ const generateDeliveryTimes = (
     return timeSlots.length > 0 ? timeSlots : [];
   }
   
-  // Hours mode: generate 2-hour intervals based on working hours
+  // Hours mode: generate 2-hour intervals based on effective schedule
   const timeSlots: { value: string; label: string }[] = [];
-  const scheduleRanges = daySchedule.split(',').map((range: string) => range.trim());
+  const scheduleRanges = effectiveSchedule.split(',').map((range: string) => range.trim());
   
   scheduleRanges.forEach((range: string) => {
     const [start, end] = range.split('-').map((time: string) => time.trim());
@@ -233,17 +240,28 @@ export default function Checkout() {
     const dateStr = format(date, "yyyy-MM-dd");
     if (closedDatesSet.has(dateStr)) return true;
     
-    // Check if it's a non-working day
+    // Check if it's a non-working day or no-delivery day
     if (storeSettings?.workingHours) {
       const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
       const dayName = dayNames[date.getDay()];
       const daySchedule = storeSettings.workingHours[dayName];
       
-      // Disable if no schedule or closed or weekend
+      // Disable if store is closed that day
       if (!daySchedule || daySchedule.trim() === '' || 
           daySchedule.toLowerCase().includes('закрыто') || 
           daySchedule.toLowerCase().includes('closed') ||
           daySchedule.toLowerCase().includes('выходной')) {
+        return true;
+      }
+
+      // Disable if deliveryHours explicitly marks this day as no-delivery
+      const deliveryDayValue = storeSettings?.deliveryHours?.[dayName];
+      if (deliveryDayValue != null && (
+        deliveryDayValue === '' ||
+        deliveryDayValue.toLowerCase() === 'closed' ||
+        deliveryDayValue.toLowerCase().includes('закрыто') ||
+        deliveryDayValue.toLowerCase().includes('выходной')
+      )) {
         return true;
       }
       
@@ -254,7 +272,8 @@ export default function Checkout() {
           format(date, "yyyy-MM-dd"), 
           storeSettings.weekStartDay,
           storeSettings.deliveryTimeMode || 'hours',
-          tCommon
+          tCommon,
+          storeSettings.deliveryHours
         );
         return !todayTimeSlots.some(slot => slot.value !== 'closed');
       }
@@ -322,7 +341,7 @@ export default function Checkout() {
     if (!storeSettings?.workingHours) return false;
     
     const today = format(new Date(), "yyyy-MM-dd");
-    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay, storeSettings.deliveryTimeMode || 'hours', tCommon);
+    const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay, storeSettings.deliveryTimeMode || 'hours', tCommon, storeSettings.deliveryHours);
     
     // Check if there are any valid time slots (not just "closed")
     return todayTimeSlots.some(slot => slot.value !== 'closed');
@@ -884,7 +903,8 @@ export default function Checkout() {
                                 format(selectedDate, "yyyy-MM-dd"),
                                 storeSettings?.weekStartDay,
                                 storeSettings?.deliveryTimeMode || 'hours',
-                                tCommon
+                                tCommon,
+                                storeSettings?.deliveryHours
                               ).map((time) => (
                                 <SelectItem key={time.value} value={time.value}>
                                   {time.label}
@@ -1094,7 +1114,8 @@ export default function Checkout() {
                                   format(selectedRegisterDate, "yyyy-MM-dd"),
                                   storeSettings?.weekStartDay,
                                   storeSettings?.deliveryTimeMode || 'hours',
-                                  tCommon
+                                  tCommon,
+                                  storeSettings?.deliveryHours
                                 ).map((time) => (
                                   <SelectItem key={time.value} value={time.value}>
                                     {time.label}
@@ -1311,7 +1332,8 @@ export default function Checkout() {
                                   format(selectedGuestDate, "yyyy-MM-dd"),
                                   storeSettings?.weekStartDay,
                                   storeSettings?.deliveryTimeMode || 'hours',
-                                  tCommon
+                                  tCommon,
+                                  storeSettings?.deliveryHours
                                 ).map((time) => (
                                   <SelectItem key={time.value} value={time.value}>
                                     {time.label}
