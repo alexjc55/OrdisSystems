@@ -321,7 +321,7 @@ export default function Home() {
   // Combined translation function that uses correct namespace for each key
   const tCombined = (key: string) => {
     // Keys that should use common translations
-    const commonKeys = ['deliveryAddress', 'phone', 'email', 'contacts', 'workingHours', 'notSpecified', 'loadingError'];
+    const commonKeys = ['deliveryAddress', 'phone', 'email', 'contacts', 'workingHours', 'notSpecified', 'loadingError', 'delivery'];
     
     if (commonKeys.includes(key)) {
       return tCommon(key);

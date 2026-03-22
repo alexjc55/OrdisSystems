@@ -573,6 +573,7 @@
     "fri": "Friday",
     "sat": "Saturday"
   },
+  "delivery": "Delivery",
   "paymentAndDelivery": "Payment and Delivery",
   "table": "Table",
   "kanban": "Kanban",
