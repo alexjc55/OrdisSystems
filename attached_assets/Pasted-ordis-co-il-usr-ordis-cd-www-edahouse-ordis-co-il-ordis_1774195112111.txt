@@ -1,0 +1,70 @@
+ordis_co_il_usr@ordis:~$ cd www/edahouse.ordis.co.il/
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ git pull origin main
+npm install
+npm run build
+pm2 restart edahouse --update-env
+remote: Enumerating objects: 369, done.
+remote: Counting objects: 100% (369/369), done.
+remote: Compressing objects: 100% (105/105), done.
+remote: Total 318 (delta 263), reused 267 (delta 212), pack-reused 0 (from 0)
+Receiving objects: 100% (318/318), 3.66 MiB | 6.50 MiB/s, done.
+Resolving deltas: 100% (263/263), completed with 45 local objects.
+From https://github.com/alexjc55/OrdisSystems
+ * branch              main       -> FETCH_HEAD
+   f73951b5..df4a789c  main       -> origin/main
+Updating f73951b5..df4a789c
+error: Your local changes to the following files would be overwritten by merge:
+        ecosystem.config.cjs
+Please commit your changes or stash them before you merge.
+Aborting
+
+up to date, audited 681 packages in 8s
+
+85 packages are looking for funding
+  run `npm fund` for details
+
+13 vulnerabilities (1 low, 6 moderate, 5 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bu                                                                                                                                                             ndle --format=esm --outdir=dist
+
+vite v5.4.21 building for production...
+transforming (34) ../node_modules/i18next-browser-languagedetector/dist/esmBrows                                                                                                                                                             erslist: browsers data (caniuse-lite) is 17 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#read                                                                                                                                                             me
+✓ 3854 modules transformed.
+../dist/public/index.html                                        4.25 kB │ gzip:                                                                                                                                                                1.47 kB
+../dist/public/assets/logo-white_1750456267684-DSssD_B9.png      8.43 kB
+../dist/public/assets/index-BZVQE9iW.css                       167.79 kB │ gzip:                                                                                                                                                               28.81 kB
+../dist/public/assets/index-DcDXy37u.js                      2,657.74 kB │ gzip:                                                                                                                                                              723.26 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollu                                                                                                                                                             pjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 28.39s
+
+  dist/index.js  356.1kb
+
+⚡ Done in 55ms
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 2  │ api.clini          │ fork     │ 0    │ online    │ 0%       │ 44.5mb   │
+│ 3  │ demo               │ fork     │ 14   │ online    │ 0%       │ 122.4mb  │
+│ 0  │ edahouse           │ fork     │ 1    │ online    │ 0%       │ 10.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$
