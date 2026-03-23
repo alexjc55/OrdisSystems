@@ -1329,18 +1329,29 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     <h3>${l('generalComments')}</h3>
   </div>`;
 
-    // Inject print-only CSS: hide everything except our overlay when printing
-    const printStyle = document.createElement('style');
-    printStyle.id = 'order-print-style';
-    printStyle.textContent = `
-      @media print {
-        body > *:not(#order-print-overlay) { display: none !important; }
-        #order-print-overlay { display: block !important; position: static !important; overflow: visible !important; }
-        #order-print-bar { display: none !important; }
-        @page { margin: 10mm; }
-      }
+    // Build standalone HTML for iframe printing
+    const printCSS = `
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; font-size: 13px; padding: 20px; color: #333; direction: ${isRTLPrint ? 'rtl' : 'ltr'}; }
+      .header { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #333; }
+      .header h1 { font-size: 18px; margin-bottom: 4px; }
+      .store-name { font-size: 14px; color: #666; }
+      .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-bottom: 15px; font-size: 12px; }
+      .info-item { display: flex; gap: 6px; }
+      .info-label { font-weight: bold; white-space: nowrap; }
+      table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+      th { padding: 6px 8px; border: 1px solid #ccc; background: #f5f5f5; font-size: 12px; text-align: ${isRTLPrint ? 'right' : 'left'}; }
+      td { padding: 6px 8px; border: 1px solid #ccc; }
+      .totals { margin-bottom: 15px; }
+      .totals-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+      .totals-row.total-final { font-weight: bold; font-size: 15px; border-top: 2px solid #333; padding-top: 6px; margin-top: 4px; }
+      .comments-section { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 60px; }
+      .comments-section h3 { font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+      .order-notes { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
+      .order-notes strong { display: block; margin-bottom: 4px; }
+      @page { margin: 10mm; }
     `;
-    document.head.appendChild(printStyle);
+    const printHtml = `<!DOCTYPE html><html dir="${isRTLPrint ? 'rtl' : 'ltr'}" lang="${currentLang}"><head><meta charset="UTF-8"><title>${l('order')} #${order.id}</title><style>${printCSS}</style></head><body>${contentHtml}</body></html>`;
 
     // Create full-screen overlay — works on iOS/Android without popup
     const overlay = document.createElement('div');
@@ -1383,12 +1394,32 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     const closeOverlay = () => {
       overlay.remove();
-      printStyle.remove();
     };
 
     document.getElementById('print-close-btn')!.addEventListener('click', closeOverlay);
-    document.getElementById('print-do-btn')!.addEventListener('click', () => window.print());
-    window.addEventListener('afterprint', closeOverlay, { once: true });
+    document.getElementById('print-do-btn')!.addEventListener('click', () => {
+      // Create hidden iframe and print only its content — works on all devices
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;';
+      document.body.appendChild(iframe);
+      const iframeDoc = iframe.contentDocument || (iframe.contentWindow as Window).document;
+      iframeDoc.open();
+      iframeDoc.write(printHtml);
+      iframeDoc.close();
+      iframe.contentWindow!.focus();
+      // Small delay to ensure iframe is fully rendered before printing
+      setTimeout(() => {
+        iframe.contentWindow!.print();
+        // Remove iframe after print dialog closes
+        const cleanup = () => {
+          iframe.remove();
+          iframe.contentWindow?.removeEventListener('afterprint', cleanup);
+        };
+        iframe.contentWindow?.addEventListener('afterprint', cleanup, { once: true });
+        // Fallback removal in case afterprint doesn't fire (older iOS)
+        setTimeout(() => iframe.remove(), 5000);
+      }, 300);
+    });
   };
 
   const handleSave = () => {
