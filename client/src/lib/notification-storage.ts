@@ -41,15 +41,25 @@ function cleanup(notifications: StoredNotification[]): StoredNotification[] {
 }
 
 export function addNotification(title: string, body: string, type: 'order' | 'marketing' | 'system' = 'marketing'): StoredNotification {
+  const now = Date.now();
+  const all = cleanup(getAll());
+
+  // Dedup: skip if identical title+body was stored within the last 30 seconds
+  const duplicate = all.find(
+    n => n.title === title && n.body === body && now - n.timestamp < 30_000
+  );
+  if (duplicate) {
+    return duplicate;
+  }
+
   const notification: StoredNotification = {
     id: generateId(),
     title,
     body,
     type,
-    timestamp: Date.now(),
+    timestamp: now,
     read: false
   };
-  const all = cleanup(getAll());
   all.unshift(notification);
   saveAll(all);
   window.dispatchEvent(new CustomEvent('notifications-updated'));

@@ -199,8 +199,16 @@ function Router() {
         
         if (event.data?.notification) {
           const { title, body, type: notificationType } = event.data.notification;
-          const fallbackType = event.data.data?.type || 'marketing';
-          
+          const rawType = notificationType || event.data.data?.type || 'marketing';
+          const mappedType = rawType === 'order_status' || rawType === 'order' ? 'order' : rawType === 'system' ? 'system' : 'marketing';
+
+          // Store in bell history (notification-shown may have been dropped if app was backgrounded)
+          try {
+            addNotification(title || 'Уведомление', body || '', mappedType);
+          } catch (e) {
+            console.error('Failed to store notification from click:', e);
+          }
+
           setNotificationModal(prev => {
             // Avoid showing duplicate modal from retry message if already open
             if (prev.isOpen && prev.title === (title || 'Уведомление')) return prev;
@@ -208,7 +216,7 @@ function Router() {
               isOpen: true,
               title: title || 'Уведомление',
               message: body || 'Новое уведомление',
-              type: notificationType || fallbackType
+              type: mappedType
             };
           });
         }
