@@ -3118,9 +3118,20 @@ export default function AdminDashboard() {
     setIsOrderFormOpen(true);
   }, []);
 
+  // Keep a stable ref to editingOrder so the reopen handler always has the latest value
+  const editingOrderRef = useRef<any>(null);
+  useEffect(() => { editingOrderRef.current = editingOrder; }, [editingOrder]);
+
   // Reopen order dialog after print preview is closed
   useEffect(() => {
-    const handler = () => setIsOrderFormOpen(true);
+    const handler = () => {
+      const order = editingOrderRef.current;
+      // Small delay to let Radix finish its close animation before we reopen
+      setTimeout(() => {
+        if (order) setEditingOrder(order);
+        setIsOrderFormOpen(true);
+      }, 80);
+    };
     window.addEventListener('edahouse:reopen-order-dialog', handler);
     return () => window.removeEventListener('edahouse:reopen-order-dialog', handler);
   }, []);
@@ -5850,9 +5861,10 @@ export default function AdminDashboard() {
               <DialogContent
                 className="max-w-4xl max-h-[90vh] overflow-y-auto"
                 onPointerDownOutside={(e) => {
-                  if (document.getElementById('order-print-overlay')) {
-                    e.preventDefault();
-                  }
+                  if (document.getElementById('order-print-overlay')) e.preventDefault();
+                }}
+                onInteractOutside={(e) => {
+                  if (document.getElementById('order-print-overlay')) e.preventDefault();
                 }}
               >
                 <DialogHeader>
