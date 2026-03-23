@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260322-1620';
+const BUILD_TIMESTAMP = '20260323-0900';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 

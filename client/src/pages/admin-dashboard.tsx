@@ -335,6 +335,7 @@ const categorySchema = z.object({
   description_he: z.string().optional(),
   description_ar: z.string().optional(),
   icon: z.string().default("🍽️"),
+  isActive: z.boolean().default(true),
 });
 
 // Use the imported store settings schema with extended validation
@@ -1306,10 +1307,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     .comments-section h3 { font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
     .order-notes { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
     .order-notes strong { display: block; margin-bottom: 4px; }
-    @media print { body { padding: 10px; } @page { margin: 10mm; } }
+    @media print { body { padding: 10px; } @page { margin: 10mm; } .no-print { display: none !important; } }
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 8px 16px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-size: 13px; color: #374151; font-family: Arial, sans-serif; }
+    .back-btn:hover { background: #e5e7eb; }
   </style>
 </head>
 <body>
+  <div class="no-print" style="margin-bottom:8px;">
+    <button class="back-btn" onclick="window.close()">&#8592; ${l('backToAdmin') || 'Назад'}</button>
+  </div>
   <div class="header">
     <div class="store-name">${storeName}</div>
     <h1>${l('order')} #${order.id}</h1>
@@ -1353,7 +1359,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     <h3>${l('generalComments')}</h3>
   </div>
 
-  <script>window.onload = function() { window.print(); };</script>
+  <script>
+    window.onload = function() { window.print(); };
+    window.addEventListener('afterprint', function() { window.close(); });
+  </script>
 </body>
 </html>`;
 
@@ -2755,7 +2764,7 @@ function ClosedDatesManager() {
         <p className={`text-sm text-gray-600 ${isRTL ? 'text-right' : 'text-left'}`}>
           {adminT('closedDates.managementDescription')}
         </p>
-        <Button onClick={() => setIsAddDialogOpen(true)} data-testid="button-add-closed-date" className="w-full sm:w-auto">
+        <Button onClick={() => setIsAddDialogOpen(true)} data-testid="button-add-closed-date" className="w-full sm:w-auto whitespace-nowrap">
           <Plus className="w-4 h-4 mr-2" />
           {adminT('closedDates.addDate')}
         </Button>
@@ -3424,8 +3433,15 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to update category');
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedCategory: any) => {
+      queryClient.setQueryData(['/api/categories', 'includeInactive'], (old: any[]) =>
+        old ? old.map((c: any) => c.id === updatedCategory.id ? { ...c, ...updatedCategory } : c) : old
+      );
+      queryClient.setQueryData(['/api/categories'], (old: any[]) =>
+        old ? old.filter((c: any) => c.isActive !== false) : old
+      );
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setEditingCategory(null);
       setIsCategoryFormOpen(false);
       toast({ title: adminT('categories.notifications.categoryUpdated'), description: adminT('categories.notifications.categoryUpdatedDesc') });
@@ -7453,6 +7469,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
       description_he: "",
       description_ar: "",
       icon: "🍽️",
+      isActive: true,
     },
   });
 
@@ -7469,6 +7486,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
           description_he: category.description_he || "",
           description_ar: category.description_ar || "",
           icon: category.icon || "🍽️",
+          isActive: category.isActive ?? true,
         });
       } else {
         form.reset({
@@ -7481,6 +7499,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
           description_he: "",
           description_ar: "",
           icon: "🍽️",
+          isActive: true,
         });
       }
     }
@@ -7660,6 +7679,25 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       </FormItem>
                     );
                   }}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isActive"
+                  render={({ field }) => (
+                    <FormItem className={`flex items-center justify-between rounded-lg border p-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className={isRTL ? 'text-right' : 'text-left'}>
+                        <FormLabel className="text-sm font-medium">{adminT('categories.showCategory')}</FormLabel>
+                        <p className="text-xs text-gray-500">{adminT('categories.hidden')}</p>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
               </>
             )}
