@@ -1390,12 +1390,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       ${contentHtml}
     `;
 
-    // Append inside the Radix Dialog DOM subtree so Radix doesn't treat
-    // overlay clicks as "outside the dialog" and close the order modal.
-    // The overlay is position:fixed so it still covers the full screen visually.
-    const dialogContent = document.querySelector('[role="dialog"]') as HTMLElement | null;
-    const mountTarget = dialogContent ?? document.body;
-    mountTarget.appendChild(overlay);
+    document.body.appendChild(overlay);
 
     const closeOverlay = () => {
       overlay.remove();
@@ -5843,7 +5838,14 @@ export default function AdminDashboard() {
 
             {/* Order Details/Edit Dialog */}
             <Dialog open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen}>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogContent
+                className="max-w-4xl max-h-[90vh] overflow-y-auto"
+                onPointerDownOutside={(e) => {
+                  if (document.getElementById('order-print-overlay')) {
+                    e.preventDefault();
+                  }
+                }}
+              >
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
                     {editingOrder ? `${adminT('orders.order')} #${editingOrder.id}` : adminT('orders.newOrder')}
