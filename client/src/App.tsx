@@ -215,11 +215,19 @@ function Router() {
       }
     };
 
-    // Ask SW for any pending notification when app becomes visible
-    // (handles iOS race condition: postMessage arrived before app JS resumed)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && navigator.serviceWorker?.controller) {
+    // Ask SW for any pending notification when app becomes visible.
+    // Retries handle the iOS race condition where visibilitychange fires
+    // BEFORE notificationclick sets pendingNotification in the SW.
+    const askSWForPending = () => {
+      if (navigator.serviceWorker?.controller) {
         navigator.serviceWorker.controller.postMessage({ type: 'GET_PENDING_NOTIFICATION' });
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        askSWForPending();
+        setTimeout(askSWForPending, 600);
+        setTimeout(askSWForPending, 1500);
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -229,6 +237,12 @@ function Router() {
     
     if (navigator.serviceWorker) {
       navigator.serviceWorker.addEventListener('message', handleMessage);
+
+      // On mount: immediately ask SW for pending notification.
+      // Handles case where visibilitychange already fired before this useEffect ran
+      // (e.g. app was backgrounded and resumed before React mounted listeners).
+      setTimeout(askSWForPending, 200);
+      setTimeout(askSWForPending, 1000);
 
       
       // Add global test function for debugging

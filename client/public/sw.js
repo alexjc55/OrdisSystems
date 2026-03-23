@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260323-1500';
+const BUILD_TIMESTAMP = '20260323-1600';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
@@ -230,9 +230,11 @@ self.addEventListener('message', (event) => {
 
   // App requests pending notification (e.g. on visibilitychange — iOS race condition recovery)
   if (event.data?.type === 'GET_PENDING_NOTIFICATION') {
-    if (self.pendingNotification && event.source) {
+    const age = Date.now() - (self.pendingNotificationTimestamp || 0);
+    if (self.pendingNotification && age < 30000 && event.source) {
       event.source.postMessage({ ...self.pendingNotification, type: 'PENDING_NOTIFICATION' });
       self.pendingNotification = null;
+      self.pendingNotificationTimestamp = 0;
     }
   }
 
@@ -311,6 +313,7 @@ self.addEventListener('push', (event) => {
 
 // Storage for pending notification (survives iOS PWA background/resume cycle)
 self.pendingNotification = null;
+self.pendingNotificationTimestamp = 0;
 
 // ─── Notification Click ───────────────────────────────────────────────────────
 self.addEventListener('notificationclick', (event) => {
@@ -340,8 +343,9 @@ self.addEventListener('notificationclick', (event) => {
     }
   };
 
-  // Store pending notification — app will pick it up on visibilitychange if postMessage missed
+  // Store pending notification — app will pick it up via GET_PENDING_NOTIFICATION if postMessage missed
   self.pendingNotification = notificationData;
+  self.pendingNotificationTimestamp = Date.now();
 
   const urlWithData = url + (url.includes('?') ? '&' : '?') +
     'notification=' + encodeURIComponent(JSON.stringify({
