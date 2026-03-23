@@ -190,28 +190,39 @@ function Router() {
       } else if (event.data?.type === 'notification-error') {
         console.error('❌ [App] Notification failed to show:', event.data.error);
         alert(`Push notification error: ${event.data.error}`);
-      } else if (event.data?.type === 'notification-click') {
+      } else if (
+        event.data?.type === 'notification-click' ||
+        event.data?.type === 'notification-click-retry' ||
+        event.data?.type === 'PENDING_NOTIFICATION'
+      ) {
         console.log('🔔 [App] Notification was clicked:', event.data);
         
         if (event.data?.notification) {
           const { title, body, type: notificationType } = event.data.notification;
           const fallbackType = event.data.data?.type || 'marketing';
           
-          console.log('🔔 [App] Opening notification modal:', {
-            title,
-            body,
-            type: notificationType || fallbackType
-          });
-          
-          setNotificationModal({
-            isOpen: true,
-            title: title || 'Уведомление',
-            message: body || 'Новое уведомление',
-            type: notificationType || fallbackType
+          setNotificationModal(prev => {
+            // Avoid showing duplicate modal from retry message if already open
+            if (prev.isOpen && prev.title === (title || 'Уведомление')) return prev;
+            return {
+              isOpen: true,
+              title: title || 'Уведомление',
+              message: body || 'Новое уведомление',
+              type: notificationType || fallbackType
+            };
           });
         }
       }
     };
+
+    // Ask SW for any pending notification when app becomes visible
+    // (handles iOS race condition: postMessage arrived before app JS resumed)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'GET_PENDING_NOTIFICATION' });
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Добавить listener к window вместо navigator.serviceWorker
     window.addEventListener('message', handleMessage);
@@ -266,6 +277,7 @@ function Router() {
     }
     
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('message', handleMessage);
       if (navigator.serviceWorker) {
         navigator.serviceWorker.removeEventListener('message', handleMessage);

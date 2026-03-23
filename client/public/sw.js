@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260323-1200';
+const BUILD_TIMESTAMP = '20260323-1400';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
@@ -90,31 +90,42 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(handleStaticAsset(request));
 });
 
-// Navigation: always try network first, only fall back to cache when offline
+// Navigation: cache-first (serve app shell instantly), update in background
+// This eliminates the white screen on PWA reopen — cached HTML is served immediately
 async function handleNavigationRequest(request) {
-  try {
-    const response = await fetch(request);
-    // Store a copy as offline fallback (but don't serve it cache-first)
+  const cache = await caches.open(DYNAMIC_CACHE);
+  // Normalise cache key: always use '/' for all navigation requests (SPA)
+  const cacheKey = new Request('/');
+  const cached = await cache.match(cacheKey);
+
+  // Start a background network fetch to keep cache fresh
+  const networkFetch = fetch(request).then(response => {
     if (response.ok) {
-      const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, response.clone());
+      cache.put(cacheKey, response.clone());
     }
     return response;
-  } catch (_) {
-    // Offline fallback
-    const cache = await caches.open(DYNAMIC_CACHE);
-    const cached = await cache.match(request) || await cache.match('/');
-    if (cached) return cached;
+  }).catch(() => null);
 
-    return new Response(
-      '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Офлайн</title></head>' +
-      '<body style="font-family:sans-serif;text-align:center;padding:40px">' +
-      '<h2>Нет подключения к интернету</h2>' +
-      '<p>Проверьте соединение и обновите страницу.</p>' +
-      '<button onclick="location.reload()">Обновить</button></body></html>',
-      { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-    );
+  // If we have a cached copy, return it instantly (eliminates white screen)
+  if (cached) {
+    return cached;
   }
+
+  // No cache yet — wait for network (first visit)
+  try {
+    const response = await networkFetch;
+    if (response) return response;
+  } catch (_) {}
+
+  // Completely offline and no cache
+  return new Response(
+    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Офлайн</title></head>' +
+    '<body style="font-family:sans-serif;text-align:center;padding:40px">' +
+    '<h2>Нет подключения к интернету</h2>' +
+    '<p>Проверьте соединение и обновите страницу.</p>' +
+    '<button onclick="location.reload()">Обновить</button></body></html>',
+    { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  );
 }
 
 // API: stale-while-revalidate for whitelisted endpoints, network-only for others
@@ -217,6 +228,14 @@ self.addEventListener('message', (event) => {
     self.testPWANotification();
   }
 
+  // App requests pending notification (e.g. on visibilitychange — iOS race condition recovery)
+  if (event.data?.type === 'GET_PENDING_NOTIFICATION') {
+    if (self.pendingNotification && event.source) {
+      event.source.postMessage({ ...self.pendingNotification, type: 'PENDING_NOTIFICATION' });
+      self.pendingNotification = null;
+    }
+  }
+
   if (event.data?.type === 'PURGE_URL_CACHE') {
     const urlPattern = event.data.urlPattern;
     if (urlPattern) {
@@ -290,6 +309,9 @@ self.addEventListener('push', (event) => {
   );
 });
 
+// Storage for pending notification (survives iOS PWA background/resume cycle)
+self.pendingNotification = null;
+
 // ─── Notification Click ───────────────────────────────────────────────────────
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
@@ -318,23 +340,45 @@ self.addEventListener('notificationclick', (event) => {
     }
   };
 
+  // Store pending notification — app will pick it up on visibilitychange if postMessage missed
+  self.pendingNotification = notificationData;
+
+  const urlWithData = url + (url.includes('?') ? '&' : '?') +
+    'notification=' + encodeURIComponent(JSON.stringify({
+      title: event.notification.title,
+      body: event.notification.body,
+      type: data.type || 'marketing'
+    }));
+
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(async clientList => {
+      let appClient = null;
       for (const client of clientList) {
-        if (client.url.includes(self.location.origin) && 'focus' in client) {
-          client.focus();
-          client.postMessage(notificationData);
-          return;
+        if (client.url.includes(self.location.origin)) {
+          appClient = client;
+          break;
         }
       }
 
+      if (appClient) {
+        // Await focus so iOS resumes the frozen JS context before we postMessage
+        try {
+          const focusedClient = await appClient.focus();
+          const target = focusedClient || appClient;
+          // Send message — app listener will show the modal
+          target.postMessage(notificationData);
+          // Also send delayed retry in case app JS needed extra time to resume on iOS
+          await new Promise(resolve => setTimeout(resolve, 600));
+          target.postMessage({ ...notificationData, type: 'notification-click-retry' });
+        } catch (e) {
+          // focus() can fail in some contexts; fall through to URL navigation
+          if (clients.openWindow) return clients.openWindow(urlWithData);
+        }
+        return;
+      }
+
+      // No client found — open app with notification data in URL
       if (clients.openWindow) {
-        const urlWithData = url + (url.includes('?') ? '&' : '?') +
-          'notification=' + encodeURIComponent(JSON.stringify({
-            title: event.notification.title,
-            body: event.notification.body,
-            type: data.type || 'marketing'
-          }));
         return clients.openWindow(urlWithData);
       }
     })
