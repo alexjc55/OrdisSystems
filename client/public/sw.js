@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260323-1400';
+const BUILD_TIMESTAMP = '20260323-1500';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
@@ -361,19 +361,13 @@ self.addEventListener('notificationclick', (event) => {
       }
 
       if (appClient) {
-        // Await focus so iOS resumes the frozen JS context before we postMessage
-        try {
-          const focusedClient = await appClient.focus();
-          const target = focusedClient || appClient;
-          // Send message — app listener will show the modal
-          target.postMessage(notificationData);
-          // Also send delayed retry in case app JS needed extra time to resume on iOS
-          await new Promise(resolve => setTimeout(resolve, 600));
-          target.postMessage({ ...notificationData, type: 'notification-click-retry' });
-        } catch (e) {
-          // focus() can fail in some contexts; fall through to URL navigation
-          if (clients.openWindow) return clients.openWindow(urlWithData);
-        }
+        // fire-and-forget focus — iOS Safari throws on focus(), never await it
+        // and NEVER put postMessage inside the catch, or it silently breaks on iOS
+        try { appClient.focus(); } catch (_) {}
+
+        // Always postMessage directly on appClient, regardless of focus result
+        appClient.postMessage(notificationData);
+        // pendingNotification + visibilitychange in the app handles any remaining race condition
         return;
       }
 
