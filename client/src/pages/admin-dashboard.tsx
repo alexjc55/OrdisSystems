@@ -1283,45 +1283,11 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       </tr>`;
     }).join('');
 
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (!printWindow) return;
+    // Remove any existing print overlay
+    document.getElementById('order-print-overlay')?.remove();
+    document.getElementById('order-print-style')?.remove();
 
-    const html = `<!DOCTYPE html>
-<html dir="${isRTLPrint ? 'rtl' : 'ltr'}" lang="${currentLang}">
-<head>
-  <meta charset="UTF-8">
-  <title>${l('order')} #${order.id}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; font-size: 13px; padding: 20px; color: #333; direction: ${isRTLPrint ? 'rtl' : 'ltr'}; }
-    .header { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #333; }
-    .header h1 { font-size: 18px; margin-bottom: 4px; }
-    .header .store-name { font-size: 14px; color: #666; }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-bottom: 15px; font-size: 12px; }
-    .info-item { display: flex; gap: 6px; }
-    .info-label { font-weight: bold; white-space: nowrap; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    th { padding: 6px 8px; border: 1px solid #ccc; background: #f5f5f5; font-size: 12px; text-align: ${isRTLPrint ? 'right' : 'left'}; }
-    .totals { margin-bottom: 15px; }
-    .totals-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
-    .totals-row.total-final { font-weight: bold; font-size: 15px; border-top: 2px solid #333; padding-top: 6px; margin-top: 4px; }
-    .comments-section { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 60px; }
-    .comments-section h3 { font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-    .order-notes { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
-    .order-notes strong { display: block; margin-bottom: 4px; }
-    @media print { body { padding: 10px; } @page { margin: 10mm; } .no-print { display: none !important; } }
-    .no-print-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-    .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-size: 13px; color: #374151; font-family: Arial, sans-serif; }
-    .back-btn:hover { background: #e5e7eb; }
-    .print-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; background: #f97316; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; color: #fff; font-family: Arial, sans-serif; font-weight: 600; }
-    .print-btn:hover { background: #ea6c0a; }
-  </style>
-</head>
-<body>
-  <div class="no-print no-print-bar">
-    <button class="back-btn" onclick="window.close()">${l('backToOrder')}</button>
-    <button class="print-btn" onclick="window.print()">🖨 ${l('printOrder')}</button>
-  </div>
+    const contentHtml = `
   <div class="header">
     <div class="store-name">${storeName}</div>
     <h1>${l('order')} #${order.id}</h1>
@@ -1347,9 +1313,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
         <th style="width:120px;">${l('notes')}</th>
       </tr>
     </thead>
-    <tbody>
-      ${itemsRows}
-    </tbody>
+    <tbody>${itemsRows}</tbody>
   </table>
 
   <div class="totals">
@@ -1363,16 +1327,68 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
   <div class="comments-section">
     <h3>${l('generalComments')}</h3>
-  </div>
+  </div>`;
 
-  <script>
-    window.addEventListener('afterprint', function() { window.close(); });
-  </script>
-</body>
-</html>`;
+    // Inject print-only CSS: hide everything except our overlay when printing
+    const printStyle = document.createElement('style');
+    printStyle.id = 'order-print-style';
+    printStyle.textContent = `
+      @media print {
+        body > *:not(#order-print-overlay) { display: none !important; }
+        #order-print-overlay { display: block !important; position: static !important; overflow: visible !important; }
+        #order-print-bar { display: none !important; }
+        @page { margin: 10mm; }
+      }
+    `;
+    document.head.appendChild(printStyle);
 
-    printWindow.document.write(html);
-    printWindow.document.close();
+    // Create full-screen overlay — works on iOS/Android without popup
+    const overlay = document.createElement('div');
+    overlay.id = 'order-print-overlay';
+    overlay.setAttribute('dir', isRTLPrint ? 'rtl' : 'ltr');
+    overlay.style.cssText = [
+      'position:fixed', 'top:0', 'left:0', 'width:100%', 'height:100%',
+      'background:#fff', 'z-index:99999', 'overflow-y:auto',
+      'font-family:Arial,sans-serif', 'font-size:13px', 'color:#333',
+      `direction:${isRTLPrint ? 'rtl' : 'ltr'}`,
+    ].join(';');
+
+    overlay.innerHTML = `
+      <style>
+        #order-print-overlay .header { text-align:center; margin-bottom:15px; padding:20px 20px 10px; border-bottom:2px solid #333; }
+        #order-print-overlay .header h1 { font-size:18px; margin-bottom:4px; }
+        #order-print-overlay .store-name { font-size:14px; color:#666; }
+        #order-print-overlay .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 20px; margin:0 20px 15px; font-size:12px; }
+        #order-print-overlay .info-item { display:flex; gap:6px; }
+        #order-print-overlay .info-label { font-weight:bold; white-space:nowrap; }
+        #order-print-overlay table { width:calc(100% - 40px); margin:0 20px 15px; border-collapse:collapse; }
+        #order-print-overlay th { padding:6px 8px; border:1px solid #ccc; background:#f5f5f5; font-size:12px; text-align:${isRTLPrint ? 'right' : 'left'}; }
+        #order-print-overlay td { padding:6px 8px; border:1px solid #ccc; }
+        #order-print-overlay .totals { margin:0 20px 15px; }
+        #order-print-overlay .totals-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+        #order-print-overlay .totals-row.total-final { font-weight:bold; font-size:15px; border-top:2px solid #333; padding-top:6px; margin-top:4px; }
+        #order-print-overlay .comments-section { border:1px solid #ccc; padding:10px; margin:0 20px 10px; min-height:60px; }
+        #order-print-overlay .comments-section h3 { font-size:13px; margin-bottom:6px; border-bottom:1px solid #eee; padding-bottom:4px; }
+        #order-print-overlay .order-notes { background:#f9f9f9; padding:8px; margin:0 20px 10px; border:1px solid #ddd; font-size:12px; }
+        #order-print-overlay .order-notes strong { display:block; margin-bottom:4px; }
+      </style>
+      <div id="order-print-bar" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;background:#fff;position:sticky;top:0;z-index:1;">
+        <button id="print-close-btn" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;cursor:pointer;font-size:13px;color:#374151;font-family:Arial,sans-serif;">${l('backToOrder')}</button>
+        <button id="print-do-btn" style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:#f97316;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#fff;font-family:Arial,sans-serif;font-weight:600;">🖨 ${l('printOrder')}</button>
+      </div>
+      ${contentHtml}
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closeOverlay = () => {
+      overlay.remove();
+      printStyle.remove();
+    };
+
+    document.getElementById('print-close-btn')!.addEventListener('click', closeOverlay);
+    document.getElementById('print-do-btn')!.addEventListener('click', () => window.print());
+    window.addEventListener('afterprint', closeOverlay, { once: true });
   };
 
   const handleSave = () => {
