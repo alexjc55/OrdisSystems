@@ -1390,24 +1390,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       ${contentHtml}
     `;
 
-    document.body.appendChild(overlay);
-
-    // Stop all pointer/click events from bubbling out of the overlay
-    // so Radix UI Dialog doesn't detect a click outside and close the order modal
-    ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(evt => {
-      overlay.addEventListener(evt, (e) => e.stopPropagation());
-    });
+    // Append inside the Radix Dialog DOM subtree so Radix doesn't treat
+    // overlay clicks as "outside the dialog" and close the order modal.
+    // The overlay is position:fixed so it still covers the full screen visually.
+    const dialogContent = document.querySelector('[role="dialog"]') as HTMLElement | null;
+    const mountTarget = dialogContent ?? document.body;
+    mountTarget.appendChild(overlay);
 
     const closeOverlay = () => {
       overlay.remove();
     };
 
-    document.getElementById('print-close-btn')!.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeOverlay();
-    });
-    document.getElementById('print-do-btn')!.addEventListener('click', (e) => {
-      e.stopPropagation();
+    document.getElementById('print-close-btn')!.addEventListener('click', closeOverlay);
+    document.getElementById('print-do-btn')!.addEventListener('click', () => {
       // Create hidden iframe and print only its content — works on all devices
       const iframe = document.createElement('iframe');
       iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;';
