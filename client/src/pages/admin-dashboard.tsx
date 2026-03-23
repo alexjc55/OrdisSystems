@@ -1394,6 +1394,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     const closeOverlay = () => {
       overlay.remove();
+      // Tell the parent dialog to reopen (it may have closed due to outside-click detection)
+      window.dispatchEvent(new CustomEvent('edahouse:reopen-order-dialog'));
     };
 
     document.getElementById('print-close-btn')!.addEventListener('click', closeOverlay);
@@ -3114,6 +3116,13 @@ export default function AdminDashboard() {
   const handleOrderEdit = useCallback((order: any) => {
     setEditingOrder(order);
     setIsOrderFormOpen(true);
+  }, []);
+
+  // Reopen order dialog after print preview is closed
+  useEffect(() => {
+    const handler = () => setIsOrderFormOpen(true);
+    window.addEventListener('edahouse:reopen-order-dialog', handler);
+    return () => window.removeEventListener('edahouse:reopen-order-dialog', handler);
   }, []);
   
   // Kanban scroll container ref
