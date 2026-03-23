@@ -242,9 +242,8 @@ export default function Header({ onResetView }: HeaderProps) {
               </Button>
             </div>
 
-            {/* Bell Button - Mobile only, always visible */}
-            {isMobile && (
-              <div className="relative md:hidden">
+            {/* Bell Button - all screen sizes */}
+            <div className="relative">
                 <Button
                   ref={bellBtnRef}
                   variant="ghost"
@@ -346,7 +345,6 @@ export default function Header({ onResetView }: HeaderProps) {
                   </div>
                 )}
               </div>
-            )}
 
             {!isInstalled && isTablet && (
               <Button
