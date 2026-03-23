@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260323-0900';
+const BUILD_TIMESTAMP = '20260323-1200';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
@@ -121,6 +121,15 @@ async function handleNavigationRequest(request) {
 async function handleApiRequest(request) {
   const url = new URL(request.url);
 
+  // Admin-specific requests that must always be fresh (never cache)
+  if (url.searchParams.get('includeInactive') === 'true') {
+    try {
+      return await fetch(request);
+    } catch (err) {
+      throw err;
+    }
+  }
+
   const isCacheable = API_CACHE_PATTERNS.some(p => url.pathname.startsWith(p));
 
   if (!isCacheable) {
@@ -206,6 +215,21 @@ self.addEventListener('message', (event) => {
 
   if (event.data?.type === 'test-pwa-notification') {
     self.testPWANotification();
+  }
+
+  if (event.data?.type === 'PURGE_URL_CACHE') {
+    const urlPattern = event.data.urlPattern;
+    if (urlPattern) {
+      event.waitUntil(
+        caches.open(DYNAMIC_CACHE).then(cache =>
+          cache.keys().then(keys =>
+            Promise.all(
+              keys.filter(k => k.url.includes(urlPattern)).map(k => cache.delete(k))
+            )
+          )
+        )
+      );
+    }
   }
 });
 

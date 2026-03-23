@@ -1252,6 +1252,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       orderNotes: { ru: 'Комментарии к заказу', en: 'Order Notes', he: 'הערות להזמנה', ar: 'ملاحظات الطلب' },
       generalComments: { ru: 'Общие комментарии', en: 'General Comments', he: 'הערות כלליות', ar: 'تعليقات عامة' },
       payment: { ru: 'Оплата', en: 'Payment', he: 'תשלום', ar: 'الدفع' },
+      backToOrder: { ru: '← Назад к заказу', en: '← Back to order', he: '← חזרה להזמנה', ar: '← العودة للطلب' },
     };
 
     const l = (key: string) => labels[key]?.[currentLang] || labels[key]?.['en'] || key;
@@ -1314,7 +1315,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 </head>
 <body>
   <div class="no-print" style="margin-bottom:8px;">
-    <button class="back-btn" onclick="window.close()">&#8592; ${l('backToAdmin') || 'Назад'}</button>
+    <button class="back-btn" onclick="window.close()">${l('backToOrder')}</button>
   </div>
   <div class="header">
     <div class="store-name">${storeName}</div>
@@ -3434,12 +3435,27 @@ export default function AdminDashboard() {
       return await response.json();
     },
     onSuccess: (updatedCategory: any) => {
+      // Immediately update admin list (all categories including inactive)
       queryClient.setQueryData(['/api/categories', 'includeInactive'], (old: any[]) =>
         old ? old.map((c: any) => c.id === updatedCategory.id ? { ...c, ...updatedCategory } : c) : old
       );
-      queryClient.setQueryData(['/api/categories'], (old: any[]) =>
-        old ? old.filter((c: any) => c.isActive !== false) : old
-      );
+      // Immediately update home page list: add if now active, remove if now inactive
+      queryClient.setQueryData(['/api/categories'], (old: any[]) => {
+        if (!old) return old;
+        const exists = old.some((c: any) => c.id === updatedCategory.id);
+        if (updatedCategory.isActive === false) {
+          return old.filter((c: any) => c.id !== updatedCategory.id);
+        } else if (exists) {
+          return old.map((c: any) => c.id === updatedCategory.id ? { ...c, ...updatedCategory } : c);
+        } else {
+          return [...old, updatedCategory];
+        }
+      });
+      // Purge SW cache for categories so next invalidateQueries refetch gets fresh server data
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'PURGE_URL_CACHE', urlPattern: '/api/categories' });
+      }
+      // Now refetch — SW cache was purged so we get live server data
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
       setEditingCategory(null);
