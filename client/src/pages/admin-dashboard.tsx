@@ -1253,6 +1253,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       generalComments: { ru: 'Общие комментарии', en: 'General Comments', he: 'הערות כלליות', ar: 'تعليقات عامة' },
       payment: { ru: 'Оплата', en: 'Payment', he: 'תשלום', ar: 'الدفع' },
       backToOrder: { ru: '← Назад к заказу', en: '← Back to order', he: '← חזרה להזמנה', ar: '← العودة للطلب' },
+      printOrder: { ru: 'Распечатать', en: 'Print', he: 'הדפסה', ar: 'طباعة' },
     };
 
     const l = (key: string) => labels[key]?.[currentLang] || labels[key]?.['en'] || key;
@@ -1309,13 +1310,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     .order-notes { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
     .order-notes strong { display: block; margin-bottom: 4px; }
     @media print { body { padding: 10px; } @page { margin: 10mm; } .no-print { display: none !important; } }
-    .back-btn { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 8px 16px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-size: 13px; color: #374151; font-family: Arial, sans-serif; }
+    .no-print-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: #f3f4f6; border: 1px solid #d1d5db; border-radius: 8px; cursor: pointer; font-size: 13px; color: #374151; font-family: Arial, sans-serif; }
     .back-btn:hover { background: #e5e7eb; }
+    .print-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; background: #f97316; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; color: #fff; font-family: Arial, sans-serif; font-weight: 600; }
+    .print-btn:hover { background: #ea6c0a; }
   </style>
 </head>
 <body>
-  <div class="no-print" style="margin-bottom:8px;">
+  <div class="no-print no-print-bar">
     <button class="back-btn" onclick="window.close()">${l('backToOrder')}</button>
+    <button class="print-btn" onclick="window.print()">🖨 ${l('printOrder')}</button>
   </div>
   <div class="header">
     <div class="store-name">${storeName}</div>
@@ -1361,7 +1366,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   </div>
 
   <script>
-    window.onload = function() { window.print(); };
     window.addEventListener('afterprint', function() { window.close(); });
   </script>
 </body>
