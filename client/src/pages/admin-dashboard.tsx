@@ -3147,6 +3147,51 @@ export default function AdminDashboard() {
   const editingOrderRef = useRef<any>(null);
   useEffect(() => { editingOrderRef.current = editingOrder; }, [editingOrder]);
 
+  // Android/iOS back button support for the order dialog
+  // Tracks whether the history entry was pushed by this dialog and the active popstate handler
+  const orderDialogHistoryRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({ pushed: false, handler: null });
+
+  useEffect(() => {
+    if (isOrderFormOpen) {
+      // Dialog just opened — push a history entry so the system back button is intercepted
+      window.history.pushState({ orderDialog: true }, '', window.location.href);
+      orderDialogHistoryRef.current.pushed = true;
+
+      const onPopState = (e: PopStateEvent) => {
+        // If we popped TO the orderDialog state, that means we came from the print overlay
+        // going back one step — the order dialog should remain open
+        if (e.state?.orderDialog) return;
+
+        // We popped PAST the orderDialog state (real Android back) — close the dialog
+        orderDialogHistoryRef.current.pushed = false;
+        orderDialogHistoryRef.current.handler = null;
+        window.removeEventListener('popstate', onPopState);
+        setIsOrderFormOpen(false);
+        setEditingOrder(null);
+      };
+
+      window.addEventListener('popstate', onPopState);
+      orderDialogHistoryRef.current.handler = onPopState;
+
+      return () => {
+        // Cleanup in case the effect re-runs before the handler fires
+        window.removeEventListener('popstate', onPopState);
+      };
+    } else {
+      // Dialog just closed via button/X (not via back button)
+      const { pushed, handler } = orderDialogHistoryRef.current;
+      if (handler) {
+        window.removeEventListener('popstate', handler);
+        orderDialogHistoryRef.current.handler = null;
+      }
+      if (pushed) {
+        orderDialogHistoryRef.current.pushed = false;
+        // Pop the history entry we pushed so the browser history stays clean
+        window.history.back();
+      }
+    }
+  }, [isOrderFormOpen]);
+
   // Reopen order dialog after print preview is closed
   useEffect(() => {
     const handler = () => {
