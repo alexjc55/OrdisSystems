@@ -414,7 +414,12 @@ export default function Checkout() {
   const createGuestOrderMutation = useMutation<GuestOrderResponse, Error, GuestOrderData>({
     mutationFn: async (data: GuestOrderData) => {
       const deliveryDate = selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "";
-      
+      if (!deliveryDate) {
+        throw new Error(tCommon('validation.deliveryDateRequired'));
+      }
+      if (storeSettings?.deliveryTimeMode !== 'disabled' && !selectedGuestTime) {
+        throw new Error(tCommon('validation.deliveryTimeRequired'));
+      }
       // Enhanced validation for future-order products
       const validation = validateDeliveryDateForFutureOrders(deliveryDate);
       if (!validation.valid) {
@@ -498,8 +503,14 @@ export default function Checkout() {
         }
       }
 
-      // Validate delivery date for future order products before creating order
+      // Validate delivery date/time before creating order
       const deliveryDateStr = selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "";
+      if (!deliveryDateStr) {
+        throw new Error(tCommon('validation.deliveryDateRequired'));
+      }
+      if (storeSettings?.deliveryTimeMode !== 'disabled' && !selectedRegisterTime) {
+        throw new Error(tCommon('validation.deliveryTimeRequired'));
+      }
       const validation = validateDeliveryDateForFutureOrders(deliveryDateStr);
       if (!validation.valid) {
         throw new Error(validation.message);
@@ -808,9 +819,16 @@ export default function Checkout() {
                   const address = formData.get("address") as string;
                   const phone = formData.get("phone") as string;
                   const deliveryDate = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
-                  const deliveryTime = formatDeliveryTimeRange(selectedTime || "");
                   const paymentMethod = selectedPaymentMethod;
-                  createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime, paymentMethod });
+                  if (!deliveryDate) {
+                    toast({ title: tCommon('validation.deliveryDateRequired'), variant: "destructive" });
+                    return;
+                  }
+                  if (storeSettings?.deliveryTimeMode !== 'disabled' && !selectedTime) {
+                    toast({ title: tCommon('validation.deliveryTimeRequired'), variant: "destructive" });
+                    return;
+                  }
+                  createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime: selectedTime, paymentMethod });
                 }}>
                   <div className="space-y-4">
                     <div>

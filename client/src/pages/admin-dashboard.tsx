@@ -833,6 +833,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   const normalizeDeliveryTime = (time: string) => {
     if (time === 'morning') return 'half_day_first';
     if (time === 'afternoon') return 'half_day_second';
+    // Normalize range format "10:00 - 12:00" → "10:00" (start time only)
+    if (time.includes(' - ')) return time.split(' - ')[0];
     return time;
   };
 
@@ -1723,7 +1725,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                     </Select>
                   ) : (
                     <Select
-                      value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                      value={editedOrder.deliveryTime || ""}
                       onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
                     >
                       <SelectTrigger className="text-sm h-8">
@@ -1731,7 +1733,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                       </SelectTrigger>
                       <SelectContent>
                         {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay, storeSettingsData?.deliveryHours).map((slot: any) => (
-                          <SelectItem key={slot.value} value={slot.label}>
+                          <SelectItem key={slot.value} value={slot.value}>
                             {slot.label}
                           </SelectItem>
                         ))}
@@ -1836,7 +1838,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                   </Select>
                 ) : (
                   <Select
-                    value={formatDeliveryTimeRange(editedOrder.deliveryTime || "")}
+                    value={editedOrder.deliveryTime || ""}
                     onValueChange={(value) => setEditedOrder(prev => ({ ...prev, deliveryTime: value }))}
                   >
                     <SelectTrigger className="text-sm h-8">
@@ -1844,7 +1846,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                     </SelectTrigger>
                     <SelectContent>
                       {getFormTimeSlots(editedOrder.deliveryDate, storeSettingsData?.workingHours, storeSettingsData?.weekStartDay, storeSettingsData?.deliveryHours).map((slot: any) => (
-                        <SelectItem key={slot.value} value={slot.label}>
+                        <SelectItem key={slot.value} value={slot.value}>
                           {slot.label}
                         </SelectItem>
                       ))}
