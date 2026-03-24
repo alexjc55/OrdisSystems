@@ -15,6 +15,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { useModalBackButton } from "@/hooks/useModalBackButton";
 
 import { useAdminTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
@@ -2748,50 +2749,6 @@ function ItemDiscountDialog({
       </DialogContent>
     </Dialog>
   );
-}
-
-// Reusable hook: intercepts Android/iOS back button to close any modal dialog.
-// On open: pushes a history entry. On back button: closes modal (browser already went back).
-// On normal close (button/X): removes listener + calls history.back() to pop the pushed entry.
-function useModalBackButton(isOpen: boolean, onClose: () => void) {
-  const historyRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({
-    pushed: false,
-    handler: null,
-  });
-  // Keep onClose stable inside the effect without needing it as a dependency
-  const onCloseRef = useRef(onClose);
-  useEffect(() => { onCloseRef.current = onClose; });
-
-  useEffect(() => {
-    if (isOpen) {
-      window.history.pushState({ modal: true }, '', window.location.href);
-      historyRef.current.pushed = true;
-
-      const onPopState = () => {
-        historyRef.current.pushed = false;
-        historyRef.current.handler = null;
-        window.removeEventListener('popstate', onPopState);
-        onCloseRef.current();
-      };
-
-      window.addEventListener('popstate', onPopState);
-      historyRef.current.handler = onPopState;
-
-      return () => {
-        window.removeEventListener('popstate', onPopState);
-      };
-    } else {
-      const { pushed, handler } = historyRef.current;
-      if (handler) {
-        window.removeEventListener('popstate', handler);
-        historyRef.current.handler = null;
-      }
-      if (pushed) {
-        historyRef.current.pushed = false;
-        window.history.back();
-      }
-    }
-  }, [isOpen]);
 }
 
 // Closed Dates Manager Component

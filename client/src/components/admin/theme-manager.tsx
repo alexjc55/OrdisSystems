@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useModalBackButton } from "@/hooks/useModalBackButton";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -340,7 +341,10 @@ export default function ThemeManager() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<ThemeData | null>(null);
   const [previewTheme, setPreviewTheme] = useState<ThemeData | null>(null);
-  
+
+  useModalBackButton(isCreateDialogOpen, () => setIsCreateDialogOpen(false));
+  useModalBackButton(!!editingTheme, () => setEditingTheme(null));
+
   // State for multilingual fields
   const [themeFields, setThemeFields] = useState({
     name: '',
