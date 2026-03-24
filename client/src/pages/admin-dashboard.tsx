@@ -1287,70 +1287,80 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     document.getElementById('order-print-overlay')?.remove();
     document.getElementById('order-print-style')?.remove();
 
+    const S = {
+      wrap:    `font-family:Arial,sans-serif;font-size:13px;color:#333;direction:${isRTLPrint ? 'rtl' : 'ltr'};`,
+      hdr:     `text-align:center;margin-bottom:15px;padding-bottom:10px;border-bottom:2px solid #333;`,
+      hdrH1:   `font-size:18px;margin:4px 0 0;padding:0;`,
+      hdrSub:  `font-size:14px;color:#666;margin:0;padding:0;`,
+      infoTbl: `width:100%;border-collapse:collapse;margin-bottom:15px;font-size:12px;`,
+      infoTd:  `padding:3px 6px;vertical-align:top;`,
+      label:   `font-weight:bold;white-space:nowrap;padding:3px 10px 3px 6px;vertical-align:top;`,
+      prodTbl: `width:100%;border-collapse:collapse;margin-bottom:15px;`,
+      th:      `padding:6px 8px;border:1px solid #ccc;background:#f5f5f5;font-size:12px;text-align:${isRTLPrint ? 'right' : 'left'};`,
+      td:      `padding:6px 8px;border:1px solid #ccc;`,
+      totWrap: `margin-bottom:15px;`,
+      totRow:  `display:flex;justify-content:space-between;padding:3px 0;font-size:12px;`,
+      totFin:  `display:flex;justify-content:space-between;padding:6px 0 3px;font-size:15px;font-weight:bold;border-top:2px solid #333;margin-top:4px;`,
+      notes:   `background:#f9f9f9;padding:8px;margin-bottom:10px;border:1px solid #ddd;font-size:12px;`,
+      comments:`border:1px solid #ccc;padding:10px;margin-bottom:10px;min-height:60px;`,
+      cmtH3:   `font-size:13px;margin:0 0 6px;padding:0 0 4px;border-bottom:1px solid #eee;`,
+    };
+
+    const customerName = order.user
+      ? (order.user.firstName && order.user.lastName
+          ? `${order.user.firstName} ${order.user.lastName}`
+          : order.user.email || '')
+      : order.guestName || '';
+
+    const infoRows = [
+      [l('customer'),     customerName],
+      [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
+      [l('address'),      editedOrder.deliveryAddress || ''],
+      [l('payment'),      order.paymentMethod || ''],
+      [l('status'),       getStatusLabel(editedOrder.status)],
+      [l('deliveryDate'), editedOrder.deliveryDate || ''],
+      [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
+    ]
+      .filter(([, v]) => v)
+      .map(([k, v]) => `<tr><td style="${S.label}">${k}:</td><td style="${S.infoTd}">${v}</td></tr>`)
+      .join('');
+
     const contentHtml = `
-  <div class="header">
-    <div class="store-name">${storeName}</div>
-    <h1>${l('order')} #${order.id}</h1>
-  </div>
+  <div style="${S.wrap}">
+    <div style="${S.hdr}">
+      <p style="${S.hdrSub}">${storeName}</p>
+      <h1 style="${S.hdrH1}">${l('order')} #${order.id}</h1>
+    </div>
 
-  <div class="info-grid">
-    <div class="info-item"><span class="info-label">${l('customer')}:</span> <span>${order.user ? (order.user.firstName && order.user.lastName ? order.user.firstName + ' ' + order.user.lastName : order.user.email || '') : order.guestName || ''}</span></div>
-    <div class="info-item"><span class="info-label">${l('status')}:</span> <span>${getStatusLabel(editedOrder.status)}</span></div>
-    ${editedOrder.customerPhone ? `<div class="info-item"><span class="info-label">${l('phone')}:</span> <span>${editedOrder.customerPhone}</span></div>` : ''}
-    ${editedOrder.deliveryDate ? `<div class="info-item"><span class="info-label">${l('deliveryDate')}:</span> <span>${editedOrder.deliveryDate}</span></div>` : ''}
-    ${editedOrder.deliveryAddress ? `<div class="info-item"><span class="info-label">${l('address')}:</span> <span>${editedOrder.deliveryAddress}</span></div>` : ''}
-    ${editedOrder.deliveryTime ? `<div class="info-item"><span class="info-label">${l('deliveryTime')}:</span> <span>${formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon)}</span></div>` : ''}
-    ${order.paymentMethod ? `<div class="info-item"><span class="info-label">${l('payment')}:</span> <span>${order.paymentMethod}</span></div>` : ''}
-  </div>
+    <table style="${S.infoTbl}"><tbody>${infoRows}</tbody></table>
 
-  <table>
-    <thead>
-      <tr>
-        <th style="width:40px;text-align:center;">${l('check')}</th>
-        <th>${l('product')}</th>
-        <th style="text-align:center;">${l('qty')}</th>
-        <th style="text-align:center;">${l('price')}</th>
-        <th style="width:120px;">${l('notes')}</th>
-      </tr>
-    </thead>
-    <tbody>${itemsRows}</tbody>
-  </table>
+    <table style="${S.prodTbl}">
+      <thead><tr>
+        <th style="${S.th}width:40px;text-align:center;">${l('check')}</th>
+        <th style="${S.th}">${l('product')}</th>
+        <th style="${S.th}text-align:center;">${l('qty')}</th>
+        <th style="${S.th}text-align:center;">${l('price')}</th>
+        <th style="${S.th}width:120px;">${l('notes')}</th>
+      </tr></thead>
+      <tbody>${itemsRows}</tbody>
+    </table>
 
-  <div class="totals">
-    <div class="totals-row"><span>${l('subtotal')}:</span> <span>${subtotal.toFixed(2)}${currency}</span></div>
-    ${discountAmount > 0 ? `<div class="totals-row" style="color:#e53e3e;"><span>${l('discount')}:</span> <span>-${discountAmount.toFixed(2)}${currency}</span></div>` : ''}
-    ${deliveryFee > 0 ? `<div class="totals-row"><span>${l('delivery')}:</span> <span>${deliveryFee.toFixed(2)}${currency}</span></div>` : ''}
-    <div class="totals-row total-final"><span>${l('total')}:</span> <span>${finalTotal.toFixed(2)}${currency}</span></div>
-  </div>
+    <div style="${S.totWrap}">
+      <div style="${S.totRow}"><span>${l('subtotal')}:</span><span>${subtotal.toFixed(2)}${currency}</span></div>
+      ${discountAmount > 0 ? `<div style="${S.totRow}color:#e53e3e;"><span>${l('discount')}:</span><span>-${discountAmount.toFixed(2)}${currency}</span></div>` : ''}
+      ${deliveryFee > 0 ? `<div style="${S.totRow}"><span>${l('delivery')}:</span><span>${deliveryFee.toFixed(2)}${currency}</span></div>` : ''}
+      <div style="${S.totFin}"><span>${l('total')}:</span><span>${finalTotal.toFixed(2)}${currency}</span></div>
+    </div>
 
-  ${editedOrder.notes ? `<div class="order-notes"><strong>${l('orderNotes')}:</strong> ${editedOrder.notes}</div>` : ''}
+    ${editedOrder.notes ? `<div style="${S.notes}"><strong>${l('orderNotes')}:</strong> ${editedOrder.notes}</div>` : ''}
 
-  <div class="comments-section">
-    <h3>${l('generalComments')}</h3>
+    <div style="${S.comments}">
+      <h3 style="${S.cmtH3}">${l('generalComments')}</h3>
+    </div>
   </div>`;
 
-    // Build standalone HTML for iframe printing
-    const printCSS = `
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: Arial, sans-serif; font-size: 13px; padding: 20px; color: #333; direction: ${isRTLPrint ? 'rtl' : 'ltr'}; }
-      .header { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #333; }
-      .header h1 { font-size: 18px; margin-bottom: 4px; }
-      .store-name { font-size: 14px; color: #666; }
-      .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; margin-bottom: 15px; font-size: 12px; }
-      .info-item { display: flex; gap: 6px; }
-      .info-label { font-weight: bold; white-space: nowrap; }
-      table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-      th { padding: 6px 8px; border: 1px solid #ccc; background: #f5f5f5; font-size: 12px; text-align: ${isRTLPrint ? 'right' : 'left'}; }
-      td { padding: 6px 8px; border: 1px solid #ccc; }
-      .totals { margin-bottom: 15px; }
-      .totals-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
-      .totals-row.total-final { font-weight: bold; font-size: 15px; border-top: 2px solid #333; padding-top: 6px; margin-top: 4px; }
-      .comments-section { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 60px; }
-      .comments-section h3 { font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-      .order-notes { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
-      .order-notes strong { display: block; margin-bottom: 4px; }
-      @page { margin: 10mm; }
-    `;
+    // Minimal iframe CSS — content uses inline styles so only browser reset + page margins needed
+    const printCSS = `* { box-sizing: border-box; } body { margin: 0; padding: 16px; } @page { margin: 10mm; }`;
     const printHtml = `<!DOCTYPE html><html dir="${isRTLPrint ? 'rtl' : 'ltr'}" lang="${currentLang}"><head><meta charset="UTF-8"><title>${l('order')} #${order.id}</title><style>${printCSS}</style></head><body>${contentHtml}</body></html>`;
 
     // Create full-screen overlay — works on iOS/Android without popup
@@ -1365,24 +1375,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     ].join(';');
 
     overlay.innerHTML = `
-      <style>
-        #order-print-overlay .header { text-align:center; margin-bottom:15px; padding:20px 20px 10px; border-bottom:2px solid #333; }
-        #order-print-overlay .header h1 { font-size:18px; margin-bottom:4px; }
-        #order-print-overlay .store-name { font-size:14px; color:#666; }
-        #order-print-overlay .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px 20px; margin:0 20px 15px; font-size:12px; }
-        #order-print-overlay .info-item { display:flex; gap:6px; }
-        #order-print-overlay .info-label { font-weight:bold; white-space:nowrap; }
-        #order-print-overlay table { width:calc(100% - 40px); margin:0 20px 15px; border-collapse:collapse; }
-        #order-print-overlay th { padding:6px 8px; border:1px solid #ccc; background:#f5f5f5; font-size:12px; text-align:${isRTLPrint ? 'right' : 'left'}; }
-        #order-print-overlay td { padding:6px 8px; border:1px solid #ccc; }
-        #order-print-overlay .totals { margin:0 20px 15px; }
-        #order-print-overlay .totals-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
-        #order-print-overlay .totals-row.total-final { font-weight:bold; font-size:15px; border-top:2px solid #333; padding-top:6px; margin-top:4px; }
-        #order-print-overlay .comments-section { border:1px solid #ccc; padding:10px; margin:0 20px 10px; min-height:60px; }
-        #order-print-overlay .comments-section h3 { font-size:13px; margin-bottom:6px; border-bottom:1px solid #eee; padding-bottom:4px; }
-        #order-print-overlay .order-notes { background:#f9f9f9; padding:8px; margin:0 20px 10px; border:1px solid #ddd; font-size:12px; }
-        #order-print-overlay .order-notes strong { display:block; margin-bottom:4px; }
-      </style>
       <div id="order-print-bar" style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;background:#fff;position:sticky;top:0;z-index:1;">
         <button id="print-close-btn" style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;cursor:pointer;font-size:13px;color:#374151;font-family:Arial,sans-serif;">${l('backToOrder')}</button>
         <button id="print-do-btn" style="display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:#f97316;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#fff;font-family:Arial,sans-serif;font-weight:600;">🖨 ${l('printOrder')}</button>
