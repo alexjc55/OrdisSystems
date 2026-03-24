@@ -1285,8 +1285,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       </tr>`;
     }).join('');
 
-    // Remove any existing print overlay
-    document.getElementById('order-print-overlay')?.remove();
+    // Remove any existing print overlay and clean up its popstate listener
+    const existingOverlay = document.getElementById('order-print-overlay');
+    if (existingOverlay) {
+      const existingHandler = (existingOverlay as any)._popStateHandler;
+      if (existingHandler) window.removeEventListener('popstate', existingHandler);
+      existingOverlay.remove();
+      // Also pop the history entry that was pushed for the old overlay
+      window.history.back();
+    }
     document.getElementById('order-print-style')?.remove();
 
     const S = {
@@ -1386,10 +1393,34 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     document.body.appendChild(overlay);
 
-    const closeOverlay = () => {
-      overlay.remove();
-      // Tell the parent dialog to reopen (it may have closed due to outside-click detection)
+    // Push a history entry so the Android/iOS back button closes the overlay
+    // instead of navigating away from the admin page
+    window.history.pushState({ printOverlay: true }, '', window.location.href);
+
+    const dispatchReopen = () => {
       window.dispatchEvent(new CustomEvent('edahouse:reopen-order-dialog'));
+    };
+
+    const onPopState = () => {
+      // Hardware/gesture back button pressed — browser already went back,
+      // just close the overlay (no extra history.back() needed)
+      overlay.remove();
+      window.removeEventListener('popstate', onPopState);
+      dispatchReopen();
+    };
+
+    window.addEventListener('popstate', onPopState);
+    // Store handler reference on the element for cleanup if handlePrint is called again
+    (overlay as any)._popStateHandler = onPopState;
+
+    const closeOverlay = () => {
+      // "← Back to Order" button clicked: remove listener first so the
+      // upcoming history.back() doesn't re-trigger onPopState
+      window.removeEventListener('popstate', onPopState);
+      overlay.remove();
+      // Pop the extra history entry we pushed when the overlay opened
+      window.history.back();
+      dispatchReopen();
     };
 
     document.getElementById('print-close-btn')!.addEventListener('click', closeOverlay);
