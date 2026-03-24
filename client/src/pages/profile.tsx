@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect, useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useModalBackButton } from "@/hooks/useModalBackButton";
 import { apiRequest } from "@/lib/queryClient";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
@@ -64,6 +65,12 @@ export default function Profile() {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
   const [isAvatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
+
+  // Android back button: close dialogs instead of navigating away
+  useModalBackButton(isAddressDialogOpen, () => { setIsAddressDialogOpen(false); setEditingAddress(null); setAddressForm({ label: "", address: "", isDefault: false }); });
+  useModalBackButton(isOrderDetailsOpen, () => { setIsOrderDetailsOpen(false); setSelectedOrder(null); });
+  useModalBackButton(isAvatarDialogOpen, () => setIsAvatarDialogOpen(false));
+
   const [avatarForm, setAvatarForm] = useState({
     profileImageUrl: user?.profileImageUrl || ""
   });

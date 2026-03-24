@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency";
 import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -28,6 +28,43 @@ export default function CartSidebar() {
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
   const { currentLanguage } = useLanguage();
+
+  // Android back button: close cart instead of navigating away.
+  // suppressHistoryBackRef prevents history.back() when cart closes due to checkout navigation.
+  const backButtonRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({ pushed: false, handler: null });
+  const suppressHistoryBackRef = useRef(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      window.history.pushState({ cartOpen: true }, '', window.location.href);
+      backButtonRef.current.pushed = true;
+
+      const onPopState = () => {
+        backButtonRef.current.pushed = false;
+        backButtonRef.current.handler = null;
+        window.removeEventListener('popstate', onPopState);
+        setCartOpen(false);
+      };
+
+      window.addEventListener('popstate', onPopState);
+      backButtonRef.current.handler = onPopState;
+
+      return () => {
+        window.removeEventListener('popstate', onPopState);
+      };
+    } else {
+      const { pushed, handler } = backButtonRef.current;
+      if (handler) {
+        window.removeEventListener('popstate', handler);
+        backButtonRef.current.handler = null;
+      }
+      if (pushed && !suppressHistoryBackRef.current) {
+        backButtonRef.current.pushed = false;
+        window.history.back();
+      }
+      suppressHistoryBackRef.current = false;
+    }
+  }, [isOpen]);
   
 
 
@@ -97,6 +134,13 @@ export default function CartSidebar() {
   };
 
   const handleCheckout = () => {
+    // Remove the back button handler and suppress history.back() so navigation to
+    // /checkout is clean (back from /checkout will go to home, not trigger cart).
+    if (backButtonRef.current.handler) {
+      window.removeEventListener('popstate', backButtonRef.current.handler);
+      backButtonRef.current.handler = null;
+    }
+    suppressHistoryBackRef.current = true;
     setCartOpen(false);
     navigate("/checkout");
   };

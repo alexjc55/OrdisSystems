@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/lib/cart";
+import { useModalBackButton } from "@/hooks/useModalBackButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useToast } from "@/hooks/use-toast";
@@ -39,6 +40,10 @@ export default function CartOverlay() {
   const { t: tCommon } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
   const queryClient = useQueryClient();
+
+  // Android back button: close overlay instead of navigating away
+  useModalBackButton(isOpen, () => setCartOpen(false));
+
   const [customerNotes, setCustomerNotes] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
