@@ -2750,6 +2750,50 @@ function ItemDiscountDialog({
   );
 }
 
+// Reusable hook: intercepts Android/iOS back button to close any modal dialog.
+// On open: pushes a history entry. On back button: closes modal (browser already went back).
+// On normal close (button/X): removes listener + calls history.back() to pop the pushed entry.
+function useModalBackButton(isOpen: boolean, onClose: () => void) {
+  const historyRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({
+    pushed: false,
+    handler: null,
+  });
+  // Keep onClose stable inside the effect without needing it as a dependency
+  const onCloseRef = useRef(onClose);
+  useEffect(() => { onCloseRef.current = onClose; });
+
+  useEffect(() => {
+    if (isOpen) {
+      window.history.pushState({ modal: true }, '', window.location.href);
+      historyRef.current.pushed = true;
+
+      const onPopState = () => {
+        historyRef.current.pushed = false;
+        historyRef.current.handler = null;
+        window.removeEventListener('popstate', onPopState);
+        onCloseRef.current();
+      };
+
+      window.addEventListener('popstate', onPopState);
+      historyRef.current.handler = onPopState;
+
+      return () => {
+        window.removeEventListener('popstate', onPopState);
+      };
+    } else {
+      const { pushed, handler } = historyRef.current;
+      if (handler) {
+        window.removeEventListener('popstate', handler);
+        historyRef.current.handler = null;
+      }
+      if (pushed) {
+        historyRef.current.pushed = false;
+        window.history.back();
+      }
+    }
+  }, [isOpen]);
+}
+
 // Closed Dates Manager Component
 function ClosedDatesManager() {
   const { toast } = useToast();
@@ -2757,6 +2801,7 @@ function ClosedDatesManager() {
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const queryClient = useQueryClient();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  useModalBackButton(isAddDialogOpen, () => setIsAddDialogOpen(false));
 
   // Fetch closed dates
   const { data: closedDates = [], isLoading } = useQuery<any[]>({
@@ -3081,6 +3126,9 @@ export default function AdminDashboard() {
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [editingCategory, setEditingCategory] = useState<any>(null);
+
+  useModalBackButton(isProductFormOpen, () => { setIsProductFormOpen(false); setEditingProduct(null); });
+  useModalBackButton(isCategoryFormOpen, () => { setIsCategoryFormOpen(false); setEditingCategory(null); });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -3293,6 +3341,8 @@ export default function AdminDashboard() {
   const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDeletionDialogOpen, setIsUserDeletionDialogOpen] = useState(false);
+
+  useModalBackButton(isUserFormOpen, () => { setIsUserFormOpen(false); setEditingUser(null); });
   const [userToDelete, setUserToDelete] = useState<any>(null);
   
   const handleDeleteUser = (user: any) => {
