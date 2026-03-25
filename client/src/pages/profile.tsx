@@ -38,11 +38,24 @@ export default function Profile() {
   const { storeSettings } = useStoreSettings();
   const queryClient = useQueryClient();
 
-  // SEO for profile page
+  // SEO for profile page — multilingual
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
-  const title = `Личный кабинет - ${storeName || 'eDAHouse'}`;
-  const description = `Управление профилем, заказами и адресами доставки в ${storeName || 'eDAHouse'}`;
-  
+  const profileSeoTitles: Record<string, string> = {
+    ru: 'Личный кабинет',
+    en: 'My Account',
+    he: 'החשבון שלי',
+    ar: 'حسابي',
+  };
+  const profileSeoDescriptions: Record<string, string> = {
+    ru: `Управление профилем, заказами и адресами доставки${storeName ? ` в ${storeName}` : ''}`,
+    en: `Manage your profile, orders and delivery addresses${storeName ? ` at ${storeName}` : ''}`,
+    he: `ניהול פרופיל, הזמנות וכתובות משלוח${storeName ? ` ב-${storeName}` : ''}`,
+    ar: `إدارة ملفك الشخصي والطلبات وعناوين التوصيل${storeName ? ` في ${storeName}` : ''}`,
+  };
+  const profileTitleText = profileSeoTitles[currentLanguage] || profileSeoTitles.ru;
+  const title = storeName ? `${profileTitleText} - ${storeName}` : profileTitleText;
+  const description = profileSeoDescriptions[currentLanguage] || profileSeoDescriptions.ru;
+
   useSEO({
     title,
     description,

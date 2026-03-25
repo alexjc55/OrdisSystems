@@ -36,11 +36,24 @@ export default function AuthPage() {
     }
   }, []);
 
-  // SEO for auth page
+  // SEO for auth page — multilingual
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
-  const title = `Вход в аккаунт - ${storeName || 'eDAHouse'}`;
-  const description = `Войдите в свой аккаунт в ${storeName || 'eDAHouse'} для оформления заказов`;
-  
+  const authSeoTitles: Record<string, string> = {
+    ru: 'Вход в аккаунт',
+    en: 'Sign In',
+    he: 'כניסה לחשבון',
+    ar: 'تسجيل الدخول',
+  };
+  const authSeoDescriptions: Record<string, string> = {
+    ru: `Войдите в свой аккаунт${storeName ? ` в ${storeName}` : ''} для оформления заказов`,
+    en: `Sign in to your${storeName ? ` ${storeName}` : ''} account to place orders`,
+    he: `היכנס לחשבונך${storeName ? ` ב-${storeName}` : ''} לביצוע הזמנות`,
+    ar: `سجل الدخول لحسابك${storeName ? ` في ${storeName}` : ''} لتقديم الطلبات`,
+  };
+  const seoTitleText = authSeoTitles[currentLanguage] || authSeoTitles.ru;
+  const title = storeName ? `${seoTitleText} - ${storeName}` : seoTitleText;
+  const description = authSeoDescriptions[currentLanguage] || authSeoDescriptions.ru;
+
   useSEO({
     title,
     description,

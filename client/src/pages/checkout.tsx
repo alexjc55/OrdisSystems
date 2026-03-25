@@ -282,11 +282,18 @@ export default function Checkout() {
     return false;
   }, [closedDatesSet, storeSettings, tCommon]);
 
-  // SEO for checkout page
+  // SEO for checkout page — multilingual
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
-  const title = `Оформление заказа - ${storeName || 'eDAHouse'}`;
-  const description = `Оформите заказ готовой еды с доставкой в ${storeName || 'eDAHouse'}`;
-  
+  const checkoutSeoDescriptions: Record<string, string> = {
+    ru: `Оформите заказ с доставкой${storeName ? ` в ${storeName}` : ''}`,
+    en: `Place your delivery order${storeName ? ` at ${storeName}` : ''}`,
+    he: `בצע הזמנה עם משלוח${storeName ? ` ב-${storeName}` : ''}`,
+    ar: `قدم طلبك مع التوصيل${storeName ? ` في ${storeName}` : ''}`,
+  };
+  const checkoutTitleText = tShop('checkout.title') || 'Checkout';
+  const title = storeName ? `${checkoutTitleText} - ${storeName}` : checkoutTitleText;
+  const description = checkoutSeoDescriptions[currentLanguage] || checkoutSeoDescriptions.ru;
+
   useSEO({
     title,
     description,

@@ -7,13 +7,16 @@
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#f97316" />
     <meta name="background-color" content="#ffffff" />
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Ordis - доставка готовой еды на дом. Свежие салаты, горячие блюда, супы, выпечка. Быстрая доставка качественных домашних блюд." />
+    <!-- SEO Meta Tags — replaced dynamically by server (bots) or React Helmet (users) -->
+    <meta name="description" content="{{storeDescription}}" />
     <meta name="robots" content="index, follow" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{storeName}}" />
+    <meta property="og:description" content="{{storeDescription}}" />
     <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="{{storeName}}" />
     
     <!-- Additional SEO tags -->
     <meta name="format-detection" content="telephone=no" />
@@ -36,16 +39,16 @@
     <!-- iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="Ordis" />
+    <meta name="apple-mobile-web-app-title" content="{{storeName}}" />
     
     <!-- Microsoft -->
     <meta name="msapplication-TileColor" content="#f97316" />
     
     <!-- Android -->
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="application-name" content="Ordis" />
+    <meta name="application-name" content="{{storeName}}" />
     
-    <title>Ordis</title>
+    <title>{{storeName}}</title>
 
     <style>
       #splash-screen {
@@ -86,10 +89,39 @@
   </head>
   <body style="margin:0;background:#ffffff;">
     <div id="splash-screen">
-      <div class="splash-logo-text">Ordis</div>
+      <div class="splash-logo-text" id="splash-store-name">●</div>
       <div class="splash-spinner"></div>
     </div>
     <div id="root"></div>
+    <!-- Inject store name into splash screen and title as early as possible -->
+    <script>
+      (function() {
+        var cached = null;
+        try { cached = JSON.parse(sessionStorage.getItem('_storeSettings') || 'null'); } catch(e) {}
+        function applyName(name) {
+          if (!name) return;
+          var el = document.getElementById('splash-store-name');
+          if (el) el.textContent = name;
+          if (document.title === '{{storeName}}' || document.title === '●') {
+            document.title = name;
+          }
+          var appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+          if (appleTitle && appleTitle.getAttribute('content') === '{{storeName}}') appleTitle.setAttribute('content', name);
+          var appName = document.querySelector('meta[name="application-name"]');
+          if (appName && appName.getAttribute('content') === '{{storeName}}') appName.setAttribute('content', name);
+        }
+        if (cached && cached.storeName) {
+          applyName(cached.storeName);
+        } else {
+          fetch('/api/settings').then(function(r) { return r.json(); }).then(function(d) {
+            if (d && d.storeName) {
+              try { sessionStorage.setItem('_storeSettings', JSON.stringify({ storeName: d.storeName })); } catch(e) {}
+              applyName(d.storeName);
+            }
+          }).catch(function() {});
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

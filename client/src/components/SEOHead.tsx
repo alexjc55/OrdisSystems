@@ -108,9 +108,7 @@ export function SEOHead({
 
   // Build full title
   const settingsData = settings as any;
-  const fullTitle = title || (settingsData?.storeName 
-    ? `${settingsData.storeName} - Доставка готовой еды` 
-    : 'eDAHouse - Доставка готовой еды');
+  const fullTitle = title || settingsData?.storeName || '';
 
   // Build canonical URL
   const canonicalUrl = canonical ? origin + canonical : href;
