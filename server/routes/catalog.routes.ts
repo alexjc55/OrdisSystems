@@ -322,6 +322,57 @@ router.put('/products/:id', isAuthenticated, async (req: any, res) => {
   }
 });
 
+router.put('/admin/products/:id/branch-availability', isAuthenticated, async (req: any, res) => {
+  try {
+    if (!BRANCHES_ENABLED) return res.status(404).json({ message: "Branches not enabled" });
+    const userId = req.user.id;
+    const user = await storage.getUser(userId);
+    if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid product id" });
+    // Accept both: array body directly (from saveProductBranchAvailabilityMutation) or wrapped { branchAvailability: [...] }
+    const branchAvailability = Array.isArray(req.body) ? req.body : req.body?.branchAvailability;
+    if (!Array.isArray(branchAvailability)) {
+      return res.status(400).json({ message: "branchAvailability must be an array" });
+    }
+    const validatedAvailability = z.array(
+      insertProductBranchAvailabilitySchema.omit({ productId: true }).partial().required({ branchId: true })
+    ).parse(branchAvailability);
+    if (user.role === 'worker') {
+      const assignedBranchIds = await storage.getUserBranches(userId);
+      let allowedBranchIds: number[];
+      if (assignedBranchIds.length > 0) {
+        allowedBranchIds = assignedBranchIds;
+      } else {
+        const allBranches = await storage.getBranches();
+        allowedBranchIds = (allBranches as any[]).filter((b: any) => b.isActive).map((b: any) => b.id);
+      }
+      const filteredEntries = validatedAvailability.filter((e: any) => allowedBranchIds.includes(e.branchId));
+      await storage.upsertProductBranchAvailabilityForBranches(id, filteredEntries.map((e: any) => ({
+        branchId: e.branchId,
+        isAvailable: e.isAvailable ?? true,
+        stockStatus: e.stockStatus || 'in_stock',
+        availabilityStatus: e.availabilityStatus || 'available',
+      })));
+    } else {
+      await storage.setProductBranchAvailability(id, validatedAvailability.map((e: any) => ({
+        branchId: e.branchId,
+        isAvailable: e.isAvailable ?? true,
+        stockStatus: e.stockStatus || 'in_stock',
+        availabilityStatus: e.availabilityStatus || 'available',
+      })));
+    }
+    clearCachePattern('admin-products');
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error saving product branch availability:", error);
+    if (error instanceof z.ZodError) return res.status(400).json({ message: "Invalid data", errors: error.errors });
+    res.status(500).json({ message: "Failed to save branch availability" });
+  }
+});
+
 router.patch('/products/:id', isAuthenticated, async (req: any, res) => {
   try {
     const userId = req.user.id;
