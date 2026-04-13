@@ -647,7 +647,7 @@ export class DatabaseStorage implements IStorage {
             ${products.isAvailable} = false
             OR EXISTS (
               SELECT 1 FROM product_branch_availability pba
-              WHERE pba.product_id = ${products.id}
+              WHERE pba.product_id = products.id
               AND pba.availability_status = 'completely_unavailable'
             )
           )`);
@@ -656,7 +656,7 @@ export class DatabaseStorage implements IStorage {
             ${products.availabilityStatus} = 'out_of_stock_today'
             OR EXISTS (
               SELECT 1 FROM product_branch_availability pba
-              WHERE pba.product_id = ${products.id}
+              WHERE pba.product_id = products.id
               AND pba.availability_status = 'out_of_stock_today'
             )
           )`);

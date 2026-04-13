@@ -4030,6 +4030,10 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to save product branch availability');
       return await response.json();
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+    },
   });
 
   const updateAvailabilityStatusMutation = useMutation({
@@ -4606,10 +4610,17 @@ export default function AdminDashboard() {
         else if (selectedStatusFilter === "out_of_stock_today") matchesStatus = effectiveStat === "out_of_stock_today";
         else matchesStatus = true;
       } else {
-        // Global status filter (no branch selected)
+        // Global status filter (no branch selected) - also consider per-branch overrides
+        const allBranchRecordsForFilter: any[] = product.allBranchAvailability || product.branchAvailability || [];
         if (selectedStatusFilter === "available") matchesStatus = product.isAvailable && product.availabilityStatus === "available";
-        else if (selectedStatusFilter === "unavailable") matchesStatus = !product.isAvailable;
-        else if (selectedStatusFilter === "out_of_stock_today") matchesStatus = product.availabilityStatus === "out_of_stock_today";
+        else if (selectedStatusFilter === "unavailable") {
+          const hasUnavailableBranch = allBranchRecordsForFilter.some((ba: any) => ba.availabilityStatus === 'completely_unavailable');
+          matchesStatus = !product.isAvailable || hasUnavailableBranch;
+        }
+        else if (selectedStatusFilter === "out_of_stock_today") {
+          const hasOutOfStockBranch = allBranchRecordsForFilter.some((ba: any) => ba.availabilityStatus === 'out_of_stock_today');
+          matchesStatus = product.availabilityStatus === "out_of_stock_today" || hasOutOfStockBranch;
+        }
         else matchesStatus = true;
       }
 
