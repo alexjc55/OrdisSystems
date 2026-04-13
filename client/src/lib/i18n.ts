@@ -19,6 +19,28 @@ import commonAr from '../locales/ar/common.json';
 import shopAr from '../locales/ar/shop.json';
 import adminAr from '../locales/ar/admin.json';
 
+// Exported translation bundles for direct lookup fallback
+export const adminTranslations: Record<string, any> = {
+  ru: adminRu,
+  en: adminEn,
+  he: adminHe,
+  ar: adminAr,
+};
+
+export const commonTranslations: Record<string, any> = {
+  ru: commonRu,
+  en: commonEn,
+  he: commonHe,
+  ar: commonAr,
+};
+
+export const shopTranslations: Record<string, any> = {
+  ru: shopRu,
+  en: shopEn,
+  he: shopHe,
+  ar: shopAr,
+};
+
 // Language configuration with CSS flag classes for better browser compatibility
 // Hebrew first as requested
 export const LANGUAGES = {

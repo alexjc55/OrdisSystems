@@ -1,6 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { LANGUAGES, Language, isRTL, updateDocumentDirection } from '../lib/i18n';
+import { LANGUAGES, Language, isRTL, updateDocumentDirection, adminTranslations, commonTranslations, shopTranslations } from '../lib/i18n';
+
+function lookupInBundle(bundle: Record<string, any>, lang: string, key: string): string | undefined {
+  const obj = bundle[lang] || bundle['ru'] || bundle['en'];
+  if (!obj) return undefined;
+  const parts = key.split('.');
+  let current: any = obj;
+  for (const part of parts) {
+    if (current == null || typeof current !== 'object') return undefined;
+    current = current[part];
+  }
+  return typeof current === 'string' ? current : undefined;
+}
 
 type StoreSettingsWithLanguage = {
   defaultLanguage?: string;
@@ -64,14 +76,15 @@ export function useLanguage() {
 export function useCommonTranslation() {
   const { t, i18n } = useTranslation('common');
   
-  // Enhanced translation function with fallback and interpolation support
   const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
     const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
     const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
+    const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
     
-    // If translation returns the key itself, it means translation is missing
-    if (translation === key) {
-      return typeof optionsOrFallback === 'string' ? optionsOrFallback : key;
+    if (translation === key || !translation || translation.trim() === '') {
+      const direct = lookupInBundle(commonTranslations, i18n.language, key);
+      if (direct) return direct;
+      return fallback || key.split('.').pop() || key;
     }
     return translation;
   };
@@ -83,14 +96,15 @@ export function useCommonTranslation() {
 export function useShopTranslation() {
   const { t, i18n } = useTranslation('shop');
   
-  // Enhanced translation function with fallback and interpolation support
   const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
     const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
     const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
+    const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
     
-    // If translation returns the key itself, it means translation is missing
-    if (translation === key) {
-      return typeof optionsOrFallback === 'string' ? optionsOrFallback : key;
+    if (translation === key || !translation || translation.trim() === '') {
+      const direct = lookupInBundle(shopTranslations, i18n.language, key);
+      if (direct) return direct;
+      return fallback || key.split('.').pop() || key;
     }
     return translation;
   };
@@ -148,15 +162,14 @@ export function useAdminTranslation() {
       const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
       const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
       
-      // If translation returns the key itself or is empty, use fallback or multilingual fallback
       if (translation === key || !translation || translation.trim() === '') {
-        // Try to get language-specific fallback
         const currentLang = i18n.language;
+        // Check hardcoded fallbacks first
         const langFallback = fallbackValues[key]?.[currentLang];
-        if (langFallback) {
-          return langFallback;
-        }
-        // Use provided fallback or key parts
+        if (langFallback) return langFallback;
+        // Direct lookup in the imported JSON bundle (reliable even if i18n fails)
+        const direct = lookupInBundle(adminTranslations, currentLang, key);
+        if (direct) return direct;
         return fallback || key.split('.').pop() || key;
       }
       return translation;
@@ -165,7 +178,8 @@ export function useAdminTranslation() {
       const currentLang = i18n.language;
       const langFallback = fallbackValues[key]?.[currentLang];
       const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
-      return langFallback || fallback || key.split('.').pop() || key;
+      const direct = lookupInBundle(adminTranslations, currentLang, key);
+      return langFallback || direct || fallback || key.split('.').pop() || key;
     }
   };
   
