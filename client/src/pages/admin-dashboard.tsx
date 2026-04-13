@@ -10969,6 +10969,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete, branches = []
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
   const [selectedBranchIds, setSelectedBranchIds] = useState<number[]>([]);
+  const [allBranchesAccess, setAllBranchesAccess] = useState(true);
 
   const userSchema = z.object({
     username: z.string().min(1, adminT('dialog.usernameRequired')),
@@ -11010,9 +11011,13 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete, branches = []
           role: user.role || "customer",
           password: "", // Always empty for editing existing users
         });
-        setSelectedBranchIds(user.branchIds || []);
+        const existing = user.branchIds || [];
+        setSelectedBranchIds(existing);
+        // Empty = all branches access, non-empty = specific branches
+        setAllBranchesAccess(existing.length === 0);
       } else {
         setSelectedBranchIds([]);
+        setAllBranchesAccess(true);
         form.reset({
           username: "",
           email: "",
@@ -11028,7 +11033,8 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete, branches = []
   const handleSubmit = (data: UserFormData) => {
     const submitData: any = { ...data };
     if (branchesEnabled && data.role === 'worker') {
-      submitData.branchIds = selectedBranchIds;
+      // If allBranchesAccess is true, submit empty array (= all branches on backend)
+      submitData.branchIds = allBranchesAccess ? [] : selectedBranchIds;
     }
     onSubmit(submitData);
   };
@@ -11176,28 +11182,47 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete, branches = []
                   <p className="text-sm font-medium">{adminT('branches.workerBranches')}</p>
                   <p className="text-xs text-gray-500">{adminT('branches.workerBranchesDescription')}</p>
                 </div>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {(branches as any[]).filter((b: any) => b.isActive).map((branch: any) => (
-                    <div key={branch.id} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <input
-                        type="checkbox"
-                        id={`branch-${branch.id}`}
-                        checked={selectedBranchIds.includes(branch.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedBranchIds(prev => [...prev, branch.id]);
-                          } else {
-                            setSelectedBranchIds(prev => prev.filter(id => id !== branch.id));
-                          }
-                        }}
-                        className="h-4 w-4 rounded border-gray-300"
-                      />
-                      <label htmlFor={`branch-${branch.id}`} className="text-sm text-gray-700 cursor-pointer">
-                        {branch.name}
-                      </label>
-                    </div>
-                  ))}
+                {/* All Branches toggle */}
+                <div className={`flex items-center gap-2 pb-2 border-b border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <input
+                    type="checkbox"
+                    id="all-branches-access"
+                    checked={allBranchesAccess}
+                    onChange={(e) => {
+                      setAllBranchesAccess(e.target.checked);
+                      if (e.target.checked) setSelectedBranchIds([]);
+                    }}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <label htmlFor="all-branches-access" className="text-sm font-medium text-gray-900 cursor-pointer">
+                    {adminT('branches.allBranchesAccess')}
+                  </label>
                 </div>
+                {/* Individual branch checkboxes (shown only when not all-access) */}
+                {!allBranchesAccess && (
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {(branches as any[]).filter((b: any) => b.isActive).map((branch: any) => (
+                      <div key={branch.id} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <input
+                          type="checkbox"
+                          id={`branch-${branch.id}`}
+                          checked={selectedBranchIds.includes(branch.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedBranchIds(prev => [...prev, branch.id]);
+                            } else {
+                              setSelectedBranchIds(prev => prev.filter(id => id !== branch.id));
+                            }
+                          }}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
+                        <label htmlFor={`branch-${branch.id}`} className="text-sm text-gray-700 cursor-pointer">
+                          {branch.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

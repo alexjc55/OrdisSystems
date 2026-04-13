@@ -343,6 +343,23 @@ router.patch('/products/:id/availability', isAuthenticated, async (req: any, res
     if (!["available", "out_of_stock_today", "completely_unavailable"].includes(availabilityStatus)) {
       return res.status(400).json({ message: "Invalid availability status" });
     }
+    // Workers update branch-specific availability only for their assigned branches
+    if (BRANCHES_ENABLED && user.role === 'worker') {
+      const workerBranchIds = await storage.getUserBranches(userId);
+      if (workerBranchIds.length > 0) {
+        const isAvailable = availabilityStatus !== 'completely_unavailable';
+        const entries = workerBranchIds.map((branchId: number) => ({
+          branchId,
+          isAvailable,
+          stockStatus: 'in_stock' as const,
+          availabilityStatus: availabilityStatus as "available" | "out_of_stock_today" | "completely_unavailable",
+        }));
+        await storage.setProductBranchAvailability(id, entries);
+      }
+      const product = await storage.getProductById(id);
+      return res.json(product);
+    }
+    // Admins update global product availability
     const product = await storage.updateProductAvailability(id, availabilityStatus);
     res.json(product);
   } catch (error) {

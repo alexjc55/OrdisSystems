@@ -1308,6 +1308,7 @@
     "deleteConfirm": "Are you sure you want to delete this branch?",
     "workerBranches": "Worker Branches",
     "workerBranchesDescription": "Select branches this worker has access to",
+    "allBranchesAccess": "Access to all branches",
     "branchAvailability": "Branch Availability",
     "branchAvailabilityDescription": "Configure product availability for each branch",
     "allBranches": "All Branches",

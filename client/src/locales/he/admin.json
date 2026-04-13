@@ -1445,6 +1445,7 @@
     "deleteConfirm": "האם אתה בטוח שברצונך למחוק את הסניף הזה?",
     "workerBranches": "סניפי העובד",
     "workerBranchesDescription": "בחר את הסניפים שיש לעובד זה גישה אליהם",
+    "allBranchesAccess": "גישה לכל הסניפים",
     "branchAvailability": "זמינות לפי סניף",
     "branchAvailabilityDescription": "הגדר את זמינות המוצר עבור כל סניף",
     "allBranches": "כל הסניפים",

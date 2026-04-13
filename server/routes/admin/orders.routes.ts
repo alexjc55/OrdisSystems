@@ -26,10 +26,21 @@ router.get('/admin/orders', isAuthenticated, async (req: any, res) => {
 
     let branchIds: number[] | undefined;
     if (BRANCHES_ENABLED && user.role === 'worker') {
-      branchIds = await storage.getUserBranches(userId);
+      const assignedBranchIds = await storage.getUserBranches(userId);
+      // Workers with assigned branches are restricted to those branches.
+      // Workers with NO assigned branches have access to ALL branches (empty = all).
+      if (assignedBranchIds.length > 0) {
+        branchIds = assignedBranchIds;
+      }
     }
 
-    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection, branchIds });
+    // Admin can filter by a specific branch via query param
+    const branchIdParam = BRANCHES_ENABLED && user.role === 'admin' && req.query.branchId && req.query.branchId !== 'all'
+      ? parseInt(req.query.branchId as string)
+      : undefined;
+    const filterBranchIds = branchIdParam && !isNaN(branchIdParam) ? [branchIdParam] : branchIds;
+
+    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection, branchIds: filterBranchIds });
     res.json(result);
   } catch (error) {
     console.error("Error fetching admin orders:", error);

@@ -1367,6 +1367,7 @@
     "deleteConfirm": "Вы уверены, что хотите удалить это отделение?",
     "workerBranches": "Отделения сотрудника",
     "workerBranchesDescription": "Выберите отделения, к которым имеет доступ этот сотрудник",
+    "allBranchesAccess": "Доступ ко всем отделениям",
     "branchAvailability": "Доступность по отделениям",
     "branchAvailabilityDescription": "Настройте доступность товара для каждого отделения",
     "allBranches": "Все отделения",

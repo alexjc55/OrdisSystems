@@ -1185,6 +1185,7 @@
     "deleteConfirm": "هل أنت متأكد من أنك تريد حذف هذا الفرع؟",
     "workerBranches": "فروع الموظف",
     "workerBranchesDescription": "حدد الفروع التي يمكن لهذا الموظف الوصول إليها",
+    "allBranchesAccess": "الوصول إلى جميع الفروع",
     "branchAvailability": "التوفر حسب الفرع",
     "branchAvailabilityDescription": "تكوين توفر المنتج لكل فرع",
     "allBranches": "جميع الفروع",

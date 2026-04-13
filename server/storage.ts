@@ -636,15 +636,13 @@ export class DatabaseStorage implements IStorage {
       }
     }
 
-    // If filtering by branch, get product IDs from product_branch_availability
+    // If filtering by branch, get product IDs that have any entry in product_branch_availability for that branch
+    // (regardless of availability status, so workers can see and update all product states for their branch)
     if (branchId) {
       const branchProducts = await db
         .select({ productId: productBranchAvailability.productId })
         .from(productBranchAvailability)
-        .where(and(
-          eq(productBranchAvailability.branchId, branchId),
-          eq(productBranchAvailability.isAvailable, true)
-        ));
+        .where(eq(productBranchAvailability.branchId, branchId));
       const branchProductIds = branchProducts.map((p: any) => p.productId);
       if (branchProductIds.length > 0) {
         conditions.push(inArray(products.id, branchProductIds));
