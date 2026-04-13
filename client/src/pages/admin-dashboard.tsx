@@ -1566,38 +1566,26 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
-      // iOS (iPhone + iPad): window.print() directly — stays in PWA, AirPrint sheet appears.
-      // Android + Desktop: blob URL in new tab — avoids document.write() duplication bug.
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-      if (isIOS) {
-        // Inject @media print CSS: show two-column, hide app chrome
-        const ps = document.createElement('style');
-        ps.id = 'order-print-style';
-        ps.textContent = `@media print {
-          @page { margin: 1cm; }
-          body > *:not(#order-print-overlay) { display: none !important; }
-          #order-print-bar { display: none !important; }
-          #order-print-overlay { position:static !important; overflow:visible !important; height:auto !important; }
-          .screen-info { display: none !important; }
-          .print-info  { display: block !important; }
-          #order-print-content td, #order-print-content th { border: 1px solid #999 !important; }
-          .info-td-no-border { border: none !important; }
-          -webkit-print-color-adjust: exact; print-color-adjust: exact;
-        }`;
-        document.head.appendChild(ps);
-        window.print();
-        const removePs = () => document.getElementById('order-print-style')?.remove();
-        window.addEventListener('afterprint', removePs, { once: true });
-        setTimeout(removePs, 30_000);
-      } else {
-        // Non-iOS: open blob URL in new tab (avoids document.write() duplication)
-        const blob = new Blob([printDocHtml], { type: 'text/html; charset=utf-8' });
-        const url  = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-        setTimeout(() => URL.revokeObjectURL(url), 60_000);
-      }
+      // All platforms: inject @media print CSS and call window.print() directly.
+      // This avoids any intermediate windows or extra taps.
+      const ps = document.createElement('style');
+      ps.id = 'order-print-style';
+      ps.textContent = `@media print {
+        @page { margin: 1cm; }
+        body > *:not(#order-print-overlay) { display: none !important; }
+        #order-print-bar { display: none !important; }
+        #order-print-overlay { position:static !important; overflow:visible !important; height:auto !important; }
+        .screen-info { display: none !important; }
+        .print-info  { display: block !important; }
+        #order-print-content td, #order-print-content th { border: 1px solid #999 !important; }
+        .info-td-no-border { border: none !important; }
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }`;
+      document.head.appendChild(ps);
+      window.print();
+      const removePs = () => document.getElementById('order-print-style')?.remove();
+      window.addEventListener('afterprint', removePs, { once: true });
+      setTimeout(removePs, 30_000);
     });
   };
 
