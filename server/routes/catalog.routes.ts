@@ -345,7 +345,12 @@ router.patch('/products/:id/availability', isAuthenticated, async (req: any, res
     }
     // Workers update branch-specific availability only for their assigned branches
     if (BRANCHES_ENABLED && user.role === 'worker') {
-      const workerBranchIds = await storage.getUserBranches(userId);
+      let workerBranchIds = await storage.getUserBranches(userId);
+      // If worker has "all branches access" (empty assignment), resolve to all active branches
+      if (workerBranchIds.length === 0) {
+        const allBranches = await storage.getBranches();
+        workerBranchIds = (allBranches as any[]).filter((b: any) => b.isActive).map((b: any) => b.id);
+      }
       if (workerBranchIds.length > 0) {
         const isAvailable = availabilityStatus !== 'completely_unavailable';
         const entries = workerBranchIds.map((branchId: number) => ({
@@ -354,7 +359,7 @@ router.patch('/products/:id/availability', isAuthenticated, async (req: any, res
           stockStatus: 'in_stock' as const,
           availabilityStatus: availabilityStatus as "available" | "out_of_stock_today" | "completely_unavailable",
         }));
-        await storage.setProductBranchAvailability(id, entries);
+        await storage.upsertProductBranchAvailabilityForBranches(id, entries);
       }
       const product = await storage.getProductById(id);
       return res.json(product);

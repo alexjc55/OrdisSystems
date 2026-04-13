@@ -13,6 +13,13 @@ function requireAdmin(req: any, res: any, next: any) {
   next();
 }
 
+function requireAdminOrWorker(req: any, res: any, next: any) {
+  if (!req.isAuthenticated() || (req.user?.role !== "admin" && req.user?.role !== "worker")) {
+    return res.status(403).json({ message: "Admin or worker access required" });
+  }
+  next();
+}
+
 function requireBranches(_req: any, res: any, next: any) {
   if (!BRANCHES_ENABLED) {
     return res.status(404).json({ message: "Branch feature is not enabled" });
@@ -21,7 +28,7 @@ function requireBranches(_req: any, res: any, next: any) {
 }
 
 // GET /api/admin/branches
-router.get("/admin/branches", requireBranches, requireAdmin, async (_req, res) => {
+router.get("/admin/branches", requireBranches, requireAdminOrWorker, async (_req, res) => {
   try {
     const allBranches = await storage.getBranches();
     res.json(allBranches);

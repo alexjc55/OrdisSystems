@@ -3729,7 +3729,7 @@ export default function AdminDashboard() {
       if (!response.ok) return [];
       return response.json();
     },
-    enabled: branchesEnabled && isAdmin,
+    enabled: branchesEnabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
@@ -6364,6 +6364,9 @@ export default function AdminDashboard() {
                           <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.name')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.role')}</TableHead>
+                            {branchesEnabled && (branches as any[]).length > 0 && (
+                              <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'} hidden sm:table-cell`}>{adminT('branches.title')}</TableHead>
+                            )}
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.phone')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.orders')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.totalAmount')}</TableHead>
@@ -6397,6 +6400,28 @@ export default function AdminDashboard() {
                                    user.role === "worker" ? adminT('roles.worker') : adminT('roles.customer')}
                                 </Badge>
                               </TableCell>
+                              {branchesEnabled && (branches as any[]).length > 0 && (
+                                <TableCell className="px-3 py-3 rtl-cell hidden sm:table-cell">
+                                  {user.role === 'worker' ? (
+                                    <div className="flex flex-wrap gap-1">
+                                      {(user.branchIds || []).length === 0 ? (
+                                        <span className="text-xs text-gray-400">{adminT('branches.allBranches')}</span>
+                                      ) : (
+                                        (user.branchIds || []).map((bId: number) => {
+                                          const branch = (branches as any[]).find((b: any) => b.id === bId);
+                                          return branch ? (
+                                            <Badge key={bId} variant="outline" className="border-purple-200 text-purple-700 bg-purple-50 text-xs">
+                                              {branch.name}
+                                            </Badge>
+                                          ) : null;
+                                        })
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <span className="text-xs text-gray-300">—</span>
+                                  )}
+                                </TableCell>
+                              )}
                               <TableCell className="px-3 py-3 text-sm">
                                 {user.phone ? (
                                   <DropdownMenu>

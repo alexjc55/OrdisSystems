@@ -150,6 +150,10 @@ export interface IStorage {
     productId: number,
     entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
   ): Promise<void>;
+  upsertProductBranchAvailabilityForBranches(
+    productId: number,
+    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+  ): Promise<void>;
   getProductBranchAvailabilityByBranch(branchId: number): Promise<ProductBranchAvailability[]>;
   getProductsForBranch(branchId: number, categoryId?: number, includeAll?: boolean): Promise<ProductWithCategories[]>;
   getCategoriesForBranch(branchId: number, includeInactive?: boolean): Promise<CategoryWithCount[]>;
@@ -1518,10 +1522,12 @@ export class DatabaseStorage implements IStorage {
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
         orderCount: sql<number>`COALESCE(COUNT(${orders.id}), 0)`,
-        totalOrderAmount: sql<number>`COALESCE(SUM(${orders.totalAmount}), 0)`
+        totalOrderAmount: sql<number>`COALESCE(SUM(${orders.totalAmount}), 0)`,
+        branchIds: sql<number[]>`COALESCE(ARRAY_AGG(DISTINCT ${userBranches.branchId}) FILTER (WHERE ${userBranches.branchId} IS NOT NULL), ARRAY[]::int[])`,
       })
       .from(users)
       .leftJoin(orders, eq(users.id, orders.userId))
+      .leftJoin(userBranches, eq(users.id, userBranches.userId))
       .where(whereClause)
       .groupBy(users.id, users.username, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.password, users.passwordResetToken, users.passwordResetExpires, users.role, users.createdAt, users.updatedAt)
       .orderBy(orderBy)
@@ -1913,6 +1919,30 @@ export class DatabaseStorage implements IStorage {
         await tx.insert(productBranchAvailability).values(
           entries.map(e => ({ productId, ...e }))
         );
+      }
+    });
+  }
+
+  async upsertProductBranchAvailabilityForBranches(
+    productId: number,
+    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+  ): Promise<void> {
+    if (entries.length === 0) return;
+    const db = await this.getDatabase();
+    await db.transaction(async tx => {
+      for (const entry of entries) {
+        await tx
+          .insert(productBranchAvailability)
+          .values({ productId, ...entry })
+          .onConflictDoUpdate({
+            target: [productBranchAvailability.productId, productBranchAvailability.branchId],
+            set: {
+              isAvailable: entry.isAvailable,
+              stockStatus: entry.stockStatus as any,
+              availabilityStatus: entry.availabilityStatus as any,
+              updatedAt: sql`now()`,
+            },
+          });
       }
     });
   }
