@@ -3,7 +3,7 @@ import { storage } from "../storage";
 import { isAuthenticated } from "../middleware/auth-guard";
 import { clearCachePattern } from "../middleware/cache";
 import { upload, processUploadedImage, optimizeImage, generateThumbnail, optimizedDir, thumbnailsDir } from "../middleware/upload";
-import { insertCategorySchema, insertProductSchema } from "@shared/schema";
+import { insertCategorySchema, insertProductSchema, insertProductBranchAvailabilitySchema } from "@shared/schema";
 import { BRANCHES_ENABLED } from "../config";
 import { z } from "zod";
 import path from "path";
@@ -247,8 +247,9 @@ router.post('/products', isAuthenticated, async (req: any, res) => {
     const { branchAvailability, ...rest } = rawData;
     const productData = insertProductSchema.parse(rest);
     const product = await storage.createProduct(productData);
-    if (BRANCHES_ENABLED && branchAvailability && Array.isArray(branchAvailability)) {
-      await storage.setProductBranchAvailability(product.id, branchAvailability);
+    if (BRANCHES_ENABLED && branchAvailability) {
+      const validatedAvailability = z.array(insertProductBranchAvailabilitySchema.omit({ productId: true })).parse(branchAvailability);
+      await storage.setProductBranchAvailability(product.id, validatedAvailability);
     }
     clearCachePattern('admin-products');
     res.json(product);
@@ -270,8 +271,9 @@ router.put('/products/:id', isAuthenticated, async (req: any, res) => {
     const { branchAvailability, ...rest } = req.body;
     const productData = insertProductSchema.partial().parse(rest);
     const product = await storage.updateProduct(id, productData);
-    if (BRANCHES_ENABLED && branchAvailability && Array.isArray(branchAvailability)) {
-      await storage.setProductBranchAvailability(id, branchAvailability);
+    if (BRANCHES_ENABLED && branchAvailability) {
+      const validatedAvailability = z.array(insertProductBranchAvailabilitySchema.omit({ productId: true })).parse(branchAvailability);
+      await storage.setProductBranchAvailability(id, validatedAvailability);
     }
     clearCachePattern('admin-products');
     res.json(product);
@@ -307,8 +309,9 @@ router.patch('/products/:id', isAuthenticated, async (req: any, res) => {
     const productData = { ...schemaData, ...multilingualFields };
     console.log('Product update - Final data for storage:', JSON.stringify(productData, null, 2));
     const product = await storage.updateProduct(id, productData);
-    if (BRANCHES_ENABLED && patchBranchAvailability && Array.isArray(patchBranchAvailability)) {
-      await storage.setProductBranchAvailability(id, patchBranchAvailability);
+    if (BRANCHES_ENABLED && patchBranchAvailability) {
+      const validatedAvailability = z.array(insertProductBranchAvailabilitySchema.omit({ productId: true })).parse(patchBranchAvailability);
+      await storage.setProductBranchAvailability(id, validatedAvailability);
     }
     console.log('Product update - Result from storage:', JSON.stringify(product, null, 2));
     clearCachePattern('admin-products');
