@@ -3982,6 +3982,18 @@ export default function AdminDashboard() {
     }
   });
 
+  const saveProductBranchAvailabilityMutation = useMutation({
+    mutationFn: async ({ id, branchAvailability }: { id: number; branchAvailability: { branchId: number; isAvailable: boolean }[] }) => {
+      const response = await fetch(`/api/admin/products/${id}/branch-availability`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(branchAvailability),
+      });
+      if (!response.ok) throw new Error('Failed to save product branch availability');
+      return await response.json();
+    },
+  });
+
   const updateAvailabilityStatusMutation = useMutation({
     mutationFn: async ({ id, availabilityStatus }: { id: number; availabilityStatus: string }) => {
       const response = await fetch(`/api/products/${id}/availability`, {
@@ -7125,21 +7137,33 @@ export default function AdminDashboard() {
         categories={categories}
         product={editingProduct}
         adminT={adminT}
-        onSubmit={(combinedData: any) => {
+        branches={branches || []}
+        branchesEnabled={branchesEnabled}
+        onSubmit={async (combinedData: any) => {
           console.log('Received combined data from form:', combinedData);
-          
+
+          const { branchAvailability: bav, ...rest } = combinedData;
+
           // Set isAvailable based on availability status
           const productData = {
-            ...combinedData,
-            isAvailable: combinedData.availabilityStatus !== 'completely_unavailable'
+            ...rest,
+            isAvailable: rest.availabilityStatus !== 'completely_unavailable'
           };
           
           console.log('Final product data for mutation:', productData);
           
           if (editingProduct) {
             updateProductMutation.mutate({ id: editingProduct.id, ...productData });
+            if (branchesEnabled && bav !== undefined) {
+              saveProductBranchAvailabilityMutation.mutate({ id: editingProduct.id, branchAvailability: bav });
+            }
           } else {
-            createProductMutation.mutate(productData);
+            try {
+              const createdProduct = await createProductMutation.mutateAsync(productData);
+              if (branchesEnabled && bav !== undefined && createdProduct?.id) {
+                saveProductBranchAvailabilityMutation.mutate({ id: createdProduct.id, branchAvailability: bav });
+              }
+            } catch (_) {}
           }
         }}
         onDelete={(productId: number) => {
@@ -7582,10 +7606,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
     
     // Merge all data - form data + multilingual data from formData
-    const finalData = {
+    const finalData: any = {
       ...data,
       ...updatedFormData
     };
+
+    // Include branch availability if enabled
+    if (branchesEnabled) {
+      finalData.branchAvailability = Object.entries(branchAvailability).map(([branchId, isAvailable]) => ({
+        branchId: Number(branchId),
+        isAvailable,
+      }));
+    }
     
     console.log('Submitting product data:', finalData);
     
@@ -7974,6 +8006,41 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     {adminT('products.dialog.fixedDiscountInfo')} {unit === "piece" ? adminT('products.units.piece') : unit === "kg" ? adminT('products.units.kg') : adminT('products.dialog.unit100gml')}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Branch Availability Section */}
+            {branchesEnabled && (branches as any[]).length > 0 && (
+              <div className="space-y-2 border border-gray-200 rounded-lg p-3">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm font-medium">{adminT('branches.branchAvailability')}</p>
+                </div>
+                <p className="text-xs text-gray-500">{adminT('branches.branchAvailabilityDescription')}</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {(branches as any[]).filter((b: any) => b.isActive).map((branch: any) => {
+                    const isChecked = branchAvailability[branch.id] !== false;
+                    return (
+                      <div key={branch.id} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id={`prod-branch-${branch.id}`}
+                          checked={isChecked}
+                          onChange={(e) => {
+                            setBranchAvailability(prev => ({
+                              ...prev,
+                              [branch.id]: e.target.checked,
+                            }));
+                          }}
+                          className="h-4 w-4 rounded border-gray-300"
+                        />
+                        <label htmlFor={`prod-branch-${branch.id}`} className="text-sm text-gray-700 cursor-pointer">
+                          {branch.name}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
 
