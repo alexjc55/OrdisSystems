@@ -126,11 +126,10 @@ const generateDeliveryTimes = (
   const isToday = selectedDate === today;
   const currentHour = new Date().getHours();
   
-  const dayNames = weekStartDay === 'sunday' 
-    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  
-  const dayName = dayNames[date.getDay()];
+  // Always use fixed Sunday-first order to map date.getDay() (0=Sun…6=Sat) to day keys.
+  // weekStartDay only affects calendar display order, not day-key lookup.
+  const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const dayName = DAY_NAMES[date.getDay()];
 
   // Determine effective schedule: deliveryHours override > workingHours fallback
   let deliveryDayValue: string | null | undefined = deliveryHours?.[dayName];

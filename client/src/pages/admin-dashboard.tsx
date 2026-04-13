@@ -379,11 +379,9 @@ const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, wee
   if (!workingHours || !selectedDate) return [];
   
   const date = new Date(selectedDate + 'T00:00:00');
-  const dayNames = weekStartDay === 'sunday' 
-    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  
-  const dayName = dayNames[date.getDay()];
+  // Fixed Sunday-first mapping: date.getDay() always returns 0=Sun…6=Sat
+  const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const dayName = DAY_NAMES[date.getDay()];
 
   // Determine effective schedule: deliveryHours override > workingHours fallback
   const deliveryDayValue = deliveryHours?.[dayName];
@@ -735,11 +733,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     if (!selectedDate) return [];
     
     const date = new Date(selectedDate + 'T00:00:00');
-    const dayNames = weekStartDay === 'sunday' 
-      ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-      : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    
-    const dayName = dayNames[date.getDay()];
+    // Fixed Sunday-first mapping: date.getDay() always returns 0=Sun…6=Sat
+    const DAY_NAMES = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayName = DAY_NAMES[date.getDay()];
 
     // Determine effective schedule: deliveryHours override > workingHours fallback
     const deliveryDayValue = deliveryHours?.[dayName];
