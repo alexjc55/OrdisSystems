@@ -16,6 +16,7 @@ import adminSettingsRoutes from "./admin/settings.routes";
 import adminThemesRoutes from "./admin/themes.routes";
 import adminAnalyticsRoutes from "./admin/analytics.routes";
 import adminPushRoutes from "./admin/push.routes";
+import adminBranchRoutes from "./admin/branches.routes";
 import feedsRoutes from "./integrations/feeds.routes";
 import translationsRoutes from "./integrations/translations.routes";
 import barcodeRoutes from "./integrations/barcode.routes";
@@ -99,6 +100,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", adminThemesRoutes);
   app.use("/api", adminAnalyticsRoutes);
   app.use("/api", adminPushRoutes);
+  app.use("/api", adminBranchRoutes);
   app.use("/api", feedsRoutes);
   app.use("/api", translationsRoutes);
   app.use("/api", barcodeRoutes);

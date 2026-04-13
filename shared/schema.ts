@@ -119,10 +119,44 @@ export const productCategories = pgTable("product_categories", {
   uniq: unique().on(table.productId, table.categoryId),
 }));
 
+// Branches table (multi-branch feature, enabled via BRANCHES_ENABLED env var)
+export const branches = pgTable("branches", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// User → branches access mapping (which branches a worker can see)
+export const userBranches = pgTable("user_branches", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  branchId: integer("branch_id").references(() => branches.id, { onDelete: "cascade" }).notNull(),
+}, (table) => ({
+  uniq: unique().on(table.userId, table.branchId),
+}));
+
+// Per-branch product availability overrides
+export const productBranchAvailability = pgTable("product_branch_availability", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }).notNull(),
+  branchId: integer("branch_id").references(() => branches.id, { onDelete: "cascade" }).notNull(),
+  isAvailable: boolean("is_available").default(true).notNull(),
+  stockStatus: varchar("stock_status", { enum: ["in_stock", "low_stock", "out_of_stock"] }).default("in_stock").notNull(),
+  availabilityStatus: varchar("availability_status", { enum: ["available", "out_of_stock_today", "completely_unavailable"] }).default("available").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => ({
+  uniq: unique().on(table.productId, table.branchId),
+}));
+
 // Orders table
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").references(() => users.id),
+  branchId: integer("branch_id").references(() => branches.id),
   status: varchar("status", { enum: ["pending", "confirmed", "preparing", "ready", "delivered", "cancelled"] }).default("pending").notNull(),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
   deliveryFee: decimal("delivery_fee", { precision: 10, scale: 2 }).default("0.00"),
@@ -824,6 +858,22 @@ export const insertClosedDateSchema = createInsertSchema(closedDates).omit({
   updatedAt: true,
 });
 
+export const insertBranchSchema = createInsertSchema(branches).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserBranchSchema = createInsertSchema(userBranches).omit({
+  id: true,
+});
+
+export const insertProductBranchAvailabilitySchema = createInsertSchema(productBranchAvailability).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -843,6 +893,12 @@ export type InsertTheme = z.infer<typeof insertThemeSchema>;
 export type Theme = typeof themes.$inferSelect;
 export type InsertClosedDate = z.infer<typeof insertClosedDateSchema>;
 export type ClosedDate = typeof closedDates.$inferSelect;
+export type InsertBranch = z.infer<typeof insertBranchSchema>;
+export type Branch = typeof branches.$inferSelect;
+export type InsertUserBranch = z.infer<typeof insertUserBranchSchema>;
+export type UserBranch = typeof userBranches.$inferSelect;
+export type InsertProductBranchAvailability = z.infer<typeof insertProductBranchAvailabilitySchema>;
+export type ProductBranchAvailability = typeof productBranchAvailability.$inferSelect;
 
 // Extended types with relations
 export type InsertProductCategory = z.infer<typeof insertProductCategorySchema>;

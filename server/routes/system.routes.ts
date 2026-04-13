@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { getDB } from "../db";
 import { sql } from "drizzle-orm";
 import { generateAppHash } from "../utils/app-hash";
+import { BRANCHES_ENABLED } from "../config";
 import path from "path";
 import fs from "fs";
 
@@ -151,6 +152,10 @@ router.get('/sitemap.xml', async (req, res) => {
     console.error('Error generating sitemap:', error);
     res.status(500).send('Error generating sitemap');
   }
+});
+
+router.get("/api/config", (req, res) => {
+  res.json({ branchesEnabled: BRANCHES_ENABLED });
 });
 
 router.get('/clear-sw', (req, res) => {

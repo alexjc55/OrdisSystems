@@ -8,6 +8,9 @@ import {
   orderItems,
   storeSettings,
   themes,
+  branches,
+  userBranches,
+  productBranchAvailability,
   type User,
   type UpsertUser,
   type UserAddress,
@@ -31,6 +34,9 @@ import {
   type InsertStoreSettings,
   type Theme,
   type InsertTheme,
+  type Branch,
+  type InsertBranch,
+  type ProductBranchAvailability,
 } from "@shared/schema";
 import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
@@ -1760,6 +1766,91 @@ export class DatabaseStorage implements IStorage {
 
       return activatedTheme;
     });
+  }
+
+  // Branch operations
+  async getBranches(): Promise<Branch[]> {
+    const db = await this.getDatabase();
+    return db.select().from(branches).orderBy(asc(branches.sortOrder), asc(branches.name));
+  }
+
+  async getBranchById(id: number): Promise<Branch | undefined> {
+    const db = await this.getDatabase();
+    const [branch] = await db.select().from(branches).where(eq(branches.id, id));
+    return branch;
+  }
+
+  async createBranch(data: InsertBranch): Promise<Branch> {
+    const db = await this.getDatabase();
+    const [branch] = await db.insert(branches).values(data).returning();
+    return branch;
+  }
+
+  async updateBranch(id: number, data: Partial<InsertBranch>): Promise<Branch> {
+    const db = await this.getDatabase();
+    const [branch] = await db
+      .update(branches)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(branches.id, id))
+      .returning();
+    return branch;
+  }
+
+  async deleteBranch(id: number): Promise<void> {
+    const db = await this.getDatabase();
+    await db.delete(branches).where(eq(branches.id, id));
+  }
+
+  async getUserBranches(userId: string): Promise<number[]> {
+    const db = await this.getDatabase();
+    const rows = await db
+      .select({ branchId: userBranches.branchId })
+      .from(userBranches)
+      .where(eq(userBranches.userId, userId));
+    return rows.map((r: any) => r.branchId);
+  }
+
+  async setUserBranches(userId: string, branchIds: number[]): Promise<void> {
+    const db = await this.getDatabase();
+    await db.transaction(async (tx: any) => {
+      await tx.delete(userBranches).where(eq(userBranches.userId, userId));
+      if (branchIds.length > 0) {
+        await tx.insert(userBranches).values(branchIds.map(branchId => ({ userId, branchId })));
+      }
+    });
+  }
+
+  async getProductBranchAvailability(productId: number): Promise<ProductBranchAvailability[]> {
+    const db = await this.getDatabase();
+    return db
+      .select()
+      .from(productBranchAvailability)
+      .where(eq(productBranchAvailability.productId, productId));
+  }
+
+  async setProductBranchAvailability(
+    productId: number,
+    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+  ): Promise<void> {
+    const db = await this.getDatabase();
+    await db.transaction(async (tx: any) => {
+      await tx.delete(productBranchAvailability).where(eq(productBranchAvailability.productId, productId));
+      if (entries.length > 0) {
+        await tx.insert(productBranchAvailability).values(
+          entries.map(e => ({ productId, ...e }))
+        );
+      }
+    });
+  }
+
+  async getProductBranchAvailabilityByBranch(
+    branchId: number
+  ): Promise<ProductBranchAvailability[]> {
+    const db = await this.getDatabase();
+    return db
+      .select()
+      .from(productBranchAvailability)
+      .where(eq(productBranchAvailability.branchId, branchId));
   }
 }
 
