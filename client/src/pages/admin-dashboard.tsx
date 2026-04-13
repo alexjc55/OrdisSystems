@@ -1504,11 +1504,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, sans-serif; font-size: 13px; color: #333;
-           direction: ${isRTLPrint ? 'rtl' : 'ltr'}; padding: 16px; }
+           direction: ${isRTLPrint ? 'rtl' : 'ltr'}; padding-top: 56px; }
+    .prt-content { padding: 16px; }
+    #prt-bar { position: fixed; top: 0; left: 0; right: 0; height: 48px;
+               display: flex; align-items: center; gap: 10px;
+               padding: 0 14px; background: #f97316; z-index: 10; }
     @page { margin: 1cm; }
+    @media print {
+      #prt-bar { display: none !important; }
+      body { padding-top: 0; }
+    }
   </style>
 </head>
 <body>
+  <div id="prt-bar">
+    <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 18px;background:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#f97316;font-family:Arial,sans-serif;">🖨 ${l('printOrder')}</button>
+    <span style="font-size:13px;color:#fff;opacity:0.9;">${l('order')} #${order.id} — ${storeName}</span>
+  </div>
+  <div class="prt-content">
   <div style="text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #333;">
     <p style="font-size:13px;color:#666;margin:0;">${storeName}</p>
     <h1 style="font-size:18px;margin:4px 0 0;">${l('order')} #${order.id}</h1>
@@ -1547,10 +1560,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;min-height:60px;">
     <h3 style="font-size:13px;margin:0 0 6px;padding:0 0 4px;border-bottom:1px solid #eee;">${l('generalComments')}</h3>
   </div>
-  <script>
-    window.addEventListener('load', function() { window.print(); });
-    window.addEventListener('afterprint', function() { window.close(); });
-  </script>
+  </div>
 </body>
 </html>`;
 
