@@ -19,28 +19,7 @@ router.get('/categories', async (req, res) => {
     if (BRANCHES_ENABLED) {
       const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
       if (branchId && !isNaN(branchId)) {
-        const branchAvailability = await storage.getProductBranchAvailabilityByBranch(branchId);
-        const availableProductIds = new Set(
-          branchAvailability.filter(a => a.isAvailable).map(a => a.productId)
-        );
-        const unavailableProductIds = new Set(
-          branchAvailability.filter(a => !a.isAvailable).map(a => a.productId)
-        );
-        const allProducts = await storage.getProducts();
-        const productsByCategory = new Map<number, number[]>();
-        for (const product of allProducts) {
-          for (const cat of (product as any).categories || []) {
-            if (!productsByCategory.has(cat.id)) productsByCategory.set(cat.id, []);
-            productsByCategory.get(cat.id)!.push(product.id);
-          }
-        }
-        categories = categories.filter(cat => {
-          const pids = productsByCategory.get(cat.id) || [];
-          return pids.some(pid => {
-            if (unavailableProductIds.has(pid)) return false;
-            return true;
-          });
-        });
+        categories = await storage.getCategoriesForBranch(branchId, includeInactive);
       }
     }
 
@@ -186,21 +165,7 @@ router.get('/products', async (req: any, res) => {
     if (BRANCHES_ENABLED) {
       const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
       if (branchId && !isNaN(branchId)) {
-        const branchAvailability = await storage.getProductBranchAvailabilityByBranch(branchId);
-        const availMap = new Map(branchAvailability.map(a => [a.productId, a]));
-        products = products.filter(p => {
-          const override = availMap.get(p.id);
-          if (!override) return true;
-          return override.isAvailable;
-        }).map(p => {
-          const override = availMap.get(p.id);
-          if (!override) return p;
-          return {
-            ...p,
-            stockStatus: override.stockStatus,
-            availabilityStatus: override.availabilityStatus,
-          };
-        });
+        products = await storage.getProductsForBranch(branchId, categoryId);
       }
     }
 

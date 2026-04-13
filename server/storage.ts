@@ -1778,6 +1778,45 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
+  // Branch-aware catalog queries (only used when BRANCHES_ENABLED=true)
+  async getProductsForBranch(branchId: number, categoryId?: number): Promise<ProductWithCategories[]> {
+    const allProducts = await this.getProducts(categoryId);
+    const branchAvailability = await this.getProductBranchAvailabilityByBranch(branchId);
+    const branchOverrideMap = new Map(branchAvailability.map(a => [a.productId, a]));
+
+    return allProducts
+      .filter(p => {
+        if (p.isAvailable === false) return false;
+        const override = branchOverrideMap.get(p.id);
+        if (override && !override.isAvailable) return false;
+        return true;
+      })
+      .map(p => {
+        const override = branchOverrideMap.get(p.id);
+        if (!override) return p;
+        return { ...p, stockStatus: override.stockStatus, availabilityStatus: override.availabilityStatus };
+      });
+  }
+
+  async getCategoriesForBranch(branchId: number, includeInactive = false): Promise<any[]> {
+    const allCategories = await this.getCategories(includeInactive);
+    const allProducts = await this.getProducts();
+    const branchAvailability = await this.getProductBranchAvailabilityByBranch(branchId);
+    const branchUnavailableIds = new Set(branchAvailability.filter(a => !a.isAvailable).map(a => a.productId));
+    const globallyAvailableIds = new Set(allProducts.filter(p => p.isAvailable !== false).map(p => p.id));
+    const productsByCategory = new Map<number, number[]>();
+    for (const product of allProducts) {
+      for (const cat of (product as any).categories || []) {
+        if (!productsByCategory.has(cat.id)) productsByCategory.set(cat.id, []);
+        productsByCategory.get(cat.id)!.push(product.id);
+      }
+    }
+    return allCategories.filter(cat => {
+      const pids = productsByCategory.get(cat.id) || [];
+      return pids.some(pid => globallyAvailableIds.has(pid) && !branchUnavailableIds.has(pid));
+    });
+  }
+
   // Branch operations
   async getBranches(): Promise<Branch[]> {
     const db = await this.getDatabase();
