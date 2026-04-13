@@ -7859,9 +7859,10 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           discountValue: initialData.discountValue,
         });
       } else {
-        // New product - reset everything
+        // New product - reset everything including branch availability
         const emptyData = {};
         setFormData(emptyData);
+        setBranchAvailability({});
         form.reset({
           name: "",
           description: "",
