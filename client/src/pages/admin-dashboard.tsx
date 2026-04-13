@@ -5010,9 +5010,16 @@ export default function AdminDashboard() {
                           {filteredProducts.map((product: any) => {
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
+                            // For workers with branch availability data, use per-branch status
+                            const workerBranchStatuses: any[] | null = branchesEnabled && !isAdmin && product.branchAvailability?.length > 0
+                              ? product.branchAvailability
+                              : null;
+                            const effectiveStatus = workerBranchStatuses
+                              ? workerBranchStatuses[0].availabilityStatus
+                              : product.availabilityStatus;
                             return (
                               <TableRow key={product.id} className={
-                              product.availabilityStatus !== "available"
+                              effectiveStatus !== "available"
                                 ? 'bg-gray-50 hover:bg-gray-100' 
                                 : 'hover:bg-gray-50'
                             }>
@@ -5026,7 +5033,7 @@ export default function AdminDashboard() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => {
-                                          const isActive = product.availabilityStatus === "available";
+                                          const isActive = effectiveStatus === "available";
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -5038,25 +5045,30 @@ export default function AdminDashboard() {
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
-                                          product.availabilityStatus === "available"
+                                          effectiveStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                         }`}
-                                        title={product.availabilityStatus === "available" 
+                                        title={effectiveStatus === "available" 
                                           ? adminT('products.hideProduct') 
                                           : adminT('products.showProduct')
                                         }
                                       >
-                                        {product.availabilityStatus === "available" 
+                                        {effectiveStatus === "available" 
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
-                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                      {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
                                         </div>
                                       )}
+                                      {workerBranchStatuses && workerBranchStatuses.length > 1 && workerBranchStatuses.slice(1).map((bs: any) => (
+                                        <div key={bs.branchId} className={`inline-block px-1 py-0.5 text-xs rounded mt-0.5 ${bs.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : bs.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+                                          #{bs.branchId}
+                                        </div>
+                                      ))}
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
@@ -5163,7 +5175,7 @@ export default function AdminDashboard() {
                                         size="sm"
                                         variant="ghost"
                                         onClick={() => {
-                                          const isActive = product.availabilityStatus === "available";
+                                          const isActive = effectiveStatus === "available";
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
@@ -5175,25 +5187,30 @@ export default function AdminDashboard() {
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
-                                          product.availabilityStatus === "available"
+                                          effectiveStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
                                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'
                                         }`}
-                                        title={product.availabilityStatus === "available" 
+                                        title={effectiveStatus === "available" 
                                           ? adminT('products.hideProduct') 
                                           : adminT('products.showProduct')
                                         }
                                       >
-                                        {product.availabilityStatus === "available" 
+                                        {effectiveStatus === "available" 
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
-                                      {product.availabilityStatus === "out_of_stock_today" && (
+                                      {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
                                         </div>
                                       )}
+                                      {workerBranchStatuses && workerBranchStatuses.length > 1 && workerBranchStatuses.slice(1).map((bs: any) => (
+                                        <div key={bs.branchId} className={`inline-block px-1 py-0.5 text-xs rounded mt-0.5 ${bs.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : bs.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+                                          #{bs.branchId}
+                                        </div>
+                                      ))}
                                     </div>
                                   </TableCell>
                                 </>
@@ -6416,6 +6433,17 @@ export default function AdminDashboard() {
                                           ) : null;
                                         })
                                       )}
+                                    </div>
+                                  ) : user.role === 'customer' && (user.customerBranchIds || []).length > 0 ? (
+                                    <div className="flex flex-wrap gap-1">
+                                      {(user.customerBranchIds || []).map((bId: number) => {
+                                        const branch = (branches as any[]).find((b: any) => b.id === bId);
+                                        return branch ? (
+                                          <Badge key={bId} variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 text-xs">
+                                            {branch.name}
+                                          </Badge>
+                                        ) : null;
+                                      })}
                                     </div>
                                   ) : (
                                     <span className="text-xs text-gray-300">—</span>

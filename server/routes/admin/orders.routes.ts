@@ -25,22 +25,33 @@ router.get('/admin/orders', isAuthenticated, async (req: any, res) => {
     const sortDirection = (req.query.sortDirection as string) || 'desc';
 
     let branchIds: number[] | undefined;
-    if (BRANCHES_ENABLED && user.role === 'worker') {
-      const assignedBranchIds = await storage.getUserBranches(userId);
-      // Workers with assigned branches are restricted to those branches.
-      // Workers with NO assigned branches have access to ALL branches (empty = all).
-      if (assignedBranchIds.length > 0) {
-        branchIds = assignedBranchIds;
+    if (BRANCHES_ENABLED) {
+      const branchIdParam = req.query.branchId && req.query.branchId !== 'all'
+        ? parseInt(req.query.branchId as string)
+        : undefined;
+      const requestedBranchId = branchIdParam && !isNaN(branchIdParam) ? branchIdParam : undefined;
+
+      if (user.role === 'worker') {
+        const assignedBranchIds = await storage.getUserBranches(userId);
+        if (assignedBranchIds.length > 0) {
+          // Restrict to assigned branches; optionally narrow to requested branch if within allowed
+          if (requestedBranchId && assignedBranchIds.includes(requestedBranchId)) {
+            branchIds = [requestedBranchId];
+          } else {
+            branchIds = assignedBranchIds;
+          }
+        } else {
+          // Worker has all-branch access; apply requested filter if any
+          if (requestedBranchId) {
+            branchIds = [requestedBranchId];
+          }
+        }
+      } else if (user.role === 'admin' && requestedBranchId) {
+        branchIds = [requestedBranchId];
       }
     }
 
-    // Admin can filter by a specific branch via query param
-    const branchIdParam = BRANCHES_ENABLED && user.role === 'admin' && req.query.branchId && req.query.branchId !== 'all'
-      ? parseInt(req.query.branchId as string)
-      : undefined;
-    const filterBranchIds = branchIdParam && !isNaN(branchIdParam) ? [branchIdParam] : branchIds;
-
-    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection, branchIds: filterBranchIds });
+    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection, branchIds });
     res.json(result);
   } catch (error) {
     console.error("Error fetching admin orders:", error);

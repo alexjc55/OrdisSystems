@@ -146,6 +146,7 @@ export interface IStorage {
   getUserBranches(userId: string): Promise<number[]>;
   setUserBranches(userId: string, branchIds: number[]): Promise<void>;
   getProductBranchAvailability(productId: number): Promise<ProductBranchAvailability[]>;
+  getProductsBranchAvailabilityByBranchIds(productIds: number[], branchIds: number[]): Promise<ProductBranchAvailability[]>;
   setProductBranchAvailability(
     productId: number,
     entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
@@ -1521,15 +1522,13 @@ export class DatabaseStorage implements IStorage {
         role: users.role,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
-        orderCount: sql<number>`COALESCE(COUNT(${orders.id}), 0)`,
-        totalOrderAmount: sql<number>`COALESCE(SUM(${orders.totalAmount}), 0)`,
-        branchIds: sql<number[]>`COALESCE(ARRAY_AGG(DISTINCT ${userBranches.branchId}) FILTER (WHERE ${userBranches.branchId} IS NOT NULL), ARRAY[]::int[])`,
+        orderCount: sql<number>`(SELECT COALESCE(COUNT(*), 0) FROM orders o_cnt WHERE o_cnt.user_id = ${users.id})`,
+        totalOrderAmount: sql<number>`(SELECT COALESCE(SUM(o_sum.total_amount::numeric), 0) FROM orders o_sum WHERE o_sum.user_id = ${users.id})`,
+        branchIds: sql<number[]>`COALESCE(ARRAY(SELECT ub.branch_id FROM user_branches ub WHERE ub.user_id = ${users.id}), ARRAY[]::int[])`,
+        customerBranchIds: sql<number[]>`COALESCE(ARRAY(SELECT DISTINCT o_br.branch_id FROM orders o_br WHERE o_br.user_id = ${users.id} AND o_br.branch_id IS NOT NULL), ARRAY[]::int[])`,
       })
       .from(users)
-      .leftJoin(orders, eq(users.id, orders.userId))
-      .leftJoin(userBranches, eq(users.id, userBranches.userId))
       .where(whereClause)
-      .groupBy(users.id, users.username, users.email, users.firstName, users.lastName, users.profileImageUrl, users.phone, users.defaultAddress, users.password, users.passwordResetToken, users.passwordResetExpires, users.role, users.createdAt, users.updatedAt)
       .orderBy(orderBy)
       .limit(limit)
       .offset(offset);
@@ -1906,6 +1905,18 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(productBranchAvailability)
       .where(eq(productBranchAvailability.productId, productId));
+  }
+
+  async getProductsBranchAvailabilityByBranchIds(productIds: number[], branchIds: number[]): Promise<ProductBranchAvailability[]> {
+    if (productIds.length === 0 || branchIds.length === 0) return [];
+    const db = await this.getDatabase();
+    return db
+      .select()
+      .from(productBranchAvailability)
+      .where(and(
+        inArray(productBranchAvailability.productId, productIds),
+        inArray(productBranchAvailability.branchId, branchIds)
+      ));
   }
 
   async setProductBranchAvailability(

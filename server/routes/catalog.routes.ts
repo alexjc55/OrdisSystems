@@ -204,6 +204,7 @@ router.get('/admin/products', isAuthenticated, async (req: any, res) => {
     if (!user || (user.role !== "admin" && user.role !== "worker")) {
       return res.status(403).json({ message: "Admin access required" });
     }
+    const userId = user.id;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const search = req.query.search as string || '';
@@ -214,6 +215,39 @@ router.get('/admin/products', isAuthenticated, async (req: any, res) => {
     const branchIdRaw = req.query.branchId as string;
     const branchId = branchIdRaw && branchIdRaw !== 'all' ? parseInt(branchIdRaw) : undefined;
     const result = await storage.getProductsPaginated({ page, limit, search, categoryId: category !== 'all' ? parseInt(category) : undefined, status, sortField, sortDirection, branchId: branchId && !isNaN(branchId) ? branchId : undefined });
+
+    // For workers with BRANCHES_ENABLED, include branch-specific availability data
+    if (BRANCHES_ENABLED && result.data.length > 0) {
+      let workerBranchIds: number[] = [];
+      if (user.role === 'worker') {
+        const assigned = await storage.getUserBranches(userId);
+        if (assigned.length > 0) {
+          workerBranchIds = assigned;
+        } else {
+          const allBranches = await storage.getBranches();
+          workerBranchIds = (allBranches as any[]).filter((b: any) => b.isActive).map((b: any) => b.id);
+        }
+      }
+      const targetBranchIds = user.role === 'worker' ? workerBranchIds : [];
+      const productIds = result.data.map((p: any) => p.id);
+      const branchAvailabilities = targetBranchIds.length > 0
+        ? await storage.getProductsBranchAvailabilityByBranchIds(productIds, targetBranchIds)
+        : await storage.getProductsBranchAvailabilityByBranchIds(productIds, branchId ? [branchId] : []);
+
+      const availMap = new Map<string, any>();
+      for (const av of branchAvailabilities) {
+        availMap.set(`${av.productId}_${av.branchId}`, av);
+      }
+
+      const enrichedData = result.data.map((p: any) => {
+        const branchAvailability = targetBranchIds.length > 0
+          ? targetBranchIds.map((bid: number) => availMap.get(`${p.id}_${bid}`) || null).filter(Boolean)
+          : branchId ? [availMap.get(`${p.id}_${branchId}`) || null].filter(Boolean) : [];
+        return { ...p, branchAvailability };
+      });
+      return res.json({ ...result, data: enrichedData });
+    }
+
     res.json(result);
   } catch (error) {
     console.error("Error fetching admin products:", error);
