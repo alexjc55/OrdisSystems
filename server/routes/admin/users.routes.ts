@@ -3,6 +3,7 @@ import { storage } from "../../storage";
 import { isAuthenticated } from "../../middleware/auth-guard";
 import { clearCachePattern, getCache, setCache } from "../../middleware/cache";
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../../facebook-conversions-api";
+import { BRANCHES_ENABLED } from "../../config";
 import bcrypt from "bcryptjs";
 
 const router = Router();
@@ -45,12 +46,20 @@ router.post('/admin/users', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Admin access required" });
     }
 
-    const userData = req.body;
+    const { branchIds, ...userData } = req.body;
     const newUser = await storage.createUser(userData);
+
+    if (BRANCHES_ENABLED && branchIds && Array.isArray(branchIds)) {
+      await storage.setUserBranches(newUser.id, branchIds);
+    }
 
     clearCachePattern('admin-users');
 
-    res.status(201).json(newUser);
+    const responseUser: any = { ...newUser };
+    if (BRANCHES_ENABLED) {
+      responseUser.branchIds = await storage.getUserBranches(newUser.id);
+    }
+    res.status(201).json(responseUser);
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Failed to create user" });
@@ -66,9 +75,20 @@ router.put('/admin/users/:id', isAuthenticated, async (req: any, res) => {
     }
 
     const { id } = req.params;
-    const updates = req.body;
+    const { branchIds, ...updates } = req.body;
     const updatedUser = await storage.updateUser(id, updates);
-    res.json(updatedUser);
+
+    if (BRANCHES_ENABLED && branchIds && Array.isArray(branchIds)) {
+      await storage.setUserBranches(id, branchIds);
+    }
+
+    clearCachePattern('admin-users');
+
+    const responseUser: any = { ...updatedUser };
+    if (BRANCHES_ENABLED) {
+      responseUser.branchIds = await storage.getUserBranches(id);
+    }
+    res.json(responseUser);
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ message: "Failed to update user" });
@@ -95,6 +115,26 @@ router.patch('/admin/users/:id/role', isAuthenticated, async (req: any, res) => 
   } catch (error) {
     console.error("Error updating user role:", error);
     res.status(500).json({ message: "Failed to update user role" });
+  }
+});
+
+router.get('/admin/users/:id', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = req.user;
+    if (!user || (user.role !== "admin" && user.role !== "worker")) {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    const { id } = req.params;
+    const foundUser = await storage.getUser(id);
+    if (!foundUser) return res.status(404).json({ message: "User not found" });
+    const responseUser: any = { ...foundUser };
+    if (BRANCHES_ENABLED) {
+      responseUser.branchIds = await storage.getUserBranches(id);
+    }
+    res.json(responseUser);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Failed to fetch user" });
   }
 });
 

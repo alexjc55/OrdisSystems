@@ -2,6 +2,7 @@ import { Router } from "express";
 import { storage } from "../../storage";
 import { isAuthenticated } from "../../middleware/auth-guard";
 import { PushNotificationService } from "../../push-notifications";
+import { BRANCHES_ENABLED } from "../../config";
 import { getDB } from "../../db";
 import { sql } from "drizzle-orm";
 
@@ -23,7 +24,12 @@ router.get('/admin/orders', isAuthenticated, async (req: any, res) => {
     const sortField = (req.query.sortField as string) || 'createdAt';
     const sortDirection = (req.query.sortDirection as string) || 'desc';
 
-    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection });
+    let branchIds: number[] | undefined;
+    if (BRANCHES_ENABLED && user.role === 'worker') {
+      branchIds = await storage.getUserBranches(userId);
+    }
+
+    const result = await storage.getOrdersPaginated({ page, limit, search, status, sortField, sortDirection, branchIds });
     res.json(result);
   } catch (error) {
     console.error("Error fetching admin orders:", error);

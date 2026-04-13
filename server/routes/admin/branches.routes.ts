@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { storage } from "../../storage";
 import { insertBranchSchema } from "@shared/schema";
+import { BRANCHES_ENABLED } from "../../config";
 import { z } from "zod";
 
 const router = Router();
@@ -12,8 +13,15 @@ function requireAdmin(req: any, res: any, next: any) {
   next();
 }
 
+function requireBranches(_req: any, res: any, next: any) {
+  if (!BRANCHES_ENABLED) {
+    return res.status(404).json({ message: "Branch feature is not enabled" });
+  }
+  next();
+}
+
 // GET /api/admin/branches
-router.get("/admin/branches", requireAdmin, async (req, res) => {
+router.get("/admin/branches", requireBranches, requireAdmin, async (_req, res) => {
   try {
     const allBranches = await storage.getBranches();
     res.json(allBranches);
@@ -24,7 +32,7 @@ router.get("/admin/branches", requireAdmin, async (req, res) => {
 });
 
 // POST /api/admin/branches
-router.post("/admin/branches", requireAdmin, async (req, res) => {
+router.post("/admin/branches", requireBranches, requireAdmin, async (req, res) => {
   try {
     const data = insertBranchSchema.parse(req.body);
     const branch = await storage.createBranch(data);
@@ -39,7 +47,7 @@ router.post("/admin/branches", requireAdmin, async (req, res) => {
 });
 
 // PUT /api/admin/branches/:id
-router.put("/admin/branches/:id", requireAdmin, async (req, res) => {
+router.put("/admin/branches/:id", requireBranches, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid branch id" });
@@ -57,7 +65,7 @@ router.put("/admin/branches/:id", requireAdmin, async (req, res) => {
 });
 
 // DELETE /api/admin/branches/:id
-router.delete("/admin/branches/:id", requireAdmin, async (req, res) => {
+router.delete("/admin/branches/:id", requireBranches, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid branch id" });
@@ -69,8 +77,8 @@ router.delete("/admin/branches/:id", requireAdmin, async (req, res) => {
   }
 });
 
-// GET /api/admin/branches/:id/availability - Get product availability for a branch
-router.get("/admin/branches/:id/availability", requireAdmin, async (req, res) => {
+// GET /api/admin/branches/:id/availability
+router.get("/admin/branches/:id/availability", requireBranches, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid branch id" });
@@ -82,8 +90,8 @@ router.get("/admin/branches/:id/availability", requireAdmin, async (req, res) =>
   }
 });
 
-// GET /api/admin/products/:id/branch-availability - Get branch availability for a product
-router.get("/admin/products/:id/branch-availability", requireAdmin, async (req, res) => {
+// GET /api/admin/products/:id/branch-availability
+router.get("/admin/products/:id/branch-availability", requireBranches, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid product id" });
@@ -95,8 +103,8 @@ router.get("/admin/products/:id/branch-availability", requireAdmin, async (req, 
   }
 });
 
-// PUT /api/admin/products/:id/branch-availability - Set branch availability for a product
-router.put("/admin/products/:id/branch-availability", requireAdmin, async (req, res) => {
+// PUT /api/admin/products/:id/branch-availability
+router.put("/admin/products/:id/branch-availability", requireBranches, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid product id" });
@@ -118,8 +126,8 @@ router.put("/admin/products/:id/branch-availability", requireAdmin, async (req, 
   }
 });
 
-// GET /api/admin/users/:id/branches - Get branches assigned to a user
-router.get("/admin/users/:id/branches", requireAdmin, async (req, res) => {
+// GET /api/admin/users/:id/branches
+router.get("/admin/users/:id/branches", requireBranches, requireAdmin, async (req, res) => {
   try {
     const branchIds = await storage.getUserBranches(req.params.id);
     res.json(branchIds);
@@ -129,8 +137,8 @@ router.get("/admin/users/:id/branches", requireAdmin, async (req, res) => {
   }
 });
 
-// PUT /api/admin/users/:id/branches - Set branches assigned to a user
-router.put("/admin/users/:id/branches", requireAdmin, async (req, res) => {
+// PUT /api/admin/users/:id/branches
+router.put("/admin/users/:id/branches", requireBranches, requireAdmin, async (req, res) => {
   try {
     const schema = z.object({ branchIds: z.array(z.number().int()) });
     const { branchIds } = schema.parse(req.body);

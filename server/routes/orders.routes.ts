@@ -4,6 +4,7 @@ import { isAuthenticated } from "../middleware/auth-guard";
 import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "../email-service";
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../facebook-conversions-api";
 import { PushNotificationService } from "../push-notifications";
+import { BRANCHES_ENABLED } from "../config";
 import { insertOrderSchema } from "@shared/schema";
 import { z } from "zod";
 import { randomBytes } from "crypto";
@@ -150,7 +151,7 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
 
 router.post('/orders/guest', async (req: any, res) => {
   try {
-    const { items, totalAmount, guestInfo, language } = req.body;
+    const { items, totalAmount, guestInfo, language, branchId } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Invalid order items" });
@@ -165,7 +166,7 @@ router.post('/orders/guest', async (req: any, res) => {
     const guestAccessTokenExpires = new Date();
     guestAccessTokenExpires.setDate(guestAccessTokenExpires.getDate() + 30);
 
-    const orderData = {
+    const orderData: any = {
       userId: null,
       totalAmount,
       status: "pending" as const,
@@ -181,6 +182,10 @@ router.post('/orders/guest', async (req: any, res) => {
       guestClaimToken,
       orderLanguage: language || 'ru'
     };
+
+    if (BRANCHES_ENABLED && branchId && !isNaN(parseInt(branchId))) {
+      orderData.branchId = parseInt(branchId);
+    }
 
     const orderItems = items.map((item: any) => ({
       productId: item.productId,
@@ -366,7 +371,7 @@ router.post('/orders', async (req: any, res) => {
     const validatedData = orderSchema.parse({ ...orderData, userId, items });
 
     const { requestedDeliveryDate, requestedDeliveryTime, items: _, ...orderDataWithoutTemp } = validatedData;
-    let processedOrderData = { ...orderDataWithoutTemp };
+    let processedOrderData: any = { ...orderDataWithoutTemp };
 
     if (userId) {
       processedOrderData.userId = userId;
@@ -379,8 +384,12 @@ router.post('/orders', async (req: any, res) => {
       processedOrderData.deliveryTime = requestedDeliveryTime;
     }
 
-    delete (processedOrderData as any).requestedDeliveryDate;
-    delete (processedOrderData as any).requestedDeliveryTime;
+    if (!BRANCHES_ENABLED) {
+      delete processedOrderData.branchId;
+    }
+
+    delete processedOrderData.requestedDeliveryDate;
+    delete processedOrderData.requestedDeliveryTime;
 
     const order = await storage.createOrder(
       processedOrderData,

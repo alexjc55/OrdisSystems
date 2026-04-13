@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { requireAdmin } from "../../middleware/auth-guard";
+import { BRANCHES_ENABLED } from "../../config";
 import { getDB } from "../../db";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
@@ -9,7 +10,8 @@ const router = Router();
 const analyticsQuerySchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
-  tz: z.string().optional().default('UTC')
+  tz: z.string().optional().default('UTC'),
+  branchId: z.string().optional(),
 });
 
 const timeseriesQuerySchema = analyticsQuerySchema.extend({
@@ -25,10 +27,16 @@ router.get('/admin/analytics/summary', requireAdmin, async (req: any, res) => {
     const defaultFrom = query.from || now.toISOString().split('T')[0];
     const defaultTo = query.to || now.toISOString().split('T')[0];
 
+    const branchId = BRANCHES_ENABLED && query.branchId ? parseInt(query.branchId) : undefined;
+    const branchFilter = branchId && !isNaN(branchId)
+      ? sql` AND branch_id = ${branchId}`
+      : sql``;
+
     const ordersResult = await db.execute(sql`
       SELECT status, COUNT(*) as count 
       FROM orders 
       WHERE created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
+      ${branchFilter}
       GROUP BY status
     `);
 
@@ -51,6 +59,7 @@ router.get('/admin/analytics/summary', requireAdmin, async (req: any, res) => {
       FROM orders 
       WHERE status = 'delivered' 
       AND created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
+      ${branchFilter}
     `);
 
     const revenue = parseFloat(revenueResult.rows[0]?.revenue as string || '0');
@@ -80,6 +89,11 @@ router.get('/admin/analytics/timeseries', requireAdmin, async (req: any, res) =>
     const defaultFrom = query.from || new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     const defaultTo = query.to || now.toISOString().split('T')[0];
 
+    const branchId = BRANCHES_ENABLED && query.branchId ? parseInt(query.branchId) : undefined;
+    const branchFilter = branchId && !isNaN(branchId)
+      ? sql` AND branch_id = ${branchId}`
+      : sql``;
+
     const ordersTimeseries = await db.execute(sql`
       SELECT 
         DATE_TRUNC(${query.granularity}, created_at) as bucket,
@@ -87,6 +101,7 @@ router.get('/admin/analytics/timeseries', requireAdmin, async (req: any, res) =>
         COUNT(CASE WHEN status = 'delivered' THEN 1 END) as completed_orders
       FROM orders 
       WHERE created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
+      ${branchFilter}
       GROUP BY bucket
       ORDER BY bucket ASC
     `);
@@ -98,6 +113,7 @@ router.get('/admin/analytics/timeseries', requireAdmin, async (req: any, res) =>
       FROM orders 
       WHERE status = 'delivered' 
       AND created_at::date BETWEEN ${defaultFrom}::date AND ${defaultTo}::date
+      ${branchFilter}
       GROUP BY bucket
       ORDER BY bucket ASC
     `);
@@ -144,10 +160,16 @@ router.get('/admin/analytics/active-orders', requireAdmin, async (req: any, res)
   try {
     const db = await getDB();
 
+    const branchId = BRANCHES_ENABLED && req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
+    const branchFilter = branchId && !isNaN(branchId)
+      ? sql` AND branch_id = ${branchId}`
+      : sql``;
+
     const activeOrdersResult = await db.execute(sql`
       SELECT status, COUNT(*) as count, COALESCE(SUM(total_amount), 0) as amount
       FROM orders 
       WHERE status NOT IN ('delivered', 'cancelled')
+      ${branchFilter}
       GROUP BY status
       ORDER BY count DESC
     `);

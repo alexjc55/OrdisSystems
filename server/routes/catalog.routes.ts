@@ -4,6 +4,7 @@ import { isAuthenticated } from "../middleware/auth-guard";
 import { clearCachePattern } from "../middleware/cache";
 import { upload, processUploadedImage, optimizeImage, generateThumbnail, optimizedDir, thumbnailsDir } from "../middleware/upload";
 import { insertCategorySchema, insertProductSchema } from "@shared/schema";
+import { BRANCHES_ENABLED } from "../config";
 import { z } from "zod";
 import path from "path";
 import fs from "fs";
@@ -13,7 +14,36 @@ const router = Router();
 router.get('/categories', async (req, res) => {
   try {
     const includeInactive = req.query.includeInactive === 'true';
-    const categories = await storage.getCategories(includeInactive);
+    let categories = await storage.getCategories(includeInactive);
+
+    if (BRANCHES_ENABLED) {
+      const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
+      if (branchId && !isNaN(branchId)) {
+        const branchAvailability = await storage.getProductBranchAvailabilityByBranch(branchId);
+        const availableProductIds = new Set(
+          branchAvailability.filter(a => a.isAvailable).map(a => a.productId)
+        );
+        const unavailableProductIds = new Set(
+          branchAvailability.filter(a => !a.isAvailable).map(a => a.productId)
+        );
+        const allProducts = await storage.getProducts();
+        const productsByCategory = new Map<number, number[]>();
+        for (const product of allProducts) {
+          for (const cat of (product as any).categories || []) {
+            if (!productsByCategory.has(cat.id)) productsByCategory.set(cat.id, []);
+            productsByCategory.get(cat.id)!.push(product.id);
+          }
+        }
+        categories = categories.filter(cat => {
+          const pids = productsByCategory.get(cat.id) || [];
+          return pids.some(pid => {
+            if (unavailableProductIds.has(pid)) return false;
+            return true;
+          });
+        });
+      }
+    }
+
     res.json(categories);
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -152,6 +182,28 @@ router.get('/products', async (req: any, res) => {
     if (!isAdmin) {
       products = products.filter(product => product.isAvailable !== false);
     }
+
+    if (BRANCHES_ENABLED) {
+      const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
+      if (branchId && !isNaN(branchId)) {
+        const branchAvailability = await storage.getProductBranchAvailabilityByBranch(branchId);
+        const availMap = new Map(branchAvailability.map(a => [a.productId, a]));
+        products = products.filter(p => {
+          const override = availMap.get(p.id);
+          if (!override) return true;
+          return override.isAvailable;
+        }).map(p => {
+          const override = availMap.get(p.id);
+          if (!override) return p;
+          return {
+            ...p,
+            stockStatus: override.stockStatus,
+            availabilityStatus: override.availabilityStatus,
+          };
+        });
+      }
+    }
+
     res.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -203,7 +255,12 @@ router.get('/products/:id', async (req, res) => {
     const id = parseInt(req.params.id);
     const product = await storage.getProductById(id);
     if (!product) return res.status(404).json({ message: "Product not found" });
-    res.json(product);
+    if (BRANCHES_ENABLED) {
+      const branchAvailability = await storage.getProductBranchAvailability(id);
+      res.json({ ...product, branchAvailability });
+    } else {
+      res.json(product);
+    }
   } catch (error) {
     console.error("Error fetching product:", error);
     res.status(500).json({ message: "Failed to fetch product" });
@@ -220,8 +277,12 @@ router.post('/products', isAuthenticated, async (req: any, res) => {
     const rawData = req.body;
     if (rawData.discountValue === "") rawData.discountValue = null;
     if (rawData.discountType === "") rawData.discountType = null;
-    const productData = insertProductSchema.parse(rawData);
+    const { branchAvailability, ...rest } = rawData;
+    const productData = insertProductSchema.parse(rest);
     const product = await storage.createProduct(productData);
+    if (BRANCHES_ENABLED && branchAvailability && Array.isArray(branchAvailability)) {
+      await storage.setProductBranchAvailability(product.id, branchAvailability);
+    }
     clearCachePattern('admin-products');
     res.json(product);
   } catch (error) {
@@ -239,8 +300,12 @@ router.put('/products/:id', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Insufficient permissions" });
     }
     const id = parseInt(req.params.id);
-    const productData = insertProductSchema.partial().parse(req.body);
+    const { branchAvailability, ...rest } = req.body;
+    const productData = insertProductSchema.partial().parse(rest);
     const product = await storage.updateProduct(id, productData);
+    if (BRANCHES_ENABLED && branchAvailability && Array.isArray(branchAvailability)) {
+      await storage.setProductBranchAvailability(id, branchAvailability);
+    }
     clearCachePattern('admin-products');
     res.json(product);
   } catch (error) {
@@ -262,18 +327,22 @@ router.patch('/products/:id', isAuthenticated, async (req: any, res) => {
     console.log('Product update - Raw data received:', JSON.stringify(rawData, null, 2));
     if (rawData.discountValue === "") rawData.discountValue = null;
     if (rawData.discountType === "") rawData.discountType = null;
-    const schemaData = insertProductSchema.partial().parse(rawData);
+    const { branchAvailability: patchBranchAvailability, ...rawDataWithout } = rawData;
+    const schemaData = insertProductSchema.partial().parse(rawDataWithout);
     const multilingualFields: any = {};
     const supportedLanguages = ['en', 'he', 'ar'];
     supportedLanguages.forEach(lang => {
-      if ((rawData as any)[`name_${lang}`] !== undefined) multilingualFields[`name_${lang}`] = (rawData as any)[`name_${lang}`];
-      if ((rawData as any)[`description_${lang}`] !== undefined) multilingualFields[`description_${lang}`] = (rawData as any)[`description_${lang}`];
-      if ((rawData as any)[`ingredients_${lang}`] !== undefined) multilingualFields[`ingredients_${lang}`] = (rawData as any)[`ingredients_${lang}`];
-      if ((rawData as any)[`imageUrl_${lang}`] !== undefined) multilingualFields[`imageUrl_${lang}`] = (rawData as any)[`imageUrl_${lang}`];
+      if ((rawDataWithout as any)[`name_${lang}`] !== undefined) multilingualFields[`name_${lang}`] = (rawDataWithout as any)[`name_${lang}`];
+      if ((rawDataWithout as any)[`description_${lang}`] !== undefined) multilingualFields[`description_${lang}`] = (rawDataWithout as any)[`description_${lang}`];
+      if ((rawDataWithout as any)[`ingredients_${lang}`] !== undefined) multilingualFields[`ingredients_${lang}`] = (rawDataWithout as any)[`ingredients_${lang}`];
+      if ((rawDataWithout as any)[`imageUrl_${lang}`] !== undefined) multilingualFields[`imageUrl_${lang}`] = (rawDataWithout as any)[`imageUrl_${lang}`];
     });
     const productData = { ...schemaData, ...multilingualFields };
     console.log('Product update - Final data for storage:', JSON.stringify(productData, null, 2));
     const product = await storage.updateProduct(id, productData);
+    if (BRANCHES_ENABLED && patchBranchAvailability && Array.isArray(patchBranchAvailability)) {
+      await storage.setProductBranchAvailability(id, patchBranchAvailability);
+    }
     console.log('Product update - Result from storage:', JSON.stringify(product, null, 2));
     clearCachePattern('admin-products');
     clearCachePattern('products');

@@ -51,6 +51,7 @@ export interface PaginationParams {
   status?: string;
   sortField?: string;
   sortDirection?: string;
+  branchIds?: number[];
 }
 
 export interface PaginatedResult<T> {
@@ -956,7 +957,7 @@ export class DatabaseStorage implements IStorage {
 
   async getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>> {
     const db = await this.getDatabase();
-    const { page, limit, search, status, sortField, sortDirection } = params;
+    const { page, limit, search, status, sortField, sortDirection, branchIds } = params;
     const offset = (page - 1) * limit;
 
     // Build where conditions for database query (only non-user fields)
@@ -972,6 +973,15 @@ export class DatabaseStorage implements IStorage {
       } else {
         conditions.push(eq(orders.status, status as any));
       }
+    }
+
+    // Branch-based filtering for workers
+    if (branchIds !== undefined) {
+      if (branchIds.length === 0) {
+        // Worker has no branches → no orders visible
+        return { data: [], total: 0, page, limit, totalPages: 0 };
+      }
+      conditions.push(inArray(orders.branchId as any, branchIds));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
