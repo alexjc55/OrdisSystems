@@ -165,7 +165,9 @@ router.get('/products', async (req: any, res) => {
     if (BRANCHES_ENABLED) {
       const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
       if (branchId && !isNaN(branchId)) {
-        products = await storage.getProductsForBranch(branchId, categoryId);
+        const userRole = req.isAuthenticated?.() ? req.user?.role : null;
+        const isAdminUser = userRole === 'admin' || userRole === 'worker';
+        products = await storage.getProductsForBranch(branchId, categoryId, isAdminUser);
       }
     }
 

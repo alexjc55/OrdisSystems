@@ -136,14 +136,22 @@ export interface IStorage {
   deleteTheme(id: string): Promise<void>;
   activateTheme(id: string): Promise<Theme>;
 
-  // Theme management
-  getThemes(): Promise<Theme[]>;
-  getActiveTheme(): Promise<Theme | undefined>;
-  getThemeById(id: string): Promise<Theme | undefined>;
-  createTheme(theme: InsertTheme): Promise<Theme>;
-  updateTheme(id: string, theme: Partial<InsertTheme>): Promise<Theme>;
-  deleteTheme(id: string): Promise<void>;
-  activateTheme(id: string): Promise<Theme>;
+  // Branch operations
+  getBranches(): Promise<Branch[]>;
+  getBranchById(id: number): Promise<Branch | undefined>;
+  createBranch(branch: InsertBranch): Promise<Branch>;
+  updateBranch(id: number, branch: Partial<InsertBranch>): Promise<Branch>;
+  deleteBranch(id: number): Promise<void>;
+  getUserBranches(userId: string): Promise<number[]>;
+  setUserBranches(userId: string, branchIds: number[]): Promise<void>;
+  getProductBranchAvailability(productId: number): Promise<ProductBranchAvailability[]>;
+  setProductBranchAvailability(
+    productId: number,
+    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+  ): Promise<void>;
+  getProductBranchAvailabilityByBranch(branchId: number): Promise<ProductBranchAvailability[]>;
+  getProductsForBranch(branchId: number, categoryId?: number, includeAll?: boolean): Promise<ProductWithCategories[]>;
+  getCategoriesForBranch(branchId: number, includeInactive?: boolean): Promise<CategoryWithCount[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1779,13 +1787,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Branch-aware catalog queries (only used when BRANCHES_ENABLED=true)
-  async getProductsForBranch(branchId: number, categoryId?: number): Promise<ProductWithCategories[]> {
+  async getProductsForBranch(branchId: number, categoryId?: number, includeAll = false): Promise<ProductWithCategories[]> {
     const allProducts = await this.getProducts(categoryId);
     const branchAvailability = await this.getProductBranchAvailabilityByBranch(branchId);
     const branchOverrideMap = new Map(branchAvailability.map(a => [a.productId, a]));
 
     return allProducts
       .filter(p => {
+        if (includeAll) return true;
         if (p.isAvailable === false) return false;
         const override = branchOverrideMap.get(p.id);
         if (override && !override.isAvailable) return false;
@@ -1798,7 +1807,7 @@ export class DatabaseStorage implements IStorage {
       });
   }
 
-  async getCategoriesForBranch(branchId: number, includeInactive = false): Promise<any[]> {
+  async getCategoriesForBranch(branchId: number, includeInactive = false): Promise<CategoryWithCount[]> {
     const allCategories = await this.getCategories(includeInactive);
     const allProducts = await this.getProducts();
     const branchAvailability = await this.getProductBranchAvailabilityByBranch(branchId);
