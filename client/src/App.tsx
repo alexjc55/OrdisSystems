@@ -19,6 +19,8 @@ import NotificationModal from "@/components/NotificationModal";
 import { CacheBuster } from "@/components/cache-buster";
 import { addNotification } from "@/lib/notification-storage";
 import { IOSCacheBuster } from "@/components/ios-cache-buster";
+import { BranchProvider } from "@/hooks/useBranch";
+import BranchSelectionModal from "@/components/BranchSelectionModal";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
@@ -388,6 +390,9 @@ function Router() {
       
       {/* Bottom Navigation Bar - Mobile only */}
       <BottomNav />
+
+      {/* Branch Selection Modal - shown when branches feature is enabled and no branch selected */}
+      <BranchSelectionModal />
     </ErrorBoundary>
   );
 }
@@ -397,11 +402,13 @@ function App() {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
-            <LanguageInitializer />
-            <Toaster />
-            <Router />
-          </TooltipProvider>
+          <BranchProvider>
+            <TooltipProvider>
+              <LanguageInitializer />
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </BranchProvider>
         </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>

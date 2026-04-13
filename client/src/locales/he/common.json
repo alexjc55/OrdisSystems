@@ -628,5 +628,11 @@
   },
   "iosIssue": "גרסה חדשה של האפליקציה זמינה",
   "iosUpdateMessage": "כדי לקבל את העדכונים האחרונים, הקש \"עדכן אפליקציה\"",
-  "forceClear": "עדכן אפליקציה"
+  "forceClear": "עדכן אפליקציה",
+  "branch": {
+    "selectTitle": "בחר סניף",
+    "selectSubtitle": "אנא בחר את הסניף ממנו ברצונך להזמין",
+    "changeBranch": "שנה סניף",
+    "selectedBranch": "סניף"
+  }
 }

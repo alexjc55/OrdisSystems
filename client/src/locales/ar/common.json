@@ -625,6 +625,12 @@
   "iosIssue": "إصدار جديد من التطبيق متاح",
   "iosUpdateMessage": "للحصول على أحدث التحديثات، اضغط \"تحديث التطبيق\"",
   "forceClear": "تحديث التطبيق",
+  "branch": {
+    "selectTitle": "اختر الفرع",
+    "selectSubtitle": "يرجى اختيار الفرع الذي تريد الطلب منه",
+    "changeBranch": "تغيير الفرع",
+    "selectedBranch": "الفرع"
+  },
   "validation": {
     "firstNameMinLength": "الاسم الأول يجب أن يحتوي على حرفين على الأقل",
     "lastNameMinLength": "اسم العائلة يجب أن يحتوي على حرفين على الأقل",

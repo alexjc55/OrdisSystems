@@ -25,6 +25,7 @@ import { UTMLink } from "@/components/UTMLink";
 import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
+import { useBranch } from "@/hooks/useBranch";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import { getPaymentMethodName as getLocalizedPaymentMethodName } from "@shared/multilingual-helpers";
@@ -213,6 +214,7 @@ export default function Checkout() {
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
+  const { selectedBranchId, branchesEnabled } = useBranch();
   const dateLocale = getDateLocale(currentLanguage);
   const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -442,7 +444,7 @@ export default function Checkout() {
       );
       const total = subtotal + deliveryFeeAmount;
 
-      const orderData = {
+      const orderData: any = {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
@@ -459,6 +461,9 @@ export default function Checkout() {
         language: currentLanguage, // Add language for email localization
         status: "pending"
       };
+      if (branchesEnabled && selectedBranchId) {
+        orderData.branchId = selectedBranchId;
+      }
       
       return await apiRequest("POST", "/api/orders/guest", orderData);
     },
@@ -533,7 +538,7 @@ export default function Checkout() {
       );
       const total = subtotal + deliveryFeeAmount;
 
-      const orderData = {
+      const orderData: any = {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
@@ -549,6 +554,9 @@ export default function Checkout() {
         customerPhone: data.phone,
         status: "pending"
       };
+      if (branchesEnabled && selectedBranchId) {
+        orderData.branchId = selectedBranchId;
+      }
       
       return await apiRequest("POST", "/api/orders", orderData);
     },
@@ -619,7 +627,7 @@ export default function Checkout() {
       );
       const total = subtotal + deliveryFeeAmount;
 
-      const orderData = {
+      const orderData: any = {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
@@ -634,6 +642,9 @@ export default function Checkout() {
         paymentMethod: formData.paymentMethod,
         status: "pending"
       };
+      if (branchesEnabled && selectedBranchId) {
+        orderData.branchId = selectedBranchId;
+      }
       
       return await apiRequest("POST", "/api/orders", orderData);
     },

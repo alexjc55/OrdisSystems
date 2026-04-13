@@ -11,6 +11,21 @@ import fs from "fs";
 
 const router = Router();
 
+// GET /api/branches - public endpoint returning active branches only
+router.get('/branches', async (_req, res) => {
+  try {
+    if (!BRANCHES_ENABLED) {
+      return res.json([]);
+    }
+    const allBranches = await storage.getBranches();
+    const activeBranches = allBranches.filter(b => b.isActive);
+    res.json(activeBranches);
+  } catch (error) {
+    console.error("Error fetching public branches:", error);
+    res.status(500).json({ message: "Failed to fetch branches" });
+  }
+});
+
 router.get('/categories', async (req, res) => {
   try {
     const includeInactive = req.query.includeInactive === 'true';

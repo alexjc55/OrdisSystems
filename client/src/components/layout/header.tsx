@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useCartStore } from "@/lib/cart";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useLanguage, useAdminTranslation } from "@/hooks/use-language";
+import { useBranch } from "@/hooks/useBranch";
 import type { SupportedLanguage } from '@shared/localization';
 import { getLocalizedImageField } from '@shared/multilingual-helpers';
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3, Bell, CheckCheck, Package, Megaphone, Info } from "lucide-react";
+import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarChart3, Bell, CheckCheck, Package, Megaphone, Info, MapPin } from "lucide-react";
 import { getNotifications, getUnreadCount, markAllAsRead, type StoredNotification } from "@/lib/notification-storage";
 import { useLocation } from "wouter";
 import { UTMLink as Link } from "@/components/UTMLink";
@@ -54,6 +55,7 @@ export default function Header({ onResetView }: HeaderProps) {
   const { t: adminT } = useAdminTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
+  const { selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const toggleBtnRef = useRef<HTMLButtonElement>(null);
   const bellRef = useRef<HTMLDivElement>(null);
@@ -210,6 +212,33 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Link>
               )}
             </nav>
+            {/* Branch indicator - desktop, shown when branches enabled and >1 branch */}
+            {branchesEnabled && branches.length > 1 && selectedBranch && (
+              <div className="relative hidden md:block ml-2 rtl:ml-0 rtl:mr-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1.5 text-gray-600 hover:text-primary px-2">
+                      <MapPin className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-sm font-medium max-w-[120px] truncate">{selectedBranch.name}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <div className="px-2 py-1.5 text-xs text-gray-500 font-medium">{t('branch.changeBranch')}</div>
+                    <DropdownMenuSeparator />
+                    {branches.map(branch => (
+                      <DropdownMenuItem
+                        key={branch.id}
+                        onClick={() => selectBranch(branch.id)}
+                        className={branch.id === selectedBranch.id ? 'bg-primary/10 text-primary' : ''}
+                      >
+                        <MapPin className="mr-2 h-4 w-4 rtl:ml-2 rtl:mr-0" />
+                        {branch.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1 md:gap-4 rtl:space-x-reverse flex-shrink-0">

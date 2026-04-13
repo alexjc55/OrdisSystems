@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
+import { useBranch } from "@/hooks/useBranch";
 import { useShopTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
@@ -318,6 +319,8 @@ export default function Home() {
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
+  const { selectedBranchId, branchesEnabled } = useBranch();
+
   // Combined translation function that uses correct namespace for each key
   const tCombined = (key: string) => {
     // Keys that should use common translations
@@ -331,14 +334,18 @@ export default function Home() {
     return t(key);
   };
 
+  const branchQueryParam = branchesEnabled && selectedBranchId ? `?branchId=${selectedBranchId}` : '';
+
   // Fetch categories
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithCount[]>({
-    queryKey: ["/api/categories"],
+    queryKey: ["/api/categories", selectedBranchId],
+    queryFn: () => fetch(`/api/categories${branchQueryParam}`).then(res => res.json()),
   });
 
   // Fetch all products for special offers and search
   const { data: allProducts = [], isLoading: allProductsLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products"],
+    queryKey: ["/api/products", selectedBranchId],
+    queryFn: () => fetch(`/api/products${branchQueryParam}`).then(res => res.json()),
   });
 
   // Get header style from store settings (accessible to all users)
@@ -351,10 +358,14 @@ export default function Home() {
 
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products", selectedCategoryId],
-    queryFn: () => fetch(`/api/products?categoryId=${selectedCategoryId}`).then(res => res.json()),
+    queryKey: ["/api/products", selectedCategoryId, selectedBranchId],
+    queryFn: () => {
+      const params = new URLSearchParams({ categoryId: String(selectedCategoryId) });
+      if (branchesEnabled && selectedBranchId) params.set('branchId', String(selectedBranchId));
+      return fetch(`/api/products?${params}`).then(res => res.json());
+    },
     enabled: selectedCategoryId !== null,
-    staleTime: 0, // Always refetch when category changes
+    staleTime: 0,
   });
 
   // Search products
