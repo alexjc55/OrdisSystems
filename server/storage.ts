@@ -1522,10 +1522,10 @@ export class DatabaseStorage implements IStorage {
         role: users.role,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
-        orderCount: sql<number>`(SELECT COALESCE(COUNT(*), 0) FROM orders o_cnt WHERE o_cnt.user_id = ${users.id})`,
-        totalOrderAmount: sql<number>`(SELECT COALESCE(SUM(o_sum.total_amount::numeric), 0) FROM orders o_sum WHERE o_sum.user_id = ${users.id})`,
-        branchIds: sql<number[]>`COALESCE(ARRAY(SELECT ub.branch_id FROM user_branches ub WHERE ub.user_id = ${users.id}), ARRAY[]::int[])`,
-        customerBranchIds: sql<number[]>`COALESCE(ARRAY(SELECT DISTINCT o_br.branch_id FROM orders o_br WHERE o_br.user_id = ${users.id} AND o_br.branch_id IS NOT NULL), ARRAY[]::int[])`,
+        orderCount: sql<number>`(SELECT COALESCE(COUNT(*), 0) FROM orders o_cnt WHERE o_cnt.user_id = users.id)`,
+        totalOrderAmount: sql<number>`(SELECT COALESCE(SUM(o_sum.total_amount::numeric), 0) FROM orders o_sum WHERE o_sum.user_id = users.id)`,
+        branchIds: sql<number[]>`COALESCE(ARRAY(SELECT ub.branch_id FROM user_branches ub WHERE ub.user_id = users.id), ARRAY[]::int[])`,
+        customerBranchIds: sql<number[]>`COALESCE(ARRAY(SELECT DISTINCT o_br.branch_id FROM orders o_br WHERE o_br.user_id = users.id AND o_br.branch_id IS NOT NULL), ARRAY[]::int[])`,
       })
       .from(users)
       .where(whereClause)
