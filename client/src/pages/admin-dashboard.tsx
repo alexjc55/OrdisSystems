@@ -1425,43 +1425,120 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     const closeBtnEl = document.getElementById('print-close-btn');
     const printBtnEl = document.getElementById('print-do-btn');
-    // Inject @media print CSS: hides everything except the overlay,
-    // hides the toolbar, forces the overlay to position:static so it
-    // fills the page. Works on mobile Chrome/Safari without any popup.
-    const printStyle = document.createElement('style');
-    printStyle.id = 'order-print-style';
-    printStyle.textContent = `
-      @media print {
-        @page { margin: 1cm; }
-        body > *:not(#order-print-overlay) { display: none !important; }
-        #order-print-bar { display: none !important; }
-        #order-print-overlay {
-          position: static !important;
-          overflow: visible !important;
-          height: auto !important;
-          z-index: auto !important;
-        }
-        #order-print-content table { border-collapse: collapse !important; }
-        #order-print-content td,
-        #order-print-content th { border: 1px solid #999 !important; }
-        #order-print-content .info-td-no-border { border: none !important; }
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-    `;
-    document.head.appendChild(printStyle);
+    // Build a standalone print document (two-column info layout, full CSS embedded).
+    // Split all info rows into two halves for two-column layout on paper.
+    const infoData = [
+      [l('customer'),     customerName],
+      [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
+      [l('address'),      editedOrder.deliveryAddress || ''],
+      [l('deliveryDate'), editedOrder.deliveryDate || ''],
+      [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
+      [l('payment'),      order.paymentMethod || ''],
+      [l('status'),       getStatusLabel(editedOrder.status)],
+    ].filter(([, v]) => v);
 
-    const removePrintStyle = () => {
-      document.getElementById('order-print-style')?.remove();
-    };
+    const half = Math.ceil(infoData.length / 2);
+    const leftData  = infoData.slice(0, half);
+    const rightData = infoData.slice(half);
+
+    const pLbl = `font-weight:bold;white-space:nowrap;padding:3px 8px 3px 4px;vertical-align:top;font-size:12px;`;
+    const pVal = `padding:3px 4px;vertical-align:top;font-size:12px;word-wrap:break-word;overflow-wrap:break-word;`;
+
+    const mkPrintRows = (rows: string[][]) =>
+      rows.map(([k, v]) => `<tr><td style="${pLbl}">${k}:</td><td style="${pVal}">${v}</td></tr>`).join('');
+
+    const pTh = `padding:6px 8px;border:1px solid #999;background:#f0f0f0;font-size:12px;font-weight:bold;text-align:${isRTLPrint ? 'right' : 'left'};-webkit-print-color-adjust:exact;print-color-adjust:exact;`;
+    const pTd = `padding:6px 8px;border:1px solid #ccc;vertical-align:top;font-size:12px;`;
+
+    const printItemsRows = editedOrderItems.map((item: any, index: number) => {
+      const productName = getLocalizedField(item.product, 'name', currentLang) || item.product?.name || `Product #${item.productId}`;
+      const quantity = item.quantity;
+      const unit = item.product?.unit || 'piece';
+      const unitDisplay = getUnitDisplay(unit, quantity);
+      const price = parseFloat(item.totalPrice || 0).toFixed(2);
+      const hasDiscount = itemDiscounts[index] && itemDiscounts[index].value > 0;
+      return `<tr>
+        <td style="${pTd}text-align:center;width:36px;"><div style="width:16px;height:16px;border:2px solid #333;display:inline-block;"></div></td>
+        <td style="${pTd}">${productName}${hasDiscount ? ` <span style="color:#e53e3e;font-size:11px;">(${l('discount')})</span>` : ''}</td>
+        <td style="${pTd}text-align:center;">${unitDisplay}</td>
+        <td style="${pTd}text-align:center;">${price}${currency}</td>
+        <td style="${pTd}width:100px;">&nbsp;</td>
+      </tr>`;
+    }).join('');
+
+    const printDocHtml = `<!DOCTYPE html>
+<html lang="${currentLang}" dir="${isRTLPrint ? 'rtl' : 'ltr'}">
+<head>
+  <meta charset="utf-8">
+  <title>${l('order')} #${order.id}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 13px; color: #333;
+           direction: ${isRTLPrint ? 'rtl' : 'ltr'}; }
+    .prt-body { padding: 16px; }
+    @page { margin: 1cm; }
+    @media print { .prt-bar { display: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="prt-bar" style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f97316;position:sticky;top:0;z-index:10;">
+    <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 20px;background:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#f97316;font-family:Arial,sans-serif;">🖨 ${l('printOrder')}</button>
+    <span style="font-size:13px;color:#fff;opacity:0.9;">${l('order')} #${order.id} — ${storeName}</span>
+  </div>
+  <div class="prt-body">
+  <div style="text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #333;">
+    <p style="font-size:13px;color:#666;margin:0;">${storeName}</p>
+    <h1 style="font-size:18px;margin:4px 0 0;">${l('order')} #${order.id}</h1>
+  </div>
+
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+    <tr>
+      <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'left' : 'right'}:10px;">
+        <table style="width:100%;border-collapse:collapse;"><tbody>${mkPrintRows(leftData)}</tbody></table>
+      </td>
+      <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'right' : 'left'}:10px;border-${isRTLPrint ? 'right' : 'left'}:1px solid #ccc;">
+        <table style="width:100%;border-collapse:collapse;"><tbody>${mkPrintRows(rightData)}</tbody></table>
+      </td>
+    </tr>
+  </table>
+
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+    <thead><tr>
+      <th style="${pTh}width:36px;text-align:center;">${l('check')}</th>
+      <th style="${pTh}">${l('product')}</th>
+      <th style="${pTh}text-align:center;">${l('qty')}</th>
+      <th style="${pTh}text-align:center;">${l('price')}</th>
+      <th style="${pTh}width:100px;">${l('notes')}</th>
+    </tr></thead>
+    <tbody>${printItemsRows}</tbody>
+  </table>
+
+  <div style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;"><span>${l('subtotal')}:</span><span>${subtotal.toFixed(2)}${currency}</span></div>
+    ${discountAmount > 0 ? `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;color:#e53e3e;"><span>${l('discount')}:</span><span>-${discountAmount.toFixed(2)}${currency}</span></div>` : ''}
+    ${deliveryFee > 0 ? `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;"><span>${l('delivery')}:</span><span>${deliveryFee.toFixed(2)}${currency}</span></div>` : ''}
+    <div style="display:flex;justify-content:space-between;padding:6px 0 3px;font-size:15px;font-weight:bold;border-top:2px solid #333;margin-top:4px;"><span>${l('total')}:</span><span>${finalTotal.toFixed(2)}${currency}</span></div>
+  </div>
+
+  ${editedOrder.notes ? `<div style="background:#f9f9f9;padding:8px;margin-bottom:10px;border:1px solid #ddd;font-size:12px;"><strong>${l('orderNotes')}:</strong> ${editedOrder.notes}</div>` : ''}
+  <div style="border:1px solid #ccc;padding:10px;margin-bottom:10px;min-height:60px;">
+    <h3 style="font-size:13px;margin:0 0 6px;padding:0 0 4px;border-bottom:1px solid #eee;">${l('generalComments')}</h3>
+  </div>
+  </div>
+</body>
+</html>`;
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
-      // window.print() works on ALL platforms including mobile Chrome and iOS Safari PWA.
-      // The @media print CSS injected above ensures only the overlay content is printed.
-      window.print();
+      // Opens a new tab with the formatted print document.
+      // No auto-print — the tab has its own orange "Print" button that the user taps.
+      // This avoids iOS blocking auto-print while still working on Android and desktop.
+      const printWin = window.open('', '_blank');
+      if (!printWin) return;
+      printWin.document.write(printDocHtml);
+      printWin.document.close();
+      printWin.focus();
     });
-    window.addEventListener('afterprint', removePrintStyle, { once: true });
   };
 
   const handleSave = () => {
