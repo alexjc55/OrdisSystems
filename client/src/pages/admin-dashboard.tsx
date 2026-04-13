@@ -5064,11 +5064,14 @@ export default function AdminDashboard() {
                                           {adminT('products.preorder')}
                                         </div>
                                       )}
-                                      {workerBranchStatuses && workerBranchStatuses.length > 1 && workerBranchStatuses.slice(1).map((bs: any) => (
-                                        <div key={bs.branchId} className={`inline-block px-1 py-0.5 text-xs rounded mt-0.5 ${bs.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : bs.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
-                                          #{bs.branchId}
-                                        </div>
-                                      ))}
+                                      {workerBranchStatuses && workerBranchStatuses.length > 1 && workerBranchStatuses.slice(1).map((bs: any) => {
+                                        const bName = (branches as any[]).find((b: any) => b.id === bs.branchId)?.name || `#${bs.branchId}`;
+                                        return (
+                                          <div key={bs.branchId} className={`inline-block px-1 py-0.5 text-xs rounded mt-0.5 ${bs.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : bs.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`} title={`${bName}: ${bs.availabilityStatus}`}>
+                                            {bName}
+                                          </div>
+                                        );
+                                      })}
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
@@ -5206,11 +5209,14 @@ export default function AdminDashboard() {
                                           {adminT('products.preorder')}
                                         </div>
                                       )}
-                                      {workerBranchStatuses && workerBranchStatuses.length > 1 && workerBranchStatuses.slice(1).map((bs: any) => (
-                                        <div key={bs.branchId} className={`inline-block px-1 py-0.5 text-xs rounded mt-0.5 ${bs.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : bs.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
-                                          #{bs.branchId}
-                                        </div>
-                                      ))}
+                                      {workerBranchStatuses && workerBranchStatuses.length > 1 && workerBranchStatuses.slice(1).map((bs: any) => {
+                                        const bName = (branches as any[]).find((b: any) => b.id === bs.branchId)?.name || `#${bs.branchId}`;
+                                        return (
+                                          <div key={bs.branchId} className={`inline-block px-1 py-0.5 text-xs rounded mt-0.5 ${bs.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : bs.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`} title={`${bName}: ${bs.availabilityStatus}`}>
+                                            {bName}
+                                          </div>
+                                        );
+                                      })}
                                     </div>
                                   </TableCell>
                                 </>
