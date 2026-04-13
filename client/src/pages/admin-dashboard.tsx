@@ -1336,6 +1336,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       [l('status'),       getStatusLabel(editedOrder.status)],
     ]);
 
+    // Two-column info rows for iOS print (window.print() path)
+    const allInfoData = [
+      [l('customer'),     customerName],
+      [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
+      [l('address'),      editedOrder.deliveryAddress || ''],
+      [l('deliveryDate'), editedOrder.deliveryDate || ''],
+      [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
+      [l('payment'),      order.paymentMethod || ''],
+      [l('status'),       getStatusLabel(editedOrder.status)],
+    ].filter(([, v]) => v);
+    const iosLeftRows  = makeInfoRows(allInfoData.slice(0, Math.ceil(allInfoData.length / 2)));
+    const iosRightRows = makeInfoRows(allInfoData.slice(Math.ceil(allInfoData.length / 2)));
+
     const contentHtml = `
   <div style="${S.wrap}" id="order-print-content">
     <div style="${S.hdr}">
@@ -1343,7 +1356,24 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       <h1 style="${S.hdrH1}">${l('order')} #${order.id}</h1>
     </div>
 
-    <table style="${S.infoTbl}"><tbody>${allInfoRows}</tbody></table>
+    <!-- SCREEN: single-column info (mobile-friendly) -->
+    <div class="screen-info">
+      <table style="${S.infoTbl}"><tbody>${allInfoRows}</tbody></table>
+    </div>
+
+    <!-- PRINT (iOS window.print()): two-column info — hidden on screen -->
+    <div class="print-info" style="display:none;">
+      <table style="width:100%;border-collapse:collapse;margin-bottom:15px;table-layout:fixed;">
+        <tr>
+          <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'left' : 'right'}:10px;">
+            <table style="${S.infoTbl}"><tbody>${iosLeftRows}</tbody></table>
+          </td>
+          <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'right' : 'left'}:10px;border-${isRTLPrint ? 'right' : 'left'}:1px solid #e5e7eb;">
+            <table style="${S.infoTbl}"><tbody>${iosRightRows}</tbody></table>
+          </td>
+        </tr>
+      </table>
+    </div>
 
     <table style="${S.prodTbl}">
       <thead><tr>
@@ -1530,14 +1560,38 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
-      // Opens a new tab with the formatted print document.
-      // No auto-print — the tab has its own orange "Print" button that the user taps.
-      // This avoids iOS blocking auto-print while still working on Android and desktop.
-      const printWin = window.open('', '_blank');
-      if (!printWin) return;
-      printWin.document.write(printDocHtml);
-      printWin.document.close();
-      printWin.focus();
+      // iOS (iPhone + iPad): window.print() directly — stays in PWA, AirPrint sheet appears.
+      // Android + Desktop: blob URL in new tab — avoids document.write() duplication bug.
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+      if (isIOS) {
+        // Inject @media print CSS: show two-column, hide app chrome
+        const ps = document.createElement('style');
+        ps.id = 'order-print-style';
+        ps.textContent = `@media print {
+          @page { margin: 1cm; }
+          body > *:not(#order-print-overlay) { display: none !important; }
+          #order-print-bar { display: none !important; }
+          #order-print-overlay { position:static !important; overflow:visible !important; height:auto !important; }
+          .screen-info { display: none !important; }
+          .print-info  { display: block !important; }
+          #order-print-content td, #order-print-content th { border: 1px solid #999 !important; }
+          .info-td-no-border { border: none !important; }
+          -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }`;
+        document.head.appendChild(ps);
+        window.print();
+        const removePs = () => document.getElementById('order-print-style')?.remove();
+        window.addEventListener('afterprint', removePs, { once: true });
+        setTimeout(removePs, 30_000);
+      } else {
+        // Non-iOS: open blob URL in new tab (avoids document.write() duplication)
+        const blob = new Blob([printDocHtml], { type: 'text/html; charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      }
     });
   };
 
