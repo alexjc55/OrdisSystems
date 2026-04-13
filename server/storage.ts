@@ -609,12 +609,43 @@ export class DatabaseStorage implements IStorage {
     }
     
     if (status && status !== 'all') {
-      if (status === 'available') {
-        conditions.push(eq(products.isAvailable, true));
-      } else if (status === 'unavailable') {
-        conditions.push(eq(products.isAvailable, false));
-      } else if (status === 'with_discount') {
+      if (status === 'with_discount') {
         conditions.push(eq(products.isSpecialOffer, true));
+      } else if (branchId) {
+        // Branch-aware status filtering: consider per-branch overrides, fallback to global
+        if (status === 'available') {
+          conditions.push(sql`(
+            EXISTS (SELECT 1 FROM product_branch_availability pba WHERE pba.product_id = ${products.id} AND pba.branch_id = ${branchId} AND pba.availability_status = 'available')
+            OR (
+              NOT EXISTS (SELECT 1 FROM product_branch_availability pba WHERE pba.product_id = ${products.id} AND pba.branch_id = ${branchId})
+              AND ${products.isAvailable} = true AND ${products.availabilityStatus} = 'available'
+            )
+          )`);
+        } else if (status === 'unavailable') {
+          conditions.push(sql`(
+            EXISTS (SELECT 1 FROM product_branch_availability pba WHERE pba.product_id = ${products.id} AND pba.branch_id = ${branchId} AND pba.availability_status = 'completely_unavailable')
+            OR (
+              NOT EXISTS (SELECT 1 FROM product_branch_availability pba WHERE pba.product_id = ${products.id} AND pba.branch_id = ${branchId})
+              AND ${products.isAvailable} = false
+            )
+          )`);
+        } else if (status === 'out_of_stock_today') {
+          conditions.push(sql`(
+            EXISTS (SELECT 1 FROM product_branch_availability pba WHERE pba.product_id = ${products.id} AND pba.branch_id = ${branchId} AND pba.availability_status = 'out_of_stock_today')
+            OR (
+              NOT EXISTS (SELECT 1 FROM product_branch_availability pba WHERE pba.product_id = ${products.id} AND pba.branch_id = ${branchId})
+              AND ${products.availabilityStatus} = 'out_of_stock_today'
+            )
+          )`);
+        }
+      } else {
+        // Global status filtering (no branch selected)
+        if (status === 'available') {
+          conditions.push(eq(products.isAvailable, true));
+        } else if (status === 'unavailable') {
+          conditions.push(eq(products.isAvailable, false));
+        }
+        // out_of_stock_today handled client-side for global queries
       }
     }
 
@@ -638,21 +669,6 @@ export class DatabaseStorage implements IStorage {
           limit,
           totalPages: 0
         };
-      }
-    }
-
-    // If filtering by branch, get product IDs that have any entry in product_branch_availability for that branch
-    // (regardless of availability status, so workers can see and update all product states for their branch)
-    if (branchId) {
-      const branchProducts = await db
-        .select({ productId: productBranchAvailability.productId })
-        .from(productBranchAvailability)
-        .where(eq(productBranchAvailability.branchId, branchId));
-      const branchProductIds = branchProducts.map((p: any) => p.productId);
-      if (branchProductIds.length > 0) {
-        conditions.push(inArray(products.id, branchProductIds));
-      } else {
-        return { data: [], total: 0, page, limit, totalPages: 0 };
       }
     }
 
@@ -719,10 +735,28 @@ export class DatabaseStorage implements IStorage {
       categoriesByProduct.get(cat.productId).push(categoryData);
     });
 
-    // Combine products with their categories
+    // If filtering by branch, attach per-branch availability data for the selected branch
+    const branchAvailabilityByProduct = new Map<number, any>();
+    if (branchId && productIds.length > 0) {
+      const branchAvailData = await db
+        .select()
+        .from(productBranchAvailability)
+        .where(
+          and(
+            inArray(productBranchAvailability.productId, productIds),
+            eq(productBranchAvailability.branchId, branchId)
+          )
+        );
+      branchAvailData.forEach((ba: any) => {
+        branchAvailabilityByProduct.set(ba.productId, ba);
+      });
+    }
+
+    // Combine products with their categories (and per-branch availability if applicable)
     const data: ProductWithCategories[] = productsData.map((product: any) => ({
       ...product,
-      categories: categoriesByProduct.get(product.id) || []
+      categories: categoriesByProduct.get(product.id) || [],
+      ...(branchId ? { branchAvailability: branchAvailabilityByProduct.has(product.id) ? [branchAvailabilityByProduct.get(product.id)] : [] } : {})
     }));
 
     return {

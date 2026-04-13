@@ -4056,6 +4056,30 @@ export default function AdminDashboard() {
     }
   });
 
+  const updateBranchAvailabilityQuickMutation = useMutation({
+    mutationFn: async ({ productId, branchId, availabilityStatus }: { productId: number; branchId: number; availabilityStatus: string }) => {
+      const isAvailable = availabilityStatus !== 'completely_unavailable';
+      const response = await fetch(`/api/products/${productId}/branch-availability`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify([{ branchId, availabilityStatus, isAvailable }]),
+      });
+      if (!response.ok) throw new Error('Failed to update branch availability');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setIsAvailabilityDialogOpen(false);
+      setProductToToggle(null);
+      toast({ title: adminT('products.notifications.statusUpdated'), description: adminT('products.notifications.statusUpdatedDesc') });
+    },
+    onError: (error: any) => {
+      console.error("Update branch availability error:", error);
+      toast({ title: adminT('actions.error'), description: adminT('products.notifications.statusError'), variant: "destructive" });
+    }
+  });
+
   // Category mutations
   const createCategoryMutation = useMutation({
     mutationFn: async (categoryData: any) => {
@@ -4433,12 +4457,29 @@ export default function AdminDashboard() {
       const matchesCategory = selectedCategoryFilter === "all" || 
         product.categories?.some((cat: any) => cat.id === parseInt(selectedCategoryFilter));
       
-      const matchesStatus = selectedStatusFilter === "all" ||
-        (selectedStatusFilter === "available" && product.isAvailable) ||
-        (selectedStatusFilter === "unavailable" && !product.isAvailable) ||
-        (selectedStatusFilter === "out_of_stock_today" && product.availabilityStatus === "out_of_stock_today") ||
-        (selectedStatusFilter === "with_discount" && (product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0)));
-      
+      let matchesStatus = false;
+      if (selectedStatusFilter === "all") {
+        matchesStatus = true;
+      } else if (selectedStatusFilter === "with_discount") {
+        matchesStatus = product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0);
+      } else if (branchesEnabled && selectedProductBranchFilter !== 'all') {
+        // Branch-aware status: check per-branch override, fallback to global
+        const branchRecord = (product.branchAvailability || []).find((ba: any) => ba.branchId === parseInt(selectedProductBranchFilter));
+        const effectiveStat = branchRecord
+          ? branchRecord.availabilityStatus
+          : (product.isAvailable ? product.availabilityStatus : 'completely_unavailable');
+        if (selectedStatusFilter === "available") matchesStatus = effectiveStat === "available";
+        else if (selectedStatusFilter === "unavailable") matchesStatus = effectiveStat === "completely_unavailable";
+        else if (selectedStatusFilter === "out_of_stock_today") matchesStatus = effectiveStat === "out_of_stock_today";
+        else matchesStatus = true;
+      } else {
+        // Global status filter (no branch selected)
+        if (selectedStatusFilter === "available") matchesStatus = product.isAvailable && product.availabilityStatus === "available";
+        else if (selectedStatusFilter === "unavailable") matchesStatus = !product.isAvailable;
+        else if (selectedStatusFilter === "out_of_stock_today") matchesStatus = product.availabilityStatus === "out_of_stock_today";
+        else matchesStatus = true;
+      }
+
       return matchesSearch && matchesCategory && matchesStatus;
     })
     .sort((a: any, b: any) => {
@@ -5021,9 +5062,15 @@ export default function AdminDashboard() {
                             const workerBranchStatuses: any[] | null = branchesEnabled && !isAdmin && product.branchAvailability?.length > 0
                               ? product.branchAvailability
                               : null;
-                            const effectiveStatus = workerBranchStatuses
-                              ? workerBranchStatuses[0].availabilityStatus
-                              : product.availabilityStatus;
+                            // For admins with a specific branch filter selected, show that branch's status
+                            const adminBranchRecord = branchesEnabled && isAdmin && selectedProductBranchFilter !== 'all'
+                              ? (product.branchAvailability || []).find((ba: any) => ba.branchId === parseInt(selectedProductBranchFilter)) || null
+                              : null;
+                            const effectiveStatus = adminBranchRecord
+                              ? adminBranchRecord.availabilityStatus
+                              : workerBranchStatuses
+                                ? workerBranchStatuses[0].availabilityStatus
+                                : product.availabilityStatus;
                             return (
                               <TableRow key={product.id} className={
                               effectiveStatus !== "available"
@@ -5041,14 +5088,23 @@ export default function AdminDashboard() {
                                         variant="ghost"
                                         onClick={() => {
                                           const isActive = effectiveStatus === "available";
+                                          const isBranchMode = branchesEnabled && selectedProductBranchFilter !== 'all';
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
                                           } else {
-                                            updateAvailabilityStatusMutation.mutate({
-                                              id: product.id,
-                                              availabilityStatus: "available"
-                                            });
+                                            if (isBranchMode) {
+                                              updateBranchAvailabilityQuickMutation.mutate({
+                                                productId: product.id,
+                                                branchId: parseInt(selectedProductBranchFilter),
+                                                availabilityStatus: "available"
+                                              });
+                                            } else {
+                                              updateAvailabilityStatusMutation.mutate({
+                                                id: product.id,
+                                                availabilityStatus: "available"
+                                              });
+                                            }
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
@@ -5186,14 +5242,23 @@ export default function AdminDashboard() {
                                         variant="ghost"
                                         onClick={() => {
                                           const isActive = effectiveStatus === "available";
+                                          const isBranchMode = branchesEnabled && selectedProductBranchFilter !== 'all';
                                           if (isActive) {
                                             setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
                                             setIsAvailabilityDialogOpen(true);
                                           } else {
-                                            updateAvailabilityStatusMutation.mutate({
-                                              id: product.id,
-                                              availabilityStatus: "available"
-                                            });
+                                            if (isBranchMode) {
+                                              updateBranchAvailabilityQuickMutation.mutate({
+                                                productId: product.id,
+                                                branchId: parseInt(selectedProductBranchFilter),
+                                                availabilityStatus: "available"
+                                              });
+                                            } else {
+                                              updateAvailabilityStatusMutation.mutate({
+                                                id: product.id,
+                                                availabilityStatus: "available"
+                                              });
+                                            }
                                           }
                                         }}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
@@ -7387,16 +7452,28 @@ export default function AdminDashboard() {
             </AlertDialogTitle>
             <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
               {adminT('products.statusDialog.description')}
+              {branchesEnabled && selectedProductBranchFilter !== 'all' && (() => {
+                const selectedBranchName = (branches as any[]).find((b: any) => b.id === parseInt(selectedProductBranchFilter))?.name;
+                return selectedBranchName ? <span className="block mt-1 font-medium text-orange-600">({selectedBranchName})</span> : null;
+              })()}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-2">
             <AlertDialogAction
               onClick={() => {
                 if (productToToggle) {
-                  updateAvailabilityStatusMutation.mutate({
-                    id: productToToggle.id,
-                    availabilityStatus: "completely_unavailable"
-                  });
+                  if (branchesEnabled && selectedProductBranchFilter !== 'all') {
+                    updateBranchAvailabilityQuickMutation.mutate({
+                      productId: productToToggle.id,
+                      branchId: parseInt(selectedProductBranchFilter),
+                      availabilityStatus: "completely_unavailable"
+                    });
+                  } else {
+                    updateAvailabilityStatusMutation.mutate({
+                      id: productToToggle.id,
+                      availabilityStatus: "completely_unavailable"
+                    });
+                  }
                 }
               }}
               className="btn-system btn-error w-full"
@@ -7406,10 +7483,18 @@ export default function AdminDashboard() {
             <AlertDialogAction
               onClick={() => {
                 if (productToToggle) {
-                  updateAvailabilityStatusMutation.mutate({
-                    id: productToToggle.id,
-                    availabilityStatus: "out_of_stock_today"
-                  });
+                  if (branchesEnabled && selectedProductBranchFilter !== 'all') {
+                    updateBranchAvailabilityQuickMutation.mutate({
+                      productId: productToToggle.id,
+                      branchId: parseInt(selectedProductBranchFilter),
+                      availabilityStatus: "out_of_stock_today"
+                    });
+                  } else {
+                    updateAvailabilityStatusMutation.mutate({
+                      id: productToToggle.id,
+                      availabilityStatus: "out_of_stock_today"
+                    });
+                  }
                 }
               }}
               className="btn-system btn-info w-full"
