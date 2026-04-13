@@ -311,7 +311,7 @@ import {
 
 // Validation schemas
 const productSchema = z.object({
-  name: z.string().optional(),  // Allow empty for translation languages
+  name: z.string().min(1, 'Введите название товара'),
   description: z.string().optional(),
   ingredients: z.string().optional(),
   categoryIds: z.array(z.number()).min(1, "Выберите хотя бы одну категорию"),
@@ -1322,18 +1322,23 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
           : order.user.email || '')
       : order.guestName || '';
 
-    const infoRows = [
+    const makeInfoRows = (rows: string[][]) =>
+      rows.filter(([, v]) => v)
+          .map(([k, v]) => `<tr><td style="${S.label}">${k}:</td><td style="${S.infoTd}">${v}</td></tr>`)
+          .join('');
+
+    const leftInfoRows = makeInfoRows([
       [l('customer'),     customerName],
       [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
       [l('address'),      editedOrder.deliveryAddress || ''],
-      [l('payment'),      order.paymentMethod || ''],
-      [l('status'),       getStatusLabel(editedOrder.status)],
+    ]);
+
+    const rightInfoRows = makeInfoRows([
       [l('deliveryDate'), editedOrder.deliveryDate || ''],
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
-    ]
-      .filter(([, v]) => v)
-      .map(([k, v]) => `<tr><td style="${S.label}">${k}:</td><td style="${S.infoTd}">${v}</td></tr>`)
-      .join('');
+      [l('payment'),      order.paymentMethod || ''],
+      [l('status'),       getStatusLabel(editedOrder.status)],
+    ]);
 
     const contentHtml = `
   <div style="${S.wrap}">
@@ -1342,7 +1347,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       <h1 style="${S.hdrH1}">${l('order')} #${order.id}</h1>
     </div>
 
-    <table style="${S.infoTbl}"><tbody>${infoRows}</tbody></table>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:15px;">
+      <tr>
+        <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'left' : 'right'}:12px;">
+          <table style="${S.infoTbl}"><tbody>${leftInfoRows}</tbody></table>
+        </td>
+        <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'right' : 'left'}:12px;border-${isRTLPrint ? 'right' : 'left'}:1px solid #e5e7eb;">
+          <table style="${S.infoTbl}"><tbody>${rightInfoRows}</tbody></table>
+        </td>
+      </tr>
+    </table>
 
     <table style="${S.prodTbl}">
       <thead><tr>

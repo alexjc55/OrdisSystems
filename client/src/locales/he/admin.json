@@ -3,7 +3,7 @@
   "description": "נהל את הגדרות החנות והתוכן שלך",
   "tabs": {
     "products": "מוצרים",
-    "categories": "קטגוריות", 
+    "categories": "קטגוריות",
     "orders": "הזמנות",
     "users": "משתמשים",
     "themes": "עיצובים",
@@ -20,9 +20,8 @@
     "delete": "מחק",
     "save": "שמור",
     "saving": "שומר...",
-    "cancel": "בטל",
-    "saveChanges": "שמור שינויים",
     "cancel": "ביטול",
+    "saveChanges": "שמור שינויים",
     "update": "עדכן",
     "create": "צור",
     "view": "צפה",
@@ -317,7 +316,6 @@
     "textRightTop": "ימין עליון",
     "textRightCenter": "ימין מרכז",
     "textRightBottom": "ימין תחתון",
-    "buttonText": "טקסט כפתור",
     "buttonTextPlaceholder": "הזינו טקסט כפתור",
     "buttonLinkPlaceholder": "הזינו קישור כפתור",
     "workingHours": "שעות פעילות",
@@ -379,7 +377,8 @@
     "iconVerified": "מאומת",
     "iconGifts": "מתנות",
     "iconPleasure": "הנאה",
-    "advantageDescription": "תיאור יתרון"
+    "advantageDescription": "תיאור יתרון",
+    "nameRequired": "יש להזין שם ערכת נושא"
   },
   "colorLabels": {
     "primaryColor": "צבע עיקרי",
@@ -654,14 +653,13 @@
   },
   "translation": {
     "defaultLanguageMode": "מצב שפת ברירת מחדל: {{language}}",
-    "defaultLanguageDescription": "אתה עורך תוכן בשפת ברירת המחדל של המערכת",
+    "defaultLanguageDescription": "בחר את שפת ברירת המחדל לתוכן החנות",
     "translationMode": "מצב תרגום:",
     "progress": "התקדמות",
     "copyFromDefault": "מלא מ{{language}} ({{count}})",
     "clearAll": "נקה הכל",
     "allFieldsTranslated": "כל השדות תורגמו",
     "defaultLanguage": "שפת ברירת מחדל",
-    "defaultLanguageDescription": "בחר את שפת ברירת המחדל לתוכן החנות",
     "enabledLanguages": "שפות פעילות",
     "enabledLanguagesDescription": "בחר שפות שיהיו זמינות למשתמשים",
     "copySuccess": "שדות הועתקו",
@@ -1244,11 +1242,6 @@
     "phone": "טלפון",
     "totalAmount": "סכום כולל"
   },
-  "roles": {
-    "admin": "מנהל",
-    "worker": "עובד",
-    "customer": "לקוח"
-  },
   "pushNotifications": {
     "title": "התראות Push",
     "description": "ניהול התראות push ללקוחות",
@@ -1285,7 +1278,6 @@
     "importTranslations": "יבוא תרגומים",
     "uploadTranslationsFile": "העלאת קובץ תרגומים",
     "exportInfo": "הקובץ יכיל את כל רכיבי הטקסט: מוצרים, קטגוריות, הגדרות חנות ועיצובים.",
-
     "selectFile": "בחירת קובץ",
     "exportToExcel": "ייצוא לאקסל",
     "importFile": "יבוא קובץ",
@@ -1350,26 +1342,6 @@
     "accessTokenDescription": "קבל טוקן מ-Business Manager → System Users → Generate Token עם הרשאת ads_management. הטוקן מאוחסן בצורה מאובטחת במסד הנתונים."
   },
   "analytics": {
-    "eventsInfo": "מערכת מעקב אנליטיקה",
-    "eventsDescription": "החנות שולחת אוטומטית אירועי אנליטיקה לYandex Metrika, Facebook Pixel ו-Google Analytics כאשר רכישות מושלמות.",
-    "automaticEvents": "אירועים אוטומטיים",
-    "purchaseEvent": "אירוע רכישה (המרה עיקרית)",
-    "orderCompletedEvent": "הזמנה הושלמה",
-    "thankYouPageEvent": "ביקור בעמוד תודה",
-    "eventParameters": "פרמטרי אירוע",
-    "orderIdParam": "מזהה הזמנה",
-    "orderPriceParam": "סכום הזמנה",
-    "currencyParam": "מטבע",
-    "isGuestParam": "הזמנת אורח (true/false)",
-    "setupNote": "💡 הגדרת מטרות בכל הפלטפורמות",
-    "yandexSetup": "Yandex Metrika",
-    "yandexInstructions": "צרו מטרות מסוג 'אירוע JavaScript' עם המזהים: purchase, order_completed, thank_you_page_visited",
-    "facebookSetup": "Facebook Pixel",
-    "facebookInstructions": "אירועי Purchase, PageView ו-Custom נשלחים אוטומטית. הגדירו המרות במנהל האירועים של Facebook",
-    "googleSetup": "Google Analytics 4",
-    "googleInstructions": "אירועי purchase, page_view ואירועים מותאמים יופיעו אוטומטית בדוחות. הגדירו המרות בקטע 'אירועים'"
-  },
-  "analytics": {
     "title": "אנליטיקה",
     "description": "סטטיסטיקות הזמנות והכנסות לתקופות שונות",
     "filters": {
@@ -1429,11 +1401,10 @@
   },
   "closedDates": {
     "title": "ימי סגירה וחגים",
-    "description": "ניהול תאריכים שבהם החנות סגורה למשלוחים",
+    "description": "תיאור",
     "managementDescription": "הוספת תאריכים שבהם המשלוח לא זמין (סופ\"ש, חגים, הפסקות תחזוקה)",
     "addDate": "הוספת תאריך",
     "date": "תאריך",
-    "description": "תיאור",
     "reason": "סיבה (אופציונלי)",
     "descriptionPlaceholder": "לדוגמה: יום חופש",
     "reasonPlaceholder": "מידע נוסף על הסגירה",

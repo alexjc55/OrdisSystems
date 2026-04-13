@@ -913,7 +913,7 @@ export default function Profile() {
                       <TableRow>
                         <TableHead>{t('profile.order')}</TableHead>
                         <TableHead>{t('profile.date')}</TableHead>
-                        <TableHead>{t('status.status')}</TableHead>
+                        <TableHead>{t('profile.status')}</TableHead>
                         <TableHead>{t('profile.items')}</TableHead>
                         <TableHead>{t('profile.amount')}</TableHead>
                       </TableRow>

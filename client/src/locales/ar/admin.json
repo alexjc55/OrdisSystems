@@ -16,7 +16,7 @@
   },
   "actions": {
     "add": "إضافة",
-    "edit": "تحرير", 
+    "edit": "تحرير",
     "delete": "حذف",
     "save": "حفظ",
     "saving": "حفظ...",
@@ -374,7 +374,8 @@
     "iconVerified": "مؤكد",
     "iconGifts": "الهدايا",
     "iconPleasure": "المتعة",
-    "advantageDescription": "وصف الميزة"
+    "advantageDescription": "وصف الميزة",
+    "nameRequired": "يرجى إدخال اسم السمة"
   },
   "colorLabels": {
     "primaryColor": "اللون الأساسي",
@@ -791,8 +792,6 @@
     "unit": "الوحدة",
     "phone": "الهاتف",
     "orders": "الطلبات",
-    "totalAmount": "المبلغ الإجمالي",
-    "phone": "الهاتف",
     "totalAmount": "المبلغ الإجمالي"
   },
   "storeSettings": {
@@ -969,14 +968,13 @@
   },
   "translation": {
     "defaultLanguageMode": "وضع اللغة الافتراضية: {{language}}",
-    "defaultLanguageDescription": "أنت تقوم بتحرير المحتوى باللغة الافتراضية للنظام",
+    "defaultLanguageDescription": "اختر اللغة الافتراضية لمحتوى المتجر",
     "translationMode": "وضع الترجمة:",
     "progress": "التقدم",
     "copyFromDefault": "املأ من {{language}} ({{count}})",
     "clearAll": "مسح الكل",
     "allFieldsTranslated": "تم ترجمة جميع الحقول",
     "defaultLanguage": "اللغة الافتراضية",
-    "defaultLanguageDescription": "اختر اللغة الافتراضية لمحتوى المتجر",
     "enabledLanguages": "اللغات النشطة",
     "enabledLanguagesDescription": "اختر اللغات التي ستكون متاحة للمستخدمين",
     "copySuccess": "تم نسخ الحقول",
@@ -1020,7 +1018,6 @@
     "importTranslations": "استيراد الترجمات",
     "uploadTranslationsFile": "رفع ملف الترجمات",
     "exportInfo": "سيحتوي الملف على جميع عناصر النص: المنتجات والفئات وإعدادات المتجر والقوالب.",
-
     "selectFile": "اختر ملف",
     "exportToExcel": "تصدير إلى اكسل",
     "importFile": "استيراد ملف",
@@ -1049,26 +1046,6 @@
     "step3Description": "ارفع الملف المحرر مرة أخرى إلى النظام",
     "important": "مهم",
     "primaryLanguageFieldsRequired": "حقول اللغة الأساسية يجب أن تكون مملوءة ولا يمكن أن تكون فارغة"
-  },
-  "analytics": {
-    "eventsInfo": "نظام تتبع التحليلات",
-    "eventsDescription": "يرسل المتجر تلقائياً أحداث التحليلات إلى Yandex Metrika و Facebook Pixel و Google Analytics عند إتمام المشتريات.",
-    "automaticEvents": "الأحداث التلقائية",
-    "purchaseEvent": "حدث الشراء (التحويل الرئيسي)",
-    "orderCompletedEvent": "تم إكمال الطلب",
-    "thankYouPageEvent": "زيارة صفحة الشكر",
-    "eventParameters": "معاملات الحدث",
-    "orderIdParam": "معرف الطلب",
-    "orderPriceParam": "مبلغ الطلب",
-    "currencyParam": "العملة",
-    "isGuestParam": "طلب ضيف (true/false)",
-    "setupNote": "💡 إعداد الأهداف في جميع المنصات",
-    "yandexSetup": "Yandex Metrika",
-    "yandexInstructions": "أنشئ أهدافاً من نوع 'حدث JavaScript' بالمعرفات: purchase, order_completed, thank_you_page_visited",
-    "facebookSetup": "Facebook Pixel",
-    "facebookInstructions": "يتم إرسال أحداث Purchase و PageView و Custom تلقائياً. قم بإعداد التحويلات في مدير الأحداث في Facebook",
-    "googleSetup": "Google Analytics 4",
-    "googleInstructions": "ستظهر أحداث purchase و page_view والأحداث المخصصة تلقائياً في التقارير. قم بإعداد التحويلات في قسم 'الأحداث'"
   },
   "analytics": {
     "title": "التحليلات",
@@ -1130,11 +1107,10 @@
   },
   "closedDates": {
     "title": "أيام الإغلاق والعطلات",
-    "description": "إدارة التواريخ التي يكون فيها المتجر مغلقًا للتوصيل",
+    "description": "الوصف",
     "managementDescription": "إضافة التواريخ التي لا يتوفر فيها التوصيل (عطلات نهاية الأسبوع، العطلات، فترات الصيانة)",
     "addDate": "إضافة تاريخ",
     "date": "التاريخ",
-    "description": "الوصف",
     "reason": "السبب (اختياري)",
     "descriptionPlaceholder": "على سبيل المثال: يوم عطلة",
     "reasonPlaceholder": "معلومات إضافية حول الإغلاق",

@@ -3,7 +3,7 @@
   "description": "Управление настройками и содержимым вашего магазина",
   "tabs": {
     "products": "Товары",
-    "categories": "Категории", 
+    "categories": "Категории",
     "orders": "Заказы",
     "users": "Пользователи",
     "themes": "Темы",
@@ -372,7 +372,8 @@
     "iconPleasure": "Удовольствие",
     "advantageDescription": "Описание преимущества",
     "textBanner": "Текст",
-    "imageBanner": "Изображение"
+    "imageBanner": "Изображение",
+    "nameRequired": "Введите название темы"
   },
   "userDeletion": {
     "deleteUser": "Удалить пользователя",
@@ -399,7 +400,7 @@
     "tomorrowDarkColor": "Кнопка 'Завтра' (при наведении)",
     "outOfStockColor": "Кнопка 'Закончилось'",
     "workingHoursIconColor": "Иконка часов работы",
-    "contactsIconColor": "Иконка контактов", 
+    "contactsIconColor": "Иконка контактов",
     "paymentDeliveryIconColor": "Иконка оплаты и доставки",
     "whiteColor": "Белый",
     "gray100Color": "Серый 100 (фон)",
@@ -694,7 +695,20 @@
     "orderTotal": "Сумма заказа",
     "orderStatus": "Статус заказа",
     "customerInfo": "Информация о клиенте",
-    "deliveryInfo": "Информация о доставке",
+    "deliveryInfo": {
+      "title": "Информация о доставке",
+      "description": "Укажите адрес, дату и время доставки",
+      "address": "Адрес доставки",
+      "addressPlaceholder": "Введите полный адрес доставки",
+      "date": "Дата доставки",
+      "time": "Время доставки",
+      "selectDate": "Выберите дату",
+      "selectTime": "Выберите время",
+      "deliveryNotes": "Примечания к доставке",
+      "savedAddresses": "Сохраненные адреса",
+      "newAddress": "Новый адрес",
+      "orNewAddress": "или введите новый адрес"
+    },
     "paymentMethod": "Способ оплаты",
     "orderItems": "Товары заказа",
     "addProduct": "Добавить товар",
@@ -763,20 +777,6 @@
       "phone": "Телефон",
       "createNewClient": "Создать нового клиента",
       "useGuestOrder": "Оформить как гостевой заказ"
-    },
-    "deliveryInfo": {
-      "title": "Информация о доставке",
-      "description": "Укажите адрес, дату и время доставки",
-      "address": "Адрес доставки",
-      "addressPlaceholder": "Введите полный адрес доставки",
-      "date": "Дата доставки",
-      "time": "Время доставки",
-      "selectDate": "Выберите дату",
-      "selectTime": "Выберите время",
-      "deliveryNotes": "Примечания к доставке",
-      "savedAddresses": "Сохраненные адреса",
-      "newAddress": "Новый адрес",
-      "orNewAddress": "или введите новый адрес"
     },
     "productSelection": {
       "title": "Добавление товаров",
@@ -1150,14 +1150,13 @@
   },
   "translation": {
     "defaultLanguageMode": "Режим основного языка: {{language}}",
-    "defaultLanguageDescription": "Вы редактируете контент на основном языке системы",
+    "defaultLanguageDescription": "Выберите основной язык для контента магазина",
     "translationMode": "Режим перевода:",
     "progress": "Прогресс",
     "copyFromDefault": "Заполнить из {{language}} ({{count}})",
     "clearAll": "Очистить все",
     "allFieldsTranslated": "Все поля переведены",
     "defaultLanguage": "Основной язык",
-    "defaultLanguageDescription": "Выберите основной язык для контента магазина",
     "enabledLanguages": "Активные языки",
     "enabledLanguagesDescription": "Выберите языки, которые будут доступны пользователям",
     "copySuccess": "Поля скопированы",
@@ -1201,7 +1200,6 @@
     "importTranslations": "Импорт переводов",
     "uploadTranslationsFile": "Загрузить файл с переводами",
     "exportInfo": "Файл будет содержать все текстовые элементы: товары, категории, настройки магазина и темы.",
-
     "selectFile": "Выберите файл",
     "exportToExcel": "Экспортировать в Excel",
     "importFile": "Импортировать файл",
@@ -1325,11 +1323,10 @@
   },
   "closedDates": {
     "title": "Выходные и праздничные дни",
-    "description": "Управление датами, когда магазин закрыт для доставки",
+    "description": "Описание",
     "managementDescription": "Добавляйте даты, когда доставка невозможна (выходные, праздники, технические перерывы)",
     "addDate": "Добавить дату",
     "date": "Дата",
-    "description": "Описание",
     "reason": "Причина (необязательно)",
     "descriptionPlaceholder": "Например: Выходной день",
     "reasonPlaceholder": "Дополнительная информация о причине закрытия",

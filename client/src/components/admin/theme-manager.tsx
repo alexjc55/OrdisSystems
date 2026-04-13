@@ -848,6 +848,11 @@ export default function ThemeManager() {
   });
 
   const handleCreateTheme = (formData: FormData) => {
+    const nameVal = (formData.get("name") as string || "").trim();
+    if (!nameVal) {
+      toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
+      return;
+    }
     const convertColorToHsl = (color: string | null) => {
       if (!color) return '';
       return color.startsWith('#') ? hexToHsl(color) : color;
@@ -989,6 +994,11 @@ export default function ThemeManager() {
   };
 
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
+    const nameVal = (formData.get("name") as string || "").trim();
+    if (!nameVal) {
+      toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
+      return;
+    }
     const convertColorToHsl = (color: string | null) => {
       if (!color) return '';
       return color.startsWith('#') ? hexToHsl(color) : color;
