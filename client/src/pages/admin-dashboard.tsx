@@ -1320,16 +1320,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     const makeInfoRows = (rows: string[][]) =>
       rows.filter(([, v]) => v)
-          .map(([k, v]) => `<tr><td style="${S.label}">${k}:</td><td style="${S.infoTd}word-break:break-word;max-width:0;">${v}</td></tr>`)
+          .map(([k, v]) => `<tr>
+            <td class="info-td-no-border" style="${S.label}">${k}:</td>
+            <td class="info-td-no-border" style="${S.infoTd}word-wrap:break-word;overflow-wrap:break-word;">${v}</td>
+          </tr>`)
           .join('');
 
-    const leftInfoRows = makeInfoRows([
+    const allInfoRows = makeInfoRows([
       [l('customer'),     customerName],
       [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
       [l('address'),      editedOrder.deliveryAddress || ''],
-    ]);
-
-    const rightInfoRows = makeInfoRows([
       [l('deliveryDate'), editedOrder.deliveryDate || ''],
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
       [l('payment'),      order.paymentMethod || ''],
@@ -1337,22 +1337,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     ]);
 
     const contentHtml = `
-  <div style="${S.wrap}">
+  <div style="${S.wrap}" id="order-print-content">
     <div style="${S.hdr}">
       <p style="${S.hdrSub}">${storeName}</p>
       <h1 style="${S.hdrH1}">${l('order')} #${order.id}</h1>
     </div>
 
-    <table style="width:100%;border-collapse:collapse;margin-bottom:15px;">
-      <tr>
-        <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'left' : 'right'}:12px;">
-          <table style="${S.infoTbl}"><tbody>${leftInfoRows}</tbody></table>
-        </td>
-        <td style="width:50%;vertical-align:top;padding-${isRTLPrint ? 'right' : 'left'}:12px;border-${isRTLPrint ? 'right' : 'left'}:1px solid #e5e7eb;">
-          <table style="${S.infoTbl}"><tbody>${rightInfoRows}</tbody></table>
-        </td>
-      </tr>
-    </table>
+    <table style="${S.infoTbl}"><tbody>${allInfoRows}</tbody></table>
 
     <table style="${S.prodTbl}">
       <thead><tr>
@@ -1411,6 +1402,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     const onPopState = () => {
       // Hardware/gesture back button pressed — browser already went back,
       // just close the overlay (no extra history.back() needed)
+      document.getElementById('order-print-style')?.remove();
       overlay.remove();
       window.removeEventListener('popstate', onPopState);
       dispatchReopen();
@@ -1423,6 +1415,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     const closeOverlay = () => {
       // "← Back to Order" button clicked: remove listener first so the
       // upcoming history.back() doesn't re-trigger onPopState
+      document.getElementById('order-print-style')?.remove();
       window.removeEventListener('popstate', onPopState);
       overlay.remove();
       // Pop the extra history entry we pushed when the overlay opened
@@ -1432,118 +1425,43 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     const closeBtnEl = document.getElementById('print-close-btn');
     const printBtnEl = document.getElementById('print-do-btn');
+    // Inject @media print CSS: hides everything except the overlay,
+    // hides the toolbar, forces the overlay to position:static so it
+    // fills the page. Works on mobile Chrome/Safari without any popup.
+    const printStyle = document.createElement('style');
+    printStyle.id = 'order-print-style';
+    printStyle.textContent = `
+      @media print {
+        @page { margin: 1cm; }
+        body > *:not(#order-print-overlay) { display: none !important; }
+        #order-print-bar { display: none !important; }
+        #order-print-overlay {
+          position: static !important;
+          overflow: visible !important;
+          height: auto !important;
+          z-index: auto !important;
+        }
+        #order-print-content table { border-collapse: collapse !important; }
+        #order-print-content td,
+        #order-print-content th { border: 1px solid #999 !important; }
+        #order-print-content .info-td-no-border { border: none !important; }
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    `;
+    document.head.appendChild(printStyle);
+
+    const removePrintStyle = () => {
+      document.getElementById('order-print-style')?.remove();
+    };
+
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
-      // Build a self-contained HTML document with all styles embedded.
-      // Using a hidden <iframe> keeps us inside the current page (no popup),
-      // works on iOS PWA, Android Chrome, and desktop browsers.
-      const printCss = `
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-          font-family: Arial, sans-serif;
-          font-size: 13px;
-          color: #333;
-          direction: ${isRTLPrint ? 'rtl' : 'ltr'};
-          padding: 16px;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th {
-          padding: 6px 8px;
-          border: 1px solid #999;
-          background: #f0f0f0;
-          font-size: 12px;
-          font-weight: bold;
-          text-align: ${isRTLPrint ? 'right' : 'left'};
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-        td { padding: 6px 8px; border: 1px solid #ccc; vertical-align: top; font-size: 12px; }
-        .info-label { font-weight: bold; white-space: nowrap; padding: 3px 10px 3px 6px; vertical-align: top; }
-        .info-val { padding: 3px 6px; vertical-align: top; word-break: break-word; }
-        .info-tbl { width: 100%; border-collapse: collapse; margin-bottom: 0; font-size: 12px; }
-        .info-tbl td { border: none; }
-        .hdr { text-align: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #333; }
-        .hdr h1 { font-size: 18px; margin: 4px 0 0; }
-        .hdr p { font-size: 13px; color: #666; }
-        .two-col { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-        .two-col td { border: none !important; padding: 0 !important; vertical-align: top; }
-        .col-left { width: 48%; padding-${isRTLPrint ? 'left' : 'right'}: 12px !important; }
-        .col-right { width: 52%; padding-${isRTLPrint ? 'right' : 'left'}: 12px !important; border-${isRTLPrint ? 'right' : 'left'}: 1px solid #ccc !important; }
-        .totals { margin-bottom: 14px; }
-        .tot-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
-        .tot-fin { display: flex; justify-content: space-between; padding: 6px 0 3px; font-size: 15px; font-weight: bold; border-top: 2px solid #333; margin-top: 4px; }
-        .notes-box { background: #f9f9f9; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; font-size: 12px; }
-        .comments-box { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; min-height: 60px; }
-        .comments-box h3 { font-size: 13px; margin: 0 0 6px; padding: 0 0 4px; border-bottom: 1px solid #eee; }
-        .prod-table thead th { background: #f0f0f0; }
-        .center { text-align: center; }
-        @media print { @page { margin: 1cm; } }
-      `;
-
-      const makeRow = (k: string, v: string) =>
-        `<tr><td class="info-label">${k}:</td><td class="info-val">${v}</td></tr>`;
-      const leftRows = [
-        [l('customer'),     customerName],
-        [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
-        [l('address'),      editedOrder.deliveryAddress || ''],
-      ].filter(([, v]) => v).map(([k, v]) => makeRow(k, v)).join('');
-      const rightRows = [
-        [l('deliveryDate'), editedOrder.deliveryDate || ''],
-        [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
-        [l('payment'),      order.paymentMethod || ''],
-        [l('status'),       getStatusLabel(editedOrder.status)],
-      ].filter(([, v]) => v).map(([k, v]) => makeRow(k, v)).join('');
-
-      const printDoc = `<!DOCTYPE html><html lang="${currentLang}" dir="${isRTLPrint ? 'rtl' : 'ltr'}">
-<head><meta charset="utf-8"><title>${l('order')} #${order.id}</title>
-<style>${printCss}</style></head>
-<body>
-  <div class="hdr">
-    <p>${storeName}</p>
-    <h1>${l('order')} #${order.id}</h1>
-  </div>
-  <table class="two-col"><tr>
-    <td class="col-left"><table class="info-tbl"><tbody>${leftRows}</tbody></table></td>
-    <td class="col-right"><table class="info-tbl"><tbody>${rightRows}</tbody></table></td>
-  </tr></table>
-  <table class="prod-table">
-    <thead><tr>
-      <th style="width:36px" class="center">${l('check')}</th>
-      <th>${l('product')}</th>
-      <th style="width:70px" class="center">${l('qty')}</th>
-      <th style="width:70px" class="center">${l('price')}</th>
-      <th style="width:100px">${l('notes')}</th>
-    </tr></thead>
-    <tbody>${itemsRows}</tbody>
-  </table>
-  <div class="totals">
-    <div class="tot-row"><span>${l('subtotal')}:</span><span>${subtotal.toFixed(2)}${currency}</span></div>
-    ${discountAmount > 0 ? `<div class="tot-row" style="color:#e53e3e"><span>${l('discount')}:</span><span>-${discountAmount.toFixed(2)}${currency}</span></div>` : ''}
-    ${deliveryFee > 0 ? `<div class="tot-row"><span>${l('delivery')}:</span><span>${deliveryFee.toFixed(2)}${currency}</span></div>` : ''}
-    <div class="tot-fin"><span>${l('total')}:</span><span>${finalTotal.toFixed(2)}${currency}</span></div>
-  </div>
-  ${editedOrder.notes ? `<div class="notes-box"><strong>${l('orderNotes')}:</strong> ${editedOrder.notes}</div>` : ''}
-  <div class="comments-box"><h3>${l('generalComments')}</h3></div>
-</body></html>`;
-
-      // Remove any leftover iframe from a previous print
-      document.getElementById('order-print-frame')?.remove();
-      const iframe = document.createElement('iframe');
-      iframe.id = 'order-print-frame';
-      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:210mm;height:297mm;border:none;visibility:hidden;';
-      document.body.appendChild(iframe);
-      const iframeDoc = iframe.contentWindow!.document;
-      iframeDoc.open();
-      iframeDoc.write(printDoc);
-      iframeDoc.close();
-      // Print immediately — no setTimeout — stays within user-gesture chain
-      iframe.contentWindow!.focus();
-      iframe.contentWindow!.print();
-      // Clean up after print dialog closes (afterprint or fallback)
-      const cleanup = () => { document.getElementById('order-print-frame')?.remove(); };
-      iframe.contentWindow!.addEventListener('afterprint', cleanup, { once: true });
-      setTimeout(cleanup, 30_000);
+      // window.print() works on ALL platforms including mobile Chrome and iOS Safari PWA.
+      // The @media print CSS injected above ensures only the overlay content is printed.
+      window.print();
     });
+    window.addEventListener('afterprint', removePrintStyle, { once: true });
   };
 
   const handleSave = () => {
