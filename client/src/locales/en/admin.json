@@ -249,10 +249,14 @@
       "deleteConfirm": "Are you sure you want to delete this product?"
     },
     "statusDialog": {
-      "title": "Change Product Status",
-      "description": "Select new status for the product",
+      "title": "Change Product Availability",
+      "description": "Select status for the product",
       "keep": "Available tomorrow",
-      "disable": "Disable product"
+      "disable": "Disable product",
+      "applyToAll": "Apply to all branches",
+      "statusAvailable": "Available",
+      "statusOutOfStockToday": "Available tomorrow",
+      "statusUnavailable": "Unavailable"
     },
     "notifications": {
       "productCreated": "Product Created",

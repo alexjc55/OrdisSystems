@@ -517,10 +517,14 @@
       "productUpdatedDesc": "تم حفظ تغييرات المنتج بنجاح"
     },
     "statusDialog": {
-      "title": "تغيير حالة المنتج",
-      "description": "اختر الحالة الجديدة للمنتج",
+      "title": "تغيير توفر المنتج",
+      "description": "اختر الحالة للمنتج",
       "keep": "متاح غداً",
-      "disable": "تعطيل المنتج"
+      "disable": "تعطيل المنتج",
+      "applyToAll": "تطبيق على جميع الفروع",
+      "statusAvailable": "متاح",
+      "statusOutOfStockToday": "متاح غداً",
+      "statusUnavailable": "غير متاح"
     },
     "dialog": {
       "nameLabel": "اسم المنتج",

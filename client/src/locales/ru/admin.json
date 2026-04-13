@@ -564,10 +564,14 @@
       "deleteConfirm": "Вы уверены, что хотите удалить этот товар?"
     },
     "statusDialog": {
-      "title": "Изменить статус товара",
-      "description": "Выберите новый статус для товара",
+      "title": "Изменить доступность товара",
+      "description": "Выберите статус для товара",
       "keep": "Доступен на завтра",
-      "disable": "Отключить товар"
+      "disable": "Отключить товар",
+      "applyToAll": "Применить ко всем отделениям",
+      "statusAvailable": "Доступен",
+      "statusOutOfStockToday": "Доступен на завтра",
+      "statusUnavailable": "Недоступен"
     },
     "notifications": {
       "productCreated": "Товар создан",

@@ -38,6 +38,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -3436,9 +3437,14 @@ export default function AdminDashboard() {
   const [isOptimizingImages, setIsOptimizingImages] = useState(false);
   const [optimizationResults, setOptimizationResults] = useState<any>(null);
 
-  // Availability confirmation dialog state
-  const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] = useState(false);
-  const [productToToggle, setProductToToggle] = useState<{ id: number; currentStatus: boolean } | null>(null);
+  // Availability modal state
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+  const [modalProductId, setModalProductId] = useState<number | null>(null);
+  const [applyToAllBranches, setApplyToAllBranches] = useState(true);
+  const [globalStatusChoice, setGlobalStatusChoice] = useState("completely_unavailable");
+  const [branchStatusChoices, setBranchStatusChoices] = useState<Record<number, string>>({});
+  const [isLoadingModalBranchData, setIsLoadingModalBranchData] = useState(false);
+  const [isSavingAvailability, setIsSavingAvailability] = useState(false);
 
   // Pagination state
   const [productsPage, setProductsPage] = useState(1);
@@ -4026,8 +4032,8 @@ export default function AdminDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-      setIsAvailabilityDialogOpen(false);
-      setProductToToggle(null);
+      setIsAvailabilityModalOpen(false);
+      setModalProductId(null);
       toast({ title: adminT('products.notifications.statusUpdated'), description: adminT('products.notifications.statusUpdatedDesc') });
     },
     onError: (error: any) => {
@@ -4070,8 +4076,8 @@ export default function AdminDashboard() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-      setIsAvailabilityDialogOpen(false);
-      setProductToToggle(null);
+      setIsAvailabilityModalOpen(false);
+      setModalProductId(null);
       toast({ title: adminT('products.notifications.statusUpdated'), description: adminT('products.notifications.statusUpdatedDesc') });
     },
     onError: (error: any) => {
@@ -4436,6 +4442,94 @@ export default function AdminDashboard() {
       </div>
     );
   }
+
+  const openAvailabilityModal = async (product: any, currentEffectiveStatus: string) => {
+    const defaultNewStatus = currentEffectiveStatus === "available" ? "completely_unavailable" : "available";
+    setModalProductId(product.id);
+    setGlobalStatusChoice(defaultNewStatus);
+    setApplyToAllBranches(true);
+    setIsAvailabilityModalOpen(true);
+
+    if (branchesEnabled && (branches as any[]).length > 0) {
+      setIsLoadingModalBranchData(true);
+      try {
+        const res = await fetch(`/api/products/${product.id}`);
+        const data = await res.json();
+        const branchAvail: any[] = data.branchAvailability || [];
+        const choices: Record<number, string> = {};
+        (branches as any[]).filter((b: any) => b.isActive).forEach((branch: any) => {
+          const override = branchAvail.find((ba: any) => ba.branchId === branch.id);
+          choices[branch.id] = override
+            ? override.availabilityStatus
+            : (product.isAvailable ? product.availabilityStatus : 'completely_unavailable');
+        });
+        setBranchStatusChoices(choices);
+      } catch {
+        const choices: Record<number, string> = {};
+        (branches as any[]).filter((b: any) => b.isActive).forEach((b: any) => {
+          choices[b.id] = product.isAvailable ? product.availabilityStatus : 'completely_unavailable';
+        });
+        setBranchStatusChoices(choices);
+      } finally {
+        setIsLoadingModalBranchData(false);
+      }
+    }
+  };
+
+  const handleSaveAvailability = async () => {
+    if (!modalProductId || isSavingAvailability) return;
+    setIsSavingAvailability(true);
+    try {
+      if (!branchesEnabled || applyToAllBranches) {
+        // Update global availability status
+        const isAvail = globalStatusChoice !== 'completely_unavailable';
+        await fetch(`/api/products/${modalProductId}/availability`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ availabilityStatus: globalStatusChoice, isAvailable: isAvail }),
+        });
+        // When branches enabled: also update all branch records so overrides don't contradict the global status
+        if (branchesEnabled) {
+          const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
+          if (activeBranches.length > 0) {
+            const branchUpdates = activeBranches.map((b: any) => ({
+              branchId: b.id,
+              availabilityStatus: globalStatusChoice,
+              isAvailable: isAvail,
+            }));
+            await fetch(`/api/products/${modalProductId}/branch-availability`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(branchUpdates),
+            });
+          }
+        }
+      } else {
+        // Per-branch update
+        const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
+        const branchUpdates = activeBranches.map((b: any) => ({
+          branchId: b.id,
+          availabilityStatus: branchStatusChoices[b.id] || 'available',
+          isAvailable: (branchStatusChoices[b.id] || 'available') !== 'completely_unavailable',
+        }));
+        const res = await fetch(`/api/products/${modalProductId}/branch-availability`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(branchUpdates),
+        });
+        if (!res.ok) throw new Error('Failed');
+      }
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setIsAvailabilityModalOpen(false);
+      setModalProductId(null);
+      toast({ title: adminT('products.notifications.statusUpdated'), description: adminT('products.notifications.statusUpdatedDesc') });
+    } catch {
+      toast({ title: adminT('actions.error'), description: adminT('products.notifications.statusError'), variant: "destructive" });
+    } finally {
+      setIsSavingAvailability(false);
+    }
+  };
 
   function getUnitDisplay(unit: string) {
     switch (unit) {
@@ -5086,27 +5180,7 @@ export default function AdminDashboard() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => {
-                                          const isActive = effectiveStatus === "available";
-                                          const isBranchMode = branchesEnabled && selectedProductBranchFilter !== 'all';
-                                          if (isActive) {
-                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                            setIsAvailabilityDialogOpen(true);
-                                          } else {
-                                            if (isBranchMode) {
-                                              updateBranchAvailabilityQuickMutation.mutate({
-                                                productId: product.id,
-                                                branchId: parseInt(selectedProductBranchFilter),
-                                                availabilityStatus: "available"
-                                              });
-                                            } else {
-                                              updateAvailabilityStatusMutation.mutate({
-                                                id: product.id,
-                                                availabilityStatus: "available"
-                                              });
-                                            }
-                                          }
-                                        }}
+                                        onClick={() => openAvailabilityModal(product, effectiveStatus)}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
                                           effectiveStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
@@ -5240,27 +5314,7 @@ export default function AdminDashboard() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => {
-                                          const isActive = effectiveStatus === "available";
-                                          const isBranchMode = branchesEnabled && selectedProductBranchFilter !== 'all';
-                                          if (isActive) {
-                                            setProductToToggle({ id: product.id, currentStatus: product.isAvailable });
-                                            setIsAvailabilityDialogOpen(true);
-                                          } else {
-                                            if (isBranchMode) {
-                                              updateBranchAvailabilityQuickMutation.mutate({
-                                                productId: product.id,
-                                                branchId: parseInt(selectedProductBranchFilter),
-                                                availabilityStatus: "available"
-                                              });
-                                            } else {
-                                              updateAvailabilityStatusMutation.mutate({
-                                                id: product.id,
-                                                availabilityStatus: "available"
-                                              });
-                                            }
-                                          }
-                                        }}
+                                        onClick={() => openAvailabilityModal(product, effectiveStatus)}
                                         className={`h-10 w-10 p-0 rounded-lg transition-all duration-200 ${
                                           effectiveStatus === "available"
                                             ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
@@ -7443,67 +7497,133 @@ export default function AdminDashboard() {
         adminT={adminT}
       />
 
-      {/* Availability Confirmation Dialog */}
-      <AlertDialog open={isAvailabilityDialogOpen} onOpenChange={setIsAvailabilityDialogOpen}>
-        <AlertDialogContent className={isRTL ? 'rtl' : ''}>
-          <AlertDialogHeader>
-            <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>
+      {/* Availability Modal */}
+      <Dialog open={isAvailabilityModalOpen} onOpenChange={(open) => { if (!open) { setIsAvailabilityModalOpen(false); setModalProductId(null); } }}>
+        <DialogContent className={`max-w-md ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+          <DialogHeader>
+            <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
               {adminT('products.statusDialog.title')}
-            </AlertDialogTitle>
-            <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>
+            </DialogTitle>
+            <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
               {adminT('products.statusDialog.description')}
-              {branchesEnabled && selectedProductBranchFilter !== 'all' && (() => {
-                const selectedBranchName = (branches as any[]).find((b: any) => b.id === parseInt(selectedProductBranchFilter))?.name;
-                return selectedBranchName ? <span className="block mt-1 font-medium text-orange-600">({selectedBranchName})</span> : null;
-              })()}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-            <AlertDialogAction
-              onClick={() => {
-                if (productToToggle) {
-                  if (branchesEnabled && selectedProductBranchFilter !== 'all') {
-                    updateBranchAvailabilityQuickMutation.mutate({
-                      productId: productToToggle.id,
-                      branchId: parseInt(selectedProductBranchFilter),
-                      availabilityStatus: "completely_unavailable"
-                    });
-                  } else {
-                    updateAvailabilityStatusMutation.mutate({
-                      id: productToToggle.id,
-                      availabilityStatus: "completely_unavailable"
-                    });
-                  }
-                }
-              }}
-              className="btn-system btn-error w-full"
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Apply to all branches checkbox — shown only when branches are enabled */}
+            {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 0 && (
+              <div className={`flex items-center gap-3 p-3 bg-gray-50 rounded-lg border ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Checkbox
+                  id="apply-to-all-branches"
+                  checked={applyToAllBranches}
+                  onCheckedChange={(checked) => setApplyToAllBranches(!!checked)}
+                />
+                <label htmlFor="apply-to-all-branches" className="text-sm font-medium cursor-pointer select-none">
+                  {adminT('products.statusDialog.applyToAll')}
+                </label>
+              </div>
+            )}
+
+            {/* Global status selector — shown when applyToAll or branches not enabled */}
+            {(!branchesEnabled || applyToAllBranches) && (
+              <div className="space-y-2">
+                <Select value={globalStatusChoice} onValueChange={setGlobalStatusChoice}>
+                  <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                    <SelectItem value="available">
+                      <span className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+                        {adminT('products.statusDialog.statusAvailable')}
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="out_of_stock_today">
+                      <span className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-yellow-500" />
+                        {adminT('products.statusDialog.statusOutOfStockToday')}
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="completely_unavailable">
+                      <span className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-gray-400" />
+                        {adminT('products.statusDialog.statusUnavailable')}
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Per-branch selectors — shown when branches enabled and applyToAll is unchecked */}
+            {branchesEnabled && !applyToAllBranches && (
+              <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+                {isLoadingModalBranchData ? (
+                  <div className="flex justify-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900" />
+                  </div>
+                ) : (
+                  (branches as any[]).filter((b: any) => b.isActive).map((branch: any) => (
+                    <div key={branch.id} className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex-1 text-sm font-medium truncate">{branch.name}</div>
+                      <Select
+                        value={branchStatusChoices[branch.id] || 'available'}
+                        onValueChange={(val) => setBranchStatusChoices(prev => ({ ...prev, [branch.id]: val }))}
+                      >
+                        <SelectTrigger className="w-44 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                          <SelectItem value="available">
+                            <span className="flex items-center gap-2">
+                              <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
+                              {adminT('products.statusDialog.statusAvailable')}
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="out_of_stock_today">
+                            <span className="flex items-center gap-2">
+                              <span className="inline-block w-2 h-2 rounded-full bg-yellow-500" />
+                              {adminT('products.statusDialog.statusOutOfStockToday')}
+                            </span>
+                          </SelectItem>
+                          <SelectItem value="completely_unavailable">
+                            <span className="flex items-center gap-2">
+                              <span className="inline-block w-2 h-2 rounded-full bg-gray-400" />
+                              {adminT('products.statusDialog.statusUnavailable')}
+                            </span>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className={`flex gap-2 sm:gap-2 ${isRTL ? 'flex-row-reverse sm:flex-row-reverse' : 'flex-row'}`}>
+            <Button
+              variant="outline"
+              onClick={() => { setIsAvailabilityModalOpen(false); setModalProductId(null); }}
+              className="flex-1"
             >
-              {adminT('products.statusDialog.disable')}
-            </AlertDialogAction>
-            <AlertDialogAction
-              onClick={() => {
-                if (productToToggle) {
-                  if (branchesEnabled && selectedProductBranchFilter !== 'all') {
-                    updateBranchAvailabilityQuickMutation.mutate({
-                      productId: productToToggle.id,
-                      branchId: parseInt(selectedProductBranchFilter),
-                      availabilityStatus: "out_of_stock_today"
-                    });
-                  } else {
-                    updateAvailabilityStatusMutation.mutate({
-                      id: productToToggle.id,
-                      availabilityStatus: "out_of_stock_today"
-                    });
-                  }
-                }
-              }}
-              className="btn-system btn-info w-full"
+              {adminT('actions.cancel')}
+            </Button>
+            <Button
+              onClick={handleSaveAvailability}
+              disabled={isSavingAvailability || isLoadingModalBranchData}
+              className="flex-1"
             >
-              {adminT('products.statusDialog.keep')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              {isSavingAvailability ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                  {adminT('actions.save')}
+                </span>
+              ) : adminT('actions.save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Create Order Dialog */}
       {showCreateOrderDialog && (

@@ -795,10 +795,14 @@
       "recommendedSize": "גודל מומלץ: 400×300 פיקסלים (יחס 4:3)"
     },
     "statusDialog": {
-      "title": "להשבית את המוצר לחלוטין או להשאיר להזמנה ליום אחר?",
-      "description": "בחר פעולה עבור מוצר זה",
+      "title": "שינוי זמינות מוצר",
+      "description": "בחר סטטוס למוצר",
       "disable": "השבת",
-      "keep": "זמין מחר"
+      "keep": "זמין מחר",
+      "applyToAll": "החל על כל הסניפים",
+      "statusAvailable": "זמין",
+      "statusOutOfStockToday": "זמין מחר",
+      "statusUnavailable": "לא זמין"
     },
     "notifications": {
       "productCreated": "מוצר נוצר",
