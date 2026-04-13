@@ -431,7 +431,7 @@ const generateAdminDeliveryTimes = (workingHours: any, selectedDate: string, wee
 };
 
 // OrderCard component for kanban view
-function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
+function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder, branchName }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void, branchName?: string }) {
   return (
     <div
       draggable={true}
@@ -454,12 +454,12 @@ function DraggableOrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { 
         backfaceVisibility: 'hidden' // Improve rendering performance
       }}
     >
-      <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} />
+      <OrderCard order={order} onEdit={onEdit} onStatusChange={onStatusChange} onCancelOrder={onCancelOrder} branchName={branchName} />
     </div>
   );
 }
 
-const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange, onCancelOrder }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void }) {
+const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange, onCancelOrder, branchName }: { order: any, onEdit: (order: any) => void, onStatusChange: (data: { orderId: number, status: string }) => void, onCancelOrder: (orderId: number) => void, branchName?: string }) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
@@ -512,9 +512,17 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
           {/* Order Header */}
           <div className="flex items-center justify-between">
             <div className="font-bold text-sm text-primary">#{order.id}</div>
-            <Badge className={`text-xs px-2 py-1 ${getStatusColor(order.status)}`}>
-              {getStatusLabel(order.status)}
-            </Badge>
+            <div className="flex items-center gap-1">
+              {branchName && (
+                <Badge variant="outline" className="text-xs px-1.5 py-0.5 border-purple-200 text-purple-700 bg-purple-50">
+                  <Building2 className="h-2.5 w-2.5 mr-0.5" />
+                  {branchName}
+                </Badge>
+              )}
+              <Badge className={`text-xs px-2 py-1 ${getStatusColor(order.status)}`}>
+                {getStatusLabel(order.status)}
+              </Badge>
+            </div>
           </div>
 
           {/* Customer Info */}
@@ -3231,6 +3239,7 @@ export default function AdminDashboard() {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
+  const [selectedProductBranchFilter, setSelectedProductBranchFilter] = useState("all");
 
   const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -3589,7 +3598,7 @@ export default function AdminDashboard() {
   });
 
   const { data: productsResponse, isLoading: productsLoading } = useQuery({
-    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/products", productsPage, searchQuery, selectedCategoryFilter, selectedStatusFilter, sortField, sortDirection, storeSettings?.defaultItemsPerPage, selectedProductBranchFilter],
     queryFn: async () => {
       const limit = storeSettings?.defaultItemsPerPage || 10;
       const params = new URLSearchParams({
@@ -3601,6 +3610,9 @@ export default function AdminDashboard() {
         sortField,
         sortDirection
       });
+      if (selectedProductBranchFilter !== 'all') {
+        params.set('branchId', selectedProductBranchFilter);
+      }
       const response = await fetch(`/api/admin/products?${params}`);
       if (!response.ok) throw new Error('Failed to fetch products');
       return response.json();
@@ -3983,7 +3995,7 @@ export default function AdminDashboard() {
   });
 
   const saveProductBranchAvailabilityMutation = useMutation({
-    mutationFn: async ({ id, branchAvailability }: { id: number; branchAvailability: { branchId: number; isAvailable: boolean }[] }) => {
+    mutationFn: async ({ id, branchAvailability }: { id: number; branchAvailability: { branchId: number; availabilityStatus: string; isAvailable: boolean }[] }) => {
       const response = await fetch(`/api/admin/products/${id}/branch-availability`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -4876,6 +4888,22 @@ export default function AdminDashboard() {
                         </SelectContent>
                       </Select>
                     </div>
+                    {branchesEnabled && (branches as any[]).length > 0 && (
+                      <div className="relative min-w-[160px]">
+                        <Building2 className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+                        <Select value={selectedProductBranchFilter} onValueChange={setSelectedProductBranchFilter}>
+                          <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
+                            <SelectValue placeholder={adminT('branches.allBranches')} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">{adminT('branches.allBranches')}</SelectItem>
+                            {(branches as any[]).filter((b: any) => b.isActive).map((b: any) => (
+                              <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -5503,6 +5531,12 @@ export default function AdminDashboard() {
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-32`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
+                                {branchesEnabled && (branches as any[]).length > 0 && (
+                                  <TableHead 
+                                    className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-28`}
+                                    style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                  >{adminT('branches.title')}</TableHead>
+                                )}
                                 <TableHead 
                                   className={`text-xs sm:text-sm table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-24 sm:w-36`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
@@ -5712,6 +5746,18 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
+                                  {branchesEnabled && (branches as any[]).length > 0 && (
+                                    <TableCell
+                                      className={`text-xs sm:text-sm hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
+                                      style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
+                                    >
+                                      {order.branchId && (
+                                        <Badge variant="outline" className="text-xs border-purple-200 text-purple-700 bg-purple-50">
+                                          {(branches as any[]).find((b: any) => b.id === order.branchId)?.name || `#${order.branchId}`}
+                                        </Badge>
+                                      )}
+                                    </TableCell>
+                                  )}
                                   <TableCell 
                                     className={`text-sm sm:text-sm table-cell ${isRTL ? 'text-right' : 'text-center'}`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
@@ -5907,7 +5953,8 @@ export default function AdminDashboard() {
                                   order={order} 
                                   onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
-                                  onCancelOrder={handleOrderCancellation} 
+                                  onCancelOrder={handleOrderCancellation}
+                                  branchName={branchesEnabled && order.branchId ? (branches as any[]).find((b: any) => b.id === order.branchId)?.name : undefined}
                                 />
                               ))}
                             </div>
@@ -5939,7 +5986,8 @@ export default function AdminDashboard() {
                                   order={order} 
                                   onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
-                                  onCancelOrder={handleOrderCancellation} 
+                                  onCancelOrder={handleOrderCancellation}
+                                  branchName={branchesEnabled && order.branchId ? (branches as any[]).find((b: any) => b.id === order.branchId)?.name : undefined}
                                 />
                               ))}
                             </div>
@@ -5971,7 +6019,8 @@ export default function AdminDashboard() {
                                   order={order} 
                                   onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
-                                  onCancelOrder={handleOrderCancellation} 
+                                  onCancelOrder={handleOrderCancellation}
+                                  branchName={branchesEnabled && order.branchId ? (branches as any[]).find((b: any) => b.id === order.branchId)?.name : undefined}
                                 />
                               ))}
                             </div>
@@ -6003,7 +6052,8 @@ export default function AdminDashboard() {
                                   order={order} 
                                   onEdit={handleOrderEdit}
                                   onStatusChange={updateOrderStatusMutation.mutate} 
-                                  onCancelOrder={handleOrderCancellation} 
+                                  onCancelOrder={handleOrderCancellation}
+                                  branchName={branchesEnabled && order.branchId ? (branches as any[]).find((b: any) => b.id === order.branchId)?.name : undefined}
                                 />
                               ))}
                             </div>
@@ -6036,7 +6086,8 @@ export default function AdminDashboard() {
                                     order={order} 
                                     onEdit={handleOrderEdit}
                                     onStatusChange={updateOrderStatusMutation.mutate} 
-                                    onCancelOrder={handleOrderCancellation} 
+                                    onCancelOrder={handleOrderCancellation}
+                                    branchName={branchesEnabled && order.branchId ? (branches as any[]).find((b: any) => b.id === order.branchId)?.name : undefined}
                                   />
                                 ))}
                               </div>
@@ -6067,7 +6118,8 @@ export default function AdminDashboard() {
                                     order={order} 
                                     onEdit={handleOrderEdit}
                                     onStatusChange={updateOrderStatusMutation.mutate} 
-                                    onCancelOrder={handleOrderCancellation} 
+                                    onCancelOrder={handleOrderCancellation}
+                                    branchName={branchesEnabled && order.branchId ? (branches as any[]).find((b: any) => b.id === order.branchId)?.name : undefined}
                                   />
                                 ))}
                               </div>
@@ -7161,9 +7213,21 @@ export default function AdminDashboard() {
             try {
               const createdProduct = await createProductMutation.mutateAsync(productData);
               if (branchesEnabled && bav !== undefined && createdProduct?.id) {
-                saveProductBranchAvailabilityMutation.mutate({ id: createdProduct.id, branchAvailability: bav });
+                try {
+                  await saveProductBranchAvailabilityMutation.mutateAsync({ id: createdProduct.id, branchAvailability: bav });
+                } catch (branchErr) {
+                  console.error('Failed to save branch availability after product creation:', branchErr);
+                  toast({
+                    title: adminT('actions.error'),
+                    description: adminT('branches.createError'),
+                    variant: 'destructive',
+                  });
+                }
               }
-            } catch (_) {}
+            } catch (productErr) {
+              // Product creation error is already handled by createProductMutation.onError
+              console.error('Product creation failed:', productErr);
+            }
           }
         }}
         onDelete={(productId: number) => {
@@ -7359,7 +7423,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   });
   
   const [formData, setFormData] = useState<any>({});
-  const [branchAvailability, setBranchAvailability] = useState<Record<number, boolean>>({});
+  const [branchAvailability, setBranchAvailability] = useState<Record<number, string>>({});
   
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -7398,11 +7462,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           discountValue: product.discountValue?.toString() || "",
         };
         setFormData(initialData);
-        // Initialize branch availability from product data
+        // Initialize branch availability from product data (3-state: available, out_of_stock_today, completely_unavailable)
         if (branchesEnabled && product.branchAvailability) {
-          const avail: Record<number, boolean> = {};
+          const avail: Record<number, string> = {};
           (product.branchAvailability as any[]).forEach((ba: any) => {
-            avail[ba.branchId] = ba.isAvailable;
+            avail[ba.branchId] = ba.availabilityStatus || (ba.isAvailable ? 'available' : 'completely_unavailable');
           });
           setBranchAvailability(avail);
         } else {
@@ -7611,11 +7675,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       ...updatedFormData
     };
 
-    // Include branch availability if enabled
+    // Include branch availability if enabled (3-state per branch)
     if (branchesEnabled) {
-      finalData.branchAvailability = Object.entries(branchAvailability).map(([branchId, isAvailable]) => ({
+      finalData.branchAvailability = Object.entries(branchAvailability).map(([branchId, status]) => ({
         branchId: Number(branchId),
-        isAvailable,
+        availabilityStatus: status,
+        isAvailable: status !== 'completely_unavailable',
       }));
     }
     
@@ -8017,26 +8082,32 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <p className="text-sm font-medium">{adminT('branches.branchAvailability')}</p>
                 </div>
                 <p className="text-xs text-gray-500">{adminT('branches.branchAvailabilityDescription')}</p>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <div className="space-y-3 max-h-48 overflow-y-auto">
                   {(branches as any[]).filter((b: any) => b.isActive).map((branch: any) => {
-                    const isChecked = branchAvailability[branch.id] !== false;
+                    const status = branchAvailability[branch.id] ?? 'available';
                     return (
-                      <div key={branch.id} className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          id={`prod-branch-${branch.id}`}
-                          checked={isChecked}
-                          onChange={(e) => {
-                            setBranchAvailability(prev => ({
-                              ...prev,
-                              [branch.id]: e.target.checked,
-                            }));
-                          }}
-                          className="h-4 w-4 rounded border-gray-300"
-                        />
-                        <label htmlFor={`prod-branch-${branch.id}`} className="text-sm text-gray-700 cursor-pointer">
-                          {branch.name}
-                        </label>
+                      <div key={branch.id} className="space-y-1">
+                        <p className="text-xs font-medium text-gray-700">{branch.name}</p>
+                        <div className="flex gap-2 flex-wrap">
+                          {(['available', 'out_of_stock_today', 'completely_unavailable'] as const).map((s) => (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => setBranchAvailability(prev => ({ ...prev, [branch.id]: s }))}
+                              className={`text-xs px-2 py-1 rounded border transition-colors ${
+                                status === s
+                                  ? s === 'available'
+                                    ? 'bg-green-100 border-green-500 text-green-800 font-medium'
+                                    : s === 'out_of_stock_today'
+                                    ? 'bg-orange-100 border-orange-500 text-orange-800 font-medium'
+                                    : 'bg-red-100 border-red-500 text-red-800 font-medium'
+                                  : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                              }`}
+                            >
+                              {s === 'available' ? adminT('products.dialog.statusAvailable') : s === 'out_of_stock_today' ? adminT('products.dialog.statusOutOfStock') : adminT('products.dialog.statusUnavailable')}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     );
                   })}

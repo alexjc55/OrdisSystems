@@ -52,6 +52,7 @@ export interface PaginationParams {
   sortField?: string;
   sortDirection?: string;
   branchIds?: number[];
+  branchId?: number;
 }
 
 export interface PaginatedResult<T> {
@@ -583,7 +584,7 @@ export class DatabaseStorage implements IStorage {
 
   async getProductsPaginated(params: PaginationParams): Promise<PaginatedResult<ProductWithCategories>> {
     const db = await this.getDatabase();
-    const { page, limit, search, categoryId, status, sortField, sortDirection } = params;
+    const { page, limit, search, categoryId, status, sortField, sortDirection, branchId } = params;
     const offset = (page - 1) * limit;
 
     // Build where conditions
@@ -632,6 +633,23 @@ export class DatabaseStorage implements IStorage {
           limit,
           totalPages: 0
         };
+      }
+    }
+
+    // If filtering by branch, get product IDs from product_branch_availability
+    if (branchId) {
+      const branchProducts = await db
+        .select({ productId: productBranchAvailability.productId })
+        .from(productBranchAvailability)
+        .where(and(
+          eq(productBranchAvailability.branchId, branchId),
+          eq(productBranchAvailability.isAvailable, true)
+        ));
+      const branchProductIds = branchProducts.map((p: any) => p.productId);
+      if (branchProductIds.length > 0) {
+        conditions.push(inArray(products.id, branchProductIds));
+      } else {
+        return { data: [], total: 0, page, limit, totalPages: 0 };
       }
     }
 

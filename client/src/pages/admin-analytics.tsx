@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, BarChart3, TrendingUp, ShoppingBag, Target, DollarSign, Filter } from "lucide-react";
+import { CalendarIcon, BarChart3, TrendingUp, ShoppingBag, Target, DollarSign, Filter, Building2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useCommonTranslation, useAdminTranslation } from "@/hooks/use-language";
 import { format, startOfDay, endOfDay, subDays, startOfMonth, startOfYear, parseISO } from "date-fns";
@@ -77,7 +77,25 @@ export default function AdminAnalytics() {
     from: startOfDay(new Date()),
     to: endOfDay(new Date())
   });
+  const [selectedBranchId, setSelectedBranchId] = useState<string>('all');
   const [customFromDate, setCustomFromDate] = useState<Date | undefined>();
+
+  // Config and branches queries (for branch filtering)
+  const { data: appConfig } = useQuery({
+    queryKey: ['/api/config'],
+    queryFn: () => apiRequest("GET", "/api/config"),
+  });
+  const branchesEnabled = (appConfig as any)?.branchesEnabled === true;
+
+  const { data: branches = [] } = useQuery({
+    queryKey: ['/api/admin/branches'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/branches');
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: branchesEnabled,
+  });
   const [customToDate, setCustomToDate] = useState<Date | undefined>();
   const [customDateRange, setCustomDateRange] = useState<{from: Date | undefined, to: Date | undefined} | undefined>();
   const [showCustomPicker, setShowCustomPicker] = useState(false);
@@ -138,6 +156,9 @@ export default function AdminAnalytics() {
     return format(date, 'yyyy-MM-dd');
   };
 
+  // Build branch query param
+  const branchParam = branchesEnabled && selectedBranchId !== 'all' ? `&branchId=${selectedBranchId}` : '';
+
   // Analytics summary query
   const { data: summaryData, isLoading: summaryLoading, error: summaryError } = useQuery<AnalyticsSummary>({
     queryKey: [
@@ -145,10 +166,11 @@ export default function AdminAnalytics() {
       {
         from: formatDateForAPI(dateRange.from),
         to: formatDateForAPI(dateRange.to),
-        tz: Intl.DateTimeFormat().resolvedOptions().timeZone
+        tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        branchId: selectedBranchId,
       }
     ],
-    queryFn: () => apiRequest("GET", `/api/admin/analytics/summary?from=${formatDateForAPI(dateRange.from)}&to=${formatDateForAPI(dateRange.to)}&tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}`),
+    queryFn: () => apiRequest("GET", `/api/admin/analytics/summary?from=${formatDateForAPI(dateRange.from)}&to=${formatDateForAPI(dateRange.to)}&tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}${branchParam}`),
     enabled: Boolean(dateRange.from && dateRange.to)
   });
 
@@ -160,17 +182,18 @@ export default function AdminAnalytics() {
         from: formatDateForAPI(dateRange.from),
         to: formatDateForAPI(dateRange.to),
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        granularity: granularity
+        granularity: granularity,
+        branchId: selectedBranchId,
       }
     ],
-    queryFn: () => apiRequest("GET", `/api/admin/analytics/timeseries?from=${formatDateForAPI(dateRange.from)}&to=${formatDateForAPI(dateRange.to)}&tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}&granularity=${granularity}`),
+    queryFn: () => apiRequest("GET", `/api/admin/analytics/timeseries?from=${formatDateForAPI(dateRange.from)}&to=${formatDateForAPI(dateRange.to)}&tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}&granularity=${granularity}${branchParam}`),
     enabled: Boolean(dateRange.from && dateRange.to)
   });
 
   // Active orders data query
   const { data: activeOrdersData, isLoading: activeOrdersLoading } = useQuery<ActiveOrdersData>({
-    queryKey: ['/api/admin/analytics/active-orders'],
-    queryFn: () => apiRequest("GET", "/api/admin/analytics/active-orders")
+    queryKey: ['/api/admin/analytics/active-orders', { branchId: selectedBranchId }],
+    queryFn: () => apiRequest("GET", `/api/admin/analytics/active-orders${branchesEnabled && selectedBranchId !== 'all' ? `?branchId=${selectedBranchId}` : ''}`)
   });
 
   // Custom date picker handlers
@@ -387,6 +410,24 @@ export default function AdminAnalytics() {
               </div>
             </div>
             
+            {/* Branch Filter (shown when branchesEnabled) */}
+            {branchesEnabled && (branches as any[]).length > 0 && (
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-gray-500" />
+                <Select value={selectedBranchId} onValueChange={setSelectedBranchId}>
+                  <SelectTrigger className="w-40 h-8 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{adminT('branches.allBranches')}</SelectItem>
+                    {(branches as any[]).filter((b: any) => b.isActive).map((b: any) => (
+                      <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             {/* Period Presets */}
             <div className="flex flex-wrap gap-2">
               {PERIOD_PRESETS.map(preset => (

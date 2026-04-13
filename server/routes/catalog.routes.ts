@@ -211,7 +211,9 @@ router.get('/admin/products', isAuthenticated, async (req: any, res) => {
     const status = req.query.status as string || 'all';
     const sortField = req.query.sortField as string || 'name';
     const sortDirection = req.query.sortDirection as string || 'asc';
-    const result = await storage.getProductsPaginated({ page, limit, search, categoryId: category !== 'all' ? parseInt(category) : undefined, status, sortField, sortDirection });
+    const branchIdRaw = req.query.branchId as string;
+    const branchId = branchIdRaw && branchIdRaw !== 'all' ? parseInt(branchIdRaw) : undefined;
+    const result = await storage.getProductsPaginated({ page, limit, search, categoryId: category !== 'all' ? parseInt(category) : undefined, status, sortField, sortDirection, branchId: branchId && !isNaN(branchId) ? branchId : undefined });
     res.json(result);
   } catch (error) {
     console.error("Error fetching admin products:", error);
