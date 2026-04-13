@@ -5,7 +5,7 @@ import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "../email-s
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../facebook-conversions-api";
 import { PushNotificationService } from "../push-notifications";
 import { BRANCHES_ENABLED } from "../config";
-import { insertOrderSchema } from "@shared/schema";
+import { insertOrderSchema, type InsertOrder } from "@shared/schema";
 import { z } from "zod";
 import { randomBytes } from "crypto";
 
@@ -166,10 +166,14 @@ router.post('/orders/guest', async (req: any, res) => {
     const guestAccessTokenExpires = new Date();
     guestAccessTokenExpires.setDate(guestAccessTokenExpires.getDate() + 30);
 
-    const orderData: any = {
+    const parsedBranchId = BRANCHES_ENABLED && branchId && !isNaN(parseInt(branchId))
+      ? parseInt(branchId)
+      : undefined;
+
+    const orderData: InsertOrder = {
       userId: null,
       totalAmount,
-      status: "pending" as const,
+      status: "pending",
       deliveryAddress: guestInfo.address,
       guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
       guestEmail: guestInfo.email,
@@ -180,12 +184,9 @@ router.post('/orders/guest', async (req: any, res) => {
       guestAccessToken,
       guestAccessTokenExpires,
       guestClaimToken,
-      orderLanguage: language || 'ru'
+      orderLanguage: language || 'ru',
+      ...(parsedBranchId !== undefined ? { branchId: parsedBranchId } : {}),
     };
-
-    if (BRANCHES_ENABLED && branchId && !isNaN(parseInt(branchId))) {
-      orderData.branchId = parseInt(branchId);
-    }
 
     const orderItems = items.map((item: any) => ({
       productId: item.productId,
@@ -371,25 +372,18 @@ router.post('/orders', async (req: any, res) => {
     const validatedData = orderSchema.parse({ ...orderData, userId, items });
 
     const { requestedDeliveryDate, requestedDeliveryTime, items: _, ...orderDataWithoutTemp } = validatedData;
-    let processedOrderData: any = { ...orderDataWithoutTemp };
 
-    if (userId) {
-      processedOrderData.userId = userId;
-    }
+    const deliveryOverride = (requestedDeliveryTime && requestedDeliveryDate)
+      ? { deliveryDate: requestedDeliveryDate, deliveryTime: requestedDeliveryTime }
+      : {};
 
-    processedOrderData.orderLanguage = language || 'ru';
-
-    if (requestedDeliveryTime && requestedDeliveryDate) {
-      processedOrderData.deliveryDate = requestedDeliveryDate;
-      processedOrderData.deliveryTime = requestedDeliveryTime;
-    }
-
-    if (!BRANCHES_ENABLED) {
-      delete processedOrderData.branchId;
-    }
-
-    delete processedOrderData.requestedDeliveryDate;
-    delete processedOrderData.requestedDeliveryTime;
+    const processedOrderData: InsertOrder = {
+      ...orderDataWithoutTemp,
+      ...(userId ? { userId } : {}),
+      orderLanguage: language || 'ru',
+      ...deliveryOverride,
+      ...(!BRANCHES_ENABLED ? { branchId: undefined } : {}),
+    };
 
     const order = await storage.createOrder(
       processedOrderData,

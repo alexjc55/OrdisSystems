@@ -55,11 +55,11 @@ router.post('/admin/users', isAuthenticated, async (req: any, res) => {
 
     clearCachePattern('admin-users');
 
-    const responseUser: any = { ...newUser };
-    if (BRANCHES_ENABLED) {
-      responseUser.branchIds = await storage.getUserBranches(newUser.id);
-    }
-    res.status(201).json(responseUser);
+    const responseBranchIds = BRANCHES_ENABLED ? await storage.getUserBranches(newUser.id) : undefined;
+    res.status(201).json({
+      ...newUser,
+      ...(responseBranchIds !== undefined ? { branchIds: responseBranchIds } : {}),
+    });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Failed to create user" });
@@ -84,11 +84,11 @@ router.put('/admin/users/:id', isAuthenticated, async (req: any, res) => {
 
     clearCachePattern('admin-users');
 
-    const responseUser: any = { ...updatedUser };
-    if (BRANCHES_ENABLED) {
-      responseUser.branchIds = await storage.getUserBranches(id);
-    }
-    res.json(responseUser);
+    const responseBranchIds = BRANCHES_ENABLED ? await storage.getUserBranches(id) : undefined;
+    res.json({
+      ...updatedUser,
+      ...(responseBranchIds !== undefined ? { branchIds: responseBranchIds } : {}),
+    });
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ message: "Failed to update user" });
@@ -127,11 +127,11 @@ router.get('/admin/users/:id', isAuthenticated, async (req: any, res) => {
     const { id } = req.params;
     const foundUser = await storage.getUser(id);
     if (!foundUser) return res.status(404).json({ message: "User not found" });
-    const responseUser: any = { ...foundUser };
-    if (BRANCHES_ENABLED) {
-      responseUser.branchIds = await storage.getUserBranches(id);
-    }
-    res.json(responseUser);
+    const branchIds = BRANCHES_ENABLED ? await storage.getUserBranches(id) : undefined;
+    res.json({
+      ...foundUser,
+      ...(branchIds !== undefined ? { branchIds } : {}),
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Failed to fetch user" });

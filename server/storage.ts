@@ -981,7 +981,7 @@ export class DatabaseStorage implements IStorage {
         // Worker has no branches → no orders visible
         return { data: [], total: 0, page, limit, totalPages: 0 };
       }
-      conditions.push(inArray(orders.branchId as any, branchIds));
+      conditions.push(sql`${orders.branchId} = ANY(ARRAY[${sql.join(branchIds.map(id => sql`${id}`), sql`, `)}]::int[])`);
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -1760,7 +1760,7 @@ export class DatabaseStorage implements IStorage {
 
   async activateTheme(id: string): Promise<Theme> {
     const db = await this.getDatabase();
-    return await db.transaction(async (tx: any) => {
+    return await db.transaction(async tx => {
       // Deactivate all themes
       await tx
         .update(themes)
@@ -1856,12 +1856,12 @@ export class DatabaseStorage implements IStorage {
       .select({ branchId: userBranches.branchId })
       .from(userBranches)
       .where(eq(userBranches.userId, userId));
-    return rows.map((r: any) => r.branchId);
+    return rows.map(r => r.branchId);
   }
 
   async setUserBranches(userId: string, branchIds: number[]): Promise<void> {
     const db = await this.getDatabase();
-    await db.transaction(async (tx: any) => {
+    await db.transaction(async tx => {
       await tx.delete(userBranches).where(eq(userBranches.userId, userId));
       if (branchIds.length > 0) {
         await tx.insert(userBranches).values(branchIds.map(branchId => ({ userId, branchId })));
@@ -1882,7 +1882,7 @@ export class DatabaseStorage implements IStorage {
     entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
   ): Promise<void> {
     const db = await this.getDatabase();
-    await db.transaction(async (tx: any) => {
+    await db.transaction(async tx => {
       await tx.delete(productBranchAvailability).where(eq(productBranchAvailability.productId, productId));
       if (entries.length > 0) {
         await tx.insert(productBranchAvailability).values(
