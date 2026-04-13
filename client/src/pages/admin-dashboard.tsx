@@ -3778,7 +3778,7 @@ export default function AdminDashboard() {
 
   // Branch CRUD mutations
   const createBranchMutation = useMutation({
-    mutationFn: async (data: { name: string; isActive: boolean; sortOrder: number }) => {
+    mutationFn: async (data: { name: string; nameEn?: string; nameHe?: string; nameAr?: string; isActive: boolean; sortOrder: number }) => {
       return await apiRequest('POST', '/api/admin/branches', data);
     },
     onSuccess: () => {
@@ -3795,7 +3795,7 @@ export default function AdminDashboard() {
   });
 
   const updateBranchMutation = useMutation({
-    mutationFn: async ({ id, ...data }: { id: number; name?: string; isActive?: boolean; sortOrder?: number }) => {
+    mutationFn: async ({ id, ...data }: { id: number; name?: string; nameEn?: string; nameHe?: string; nameAr?: string; isActive?: boolean; sortOrder?: number }) => {
       return await apiRequest('PUT', `/api/admin/branches/${id}`, data);
     },
     onSuccess: () => {
@@ -3830,6 +3830,9 @@ export default function AdminDashboard() {
   const [isBranchFormOpen, setIsBranchFormOpen] = useState(false);
   const [editingBranch, setEditingBranch] = useState<any>(null);
   const [branchFormName, setBranchFormName] = useState('');
+  const [branchFormNameEn, setBranchFormNameEn] = useState('');
+  const [branchFormNameHe, setBranchFormNameHe] = useState('');
+  const [branchFormNameAr, setBranchFormNameAr] = useState('');
   const [branchFormIsActive, setBranchFormIsActive] = useState(true);
   const [branchFormSortOrder, setBranchFormSortOrder] = useState(1);
   const [selectedBranchesToDelete, setSelectedBranchesToDelete] = useState<Set<number>>(new Set());
@@ -7406,6 +7409,9 @@ export default function AdminDashboard() {
                       onClick={() => {
                         setEditingBranch(null);
                         setBranchFormName('');
+                        setBranchFormNameEn('');
+                        setBranchFormNameHe('');
+                        setBranchFormNameAr('');
                         setBranchFormIsActive(true);
                         setBranchFormSortOrder((branches as any[]).length + 1);
                         setIsBranchFormOpen(true);
@@ -7457,6 +7463,9 @@ export default function AdminDashboard() {
                                       onClick={() => {
                                         setEditingBranch(branch);
                                         setBranchFormName(branch.name);
+                                        setBranchFormNameEn(branch.nameEn || '');
+                                        setBranchFormNameHe(branch.nameHe || '');
+                                        setBranchFormNameAr(branch.nameAr || '');
                                         setBranchFormIsActive(branch.isActive);
                                         setBranchFormSortOrder(branch.sortOrder);
                                         setIsBranchFormOpen(true);
@@ -7508,13 +7517,43 @@ export default function AdminDashboard() {
                   </DialogHeader>
                   <div className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
                     <div>
-                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} *</label>
+                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (RU) *</label>
                       <Input
                         value={branchFormName}
                         onChange={(e) => setBranchFormName(e.target.value)}
                         placeholder={adminT('branches.namePlaceholder')}
                         className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                        dir={isRTL ? 'rtl' : 'ltr'}
+                        dir="ltr"
+                      />
+                    </div>
+                    <div>
+                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (EN)</label>
+                      <Input
+                        value={branchFormNameEn}
+                        onChange={(e) => setBranchFormNameEn(e.target.value)}
+                        placeholder={adminT('branches.namePlaceholder')}
+                        className="text-sm"
+                        dir="ltr"
+                      />
+                    </div>
+                    <div>
+                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (HE)</label>
+                      <Input
+                        value={branchFormNameHe}
+                        onChange={(e) => setBranchFormNameHe(e.target.value)}
+                        placeholder={adminT('branches.namePlaceholder')}
+                        className="text-sm"
+                        dir="rtl"
+                      />
+                    </div>
+                    <div>
+                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (AR)</label>
+                      <Input
+                        value={branchFormNameAr}
+                        onChange={(e) => setBranchFormNameAr(e.target.value)}
+                        placeholder={adminT('branches.namePlaceholder')}
+                        className="text-sm"
+                        dir="rtl"
                       />
                     </div>
                     <div>
@@ -7544,10 +7583,18 @@ export default function AdminDashboard() {
                     <Button
                       onClick={() => {
                         if (!branchFormName.trim()) return;
+                        const payload = {
+                          name: branchFormName,
+                          nameEn: branchFormNameEn.trim() || undefined,
+                          nameHe: branchFormNameHe.trim() || undefined,
+                          nameAr: branchFormNameAr.trim() || undefined,
+                          isActive: branchFormIsActive,
+                          sortOrder: branchFormSortOrder,
+                        };
                         if (editingBranch) {
-                          updateBranchMutation.mutate({ id: editingBranch.id, name: branchFormName, isActive: branchFormIsActive, sortOrder: branchFormSortOrder });
+                          updateBranchMutation.mutate({ id: editingBranch.id, ...payload });
                         } else {
-                          createBranchMutation.mutate({ name: branchFormName, isActive: branchFormIsActive, sortOrder: branchFormSortOrder });
+                          createBranchMutation.mutate(payload);
                         }
                       }}
                       className="bg-primary hover:bg-primary text-white text-sm"

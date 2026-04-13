@@ -6,6 +6,7 @@ import { useCommonTranslation, useLanguage, useAdminTranslation } from "@/hooks/
 import { useBranch } from "@/hooks/useBranch";
 import BranchModal from "@/components/BranchSelectionModal";
 import type { SupportedLanguage } from '@shared/localization';
+import { getLocalizedField } from '@shared/localization';
 import { getLocalizedImageField } from '@shared/multilingual-helpers';
 import { Button } from "@/components/ui/button";
 import { usePWA } from "@/hooks/usePWA";
@@ -214,38 +215,25 @@ export default function Header({ onResetView }: HeaderProps) {
                 </Link>
               )}
             </nav>
-            {/* Branch indicator - desktop, shown when branches enabled and >1 branch */}
-            {branchesEnabled && branches.length > 1 && selectedBranch && (
-              <div className="hidden md:block ml-2 rtl:ml-0 rtl:mr-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="flex items-center gap-1.5 text-gray-600 hover:text-primary px-2"
-                  onClick={() => setIsBranchModalOpen(true)}
-                  title={String(t('branch.changeBranch'))}
-                >
-                  <MapPin className="h-4 w-4 flex-shrink-0" />
-                  <span className="text-sm font-medium max-w-[120px] truncate">{selectedBranch.name}</span>
-                </Button>
-              </div>
-            )}
             {isBranchModalOpen && (
               <BranchModal dismissible onClose={() => setIsBranchModalOpen(false)} />
             )}
           </div>
 
           <div className="flex items-center gap-1 md:gap-4 rtl:space-x-reverse flex-shrink-0">
-            {/* Branch indicator - mobile, visible only on small screens */}
+            {/* Branch indicator */}
             {branchesEnabled && branches.length > 1 && selectedBranch && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex md:hidden items-center gap-1 text-gray-600 hover:text-primary px-1.5 py-1"
+                className="flex items-center gap-1 text-gray-600 hover:text-primary px-1.5 py-1"
                 onClick={() => setIsBranchModalOpen(true)}
                 title={String(t('branch.changeBranch'))}
               >
                 <MapPin className="h-4 w-4 flex-shrink-0" />
-                <span className="text-xs font-medium max-w-[60px] truncate">{selectedBranch.name}</span>
+                <span className="text-xs md:text-sm font-medium max-w-[60px] md:max-w-[120px] truncate">
+                  {getLocalizedField(selectedBranch, 'name', currentLanguage as SupportedLanguage)}
+                </span>
               </Button>
             )}
             {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (

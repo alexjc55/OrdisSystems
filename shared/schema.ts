@@ -123,6 +123,9 @@ export const productCategories = pgTable("product_categories", {
 export const branches = pgTable("branches", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  nameEn: varchar("name_en", { length: 255 }),
+  nameHe: varchar("name_he", { length: 255 }),
+  nameAr: varchar("name_ar", { length: 255 }),
   isActive: boolean("is_active").default(true).notNull(),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
