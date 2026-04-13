@@ -223,7 +223,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
-  const { items, getTotalPrice, clearCart, removeItem } = useCartStore();
+  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -955,8 +955,13 @@ export default function Checkout() {
               <Button
                 className="flex-1 bg-primary text-white hover:bg-primary-hover"
                 onClick={() => {
-                  const { toRemove } = branchCompatResult;
+                  const { toRemove, toDowngrade } = branchCompatResult;
                   toRemove.forEach(item => removeItem(item.product.id));
+                  // Update cart product snapshots for downgraded items so
+                  // checkout delivery validation reflects their new pre-order status
+                  toDowngrade.forEach(item =>
+                    updateProductSnapshot(item.product.id, { availabilityStatus: 'out_of_stock_today' })
+                  );
                   selectBranch(pendingBranchId!);
                   setPendingBranchId(null);
                   setBranchCompatResult(null);

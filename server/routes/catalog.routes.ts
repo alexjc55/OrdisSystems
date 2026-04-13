@@ -200,11 +200,29 @@ router.get('/products/search', async (req: any, res) => {
     let query = req.query.q as string;
     if (!query) return res.status(400).json({ message: "Search query is required" });
     try { query = decodeURIComponent(query); } catch (e) { }
-    let products = await storage.searchProducts(query);
+    const branchIdParam = req.query.branchId ? parseInt(req.query.branchId as string, 10) : null;
     const user = req.user;
     const isAdmin = user && (user.role === "admin" || user.role === "worker");
+    let products = await storage.searchProducts(query);
     if (!isAdmin) {
       products = products.filter(product => product.isAvailable !== false);
+    }
+    // Apply branch-level availability filter when branchId is provided
+    const branchesEnabled = process.env.BRANCHES_ENABLED === 'true';
+    if (branchesEnabled && branchIdParam && !isNaN(branchIdParam)) {
+      const branchAvailability = await storage.getProductBranchAvailabilityByBranch(branchIdParam);
+      const overrideMap = new Map(branchAvailability.map(a => [a.productId, a]));
+      products = products
+        .filter(p => {
+          const override = overrideMap.get(p.id);
+          if (override && !override.isAvailable) return false;
+          return true;
+        })
+        .map(p => {
+          const override = overrideMap.get(p.id);
+          if (!override) return p;
+          return { ...p, stockStatus: override.stockStatus, availabilityStatus: override.availabilityStatus };
+        });
     }
     res.json(products);
   } catch (error) {

@@ -368,10 +368,14 @@ export default function Home() {
     staleTime: 0,
   });
 
-  // Search products
+  // Search products (branch-aware)
   const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products/search", searchQuery],
-    queryFn: () => fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
+    queryKey: ["/api/products/search", searchQuery, selectedBranchId],
+    queryFn: () => {
+      const searchParams = new URLSearchParams({ q: searchQuery });
+      if (branchesEnabled && selectedBranchId) searchParams.set('branchId', String(selectedBranchId));
+      return fetch(`/api/products/search?${searchParams}`).then(res => res.json());
+    },
     enabled: searchQuery.length > 2,
   });
 

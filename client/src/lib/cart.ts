@@ -16,6 +16,7 @@ interface CartStore {
   addItem: (product: Product, quantity: number) => void;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
+  updateProductSnapshot: (productId: number, patch: Partial<Product>) => void;
   clearCart: () => void;
   toggleCart: () => void;
   setCartOpen: (open: boolean) => void;
@@ -80,6 +81,18 @@ export const useCartStore = create<CartStore>()(
                 quantity,
                 totalPrice: calculateTotal(parseFloat(item.product.price), quantity, item.product.unit as ProductUnit)
               }
+            : item
+        );
+        set({ items: updatedItems });
+      },
+      
+      // Patch product availability snapshot in cart without changing quantity/price
+      updateProductSnapshot: (productId, patch) => {
+        const items = get().items;
+        const validItems = items.filter(item => item.product && item.product.id);
+        const updatedItems = validItems.map(item =>
+          item.product.id === productId
+            ? { ...item, product: { ...item.product, ...patch } }
             : item
         );
         set({ items: updatedItems });
