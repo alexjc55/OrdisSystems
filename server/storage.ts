@@ -1873,7 +1873,13 @@ export class DatabaseStorage implements IStorage {
         if (includeAll) return true;
         if (p.isAvailable === false) return false;
         const override = branchOverrideMap.get(p.id);
-        if (override && !override.isAvailable) return false;
+        if (override) {
+          // Branch-specific override: hide if completely unavailable for this branch
+          if (!override.isAvailable || override.availabilityStatus === 'completely_unavailable') return false;
+        } else {
+          // No branch override: hide if product is globally completely unavailable
+          if (p.availabilityStatus === 'completely_unavailable') return false;
+        }
         return true;
       })
       .map(p => {
@@ -1887,8 +1893,16 @@ export class DatabaseStorage implements IStorage {
     const allCategories = await this.getCategories(includeInactive);
     const allProducts = await this.getProducts();
     const branchAvailability = await this.getProductBranchAvailabilityByBranch(branchId);
-    const branchUnavailableIds = new Set(branchAvailability.filter(a => !a.isAvailable).map(a => a.productId));
-    const globallyAvailableIds = new Set(allProducts.filter(p => p.isAvailable !== false).map(p => p.id));
+    const branchUnavailableIds = new Set(
+      branchAvailability
+        .filter(a => !a.isAvailable || a.availabilityStatus === 'completely_unavailable')
+        .map(a => a.productId)
+    );
+    const globallyAvailableIds = new Set(
+      allProducts
+        .filter(p => p.isAvailable !== false && p.availabilityStatus !== 'completely_unavailable')
+        .map(p => p.id)
+    );
     const productsByCategory = new Map<number, number[]>();
     for (const product of allProducts) {
       for (const cat of (product as any).categories || []) {

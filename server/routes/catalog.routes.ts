@@ -174,7 +174,7 @@ router.get('/products', async (req: any, res) => {
     const isAdmin = req.user?.claims?.sub && req.isAuthenticated?.() &&
       (await storage.getUser(req.user.id))?.email === "alexjc55@gmail.com";
     if (!isAdmin) {
-      products = products.filter(product => product.isAvailable !== false);
+      products = products.filter(product => product.isAvailable !== false && product.availabilityStatus !== 'completely_unavailable');
     }
 
     if (BRANCHES_ENABLED) {
@@ -205,7 +205,7 @@ router.get('/products/search', async (req: any, res) => {
     const isAdmin = user && (user.role === "admin" || user.role === "worker");
     let products = await storage.searchProducts(query);
     if (!isAdmin) {
-      products = products.filter(product => product.isAvailable !== false);
+      products = products.filter(product => product.isAvailable !== false && product.availabilityStatus !== 'completely_unavailable');
     }
     // Apply branch-level availability filter when branchId is provided
     const branchesEnabled = process.env.BRANCHES_ENABLED === 'true';
@@ -215,7 +215,11 @@ router.get('/products/search', async (req: any, res) => {
       products = products
         .filter(p => {
           const override = overrideMap.get(p.id);
-          if (override && !override.isAvailable) return false;
+          if (override) {
+            if (!override.isAvailable || override.availabilityStatus === 'completely_unavailable') return false;
+          } else {
+            if (p.availabilityStatus === 'completely_unavailable') return false;
+          }
           return true;
         })
         .map(p => {
