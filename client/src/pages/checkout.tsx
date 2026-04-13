@@ -21,8 +21,9 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
+import { useLocation } from "wouter";
 import { UTMLink } from "@/components/UTMLink";
-import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
+import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info, MapPin } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useBranch } from "@/hooks/useBranch";
@@ -77,6 +78,20 @@ type AuthData = {
   email: string;
   password: string;
 };
+type OrderPayloadItem = {
+  productId: number;
+  quantity: string;
+  pricePerKg: string;
+  totalPrice: string;
+};
+
+type BaseOrderPayload = {
+  items: OrderPayloadItem[];
+  totalAmount: string;
+  status: string;
+  branchId?: number;
+};
+
 type AuthenticatedOrderData = {
   address: string;
   phone: string;
@@ -210,11 +225,14 @@ export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
   const { items, getTotalPrice, clearCart } = useCartStore();
   const navigate = useUTMNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
-  const { selectedBranchId, branchesEnabled } = useBranch();
+  const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
+  const [showBranchChangeDialog, setShowBranchChangeDialog] = useState(false);
+  const [pendingBranchId, setPendingBranchId] = useState<number | null>(null);
   const dateLocale = getDateLocale(currentLanguage);
   const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -444,13 +462,17 @@ export default function Checkout() {
       );
       const total = subtotal + deliveryFeeAmount;
 
-      const orderData: any = {
-        items: items.map(item => ({
-          productId: item.product.id,
-          quantity: item.quantity.toString(),
-          pricePerKg: item.product.pricePerKg || item.product.price,
-          totalPrice: item.totalPrice.toString()
-        })),
+      const orderPayloadItems: OrderPayloadItem[] = items.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity.toString(),
+        pricePerKg: item.product.pricePerKg || item.product.price,
+        totalPrice: item.totalPrice.toString()
+      }));
+      const orderData: BaseOrderPayload & {
+        guestInfo: typeof data & { deliveryDate: string; deliveryTime: string; paymentMethod: string };
+        language: string;
+      } = {
+        items: orderPayloadItems,
         totalAmount: total.toString(),
         guestInfo: {
           ...data,
@@ -458,12 +480,10 @@ export default function Checkout() {
           deliveryTime: selectedGuestTime,
           paymentMethod: selectedGuestPaymentMethod,
         },
-        language: currentLanguage, // Add language for email localization
-        status: "pending"
+        language: currentLanguage,
+        status: "pending",
+        ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
       };
-      if (branchesEnabled && selectedBranchId) {
-        orderData.branchId = selectedBranchId;
-      }
       
       return await apiRequest("POST", "/api/orders/guest", orderData);
     },
@@ -538,7 +558,14 @@ export default function Checkout() {
       );
       const total = subtotal + deliveryFeeAmount;
 
-      const orderData: any = {
+      const regOrderPayload: BaseOrderPayload & {
+        userId: string;
+        deliveryAddress: string;
+        deliveryDate: string;
+        deliveryTime: string;
+        paymentMethod: string;
+        customerPhone: string;
+      } = {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
@@ -546,19 +573,17 @@ export default function Checkout() {
           totalPrice: item.totalPrice.toString()
         })),
         totalAmount: total.toString(),
-        userId: newUser.id, // Link order to the newly created user
+        userId: newUser.id,
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
         deliveryTime: selectedRegisterTime,
         paymentMethod: selectedRegisterPaymentMethod,
         customerPhone: data.phone,
-        status: "pending"
+        status: "pending",
+        ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
       };
-      if (branchesEnabled && selectedBranchId) {
-        orderData.branchId = selectedBranchId;
-      }
       
-      return await apiRequest("POST", "/api/orders", orderData);
+      return await apiRequest("POST", "/api/orders", regOrderPayload);
     },
     onSuccess: (order) => {
       clearCart();
@@ -627,7 +652,13 @@ export default function Checkout() {
       );
       const total = subtotal + deliveryFeeAmount;
 
-      const orderData: any = {
+      const authOrderPayload: BaseOrderPayload & {
+        deliveryAddress: string;
+        customerPhone: string;
+        deliveryDate: string;
+        deliveryTime: string;
+        paymentMethod: string;
+      } = {
         items: items.map(item => ({
           productId: item.product.id,
           quantity: item.quantity.toString(),
@@ -640,13 +671,11 @@ export default function Checkout() {
         deliveryDate,
         deliveryTime: selectedTime,
         paymentMethod: formData.paymentMethod,
-        status: "pending"
+        status: "pending",
+        ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
       };
-      if (branchesEnabled && selectedBranchId) {
-        orderData.branchId = selectedBranchId;
-      }
       
-      return await apiRequest("POST", "/api/orders", orderData);
+      return await apiRequest("POST", "/api/orders", authOrderPayload);
     },
     onSuccess: (order) => {
       clearCart();
@@ -706,6 +735,115 @@ export default function Checkout() {
           </UTMLink>
         </Button>
       </div>
+
+      {/* Branch indicator - shown when branches feature is active and a branch is selected */}
+      {branchesEnabled && selectedBranch && branches.length > 1 && (
+        <div className="mb-4 flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+          <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+          <span className="text-sm font-medium text-gray-800 flex-1">
+            {String(tCommon('branch.selectedBranch'))}: <strong>{selectedBranch.name}</strong>
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary hover:text-primary-hover text-xs px-2 h-7"
+            onClick={() => setShowBranchChangeDialog(true)}
+          >
+            {String(tCommon('branch.changeBranch'))}
+          </Button>
+        </div>
+      )}
+
+      {/* Branch Change Warning Dialog */}
+      {showBranchChangeDialog && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6">
+            <div className="flex flex-col items-center text-center mb-5">
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
+                <AlertTriangle className="w-6 h-6 text-orange-500" />
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">
+                {String(tCommon('branch.changeBranch'))}
+              </h2>
+              <p className="text-gray-500 text-sm">
+                {String(tCommon('branch.changeWarning'))}
+              </p>
+            </div>
+            <div className="space-y-2 mb-5">
+              {branches.map(branch => (
+                <button
+                  key={branch.id}
+                  onClick={() => {
+                    if (branch.id !== selectedBranchId) {
+                      setPendingBranchId(branch.id);
+                    } else {
+                      setShowBranchChangeDialog(false);
+                    }
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 group ${
+                    branch.id === selectedBranchId
+                      ? 'border-primary bg-primary/5 cursor-default'
+                      : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <MapPin className={`w-4 h-4 flex-shrink-0 ${branch.id === selectedBranchId ? 'text-primary' : 'text-gray-400 group-hover:text-orange-500'}`} />
+                    <span className={`font-medium text-sm ${branch.id === selectedBranchId ? 'text-primary' : 'text-gray-800'}`}>
+                      {branch.name}
+                    </span>
+                    {branch.id === selectedBranchId && (
+                      <CheckCircle className="w-4 h-4 text-primary ml-auto" />
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+            <Button variant="outline" className="w-full" onClick={() => setShowBranchChangeDialog(false)}>
+              {tCommon('actions.cancel')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Branch Change Confirmation (cart will be cleared) */}
+      {pendingBranchId !== null && (
+        <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6">
+            <div className="flex flex-col items-center text-center mb-5">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                <AlertTriangle className="w-6 h-6 text-red-500" />
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">
+                {String(tCommon('branch.confirmChange'))}
+              </h2>
+              <p className="text-gray-500 text-sm">
+                {String(tCommon('branch.cartWillBeCleared'))}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setPendingBranchId(null)}
+              >
+                {tCommon('actions.cancel')}
+              </Button>
+              <Button
+                className="flex-1 bg-primary text-white hover:bg-primary-hover"
+                onClick={() => {
+                  selectBranch(pendingBranchId!);
+                  clearCart();
+                  setPendingBranchId(null);
+                  setShowBranchChangeDialog(false);
+                  setLocation('/');
+                }}
+              >
+                {String(tCommon('branch.confirmAndClear'))}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Order Summary */}

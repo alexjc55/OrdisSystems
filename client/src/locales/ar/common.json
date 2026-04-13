@@ -629,7 +629,11 @@
     "selectTitle": "اختر الفرع",
     "selectSubtitle": "يرجى اختيار الفرع الذي تريد الطلب منه",
     "changeBranch": "تغيير الفرع",
-    "selectedBranch": "الفرع"
+    "selectedBranch": "الفرع",
+    "changeWarning": "اختر فرعاً مختلفاً. سيتم مسح سلة التسوق الحالية عند التبديل.",
+    "confirmChange": "تغيير الفرع؟",
+    "cartWillBeCleared": "سيؤدي التبديل إلى فرع آخر إلى مسح سلة التسوق الحالية. هل أنت متأكد؟",
+    "confirmAndClear": "تغيير ومسح السلة"
   },
   "validation": {
     "firstNameMinLength": "الاسم الأول يجب أن يحتوي على حرفين على الأقل",

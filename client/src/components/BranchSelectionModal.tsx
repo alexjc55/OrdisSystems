@@ -1,14 +1,24 @@
-import { MapPin } from "lucide-react";
+import { MapPin, X, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBranch } from "@/hooks/useBranch";
 import { useCommonTranslation } from "@/hooks/use-language";
 import type { Branch } from "@shared/schema";
 
-export default function BranchSelectionModal() {
-  const { branches, needsBranchSelection, selectBranch } = useBranch();
+interface BranchSelectionModalProps {
+  dismissible?: boolean;
+  onClose?: () => void;
+}
+
+export default function BranchSelectionModal({ dismissible = false, onClose }: BranchSelectionModalProps) {
+  const { branches, needsBranchSelection, selectBranch, selectedBranchId } = useBranch();
   const { t } = useCommonTranslation();
 
-  if (!needsBranchSelection) return null;
+  if (!dismissible && !needsBranchSelection) return null;
+
+  const handleSelect = (branchId: number) => {
+    selectBranch(branchId);
+    onClose?.();
+  };
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -29,20 +39,37 @@ export default function BranchSelectionModal() {
           {branches.map((branch: Branch) => (
             <button
               key={branch.id}
-              onClick={() => selectBranch(branch.id)}
-              className="w-full text-left px-4 py-3 rounded-xl border-2 border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-150 group"
+              onClick={() => handleSelect(branch.id)}
+              className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 group ${
+                branch.id === selectedBranchId
+                  ? 'border-primary bg-primary/5'
+                  : 'border-gray-200 hover:border-primary hover:bg-primary/5'
+              }`}
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-primary/10 group-hover:bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 transition-colors">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${
+                  branch.id === selectedBranchId ? 'bg-primary/20' : 'bg-primary/10 group-hover:bg-primary/20'
+                }`}>
                   <MapPin className="w-4 h-4 text-primary" />
                 </div>
-                <span className="font-medium text-gray-800 group-hover:text-primary transition-colors">
+                <span className={`font-medium transition-colors flex-1 ${
+                  branch.id === selectedBranchId ? 'text-primary' : 'text-gray-800 group-hover:text-primary'
+                }`}>
                   {branch.name}
                 </span>
+                {branch.id === selectedBranchId && (
+                  <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                )}
               </div>
             </button>
           ))}
         </div>
+
+        {dismissible && onClose && (
+          <Button variant="outline" className="w-full mt-4" onClick={onClose}>
+            {String(t('actions.cancel'))}
+          </Button>
+        )}
       </div>
     </div>
   );

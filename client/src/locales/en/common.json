@@ -626,6 +626,10 @@
     "selectTitle": "Choose a Branch",
     "selectSubtitle": "Please select the branch you want to order from",
     "changeBranch": "Change Branch",
-    "selectedBranch": "Branch"
+    "selectedBranch": "Branch",
+    "changeWarning": "Select a different branch. Your current cart will be cleared when you switch.",
+    "confirmChange": "Change Branch?",
+    "cartWillBeCleared": "Switching to a different branch will clear your current cart. Are you sure?",
+    "confirmAndClear": "Change & Clear Cart"
   }
 }

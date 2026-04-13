@@ -633,6 +633,10 @@
     "selectTitle": "בחר סניף",
     "selectSubtitle": "אנא בחר את הסניף ממנו ברצונך להזמין",
     "changeBranch": "שנה סניף",
-    "selectedBranch": "סניף"
+    "selectedBranch": "סניף",
+    "changeWarning": "בחר סניף אחר. עגלת הקניות שלך תתנקה בעת המעבר.",
+    "confirmChange": "לשנות סניף?",
+    "cartWillBeCleared": "מעבר לסניף אחר ינקה את עגלת הקניות הנוכחית שלך. האם אתה בטוח?",
+    "confirmAndClear": "שנה ונקה עגלה"
   }
 }
