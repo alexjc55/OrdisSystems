@@ -265,6 +265,7 @@ export default function Checkout() {
             toRemove.push(cartItem);
           }
         }
+        // Remove unavailable items
         if (toRemove.length > 0 && !cancelled) {
           toRemove.forEach(item => removeItem(item.product.id));
           toast({
@@ -272,6 +273,19 @@ export default function Checkout() {
             description: String(tCommon('branch.itemsRemovedDesc')),
             variant: 'destructive',
           });
+        }
+        // Patch availability snapshot for items that changed to pre-order
+        const toDowngrade = items.filter(cartItem => {
+          if (toRemove.some(r => r.product.id === cartItem.product.id)) return false;
+          const inBranch = branchMap.get(cartItem.product.id);
+          return inBranch &&
+            inBranch.availabilityStatus === 'out_of_stock_today' &&
+            cartItem.product.availabilityStatus !== 'out_of_stock_today';
+        });
+        if (toDowngrade.length > 0 && !cancelled) {
+          toDowngrade.forEach(item =>
+            updateProductSnapshot(item.product.id, { availabilityStatus: 'out_of_stock_today' })
+          );
         }
       } catch {
         // Silent — don't block checkout on network failure
