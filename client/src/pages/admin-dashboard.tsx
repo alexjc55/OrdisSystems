@@ -1369,10 +1369,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     </div>
   </div>`;
 
-    // Minimal iframe CSS — content uses inline styles so only browser reset + page margins needed
-    const printCSS = `* { box-sizing: border-box; } body { margin: 0; padding: 16px; } @page { margin: 10mm; }`;
-    const printHtml = `<!DOCTYPE html><html dir="${isRTLPrint ? 'rtl' : 'ltr'}" lang="${currentLang}"><head><meta charset="UTF-8"><title>${l('order')} #${order.id}</title><style>${printCSS}</style></head><body>${contentHtml}</body></html>`;
-
     // Create full-screen overlay — works on iOS/Android without popup
     const overlay = document.createElement('div');
     overlay.id = 'order-print-overlay';
@@ -1426,27 +1422,35 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     document.getElementById('print-close-btn')!.addEventListener('click', closeOverlay);
     document.getElementById('print-do-btn')!.addEventListener('click', () => {
-      // Create hidden iframe and print only its content — works on all devices
-      const iframe = document.createElement('iframe');
-      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;';
-      document.body.appendChild(iframe);
-      const iframeDoc = iframe.contentDocument || (iframe.contentWindow as Window).document;
-      iframeDoc.open();
-      iframeDoc.write(printHtml);
-      iframeDoc.close();
-      iframe.contentWindow!.focus();
-      // Small delay to ensure iframe is fully rendered before printing
-      setTimeout(() => {
-        iframe.contentWindow!.print();
-        // Remove iframe after print dialog closes
-        const cleanup = () => {
-          iframe.remove();
-          iframe.contentWindow?.removeEventListener('afterprint', cleanup);
-        };
-        iframe.contentWindow?.addEventListener('afterprint', cleanup, { once: true });
-        // Fallback removal in case afterprint doesn't fire (older iOS)
-        setTimeout(() => iframe.remove(), 5000);
-      }, 300);
+      // Inject @media print CSS that hides the toolbar and makes the overlay
+      // fill the whole page — then call window.print() directly in the click
+      // handler so it stays within the user-gesture chain (no setTimeout needed).
+      const printStyle = document.createElement('style');
+      printStyle.id = 'order-print-style';
+      printStyle.textContent = `
+        @media print {
+          body > *:not(#order-print-overlay) { display: none !important; }
+          #order-print-bar { display: none !important; }
+          #order-print-overlay {
+            position: static !important;
+            overflow: visible !important;
+            height: auto !important;
+            background: #fff !important;
+            z-index: auto !important;
+          }
+        }
+      `;
+      document.head.appendChild(printStyle);
+
+      const removePrintStyle = () => {
+        document.getElementById('order-print-style')?.remove();
+        window.removeEventListener('afterprint', removePrintStyle);
+      };
+      window.addEventListener('afterprint', removePrintStyle, { once: true });
+      // Fallback removal in case afterprint doesn't fire (older browsers)
+      setTimeout(removePrintStyle, 10_000);
+
+      window.print();
     });
   };
 
