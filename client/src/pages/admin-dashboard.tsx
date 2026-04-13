@@ -8970,6 +8970,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <div className="space-y-2">
                       <div>
                         <FormLabel className="text-xs text-gray-600 block mb-1">{adminT('storeSettings.openTime')}</FormLabel>
+
                         <Select
                           value={openTime}
                           onValueChange={(value) => {
@@ -9032,8 +9033,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                         </Select>
                       </div>
 
-                      {/* Delivery hours section inside each working day card */}
-                      <div className="mt-2 pt-2 border-t border-dashed border-gray-300 space-y-2">
+                    </div>
+                  )}
+                  {/* Delivery hours section - shown for all days including closed days */}
+                  <div className="mt-2 pt-2 border-t border-dashed border-gray-300 space-y-2">
                         <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{adminT('storeSettings.deliveryHoursTitle')}</div>
                         <div className={`flex items-center gap-4 flex-wrap ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                           <label className={`flex items-center gap-1.5 cursor-pointer select-none ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -9133,9 +9136,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                             </div>
                           </div>
                         )}
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

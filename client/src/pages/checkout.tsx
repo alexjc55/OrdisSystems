@@ -241,44 +241,46 @@ export default function Checkout() {
     if (closedDatesSet.has(dateStr)) return true;
     
     // Check if it's a non-working day or no-delivery day
-    if (storeSettings?.workingHours) {
-      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-      const dayName = dayNames[date.getDay()];
-      const daySchedule = storeSettings.workingHours[dayName];
-      
-      // Disable if store is closed that day
-      if (!daySchedule || daySchedule.trim() === '' || 
-          daySchedule.toLowerCase().includes('закрыто') || 
-          daySchedule.toLowerCase().includes('closed') ||
-          daySchedule.toLowerCase().includes('выходной')) {
-        return true;
-      }
+    // Priority: deliveryHours[day] overrides workingHours[day] when explicitly set
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const dayName = dayNames[date.getDay()];
 
-      // Disable if deliveryHours explicitly marks this day as no-delivery
-      const deliveryDayValue = storeSettings?.deliveryHours?.[dayName];
-      if (deliveryDayValue != null && (
+    const deliveryDayValue = storeSettings?.deliveryHours?.[dayName];
+
+    if (deliveryDayValue != null) {
+      // deliveryHours explicitly configured for this day — takes full priority
+      const isNoDelivery =
         deliveryDayValue === '' ||
         deliveryDayValue.toLowerCase() === 'closed' ||
         deliveryDayValue.toLowerCase().includes('закрыто') ||
-        deliveryDayValue.toLowerCase().includes('выходной')
-      )) {
-        return true;
-      }
-      
-      // Check if today has no available delivery times
-      if (date.getTime() === today.getTime()) {
-        const todayTimeSlots = generateDeliveryTimes(
-          storeSettings.workingHours, 
-          format(date, "yyyy-MM-dd"), 
-          storeSettings.weekStartDay,
-          storeSettings.deliveryTimeMode || 'hours',
-          tCommon,
-          storeSettings.deliveryHours
-        );
-        return !todayTimeSlots.some(slot => slot.value !== 'closed');
-      }
+        deliveryDayValue.toLowerCase().includes('выходной');
+      if (isNoDelivery) return true;
+      // Has an explicit delivery window → day is available; skip workingHours check
+    } else if (storeSettings?.workingHours) {
+      // No deliveryHours override → fall back to workingHours
+      const daySchedule = storeSettings.workingHours[dayName];
+      const isClosed =
+        !daySchedule ||
+        daySchedule.trim() === '' ||
+        daySchedule.toLowerCase().includes('закрыто') ||
+        daySchedule.toLowerCase().includes('closed') ||
+        daySchedule.toLowerCase().includes('выходной');
+      if (isClosed) return true;
     }
-    
+
+    // Check if today has no available delivery time slots
+    if (storeSettings?.workingHours && date.getTime() === today.getTime()) {
+      const todayTimeSlots = generateDeliveryTimes(
+        storeSettings.workingHours,
+        format(date, "yyyy-MM-dd"),
+        storeSettings.weekStartDay,
+        storeSettings.deliveryTimeMode || 'hours',
+        tCommon,
+        storeSettings.deliveryHours
+      );
+      return !todayTimeSlots.some(slot => slot.value !== 'closed');
+    }
+
     return false;
   }, [closedDatesSet, storeSettings, tCommon]);
 
