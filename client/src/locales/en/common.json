@@ -628,8 +628,16 @@
     "changeBranch": "Change Branch",
     "selectedBranch": "Branch",
     "changeWarning": "Select a different branch. Your current cart will be cleared when you switch.",
-    "confirmChange": "Change Branch?",
+    "confirmChange": "Switch Branch",
     "cartWillBeCleared": "Switching to a different branch will clear your current cart. Are you sure?",
-    "confirmAndClear": "Change & Clear Cart"
+    "confirmAndClear": "Change & Clear Cart",
+    "allItemsAvailable": "All items in your cart are available in this branch.",
+    "itemsToRemove": "Items that will be removed (not available)",
+    "itemsPreOrder": "Items changing to pre-order",
+    "itemsKept": "Items available in this branch",
+    "confirmAndRemove": "Switch & Remove Unavailable",
+    "confirm": "Switch Branch",
+    "itemsRemovedTitle": "Some items removed",
+    "itemsRemovedDesc": "Items unavailable in your selected branch were removed from the cart."
   }
 }

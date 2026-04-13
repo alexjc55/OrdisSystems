@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useCartStore } from "@/lib/cart";
+import { useCartStore, type CartItem } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -223,7 +223,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { items, getTotalPrice, clearCart, removeItem } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -233,6 +233,12 @@ export default function Checkout() {
   const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
   const [showBranchChangeDialog, setShowBranchChangeDialog] = useState(false);
   const [pendingBranchId, setPendingBranchId] = useState<number | null>(null);
+  const [branchCompatResult, setBranchCompatResult] = useState<{
+    toRemove: CartItem[];
+    toDowngrade: CartItem[];
+    toKeep: CartItem[];
+  } | null>(null);
+  const [isFetchingCompat, setIsFetchingCompat] = useState(false);
   const dateLocale = getDateLocale(currentLanguage);
   const { t: tCommon } = useCommonTranslation();
   const { t: tShop } = useShopTranslation();
@@ -241,6 +247,39 @@ export default function Checkout() {
   const { data: closedDates = [] } = useQuery<any[]>({
     queryKey: ['/api/closed-dates'],
   });
+
+  // On checkout load, validate cart against selected branch and auto-remove unavailable items
+  useEffect(() => {
+    if (!branchesEnabled || !selectedBranchId || items.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/products?branchId=${selectedBranchId}`);
+        if (!res.ok || cancelled) return;
+        const branchProducts: Array<{ id: number; isAvailable: boolean; availabilityStatus: string }> = await res.json();
+        const branchMap = new Map(branchProducts.map(p => [p.id, p]));
+        const toRemove: CartItem[] = [];
+        for (const cartItem of items) {
+          const inBranch = branchMap.get(cartItem.product.id);
+          if (!inBranch || inBranch.isAvailable === false) {
+            toRemove.push(cartItem);
+          }
+        }
+        if (toRemove.length > 0 && !cancelled) {
+          toRemove.forEach(item => removeItem(item.product.id));
+          toast({
+            title: String(tCommon('branch.itemsRemovedTitle')),
+            description: String(tCommon('branch.itemsRemovedDesc')),
+            variant: 'destructive',
+          });
+        }
+      } catch {
+        // Silent — don't block checkout on network failure
+      }
+    })();
+    return () => { cancelled = true; };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);  // Run only on mount
 
   // Create Set for fast lookup
   const closedDatesSet = useMemo(() => {
@@ -754,36 +793,61 @@ export default function Checkout() {
         </div>
       )}
 
-      {/* Branch Change Warning Dialog */}
+      {/* Branch Change: Step 1 – Select a different branch */}
       {showBranchChangeDialog && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6">
             <div className="flex flex-col items-center text-center mb-5">
               <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
-                <AlertTriangle className="w-6 h-6 text-orange-500" />
+                <MapPin className="w-6 h-6 text-orange-500" />
               </div>
               <h2 className="text-lg font-bold text-gray-900 mb-1">
                 {String(tCommon('branch.changeBranch'))}
               </h2>
-              <p className="text-gray-500 text-sm">
-                {String(tCommon('branch.changeWarning'))}
-              </p>
             </div>
             <div className="space-y-2 mb-5">
               {branches.map(branch => (
                 <button
                   key={branch.id}
-                  onClick={() => {
-                    if (branch.id !== selectedBranchId) {
-                      setPendingBranchId(branch.id);
-                    } else {
+                  disabled={isFetchingCompat}
+                  onClick={async () => {
+                    if (branch.id === selectedBranchId) {
                       setShowBranchChangeDialog(false);
+                      return;
+                    }
+                    setIsFetchingCompat(true);
+                    try {
+                      const res = await fetch(`/api/products?branchId=${branch.id}`);
+                      const branchProducts: Array<{ id: number; isAvailable: boolean; availabilityStatus: string }> = await res.json();
+                      const branchMap = new Map(branchProducts.map(p => [p.id, p]));
+                      const toRemove: CartItem[] = [];
+                      const toDowngrade: CartItem[] = [];
+                      const toKeep: CartItem[] = [];
+                      for (const cartItem of items) {
+                        const inBranch = branchMap.get(cartItem.product.id);
+                        if (!inBranch || inBranch.isAvailable === false) {
+                          toRemove.push(cartItem);
+                        } else if (
+                          inBranch.availabilityStatus === 'out_of_stock_today' &&
+                          cartItem.product.availabilityStatus !== 'out_of_stock_today'
+                        ) {
+                          toDowngrade.push(cartItem);
+                        } else {
+                          toKeep.push(cartItem);
+                        }
+                      }
+                      setBranchCompatResult({ toRemove, toDowngrade, toKeep });
+                      setPendingBranchId(branch.id);
+                    } catch {
+                      toast({ title: String(tShop('checkout.orderError')), variant: 'destructive' });
+                    } finally {
+                      setIsFetchingCompat(false);
                     }
                   }}
                   className={`w-full text-left px-4 py-3 rounded-xl border-2 transition-all duration-150 group ${
                     branch.id === selectedBranchId
                       ? 'border-primary bg-primary/5 cursor-default'
-                      : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50'
+                      : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50 disabled:opacity-60 disabled:cursor-not-allowed'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -793,6 +857,9 @@ export default function Checkout() {
                     </span>
                     {branch.id === selectedBranchId && (
                       <CheckCircle className="w-4 h-4 text-primary ml-auto" />
+                    )}
+                    {isFetchingCompat && branch.id !== selectedBranchId && (
+                      <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin ml-auto" />
                     )}
                   </div>
                 </button>
@@ -805,40 +872,103 @@ export default function Checkout() {
         </div>
       )}
 
-      {/* Branch Change Confirmation (cart will be cleared) */}
-      {pendingBranchId !== null && (
+      {/* Branch Change: Step 2 – Show compatibility and confirm */}
+      {pendingBranchId !== null && branchCompatResult !== null && (
         <div className="fixed inset-0 z-[210] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6">
-            <div className="flex flex-col items-center text-center mb-5">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
-                <AlertTriangle className="w-6 h-6 text-red-500" />
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex flex-col items-center text-center mb-4">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
+                branchCompatResult.toRemove.length > 0 ? 'bg-red-100' : 'bg-orange-100'
+              }`}>
+                <AlertTriangle className={`w-6 h-6 ${branchCompatResult.toRemove.length > 0 ? 'text-red-500' : 'text-orange-500'}`} />
               </div>
               <h2 className="text-lg font-bold text-gray-900 mb-1">
                 {String(tCommon('branch.confirmChange'))}
               </h2>
               <p className="text-gray-500 text-sm">
-                {String(tCommon('branch.cartWillBeCleared'))}
+                {(() => {
+                  const pendingBranch = branches.find(b => b.id === pendingBranchId);
+                  return pendingBranch ? pendingBranch.name : '';
+                })()}
               </p>
             </div>
+
+            {branchCompatResult.toRemove.length === 0 && branchCompatResult.toDowngrade.length === 0 ? (
+              <p className="text-sm text-green-700 bg-green-50 rounded-lg px-3 py-2 mb-4 text-center">
+                {String(tCommon('branch.allItemsAvailable'))}
+              </p>
+            ) : (
+              <div className="space-y-3 mb-4">
+                {branchCompatResult.toRemove.length > 0 && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2">
+                    <p className="text-xs font-semibold text-red-700 mb-1">{String(tCommon('branch.itemsToRemove'))} ({branchCompatResult.toRemove.length})</p>
+                    <ul className="space-y-0.5">
+                      {branchCompatResult.toRemove.map(item => (
+                        <li key={item.product.id} className="text-xs text-red-600 flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-red-400 flex-shrink-0" />
+                          {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {branchCompatResult.toDowngrade.length > 0 && (
+                  <div className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-2">
+                    <p className="text-xs font-semibold text-orange-700 mb-1">{String(tCommon('branch.itemsPreOrder'))} ({branchCompatResult.toDowngrade.length})</p>
+                    <ul className="space-y-0.5">
+                      {branchCompatResult.toDowngrade.map(item => (
+                        <li key={item.product.id} className="text-xs text-orange-600 flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-orange-400 flex-shrink-0" />
+                          {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {branchCompatResult.toKeep.length > 0 && (
+                  <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2">
+                    <p className="text-xs font-semibold text-green-700 mb-1">{String(tCommon('branch.itemsKept'))} ({branchCompatResult.toKeep.length})</p>
+                    <ul className="space-y-0.5">
+                      {branchCompatResult.toKeep.map(item => (
+                        <li key={item.product.id} className="text-xs text-green-600 flex items-center gap-1">
+                          <span className="w-1 h-1 rounded-full bg-green-400 flex-shrink-0" />
+                          {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 className="flex-1"
-                onClick={() => setPendingBranchId(null)}
+                onClick={() => {
+                  setPendingBranchId(null);
+                  setBranchCompatResult(null);
+                }}
               >
                 {tCommon('actions.cancel')}
               </Button>
               <Button
                 className="flex-1 bg-primary text-white hover:bg-primary-hover"
                 onClick={() => {
+                  const { toRemove } = branchCompatResult;
+                  toRemove.forEach(item => removeItem(item.product.id));
                   selectBranch(pendingBranchId!);
-                  clearCart();
                   setPendingBranchId(null);
+                  setBranchCompatResult(null);
                   setShowBranchChangeDialog(false);
-                  setLocation('/');
+                  if (branchCompatResult.toRemove.length === items.length) {
+                    setLocation('/');
+                  }
                 }}
               >
-                {String(tCommon('branch.confirmAndClear'))}
+                {branchCompatResult.toRemove.length > 0
+                  ? String(tCommon('branch.confirmAndRemove'))
+                  : String(tCommon('branch.confirm'))}
               </Button>
             </div>
           </div>

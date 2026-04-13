@@ -235,6 +235,19 @@ export default function Header({ onResetView }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-1 md:gap-4 rtl:space-x-reverse flex-shrink-0">
+            {/* Branch indicator - mobile, visible only on small screens */}
+            {branchesEnabled && branches.length > 1 && selectedBranch && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex md:hidden items-center gap-1 text-gray-600 hover:text-primary px-1.5 py-1"
+                onClick={() => setIsBranchModalOpen(true)}
+                title={String(t('branch.changeBranch'))}
+              >
+                <MapPin className="h-4 w-4 flex-shrink-0" />
+                <span className="text-xs font-medium max-w-[60px] truncate">{selectedBranch.name}</span>
+              </Button>
+            )}
             {storeSettings?.enabledLanguages && storeSettings.enabledLanguages.length > 1 && (
               <div className="hidden md:block">
                 <LanguageSwitcher variant="compact" />

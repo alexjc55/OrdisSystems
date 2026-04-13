@@ -635,8 +635,16 @@
     "changeBranch": "שנה סניף",
     "selectedBranch": "סניף",
     "changeWarning": "בחר סניף אחר. עגלת הקניות שלך תתנקה בעת המעבר.",
-    "confirmChange": "לשנות סניף?",
+    "confirmChange": "מעבר לסניף",
     "cartWillBeCleared": "מעבר לסניף אחר ינקה את עגלת הקניות הנוכחית שלך. האם אתה בטוח?",
-    "confirmAndClear": "שנה ונקה עגלה"
+    "confirmAndClear": "שנה ונקה עגלה",
+    "allItemsAvailable": "כל הפריטים בעגלה שלך זמינים בסניף זה.",
+    "itemsToRemove": "פריטים שיוסרו (לא זמינים)",
+    "itemsPreOrder": "פריטים שיהפכו להזמנה מראש",
+    "itemsKept": "פריטים הזמינים בסניף זה",
+    "confirmAndRemove": "עבור והסר פריטים לא זמינים",
+    "confirm": "עבור לסניף",
+    "itemsRemovedTitle": "חלק מהפריטים הוסרו",
+    "itemsRemovedDesc": "פריטים שאינם זמינים בסניף שנבחר הוסרו מעגלת הקניות."
   }
 }

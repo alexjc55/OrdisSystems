@@ -631,9 +631,17 @@
     "changeBranch": "تغيير الفرع",
     "selectedBranch": "الفرع",
     "changeWarning": "اختر فرعاً مختلفاً. سيتم مسح سلة التسوق الحالية عند التبديل.",
-    "confirmChange": "تغيير الفرع؟",
+    "confirmChange": "التبديل إلى الفرع",
     "cartWillBeCleared": "سيؤدي التبديل إلى فرع آخر إلى مسح سلة التسوق الحالية. هل أنت متأكد؟",
-    "confirmAndClear": "تغيير ومسح السلة"
+    "confirmAndClear": "تغيير ومسح السلة",
+    "allItemsAvailable": "جميع عناصر سلة التسوق متاحة في هذا الفرع.",
+    "itemsToRemove": "عناصر ستُزال (غير متاحة)",
+    "itemsPreOrder": "عناصر ستتحول إلى الطلب المسبق",
+    "itemsKept": "عناصر متاحة في هذا الفرع",
+    "confirmAndRemove": "انتقل وأزل العناصر غير المتاحة",
+    "confirm": "الانتقال إلى الفرع",
+    "itemsRemovedTitle": "تمت إزالة بعض العناصر",
+    "itemsRemovedDesc": "تمت إزالة العناصر غير المتاحة في الفرع المحدد من سلة التسوق."
   },
   "validation": {
     "firstNameMinLength": "الاسم الأول يجب أن يحتوي على حرفين على الأقل",
