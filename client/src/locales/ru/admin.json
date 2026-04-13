@@ -12,7 +12,8 @@
     "basic": "Основные",
     "colors": "Цвета",
     "visuals": "Визуальные",
-    "closedDates": "Выходные"
+    "closedDates": "Выходные",
+    "branches": "Отделения"
   },
   "actions": {
     "add": "Добавить",
@@ -1343,5 +1344,37 @@
     "error": "Ошибка",
     "addError": "Не удалось добавить выходной день",
     "deleteError": "Не удалось удалить выходной день"
+  },
+  "branches": {
+    "title": "Отделения",
+    "description": "Управление отделениями магазина",
+    "createBranch": "Добавить отделение",
+    "editBranch": "Редактировать отделение",
+    "deleteBranch": "Удалить отделение",
+    "noBranches": "Отделения не найдены",
+    "name": "Название",
+    "namePlaceholder": "Введите название отделения",
+    "sortOrder": "Порядок",
+    "status": "Статус",
+    "active": "Активно",
+    "inactive": "Неактивно",
+    "createSuccess": "Отделение создано",
+    "createError": "Ошибка при создании отделения",
+    "updateSuccess": "Отделение обновлено",
+    "updateError": "Ошибка при обновлении отделения",
+    "deleteSuccess": "Отделение удалено",
+    "deleteError": "Ошибка при удалении отделения",
+    "deleteConfirm": "Вы уверены, что хотите удалить это отделение?",
+    "workerBranches": "Отделения сотрудника",
+    "workerBranchesDescription": "Выберите отделения, к которым имеет доступ этот сотрудник",
+    "branchAvailability": "Доступность по отделениям",
+    "branchAvailabilityDescription": "Настройте доступность товара для каждого отделения",
+    "allBranches": "Все отделения",
+    "filterByBranch": "Фильтр по отделению",
+    "available": "Доступен",
+    "unavailable": "Недоступен",
+    "tomorrow": "Завтра",
+    "outOfStock": "Нет в наличии",
+    "actions": "Действия"
   }
 }

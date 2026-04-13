@@ -306,7 +306,9 @@ import {
   Menu,
   Mail,
   BarChart3,
-  Printer
+  Printer,
+  Building2,
+  Pencil
 } from "lucide-react";
 
 // Validation schemas
@@ -3415,6 +3417,7 @@ export default function AdminDashboard() {
     };
   }, [ordersViewMode]);
   const [ordersStatusFilter, setOrdersStatusFilter] = useState("active"); // active, delivered, cancelled, all
+  const [ordersBranchFilter, setOrdersBranchFilter] = useState("all");
   
   // Cancellation dialog state
   const [isCancellationDialogOpen, setIsCancellationDialogOpen] = useState(false);
@@ -3517,7 +3520,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     setOrdersPage(1);
-  }, [searchQuery, ordersStatusFilter]);
+  }, [searchQuery, ordersStatusFilter, ordersBranchFilter]);
 
   useEffect(() => {
     setUsersPage(1);
@@ -3608,7 +3611,7 @@ export default function AdminDashboard() {
   });
 
   const { data: ordersResponse, isLoading: ordersLoading } = useQuery({
-    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, storeSettings?.defaultItemsPerPage],
+    queryKey: ["/api/admin/orders", ordersPage, searchQuery, ordersStatusFilter, ordersBranchFilter, storeSettings?.defaultItemsPerPage],
     queryFn: async () => {
       const limit = storeSettings?.defaultItemsPerPage || 10;
       
@@ -3622,14 +3625,18 @@ export default function AdminDashboard() {
         statusParam = "cancelled";
       }
       
-      const params = new URLSearchParams({
+      const paramsObj: Record<string, string> = {
         page: ordersPage.toString(),
         limit: limit.toString(),
         search: searchQuery,
         status: statusParam,
         sortField: 'createdAt',
         sortDirection: 'desc'
-      });
+      };
+      if (ordersBranchFilter !== 'all') {
+        paramsObj.branchId = ordersBranchFilter;
+      }
+      const params = new URLSearchParams(paramsObj);
       const response = await fetch(`/api/admin/orders?${params}`);
       if (!response.ok) throw new Error('Failed to fetch orders');
       return response.json();
@@ -3693,6 +3700,74 @@ export default function AdminDashboard() {
     staleTime: 3 * 60 * 1000, // 3 minutes for users (less frequent changes)
     gcTime: 7 * 60 * 1000, // 7 minutes
   });
+
+  // Config query to check feature flags
+  const { data: appConfig } = useQuery({
+    queryKey: ["/api/config"],
+    staleTime: 10 * 60 * 1000,
+    gcTime: 20 * 60 * 1000,
+  });
+  const branchesEnabled = (appConfig as any)?.branchesEnabled === true;
+
+  // Branches data query (admin only, when branchesEnabled)
+  const { data: branches = [] } = useQuery({
+    queryKey: ["/api/admin/branches"],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/branches');
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: branchesEnabled && isAdmin,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
+  // Branch CRUD mutations
+  const createBranchMutation = useMutation({
+    mutationFn: async (data: { name: string; isActive: boolean; sortOrder: number }) => {
+      return await apiRequest('POST', '/api/admin/branches', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      toast({ title: adminT('branches.createSuccess') });
+    },
+    onError: () => {
+      toast({ title: adminT('actions.error'), description: adminT('branches.createError'), variant: 'destructive' });
+    }
+  });
+
+  const updateBranchMutation = useMutation({
+    mutationFn: async ({ id, ...data }: { id: number; name?: string; isActive?: boolean; sortOrder?: number }) => {
+      return await apiRequest('PUT', `/api/admin/branches/${id}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      toast({ title: adminT('branches.updateSuccess') });
+    },
+    onError: () => {
+      toast({ title: adminT('actions.error'), description: adminT('branches.updateError'), variant: 'destructive' });
+    }
+  });
+
+  const deleteBranchMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest('DELETE', `/api/admin/branches/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      toast({ title: adminT('branches.deleteSuccess') });
+    },
+    onError: () => {
+      toast({ title: adminT('actions.error'), description: adminT('branches.deleteError'), variant: 'destructive' });
+    }
+  });
+
+  // Branch form state
+  const [isBranchFormOpen, setIsBranchFormOpen] = useState(false);
+  const [editingBranch, setEditingBranch] = useState<any>(null);
+  const [branchFormName, setBranchFormName] = useState('');
+  const [branchFormIsActive, setBranchFormIsActive] = useState(true);
+  const [branchFormSortOrder, setBranchFormSortOrder] = useState(1);
 
   // Pagination configuration
   const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
@@ -4504,6 +4579,21 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     )}
+                    {isAdmin && branchesEnabled && (
+                      <div 
+                        onClick={() => {
+                          setActiveTab("branches");
+                          document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
+                        }} 
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'branches' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        style={{minWidth: '0', overflow: 'hidden'}}
+                      >
+                        <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
+                          <Building2 className="w-5 h-5 flex-shrink-0" />
+                          <span className="text-xs font-medium leading-tight text-center truncate w-full">{adminT('tabs.branches')}</span>
+                        </div>
+                      </div>
+                    )}
                     {user?.role === 'admin' && (
                       <div 
                         onClick={() => {
@@ -4577,6 +4667,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="settings" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.permissions')}>
                       <UserCheck className="w-4 h-4 ml-1" />
                       <span className="admin-tab-text">{adminT('tabs.permissions')}</span>
+                    </TabsTrigger>
+                  )}
+                  {isAdmin && branchesEnabled && (
+                    <TabsTrigger value="branches" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.branches')}>
+                      <Building2 className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.branches')}</span>
                     </TabsTrigger>
                   )}
                   {isAdmin && (
@@ -4677,6 +4773,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="themes" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.themes')}>
                       <Palette className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{adminT('tabs.themes')}</span>
+                    </TabsTrigger>
+                  )}
+                  {isAdmin && branchesEnabled && (
+                    <TabsTrigger value="branches" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.branches')}>
+                      <Building2 className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.branches')}</span>
                     </TabsTrigger>
                   )}
 
@@ -5340,6 +5442,21 @@ export default function AdminDashboard() {
                     className={`w-full h-9 ${isRTL ? 'pr-9 pl-3 text-right' : 'pl-9'}`}
                   />
                 </div>
+
+                {/* Row 5: Branch filter (only shown when branchesEnabled and branches exist) */}
+                {branchesEnabled && (branches as any[]).length > 0 && (
+                  <Select value={ordersBranchFilter} onValueChange={setOrdersBranchFilter}>
+                    <SelectTrigger className="w-full text-xs h-9">
+                      <SelectValue placeholder={adminT('branches.filterByBranch')} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                      <SelectItem value="all">{adminT('branches.allBranches')}</SelectItem>
+                      {(branches as any[]).map((branch: any) => (
+                        <SelectItem key={branch.id} value={String(branch.id)}>{branch.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
 
@@ -6825,6 +6942,175 @@ export default function AdminDashboard() {
             </TabsContent>
           )}
 
+          {/* Branches Management */}
+          {isAdmin && branchesEnabled && (
+            <TabsContent value="branches" className="space-y-4 sm:space-y-6">
+              <Card>
+                <CardHeader>
+                  <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <CardTitle className={`flex items-center gap-2 text-lg sm:text-xl ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                        <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                        {adminT('branches.title')}
+                      </CardTitle>
+                      <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {adminT('branches.description')}
+                      </CardDescription>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        setEditingBranch(null);
+                        setBranchFormName('');
+                        setBranchFormIsActive(true);
+                        setBranchFormSortOrder((branches as any[]).length + 1);
+                        setIsBranchFormOpen(true);
+                      }}
+                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 w-full sm:w-auto ${isRTL ? 'flex-row-reverse' : ''}`}
+                    >
+                      <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                      {adminT('branches.createBranch')}
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {(branches as any[]).length === 0 ? (
+                    <p className={`text-gray-500 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.noBranches')}</p>
+                  ) : (
+                    <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                      <div className="overflow-x-auto">
+                        <Table className="w-full">
+                          <TableHeader className="bg-gray-50/80">
+                            <TableRow className="border-b border-gray-100">
+                              <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.sortOrder')}</TableHead>
+                              <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')}</TableHead>
+                              <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.status')}</TableHead>
+                              <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.actions')}</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {(branches as any[]).map((branch: any) => (
+                              <TableRow key={branch.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                                <TableCell className="px-3 py-3 text-sm text-gray-600">{branch.sortOrder}</TableCell>
+                                <TableCell className="px-3 py-3 text-sm font-medium">{branch.name}</TableCell>
+                                <TableCell className="px-3 py-3">
+                                  <Badge variant="outline" className={branch.isActive ? "border-green-200 text-green-700 bg-green-50 text-xs" : "border-gray-200 text-gray-500 bg-gray-50 text-xs"}>
+                                    {branch.isActive ? adminT('branches.active') : adminT('branches.inactive')}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="px-3 py-3">
+                                  <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-8 px-2 text-xs"
+                                      onClick={() => {
+                                        setEditingBranch(branch);
+                                        setBranchFormName(branch.name);
+                                        setBranchFormIsActive(branch.isActive);
+                                        setBranchFormSortOrder(branch.sortOrder);
+                                        setIsBranchFormOpen(true);
+                                      }}
+                                    >
+                                      <Pencil className="h-3 w-3" />
+                                    </Button>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="outline" size="sm" className="h-8 px-2 text-xs text-red-600 border-red-200 hover:bg-red-50">
+                                          <Trash2 className="h-3 w-3" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent className={isRTL ? 'rtl' : ''}>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>{adminT('branches.deleteBranch')}</AlertDialogTitle>
+                                          <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>{adminT('branches.deleteConfirm')}</AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
+                                          <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={() => deleteBranchMutation.mutate(branch.id)}
+                                            className="bg-red-600 hover:bg-red-700"
+                                          >
+                                            {adminT('actions.delete')}
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Branch Create/Edit Dialog */}
+              <Dialog open={isBranchFormOpen} onOpenChange={(open) => { if (!open) setIsBranchFormOpen(false); }}>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className={isRTL ? 'text-right' : 'text-left'}>
+                      {editingBranch ? adminT('branches.editBranch') : adminT('branches.createBranch')}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
+                    <div>
+                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} *</label>
+                      <Input
+                        value={branchFormName}
+                        onChange={(e) => setBranchFormName(e.target.value)}
+                        placeholder={adminT('branches.namePlaceholder')}
+                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                        dir={isRTL ? 'rtl' : 'ltr'}
+                      />
+                    </div>
+                    <div>
+                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.sortOrder')}</label>
+                      <Input
+                        type="number"
+                        value={branchFormSortOrder}
+                        onChange={(e) => setBranchFormSortOrder(parseInt(e.target.value) || 1)}
+                        className="text-sm"
+                        min={1}
+                      />
+                    </div>
+                    <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Switch
+                        checked={branchFormIsActive}
+                        onCheckedChange={setBranchFormIsActive}
+                      />
+                      <label className="text-sm font-medium">
+                        {branchFormIsActive ? adminT('branches.active') : adminT('branches.inactive')}
+                      </label>
+                    </div>
+                  </div>
+                  <div className={`flex justify-between pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Button variant="outline" onClick={() => setIsBranchFormOpen(false)} className="text-sm">
+                      {adminT('actions.cancel')}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (!branchFormName.trim()) return;
+                        if (editingBranch) {
+                          updateBranchMutation.mutate({ id: editingBranch.id, name: branchFormName, isActive: branchFormIsActive, sortOrder: branchFormSortOrder });
+                        } else {
+                          createBranchMutation.mutate({ name: branchFormName, isActive: branchFormIsActive, sortOrder: branchFormSortOrder });
+                        }
+                        setIsBranchFormOpen(false);
+                      }}
+                      className="bg-primary hover:bg-primary text-white text-sm"
+                      disabled={!branchFormName.trim() || createBranchMutation.isPending || updateBranchMutation.isPending}
+                    >
+                      {editingBranch ? adminT('actions.update') : adminT('actions.create')}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </TabsContent>
+          )}
+
 
         </Tabs>
       </div>
@@ -6886,6 +7172,8 @@ export default function AdminDashboard() {
           setEditingUser(null);
         }}
         user={editingUser}
+        branches={branches || []}
+        branchesEnabled={branchesEnabled}
         onSubmit={(data: any) => {
           if (editingUser) {
             // For editing users, handle password separately if provided
@@ -7036,7 +7324,7 @@ function CustomSwitch({ checked, onChange, bgColor = "bg-gray-500" }: {
 }
 
 // Form Dialog Components
-function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT }: any) {
+function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDelete, adminT, branches = [], branchesEnabled = false }: any) {
   type ProductFormData = z.infer<typeof productSchema>;
   
   const { toast } = useToast();
@@ -7047,6 +7335,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   });
   
   const [formData, setFormData] = useState<any>({});
+  const [branchAvailability, setBranchAvailability] = useState<Record<number, boolean>>({});
   
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -7085,6 +7374,16 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           discountValue: product.discountValue?.toString() || "",
         };
         setFormData(initialData);
+        // Initialize branch availability from product data
+        if (branchesEnabled && product.branchAvailability) {
+          const avail: Record<number, boolean> = {};
+          (product.branchAvailability as any[]).forEach((ba: any) => {
+            avail[ba.branchId] = ba.isAvailable;
+          });
+          setBranchAvailability(avail);
+        } else {
+          setBranchAvailability({});
+        }
         
         // Set form values based on current language
         const nameValue = translationManager.getFieldValue(initialData, 'name');
@@ -10527,10 +10826,11 @@ function UserDeletionDialog({ open, onClose, user, onConfirm }: {
 }
 
 // User Form Dialog Component
-function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
+function UserFormDialog({ open, onClose, user, onSubmit, onDelete, branches = [], branchesEnabled = false }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
+  const [selectedBranchIds, setSelectedBranchIds] = useState<number[]>([]);
 
   const userSchema = z.object({
     username: z.string().min(1, adminT('dialog.usernameRequired')),
@@ -10557,6 +10857,8 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
     },
   });
 
+  const watchedRole = useWatch({ control: form.control, name: "role" });
+
   // Reset form when user or dialog state changes
   useEffect(() => {
     if (open) {
@@ -10570,7 +10872,9 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
           role: user.role || "customer",
           password: "", // Always empty for editing existing users
         });
+        setSelectedBranchIds(user.branchIds || []);
       } else {
+        setSelectedBranchIds([]);
         form.reset({
           username: "",
           email: "",
@@ -10584,7 +10888,11 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
   }, [open, user, form]);
 
   const handleSubmit = (data: UserFormData) => {
-    onSubmit(data);
+    const submitData: any = { ...data };
+    if (branchesEnabled && data.role === 'worker') {
+      submitData.branchIds = selectedBranchIds;
+    }
+    onSubmit(submitData);
   };
 
   return (
@@ -10722,6 +11030,38 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete }: any) {
                 </FormItem>
               )}
             />
+
+            {/* Branch Assignment (shown for workers when branchesEnabled) */}
+            {branchesEnabled && watchedRole === 'worker' && (branches as any[]).length > 0 && (
+              <div className={`space-y-2 border border-gray-200 rounded-lg p-3 ${isRTL ? 'text-right' : 'text-left'}`}>
+                <div>
+                  <p className="text-sm font-medium">{adminT('branches.workerBranches')}</p>
+                  <p className="text-xs text-gray-500">{adminT('branches.workerBranchesDescription')}</p>
+                </div>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {(branches as any[]).filter((b: any) => b.isActive).map((branch: any) => (
+                    <div key={branch.id} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <input
+                        type="checkbox"
+                        id={`branch-${branch.id}`}
+                        checked={selectedBranchIds.includes(branch.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedBranchIds(prev => [...prev, branch.id]);
+                          } else {
+                            setSelectedBranchIds(prev => prev.filter(id => id !== branch.id));
+                          }
+                        }}
+                        className="h-4 w-4 rounded border-gray-300"
+                      />
+                      <label htmlFor={`branch-${branch.id}`} className="text-sm text-gray-700 cursor-pointer">
+                        {branch.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <FormField
               control={form.control}

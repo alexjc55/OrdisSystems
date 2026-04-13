@@ -12,7 +12,8 @@
     "basic": "בסיסי",
     "colors": "צבעים",
     "visuals": "ויזואלי",
-    "closedDates": "חגים"
+    "closedDates": "חגים",
+    "branches": "סניפים"
   },
   "actions": {
     "add": "הוסף",
@@ -1421,5 +1422,37 @@
     "error": "שגיאה",
     "addError": "נכשל בהוספת יום סגירה",
     "deleteError": "נכשל במחיקת יום סגירה"
+  },
+  "branches": {
+    "title": "סניפים",
+    "description": "ניהול סניפי החנות",
+    "createBranch": "הוסף סניף",
+    "editBranch": "ערוך סניף",
+    "deleteBranch": "מחק סניף",
+    "noBranches": "לא נמצאו סניפים",
+    "name": "שם",
+    "namePlaceholder": "הכנס שם סניף",
+    "sortOrder": "סדר",
+    "status": "סטטוס",
+    "active": "פעיל",
+    "inactive": "לא פעיל",
+    "createSuccess": "סניף נוצר",
+    "createError": "שגיאה ביצירת סניף",
+    "updateSuccess": "סניף עודכן",
+    "updateError": "שגיאה בעדכון סניף",
+    "deleteSuccess": "סניף נמחק",
+    "deleteError": "שגיאה במחיקת סניף",
+    "deleteConfirm": "האם אתה בטוח שברצונך למחוק את הסניף הזה?",
+    "workerBranches": "סניפי העובד",
+    "workerBranchesDescription": "בחר את הסניפים שיש לעובד זה גישה אליהם",
+    "branchAvailability": "זמינות לפי סניף",
+    "branchAvailabilityDescription": "הגדר את זמינות המוצר עבור כל סניף",
+    "allBranches": "כל הסניפים",
+    "filterByBranch": "סנן לפי סניף",
+    "available": "זמין",
+    "unavailable": "לא זמין",
+    "tomorrow": "מחר",
+    "outOfStock": "אזל מהמלאי",
+    "actions": "פעולות"
   }
 }

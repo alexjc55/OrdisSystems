@@ -20,7 +20,8 @@
     "basic": "Basic",
     "colors": "Colors",
     "visuals": "Visual",
-    "closedDates": "Holidays"
+    "closedDates": "Holidays",
+    "branches": "Branches"
   },
   "actions": {
     "add": "Add",
@@ -1284,5 +1285,37 @@
     "error": "Error",
     "addError": "Failed to add closed date",
     "deleteError": "Failed to delete closed date"
+  },
+  "branches": {
+    "title": "Branches",
+    "description": "Manage store branches",
+    "createBranch": "Add Branch",
+    "editBranch": "Edit Branch",
+    "deleteBranch": "Delete Branch",
+    "noBranches": "No branches found",
+    "name": "Name",
+    "namePlaceholder": "Enter branch name",
+    "sortOrder": "Order",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "createSuccess": "Branch created",
+    "createError": "Failed to create branch",
+    "updateSuccess": "Branch updated",
+    "updateError": "Failed to update branch",
+    "deleteSuccess": "Branch deleted",
+    "deleteError": "Failed to delete branch",
+    "deleteConfirm": "Are you sure you want to delete this branch?",
+    "workerBranches": "Worker Branches",
+    "workerBranchesDescription": "Select branches this worker has access to",
+    "branchAvailability": "Branch Availability",
+    "branchAvailabilityDescription": "Configure product availability for each branch",
+    "allBranches": "All Branches",
+    "filterByBranch": "Filter by Branch",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "tomorrow": "Tomorrow",
+    "outOfStock": "Out of Stock",
+    "actions": "Actions"
   }
 }
