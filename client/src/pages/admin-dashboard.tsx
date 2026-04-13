@@ -3741,6 +3741,9 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
+      setIsBranchFormOpen(false);
+      setEditingBranch(null);
       toast({ title: adminT('branches.createSuccess') });
     },
     onError: () => {
@@ -3754,6 +3757,9 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
+      setIsBranchFormOpen(false);
+      setEditingBranch(null);
       toast({ title: adminT('branches.updateSuccess') });
     },
     onError: () => {
@@ -3767,6 +3773,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
       toast({ title: adminT('branches.deleteSuccess') });
     },
     onError: () => {
@@ -7221,7 +7228,6 @@ export default function AdminDashboard() {
                         } else {
                           createBranchMutation.mutate({ name: branchFormName, isActive: branchFormIsActive, sortOrder: branchFormSortOrder });
                         }
-                        setIsBranchFormOpen(false);
                       }}
                       className="bg-primary hover:bg-primary text-white text-sm"
                       disabled={!branchFormName.trim() || createBranchMutation.isPending || updateBranchMutation.isPending}
