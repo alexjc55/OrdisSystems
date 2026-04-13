@@ -3753,6 +3753,29 @@ export default function AdminDashboard() {
     staleTime: 5 * 60 * 1000,
   });
 
+  // Branch limit status — check if current count exceeds MAX_BRANCHES config
+  const { data: branchLimitStatus, refetch: refetchLimitStatus } = useQuery<{
+    maxBranches: number | null;
+    currentCount: number;
+    isOverLimit: boolean;
+    overLimitCount: number;
+    branches: any[];
+  } | null>({
+    queryKey: ["/api/admin/branches/limit-status"],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/branches/limit-status');
+      if (!res.ok) return null;
+      return res.json();
+    },
+    enabled: branchesEnabled,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+  });
+
+  const branchOverLimit = branchLimitStatus?.isOverLimit === true;
+  const branchOverLimitCount = branchLimitStatus?.overLimitCount || 0;
+  const branchMaxAllowed = branchLimitStatus?.maxBranches ?? null;
+
   // Branch CRUD mutations
   const createBranchMutation = useMutation({
     mutationFn: async (data: { name: string; isActive: boolean; sortOrder: number }) => {
@@ -3760,6 +3783,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches/limit-status'] });
       queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
       setIsBranchFormOpen(false);
       setEditingBranch(null);
@@ -3776,6 +3800,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches/limit-status'] });
       queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
       setIsBranchFormOpen(false);
       setEditingBranch(null);
@@ -3792,6 +3817,7 @@ export default function AdminDashboard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches/limit-status'] });
       queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
       toast({ title: adminT('branches.deleteSuccess') });
     },
@@ -3806,6 +3832,8 @@ export default function AdminDashboard() {
   const [branchFormName, setBranchFormName] = useState('');
   const [branchFormIsActive, setBranchFormIsActive] = useState(true);
   const [branchFormSortOrder, setBranchFormSortOrder] = useState(1);
+  const [selectedBranchesToDelete, setSelectedBranchesToDelete] = useState<Set<number>>(new Set());
+  const [isDeletingLimitBranches, setIsDeletingLimitBranches] = useState(false);
 
   // Pagination configuration
   const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
@@ -4460,6 +4488,25 @@ export default function AdminDashboard() {
     );
   }
 
+  const handleDeleteOverLimitBranches = async () => {
+    if (selectedBranchesToDelete.size < branchOverLimitCount) return;
+    setIsDeletingLimitBranches(true);
+    try {
+      for (const branchId of selectedBranchesToDelete) {
+        await apiRequest('DELETE', `/api/admin/branches/${branchId}`);
+      }
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/branches/limit-status'] });
+      refetchLimitStatus();
+      setSelectedBranchesToDelete(new Set());
+      toast({ title: adminT('branches.deleteSuccess') });
+    } catch {
+      toast({ title: adminT('actions.error'), description: adminT('branches.deleteError'), variant: 'destructive' });
+    } finally {
+      setIsDeletingLimitBranches(false);
+    }
+  };
+
   const openAvailabilityModal = async (product: any, currentEffectiveStatus: string) => {
     setModalProductId(product.id);
     setGlobalStatusChoice(currentEffectiveStatus || product.availabilityStatus || 'available');
@@ -4656,7 +4703,74 @@ export default function AdminDashboard() {
   return (
     <div className={`min-h-screen bg-gray-50 pt-16`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header />
-      
+
+      {/* Branch limit exceeded — WORKER blocking overlay */}
+      {branchesEnabled && branchOverLimit && !isAdmin && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4" dir={isRTL ? 'rtl' : 'ltr'}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 110 18A9 9 0 0112 3z" /></svg>
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">{adminT('branches.workerBlockedTitle')}</h2>
+            </div>
+            <p className="text-gray-600 text-sm leading-relaxed">{adminT('branches.workerBlockedDesc')}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Branch limit exceeded — ADMIN selection modal */}
+      {branchesEnabled && branchOverLimit && isAdmin && (
+        <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4" dir={isRTL ? 'rtl' : 'ltr'}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 110 18A9 9 0 0112 3z" /></svg>
+              </div>
+              <h2 className="text-lg font-semibold text-gray-900">{adminT('branches.limitExceeded')}</h2>
+            </div>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              {adminT('branches.limitExceededDesc')
+                .replace('{count}', String(branchLimitStatus?.currentCount || 0))
+                .replace('{max}', String(branchMaxAllowed ?? 0))}
+            </p>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-700 mb-2">{adminT('branches.limitExceededSelectTitle')}</p>
+              {(branchLimitStatus?.branches || []).map((branch: any) => (
+                <label key={branch.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <Checkbox
+                    checked={selectedBranchesToDelete.has(branch.id)}
+                    onCheckedChange={(checked) => {
+                      setSelectedBranchesToDelete(prev => {
+                        const next = new Set(prev);
+                        if (checked) next.add(branch.id); else next.delete(branch.id);
+                        return next;
+                      });
+                    }}
+                  />
+                  <span className="text-sm text-gray-800">{branch.name}</span>
+                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${branch.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {branch.isActive ? adminT('branches.active') : adminT('branches.inactive')}
+                  </span>
+                </label>
+              ))}
+            </div>
+            {selectedBranchesToDelete.size < branchOverLimitCount && (
+              <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                {adminT('branches.mustSelectMinimum').replace('{count}', String(branchOverLimitCount))}
+              </p>
+            )}
+            <Button
+              className="w-full bg-red-600 hover:bg-red-700 text-white"
+              disabled={selectedBranchesToDelete.size < branchOverLimitCount || isDeletingLimitBranches}
+              onClick={handleDeleteOverLimitBranches}
+            >
+              {isDeletingLimitBranches ? adminT('branches.deletingBranches') : adminT('branches.deleteSelected')}
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <div className="mb-4 sm:mb-8">
           <div className={`flex flex-col sm:flex-row sm:items-center ${isRTL ? 'sm:flex-row-reverse' : ''} justify-between gap-4`}>
@@ -7296,10 +7410,16 @@ export default function AdminDashboard() {
                         setBranchFormSortOrder((branches as any[]).length + 1);
                         setIsBranchFormOpen(true);
                       }}
-                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 w-full sm:w-auto ${isRTL ? 'flex-row-reverse' : ''}`}
+                      disabled={branchMaxAllowed !== null && (branches as any[]).length >= branchMaxAllowed}
+                      title={branchMaxAllowed !== null && (branches as any[]).length >= branchMaxAllowed
+                        ? adminT('branches.limitReached').replace('{max}', String(branchMaxAllowed))
+                        : undefined}
+                      className={`bg-primary hover:bg-primary text-white flex items-center gap-2 w-full sm:w-auto ${isRTL ? 'flex-row-reverse' : ''} disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                       <Plus className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                      {adminT('branches.createBranch')}
+                      {branchMaxAllowed !== null && (branches as any[]).length >= branchMaxAllowed
+                        ? adminT('branches.limitReached').replace('{max}', String(branchMaxAllowed))
+                        : adminT('branches.createBranch')}
                     </Button>
                   </div>
                 </CardHeader>

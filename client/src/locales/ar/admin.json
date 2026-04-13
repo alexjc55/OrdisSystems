@@ -1198,6 +1198,16 @@
     "unavailable": "غير متاح",
     "tomorrow": "غداً",
     "outOfStock": "نفد المخزون",
-    "actions": "الإجراءات"
+    "actions": "الإجراءات",
+    "limitExceeded": "تم تجاوز حد الفروع",
+    "limitExceededDesc": "الفروع النشطة: {count}، الحد المسموح: {max}. يرجى حذف الفروع الزائدة.",
+    "limitExceededSelectTitle": "اختر الفروع للحذف",
+    "limitExceededSelectDesc": "يجب حذف {count} فرع/فروع على الأقل للالتزام بالحد {max}.",
+    "workerBlockedTitle": "مطلوب إجراء من المسؤول",
+    "workerBlockedDesc": "عدد الفروع يتجاوز الحد المسموح. يلزم إجراء من مسؤول المتجر للمتابعة.",
+    "limitReached": "وصل الحد ({max} فروع)",
+    "deleteSelected": "حذف الفروع المحددة",
+    "mustSelectMinimum": "يجب اختيار {count} فرع/فروع على الأقل للحذف",
+    "deletingBranches": "جارٍ الحذف..."
   }
 }

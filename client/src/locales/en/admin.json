@@ -1321,6 +1321,16 @@
     "unavailable": "Unavailable",
     "tomorrow": "Tomorrow",
     "outOfStock": "Out of Stock",
-    "actions": "Actions"
+    "actions": "Actions",
+    "limitExceeded": "Branch Limit Exceeded",
+    "limitExceededDesc": "Active branches: {count}, allowed limit: {max}. Please delete the extra branches.",
+    "limitExceededSelectTitle": "Select Branches to Delete",
+    "limitExceededSelectDesc": "You must delete at least {count} branch(es) to meet the limit of {max}.",
+    "workerBlockedTitle": "Admin Action Required",
+    "workerBlockedDesc": "The number of branches exceeds the allowed limit. Admin action is required to continue.",
+    "limitReached": "Limit reached ({max} branches)",
+    "deleteSelected": "Delete Selected Branches",
+    "mustSelectMinimum": "You must select at least {count} branch(es) to delete",
+    "deletingBranches": "Deleting..."
   }
 }

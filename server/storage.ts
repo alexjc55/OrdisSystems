@@ -1932,6 +1932,8 @@ export class DatabaseStorage implements IStorage {
 
   async deleteBranch(id: number): Promise<void> {
     const db = await this.getDatabase();
+    // Nullify branchId on orders (no cascade set), cascade handles userBranches & productBranchAvailability
+    await db.update(orders).set({ branchId: null }).where(eq(orders.branchId, id));
     await db.delete(branches).where(eq(branches.id, id));
   }
 

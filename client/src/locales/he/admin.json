@@ -1458,6 +1458,16 @@
     "unavailable": "לא זמין",
     "tomorrow": "מחר",
     "outOfStock": "אזל מהמלאי",
-    "actions": "פעולות"
+    "actions": "פעולות",
+    "limitExceeded": "חריגה ממגבלת הסניפים",
+    "limitExceededDesc": "סניפים פעילים: {count}, מגבלה: {max}. אנא מחק את הסניפים הנוספים.",
+    "limitExceededSelectTitle": "בחר סניפים למחיקה",
+    "limitExceededSelectDesc": "עליך למחוק לפחות {count} סניף/ים כדי לעמוד במגבלה של {max}.",
+    "workerBlockedTitle": "נדרשת פעולת מנהל",
+    "workerBlockedDesc": "מספר הסניפים עולה על המגבלה המותרת. נדרשת פעולת מנהל להמשך.",
+    "limitReached": "הגעת למגבלה ({max} סניפים)",
+    "deleteSelected": "מחק סניפים נבחרים",
+    "mustSelectMinimum": "יש לבחור לפחות {count} סניף/ים למחיקה",
+    "deletingBranches": "מוחק..."
   }
 }

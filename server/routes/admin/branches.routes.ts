@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { storage } from "../../storage";
 import { insertBranchSchema } from "@shared/schema";
-import { BRANCHES_ENABLED } from "../../config";
+import { BRANCHES_ENABLED, MAX_BRANCHES } from "../../config";
 import { z } from "zod";
 
 const router = Router();
@@ -38,9 +38,35 @@ router.get("/admin/branches", requireBranches, requireAdminOrWorker, async (_req
   }
 });
 
+// GET /api/admin/branches/limit-status
+router.get("/admin/branches/limit-status", requireBranches, requireAdminOrWorker, async (_req, res) => {
+  try {
+    const allBranches = await storage.getBranches();
+    const currentCount = allBranches.length;
+    const maxBranches = isFinite(MAX_BRANCHES) ? MAX_BRANCHES : null;
+    const isOverLimit = maxBranches !== null && currentCount > maxBranches;
+    res.json({
+      maxBranches,
+      currentCount,
+      isOverLimit,
+      overLimitCount: isOverLimit ? currentCount - maxBranches! : 0,
+      branches: allBranches,
+    });
+  } catch (error) {
+    console.error("Error fetching branch limit status:", error);
+    res.status(500).json({ message: "Failed to fetch branch limit status" });
+  }
+});
+
 // POST /api/admin/branches
 router.post("/admin/branches", requireBranches, requireAdmin, async (req, res) => {
   try {
+    if (isFinite(MAX_BRANCHES)) {
+      const allBranches = await storage.getBranches();
+      if (allBranches.length >= MAX_BRANCHES) {
+        return res.status(403).json({ message: `Branch limit reached. Maximum allowed: ${MAX_BRANCHES}` });
+      }
+    }
     const data = insertBranchSchema.parse(req.body);
     const branch = await storage.createBranch(data);
     res.status(201).json(branch);
