@@ -3445,6 +3445,7 @@ export default function AdminDashboard() {
   const [branchStatusChoices, setBranchStatusChoices] = useState<Record<number, string>>({});
   const [isLoadingModalBranchData, setIsLoadingModalBranchData] = useState(false);
   const [isSavingAvailability, setIsSavingAvailability] = useState(false);
+  const [modalAccessibleBranches, setModalAccessibleBranches] = useState<any[]>([]);
 
   // Pagination state
   const [productsPage, setProductsPage] = useState(1);
@@ -3738,6 +3739,18 @@ export default function AdminDashboard() {
     enabled: branchesEnabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+  });
+
+  // Current user's accessible branch IDs (empty = all branches for admin)
+  const { data: myBranchIds = [] } = useQuery<number[]>({
+    queryKey: ["/api/auth/my-branches"],
+    queryFn: async () => {
+      const res = await fetch('/api/auth/my-branches');
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: branchesEnabled,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Branch CRUD mutations
@@ -4444,9 +4457,8 @@ export default function AdminDashboard() {
   }
 
   const openAvailabilityModal = async (product: any, currentEffectiveStatus: string) => {
-    const defaultNewStatus = currentEffectiveStatus === "available" ? "completely_unavailable" : "available";
     setModalProductId(product.id);
-    setGlobalStatusChoice(defaultNewStatus);
+    setGlobalStatusChoice(currentEffectiveStatus || product.availabilityStatus || 'available');
     setApplyToAllBranches(true);
     setIsAvailabilityModalOpen(true);
 
@@ -4455,20 +4467,52 @@ export default function AdminDashboard() {
       try {
         const res = await fetch(`/api/admin/products/${product.id}/branch-availability`);
         const branchAvail: any[] = await res.json();
+
+        // Determine which branches this user can access
+        const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
+        const accessibleBranches = isAdmin
+          ? activeBranches
+          : myBranchIds.length === 0
+            ? activeBranches
+            : activeBranches.filter((b: any) => myBranchIds.includes(b.id));
+
         const choices: Record<number, string> = {};
-        (branches as any[]).filter((b: any) => b.isActive).forEach((branch: any) => {
+        accessibleBranches.forEach((branch: any) => {
           const override = branchAvail.find((ba: any) => ba.branchId === branch.id);
           choices[branch.id] = override
             ? override.availabilityStatus
-            : (product.isAvailable ? product.availabilityStatus : 'completely_unavailable');
+            : (product.isAvailable ? (product.availabilityStatus || 'available') : 'completely_unavailable');
         });
         setBranchStatusChoices(choices);
+        setModalAccessibleBranches(accessibleBranches);
+
+        // Fix 1: if only 1 accessible branch, never show "apply to all" checkbox
+        if (accessibleBranches.length <= 1) {
+          setApplyToAllBranches(false);
+        } else {
+          // Fix 2: if statuses differ across accessible branches, auto-switch to per-branch view
+          const statuses = Object.values(choices);
+          const allSame = statuses.every(s => s === statuses[0]);
+          if (!allSame) {
+            setApplyToAllBranches(false);
+          } else {
+            setGlobalStatusChoice(statuses[0] || currentEffectiveStatus);
+          }
+        }
       } catch {
+        const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
+        const accessibleBranches = isAdmin
+          ? activeBranches
+          : myBranchIds.length === 0
+            ? activeBranches
+            : activeBranches.filter((b: any) => myBranchIds.includes(b.id));
         const choices: Record<number, string> = {};
-        (branches as any[]).filter((b: any) => b.isActive).forEach((b: any) => {
-          choices[b.id] = product.isAvailable ? product.availabilityStatus : 'completely_unavailable';
+        accessibleBranches.forEach((b: any) => {
+          choices[b.id] = product.isAvailable ? (product.availabilityStatus || 'available') : 'completely_unavailable';
         });
         setBranchStatusChoices(choices);
+        setModalAccessibleBranches(accessibleBranches);
+        if (accessibleBranches.length <= 1) setApplyToAllBranches(false);
       } finally {
         setIsLoadingModalBranchData(false);
       }
@@ -4487,26 +4531,22 @@ export default function AdminDashboard() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ availabilityStatus: globalStatusChoice, isAvailable: isAvail }),
         });
-        // When branches enabled: also update all branch records so overrides don't contradict the global status
-        if (branchesEnabled) {
-          const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
-          if (activeBranches.length > 0) {
-            const branchUpdates = activeBranches.map((b: any) => ({
-              branchId: b.id,
-              availabilityStatus: globalStatusChoice,
-              isAvailable: isAvail,
-            }));
-            await fetch(`/api/admin/products/${modalProductId}/branch-availability`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(branchUpdates),
-            });
-          }
+        // When branches enabled: also update accessible branch records so overrides don't contradict the global status
+        if (branchesEnabled && modalAccessibleBranches.length > 0) {
+          const branchUpdates = modalAccessibleBranches.map((b: any) => ({
+            branchId: b.id,
+            availabilityStatus: globalStatusChoice,
+            isAvailable: isAvail,
+          }));
+          await fetch(`/api/admin/products/${modalProductId}/branch-availability`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(branchUpdates),
+          });
         }
       } else {
-        // Per-branch update
-        const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
-        const branchUpdates = activeBranches.map((b: any) => ({
+        // Per-branch update: only update the branches this user has access to
+        const branchUpdates = modalAccessibleBranches.map((b: any) => ({
           branchId: b.id,
           availabilityStatus: branchStatusChoices[b.id] || 'available',
           isAvailable: (branchStatusChoices[b.id] || 'available') !== 'completely_unavailable',
@@ -5151,6 +5191,8 @@ export default function AdminDashboard() {
                           {filteredProducts.map((product: any) => {
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
+                            // All branch availability records for this product (for mixed status display)
+                            const allBranchRecords: any[] = branchesEnabled ? (product.allBranchAvailability || product.branchAvailability || []) : [];
                             // For workers with branch availability data, use per-branch status
                             const workerBranchStatuses: any[] | null = branchesEnabled && !isAdmin && product.branchAvailability?.length > 0
                               ? product.branchAvailability
@@ -5164,6 +5206,10 @@ export default function AdminDashboard() {
                               : workerBranchStatuses
                                 ? workerBranchStatuses[0].availabilityStatus
                                 : product.availabilityStatus;
+                            // Detect mixed statuses across branches (for status column indicator)
+                            const hasMixedBranchStatuses = branchesEnabled && allBranchRecords.length > 1 &&
+                              new Set(allBranchRecords.map((ba: any) => ba.availabilityStatus)).size > 1;
+                            const showMixedIndicator = hasMixedBranchStatuses && selectedProductBranchFilter === 'all';
                             return (
                               <TableRow key={product.id} className={
                               effectiveStatus !== "available"
@@ -5208,6 +5254,19 @@ export default function AdminDashboard() {
                                           </div>
                                         );
                                       })}
+                                      {showMixedIndicator && (
+                                        <div className="flex gap-1 flex-wrap justify-center mt-0.5">
+                                          {allBranchRecords.map((ba: any) => {
+                                            const bName = (branches as any[]).find((b: any) => b.id === ba.branchId)?.name || `#${ba.branchId}`;
+                                            return (
+                                              <span key={ba.branchId} title={`${bName}: ${ba.availabilityStatus}`} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${ba.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : ba.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${ba.availabilityStatus === 'available' ? 'bg-green-500' : ba.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-500' : 'bg-gray-400'}`} />
+                                                {bName}
+                                              </span>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
@@ -5342,6 +5401,19 @@ export default function AdminDashboard() {
                                           </div>
                                         );
                                       })}
+                                      {showMixedIndicator && (
+                                        <div className="flex gap-1 flex-wrap justify-center mt-0.5">
+                                          {allBranchRecords.map((ba: any) => {
+                                            const bName = (branches as any[]).find((b: any) => b.id === ba.branchId)?.name || `#${ba.branchId}`;
+                                            return (
+                                              <span key={ba.branchId} title={`${bName}: ${ba.availabilityStatus}`} className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium ${ba.availabilityStatus === 'available' ? 'bg-green-100 text-green-700' : ba.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${ba.availabilityStatus === 'available' ? 'bg-green-500' : ba.availabilityStatus === 'out_of_stock_today' ? 'bg-yellow-500' : 'bg-gray-400'}`} />
+                                                {bName}
+                                              </span>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
                                     </div>
                                   </TableCell>
                                 </>
@@ -7509,8 +7581,8 @@ export default function AdminDashboard() {
           </DialogHeader>
 
           <div className="space-y-4 py-2">
-            {/* Apply to all branches checkbox — shown only when branches are enabled */}
-            {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 0 && (
+            {/* Apply to all branches checkbox — only shown when user has access to multiple branches */}
+            {branchesEnabled && modalAccessibleBranches.length > 1 && (
               <div className={`flex items-center gap-3 p-3 bg-gray-50 rounded-lg border ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Checkbox
                   id="apply-to-all-branches"
@@ -7562,7 +7634,7 @@ export default function AdminDashboard() {
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900" />
                   </div>
                 ) : (
-                  (branches as any[]).filter((b: any) => b.isActive).map((branch: any) => (
+                  modalAccessibleBranches.map((branch: any) => (
                     <div key={branch.id} className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <div className="flex-1 text-sm font-medium truncate">{branch.name}</div>
                       <Select
@@ -7731,13 +7803,26 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           discountValue: product.discountValue?.toString() || "",
         };
         setFormData(initialData);
-        // Initialize branch availability from product data (3-state: available, out_of_stock_today, completely_unavailable)
-        if (branchesEnabled && product.branchAvailability) {
-          const avail: Record<number, string> = {};
-          (product.branchAvailability as any[]).forEach((ba: any) => {
-            avail[ba.branchId] = ba.availabilityStatus || (ba.isAvailable ? 'available' : 'completely_unavailable');
-          });
-          setBranchAvailability(avail);
+        // Fetch fresh branch availability from API (more reliable than stale product data)
+        if (branchesEnabled && product.id) {
+          setBranchAvailability({});
+          fetch(`/api/admin/products/${product.id}/branch-availability`)
+            .then(r => r.ok ? r.json() : [])
+            .then((branchAvail: any[]) => {
+              const avail: Record<number, string> = {};
+              branchAvail.forEach((ba: any) => {
+                avail[ba.branchId] = ba.availabilityStatus || (ba.isAvailable ? 'available' : 'completely_unavailable');
+              });
+              setBranchAvailability(avail);
+            })
+            .catch(() => {
+              // Fallback to product data
+              const fallback: Record<number, string> = {};
+              ((product.allBranchAvailability || product.branchAvailability || []) as any[]).forEach((ba: any) => {
+                fallback[ba.branchId] = ba.availabilityStatus || (ba.isAvailable ? 'available' : 'completely_unavailable');
+              });
+              setBranchAvailability(fallback);
+            });
         } else {
           setBranchAvailability({});
         }

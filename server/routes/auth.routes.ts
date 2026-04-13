@@ -19,6 +19,23 @@ router.get('/auth/user', isAuthenticated, async (req: any, res) => {
   }
 });
 
+router.get('/auth/my-branches', isAuthenticated, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await storage.getUser(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    if (user.role === 'admin') {
+      res.json([]); // empty = all branches
+    } else {
+      const branchIds = await storage.getUserBranches(userId);
+      res.json(branchIds);
+    }
+  } catch (error) {
+    console.error("Error fetching user branches:", error);
+    res.status(500).json({ message: "Failed to fetch user branches" });
+  }
+});
+
 router.post('/auth/change-password', isAuthenticated, async (req: any, res) => {
   try {
     const userId = req.user.id;
