@@ -4453,9 +4453,8 @@ export default function AdminDashboard() {
     if (branchesEnabled && (branches as any[]).length > 0) {
       setIsLoadingModalBranchData(true);
       try {
-        const res = await fetch(`/api/products/${product.id}`);
-        const data = await res.json();
-        const branchAvail: any[] = data.branchAvailability || [];
+        const res = await fetch(`/api/admin/products/${product.id}/branch-availability`);
+        const branchAvail: any[] = await res.json();
         const choices: Record<number, string> = {};
         (branches as any[]).filter((b: any) => b.isActive).forEach((branch: any) => {
           const override = branchAvail.find((ba: any) => ba.branchId === branch.id);
@@ -4497,7 +4496,7 @@ export default function AdminDashboard() {
               availabilityStatus: globalStatusChoice,
               isAvailable: isAvail,
             }));
-            await fetch(`/api/products/${modalProductId}/branch-availability`, {
+            await fetch(`/api/admin/products/${modalProductId}/branch-availability`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(branchUpdates),
@@ -4512,7 +4511,7 @@ export default function AdminDashboard() {
           availabilityStatus: branchStatusChoices[b.id] || 'available',
           isAvailable: (branchStatusChoices[b.id] || 'available') !== 'completely_unavailable',
         }));
-        const res = await fetch(`/api/products/${modalProductId}/branch-availability`, {
+        const res = await fetch(`/api/admin/products/${modalProductId}/branch-availability`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(branchUpdates),
