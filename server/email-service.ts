@@ -354,7 +354,24 @@ export async function sendNewOrderEmail(
       morning: { ru: 'Первая половина дня', en: 'First half of the day', he: 'חצי יום ראשון', ar: 'النصف الأول من اليوم' },
       afternoon: { ru: 'Вторая половина дня', en: 'Second half of the day', he: 'חצי יום שני', ar: 'النصف الثاني من اليوم' },
     };
-    return translations[time]?.[language] || translations[time]?.['en'] || time;
+    if (translations[time]) {
+      return translations[time][language] || translations[time]['en'];
+    }
+    // Already a formatted range with spaces (e.g. "14:00 - 16:00")
+    if (time.includes(' - ')) {
+      return time;
+    }
+    // Single start time stored by checkout (e.g. "14:00") — reconstruct 2-hour range
+    const singleMatch = time.match(/^(\d{1,2}):(\d{2})$/);
+    if (singleMatch) {
+      const hour = parseInt(singleMatch[1]);
+      const minute = parseInt(singleMatch[2]);
+      const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      const endHour = Math.min(hour + 2, 23);
+      const endTime = `${endHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      return `${startTime} - ${endTime}`;
+    }
+    return time;
   };
   const deliveryTimeFormatted = formatDeliveryTime(orderDetails.deliveryTime || '');
 
