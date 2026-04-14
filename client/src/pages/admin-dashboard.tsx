@@ -739,6 +739,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
+  const { data: adminBranches = [] } = useQuery<any[]>({
+    queryKey: ['/api/admin/branches'],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
   // Generate time slots based on store working hours for this component
   const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday', deliveryHours?: any) => {
     if (!selectedDate) return [];
@@ -1261,6 +1267,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       total: { ru: 'Итого', en: 'Total', he: 'סה"כ', ar: 'المجموع' },
       orderNotes: { ru: 'Комментарии к заказу', en: 'Order Notes', he: 'הערות להזמנה', ar: 'ملاحظات الطلب' },
       generalComments: { ru: 'Общие комментарии', en: 'General Comments', he: 'הערות כלליות', ar: 'تعليقات عامة' },
+      branch: { ru: 'Филиал', en: 'Branch', he: 'סניף', ar: 'الفرع' },
       payment: { ru: 'Оплата', en: 'Payment', he: 'תשלום', ar: 'الدفع' },
       backToOrder: { ru: '← Назад к заказу', en: '← Back to order', he: '← חזרה להזמנה', ar: '← العودة للطلب' },
       printOrder: { ru: 'Распечатать', en: 'Print', he: 'הדפסה', ar: 'طباعة' },
@@ -1337,6 +1344,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
           </tr>`)
           .join('');
 
+    const printBranch = order.branchId
+      ? adminBranches.find((br: any) => br.id === order.branchId)
+      : null;
+    const printBranchName = printBranch
+      ? (getLocalizedField(printBranch, 'name', currentLang) || printBranch.name || '')
+      : '';
+
     const allInfoRows = makeInfoRows([
       [l('customer'),     customerName],
       [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
@@ -1345,6 +1359,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
       [l('payment'),      order.paymentMethod || ''],
       [l('status'),       getStatusLabel(editedOrder.status)],
+      [l('branch'),       printBranchName],
     ]);
 
     // Two-column info rows for iOS print (window.print() path)
@@ -1356,6 +1371,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
       [l('payment'),      order.paymentMethod || ''],
       [l('status'),       getStatusLabel(editedOrder.status)],
+      [l('branch'),       printBranchName],
     ].filter(([, v]) => v);
     const iosLeftRows  = makeInfoRows(allInfoData.slice(0, Math.ceil(allInfoData.length / 2)));
     const iosRightRows = makeInfoRows(allInfoData.slice(Math.ceil(allInfoData.length / 2)));
@@ -1476,6 +1492,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
       [l('payment'),      order.paymentMethod || ''],
       [l('status'),       getStatusLabel(editedOrder.status)],
+      [l('branch'),       printBranchName],
     ].filter(([, v]) => v);
 
     const half = Math.ceil(infoData.length / 2);
@@ -1655,6 +1672,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                 )}
               </div>
             </div>
+            {order.branchId && (() => {
+              const bm = adminBranches.find((br: any) => br.id === order.branchId);
+              if (!bm) return null;
+              const bmName = getLocalizedField(bm, 'name', i18n.language as any) || bm.name;
+              return (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 shadow-sm shrink-0">
+                  <div className="text-xs text-purple-500">{tCommon('branch.selectedBranch')}</div>
+                  <div className="font-medium text-purple-800 text-sm">{bmName}</div>
+                </div>
+              );
+            })()}
           </div>
           {/* Second row: Total amount and Status */}
           <div className="flex justify-between items-center gap-2">
@@ -1740,6 +1768,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                 )}
               </div>
             </div>
+            {order.branchId && (() => {
+              const b = adminBranches.find((br: any) => br.id === order.branchId);
+              if (!b) return null;
+              const bName = getLocalizedField(b, 'name', i18n.language as any) || b.name;
+              return (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 shadow-sm">
+                  <div className="text-xs text-purple-500">{tCommon('branch.selectedBranch')}</div>
+                  <div className="font-medium text-purple-800">{bName}</div>
+                </div>
+              );
+            })()}
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[160px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
               <Select

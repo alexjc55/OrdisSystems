@@ -235,6 +235,7 @@ export async function sendNewOrderEmail(
       itemsLabel: 'Товары:',
       deliveryDateLabel: 'Дата доставки:',
       deliveryTimeLabel: 'Время доставки:',
+      branchLabel: 'Филиал:',
       footer: 'Обработайте заказ в админ-панели',
       viewOrderButton: 'Посмотреть заказ',
       quantityLabel: 'Кол-во',
@@ -263,6 +264,7 @@ export async function sendNewOrderEmail(
       itemsLabel: 'Items:',
       deliveryDateLabel: 'Delivery date:',
       deliveryTimeLabel: 'Delivery time:',
+      branchLabel: 'Branch:',
       footer: 'Process the order in admin panel',
       viewOrderButton: 'View order',
       quantityLabel: 'Quantity',
@@ -291,6 +293,7 @@ export async function sendNewOrderEmail(
       itemsLabel: 'פריטים:',
       deliveryDateLabel: 'תאריך משלוח:',
       deliveryTimeLabel: 'שעת משלוח:',
+      branchLabel: 'סניף:',
       footer: 'עבד על ההזמנה בפאנל הניהול',
       viewOrderButton: 'צפה בהזמנה',
       quantityLabel: 'כמות',
@@ -319,6 +322,7 @@ export async function sendNewOrderEmail(
       itemsLabel: 'العناصر:',
       deliveryDateLabel: 'تاريخ التسليم:',
       deliveryTimeLabel: 'وقت التسليم:',
+      branchLabel: 'الفرع:',
       footer: 'قم بمعالجة الطلب في لوحة الإدارة',
       viewOrderButton: 'عرض الطلب',
       quantityLabel: 'الكمية',
@@ -450,6 +454,10 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.notesLabel}</td>
               <td style="padding: 10px 0; color: #666; font-style: italic;">${orderDetails.customerNotes}</td>
             </tr>` : ''}
+            ${orderDetails.branchName ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).branchLabel}</td>
+              <td style="padding: 10px 0; color: #666;">${orderDetails.branchName}</td>
+            </tr>` : ''}
           </table>
         </div>
 
@@ -546,6 +554,7 @@ export async function sendGuestOrderEmail(
       addressLabel: 'Адрес доставки:',
       phoneLabel: 'Телефон:',
       paymentLabel: 'Способ оплаты:',
+      branchLabel: 'Филиал:',
       itemsLabel: 'Заказанные товары:',
       viewOrderButton: 'Посмотреть детали заказа',
       viewOrderText: 'Вы можете отслеживать статус заказа по ссылке:',
@@ -576,6 +585,7 @@ export async function sendGuestOrderEmail(
       addressLabel: 'Delivery address:',
       phoneLabel: 'Phone:',
       paymentLabel: 'Payment method:',
+      branchLabel: 'Branch:',
       itemsLabel: 'Ordered items:',
       viewOrderButton: 'View order details',
       viewOrderText: 'You can track your order status using this link:',
@@ -606,6 +616,7 @@ export async function sendGuestOrderEmail(
       addressLabel: 'כתובת משלוח:',
       phoneLabel: 'טלפון:',
       paymentLabel: 'אמצעי תשלום:',
+      branchLabel: 'סניף:',
       itemsLabel: 'פריטים שהוזמנו:',
       viewOrderButton: 'צפה בפרטי ההזמנה',
       viewOrderText: 'ניתן לעקוב אחר סטטוס ההזמנה בקישור:',
@@ -636,6 +647,7 @@ export async function sendGuestOrderEmail(
       addressLabel: 'عنوان التسليم:',
       phoneLabel: 'الهاتف:',
       paymentLabel: 'طريقة الدفع:',
+      branchLabel: 'الفرع:',
       itemsLabel: 'العناصر المطلوبة:',
       viewOrderButton: 'عرض تفاصيل الطلب',
       viewOrderText: 'يمكنك تتبع حالة طلبك باستخدام هذا الرابط:',
@@ -749,6 +761,7 @@ export async function sendGuestOrderEmail(
           ${orderDetails.customerPhone ? `<p><strong>${template.phoneLabel}</strong> ${orderDetails.customerPhone}</p>` : ''}
           ${orderDetails.deliveryAddress ? `<p><strong>${template.addressLabel}</strong> ${orderDetails.deliveryAddress}</p>` : ''}
           ${orderDetails.paymentMethod ? `<p><strong>${template.paymentLabel}</strong> ${orderDetails.paymentMethod}</p>` : ''}
+          ${orderDetails.branchName ? `<p><strong>${(template as any).branchLabel}</strong> ${orderDetails.branchName}</p>` : ''}
         </div>
         
         ${itemsHtml ? `

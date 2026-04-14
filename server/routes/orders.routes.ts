@@ -98,6 +98,10 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
       } : null
     }));
 
+    const resendBranchName = order.branchId
+      ? (await storage.getBranchById(order.branchId))?.name
+      : undefined;
+
     const currentStoreSettings = await storage.getStoreSettings();
     if (!currentStoreSettings?.emailNotificationsEnabled) {
       return res.status(503).json({ message: "Email service is not available" });
@@ -131,7 +135,8 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
         paymentMethod: order.paymentMethod,
         customerNotes: order.customerNotes,
         status: order.status,
-        items: itemsWithProducts
+        items: itemsWithProducts,
+        branchName: resendBranchName
       },
       order.guestAccessToken ?? '',
       order.guestClaimToken ?? '',
@@ -237,6 +242,10 @@ router.post('/orders/guest', async (req: any, res) => {
           };
         });
 
+        const branchNameForEmail = parsedBranchId
+          ? (await storage.getBranchById(parsedBranchId))?.name
+          : undefined;
+
         await sendNewOrderEmail(
           order.id,
           orderData.guestName || 'Гость',
@@ -249,7 +258,8 @@ router.post('/orders/guest', async (req: any, res) => {
             paymentMethod: guestInfo.paymentMethod,
             customerNotes: guestInfo.customerNotes,
             status: 'pending',
-            items: itemsWithProducts
+            items: itemsWithProducts,
+            branchName: branchNameForEmail
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
@@ -278,7 +288,8 @@ router.post('/orders/guest', async (req: any, res) => {
               paymentMethod: guestInfo.paymentMethod,
               customerNotes: guestInfo.customerNotes,
               status: 'pending',
-              items: itemsWithProducts
+              items: itemsWithProducts,
+              branchName: branchNameForEmail
             },
             guestAccessToken,
             guestClaimToken,
@@ -430,6 +441,10 @@ router.post('/orders', async (req: any, res) => {
           };
         });
 
+        const authBranchName = processedOrderData.branchId
+          ? (await storage.getBranchById(processedOrderData.branchId))?.name
+          : undefined;
+
         const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
         await sendNewOrderEmail(
           order.id,
@@ -443,7 +458,8 @@ router.post('/orders', async (req: any, res) => {
             paymentMethod: orderData.paymentMethod,
             customerNotes: orderData.customerNotes,
             status: 'pending',
-            items: itemsWithProducts
+            items: itemsWithProducts,
+            branchName: authBranchName
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',

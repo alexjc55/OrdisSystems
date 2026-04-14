@@ -6,6 +6,7 @@ import { useModalBackButton } from "@/hooks/useModalBackButton";
 import { apiRequest } from "@/lib/queryClient";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useBranch } from "@/hooks/useBranch";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import Header from "@/components/layout/header";
@@ -37,6 +38,7 @@ export default function Profile() {
   const { currentLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const queryClient = useQueryClient();
+  const { branches, branchesEnabled } = useBranch();
 
   // SEO for profile page — multilingual
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -1040,6 +1042,17 @@ export default function Profile() {
                         <span className="text-sm text-gray-600">{t('profile.paymentMethod')}:</span>
                         <span className="text-sm">{selectedOrder.paymentMethod === 'cash' ? t('profile.cash') : t('profile.card')}</span>
                       </div>
+                      {branchesEnabled && selectedOrder.branchId && (() => {
+                        const orderBranch = branches.find(b => b.id === selectedOrder.branchId);
+                        if (!orderBranch) return null;
+                        const branchName = getLocalizedField(orderBranch, 'name', currentLanguage as SupportedLanguage);
+                        return (
+                          <div className="flex justify-between">
+                            <span className="text-sm text-gray-600">{t('branch.selectedBranch')}:</span>
+                            <span className="text-sm font-medium">{branchName}</span>
+                          </div>
+                        );
+                      })()}
                     </CardContent>
                   </Card>
 
