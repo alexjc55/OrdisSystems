@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { MapPin, X, CheckCircle } from "lucide-react";
+import { MapPin, CheckCircle, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useBranch } from "@/hooks/useBranch";
@@ -16,7 +15,7 @@ interface BranchSelectionModalProps {
 export default function BranchSelectionModal({ dismissible = false, onClose }: BranchSelectionModalProps) {
   const { branches, needsBranchSelection, selectBranch, selectedBranchId } = useBranch();
   const { t } = useCommonTranslation();
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, changeLanguage, languages } = useLanguage();
 
   if (!dismissible && !needsBranchSelection) return null;
 
@@ -28,9 +27,33 @@ export default function BranchSelectionModal({ dismissible = false, onClose }: B
   const getLocalizedBranchName = (branch: Branch) =>
     getLocalizedField(branch, 'name', currentLanguage as SupportedLanguage);
 
+  const languageEntries = Object.entries(languages);
+
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6">
+
+        {/* Language selector row — always visible at top */}
+        {languageEntries.length > 1 && (
+          <div className="flex items-center justify-center gap-1 mb-5 flex-wrap">
+            <Globe className="w-3.5 h-3.5 text-gray-400 mr-1 flex-shrink-0" />
+            {languageEntries.map(([code, info]) => (
+              <button
+                key={code}
+                onClick={() => changeLanguage(code as any)}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                  code === currentLanguage
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800 border border-gray-200'
+                }`}
+              >
+                <span className={`${(info as any).flagClass} inline-block`} />
+                <span>{(info as any).nativeName}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="flex flex-col items-center text-center mb-6">
           <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
             <MapPin className="w-7 h-7 text-primary" />
