@@ -28,9 +28,18 @@ function requireBranches(_req: any, res: any, next: any) {
 }
 
 // GET /api/admin/branches
-router.get("/admin/branches", requireBranches, requireAdminOrWorker, async (_req, res) => {
+router.get("/admin/branches", requireBranches, requireAdminOrWorker, async (req: any, res) => {
   try {
     const allBranches = await storage.getBranches();
+    // Workers only see branches they are assigned to
+    if (req.user?.role === 'worker') {
+      const assignedIds = await storage.getUserBranches(req.user.id);
+      if (assignedIds.length > 0) {
+        const filtered = (allBranches as any[]).filter((b: any) => assignedIds.includes(b.id));
+        return res.json(filtered);
+      }
+      // Worker with no specific assignment → full access (existing behaviour)
+    }
     res.json(allBranches);
   } catch (error) {
     console.error("Error fetching branches:", error);
@@ -124,11 +133,19 @@ router.get("/admin/branches/:id/availability", requireBranches, requireAdmin, as
 });
 
 // GET /api/admin/products/:id/branch-availability
-router.get("/admin/products/:id/branch-availability", requireBranches, requireAdmin, async (req, res) => {
+router.get("/admin/products/:id/branch-availability", requireBranches, requireAdminOrWorker, async (req: any, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid product id" });
     const availability = await storage.getProductBranchAvailability(id);
+    // Workers only see availability records for their assigned branches
+    if (req.user?.role === 'worker') {
+      const assignedIds = await storage.getUserBranches(req.user.id);
+      if (assignedIds.length > 0) {
+        return res.json((availability as any[]).filter((a: any) => assignedIds.includes(a.branchId)));
+      }
+      // Worker with no specific assignment → full access
+    }
     res.json(availability);
   } catch (error) {
     console.error("Error fetching product branch availability:", error);
