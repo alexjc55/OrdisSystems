@@ -231,7 +231,7 @@ export default function Checkout() {
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
-  const [showBranchConfirmDialog, setShowBranchConfirmDialog] = useState(() => !localStorage.getItem('selectedBranchId'));
+  const [showBranchConfirmDialog, setShowBranchConfirmDialog] = useState(true);
   const [showBranchChangeDialog, setShowBranchChangeDialog] = useState(false);
   const [pendingBranchId, setPendingBranchId] = useState<number | null>(null);
   const [branchCompatResult, setBranchCompatResult] = useState<{
