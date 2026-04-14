@@ -180,11 +180,9 @@ router.get('/products', async (req: any, res) => {
     if (BRANCHES_ENABLED) {
       const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : undefined;
       if (branchId && !isNaN(branchId)) {
-        const userRole = req.isAuthenticated?.() ? req.user?.role : null;
-        // Admins/workers need to see all products (including unavailable) to manage branch availability.
-        // Public callers only see globally-available products not marked unavailable for this branch.
-        const isAdminUser = userRole === 'admin' || userRole === 'worker';
-        products = await storage.getProductsForBranch(branchId, categoryId, isAdminUser);
+        // Public catalog always filters by branch availability — even for admins/workers.
+        // Admins manage availability via the admin panel (/api/admin/products), not this route.
+        products = await storage.getProductsForBranch(branchId, categoryId, false);
       }
     }
 
