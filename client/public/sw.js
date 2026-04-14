@@ -1,23 +1,13 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260323-1600';
+const BUILD_TIMESTAMP = '20260414-1200';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
-const DYNAMIC_CACHE = `edahouse-dynamic-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
-// Only cache true static assets (icons that never change)
+// Only cache true static assets with content hashes (icons + hashed JS/CSS)
 const STATIC_ASSETS = [
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png'
 ];
-
-// API endpoints eligible for stale-while-revalidate caching
-const API_CACHE_PATTERNS = [
-  '/api/settings',
-  '/api/categories',
-  '/api/products'
-];
-
-const API_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 // ─── Install ─────────────────────────────────────────────────────────────────
 self.addEventListener('install', (event) => {
@@ -44,11 +34,7 @@ self.addEventListener('activate', (event) => {
       .then((cacheNames) =>
         Promise.all(
           cacheNames
-            .filter(name =>
-              name.startsWith('edahouse-') &&
-              name !== STATIC_CACHE &&
-              name !== DYNAMIC_CACHE
-            )
+            .filter(name => name.startsWith('edahouse-') && name !== STATIC_CACHE)
             .map(name => {
               console.log('🗑️ [SW] Deleting old cache:', name);
               return caches.delete(name);
@@ -74,122 +60,37 @@ self.addEventListener('fetch', (event) => {
   // Skip non-same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // ① Navigation requests (HTML pages) → Network-first, cache as offline fallback only
+  // ① Navigation requests (HTML pages) → Network-first, no HTML caching
   if (request.mode === 'navigate') {
     event.respondWith(handleNavigationRequest(request));
     return;
   }
 
-  // ② API requests
+  // ② API requests → Always network, no caching
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(handleApiRequest(request));
-    return;
+    return; // Let browser handle normally
   }
 
-  // ③ Static assets (JS, CSS with content hash → safe to cache forever)
+  // ③ Static assets with content hash → Cache-first (safe: hashed filenames never change)
   event.respondWith(handleStaticAsset(request));
 });
 
-// Navigation: cache-first (serve app shell instantly), update in background
-// This eliminates the white screen on PWA reopen — cached HTML is served immediately
+// Navigation: network-first, offline fallback only
 async function handleNavigationRequest(request) {
-  const cache = await caches.open(DYNAMIC_CACHE);
-  // Normalise cache key: always use '/' for all navigation requests (SPA)
-  const cacheKey = new Request('/');
-  const cached = await cache.match(cacheKey);
-
-  // Start a background network fetch to keep cache fresh
-  const networkFetch = fetch(request).then(response => {
-    if (response.ok) {
-      cache.put(cacheKey, response.clone());
-    }
-    return response;
-  }).catch(() => null);
-
-  // If we have a cached copy, return it instantly (eliminates white screen)
-  if (cached) {
-    return cached;
-  }
-
-  // No cache yet — wait for network (first visit)
   try {
-    const response = await networkFetch;
-    if (response) return response;
-  } catch (_) {}
-
-  // Completely offline and no cache
-  return new Response(
-    '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Офлайн</title></head>' +
-    '<body style="font-family:sans-serif;text-align:center;padding:40px">' +
-    '<h2>Нет подключения к интернету</h2>' +
-    '<p>Проверьте соединение и обновите страницу.</p>' +
-    '<button onclick="location.reload()">Обновить</button></body></html>',
-    { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-  );
-}
-
-// API: stale-while-revalidate for whitelisted endpoints, network-only for others
-async function handleApiRequest(request) {
-  const url = new URL(request.url);
-
-  // Admin-specific requests that must always be fresh (never cache)
-  if (url.searchParams.get('includeInactive') === 'true') {
-    try {
-      return await fetch(request);
-    } catch (err) {
-      throw err;
-    }
+    const response = await fetch(request);
+    return response;
+  } catch (_) {
+    // Completely offline
+    return new Response(
+      '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Офлайн</title></head>' +
+      '<body style="font-family:sans-serif;text-align:center;padding:40px">' +
+      '<h2>Нет подключения к интернету</h2>' +
+      '<p>Проверьте соединение и обновите страницу.</p>' +
+      '<button onclick="location.reload()">Обновить</button></body></html>',
+      { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+    );
   }
-
-  const isCacheable = API_CACHE_PATTERNS.some(p => url.pathname.startsWith(p));
-
-  if (!isCacheable) {
-    // Network-only for non-cacheable API calls
-    try {
-      return await fetch(request);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  // Stale-while-revalidate with TTL
-  const cache = await caches.open(DYNAMIC_CACHE);
-  const cached = await cache.match(request);
-
-  if (cached) {
-    const dateHeader = cached.headers.get('sw-cached-at');
-    const age = dateHeader ? Date.now() - parseInt(dateHeader) : Infinity;
-
-    // Revalidate in background if stale
-    if (age > API_CACHE_TTL) {
-      fetchAndCacheApi(request, cache);
-    }
-
-    return cached;
-  }
-
-  // No cache → fetch and store
-  return fetchAndCacheApi(request, cache);
-}
-
-async function fetchAndCacheApi(request, cache) {
-  const response = await fetch(request);
-  if (response.ok) {
-    const headers = new Headers(response.headers);
-    headers.set('sw-cached-at', String(Date.now()));
-    const body = await response.arrayBuffer();
-    await cache.put(request, new Response(body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers
-    }));
-    return new Response(body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers
-    });
-  }
-  return response;
 }
 
 // Static assets: cache-first (safe for hashed filenames like /assets/main.abc123.js)
@@ -242,7 +143,7 @@ self.addEventListener('message', (event) => {
     const urlPattern = event.data.urlPattern;
     if (urlPattern) {
       event.waitUntil(
-        caches.open(DYNAMIC_CACHE).then(cache =>
+        caches.open(STATIC_CACHE).then(cache =>
           cache.keys().then(keys =>
             Promise.all(
               keys.filter(k => k.url.includes(urlPattern)).map(k => cache.delete(k))
@@ -366,12 +267,10 @@ self.addEventListener('notificationclick', (event) => {
 
       if (appClient) {
         // fire-and-forget focus — iOS Safari throws on focus(), never await it
-        // and NEVER put postMessage inside the catch, or it silently breaks on iOS
         try { appClient.focus(); } catch (_) {}
 
         // Always postMessage directly on appClient, regardless of focus result
         appClient.postMessage(notificationData);
-        // pendingNotification + visibilitychange in the app handles any remaining race condition
         return;
       }
 
