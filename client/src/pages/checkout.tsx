@@ -813,22 +813,22 @@ export default function Checkout() {
                 {getLocalizedField(selectedBranch, 'name', currentLanguage as SupportedLanguage, 'ru')}
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3">
+              <Button
+                className="w-full bg-primary text-white hover:bg-primary-hover"
+                onClick={() => setShowBranchConfirmDialog(false)}
+              >
+                {String(tCommon('branch.confirmBranchBtn'))}
+              </Button>
               <Button
                 variant="outline"
-                className="flex-1 border-gray-300 text-gray-700"
+                className="w-full border-gray-300 text-gray-700"
                 onClick={() => {
                   setShowBranchConfirmDialog(false);
                   setShowBranchChangeDialog(true);
                 }}
               >
                 {String(tCommon('branch.changeBranch'))}
-              </Button>
-              <Button
-                className="flex-1 bg-primary text-white hover:bg-primary-hover"
-                onClick={() => setShowBranchConfirmDialog(false)}
-              >
-                {String(tCommon('branch.confirmBranchBtn'))}
               </Button>
             </div>
           </div>
