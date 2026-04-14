@@ -743,6 +743,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     queryKey: ['/api/admin/branches'],
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
+    enabled: !!order.branchId,
   });
 
   // Generate time slots based on store working hours for this component
