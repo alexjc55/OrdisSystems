@@ -716,7 +716,7 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
 });
 
 // OrderEditForm component
-function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCommon, isRTL }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, tCommon: (key: string) => string, isRTL: boolean }) {
+function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCommon, isRTL, isAdmin, branchesEnabled }: { order: any, onClose: () => void, onSave: () => void, searchPlaceholder: string, adminT: (key: string) => string, tCommon: (key: string) => string, isRTL: boolean, isAdmin?: boolean, branchesEnabled?: boolean }) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { i18n } = useTranslation();
@@ -743,7 +743,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     queryKey: ['/api/admin/branches'],
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    enabled: !!order.branchId,
+    enabled: !!branchesEnabled,
   });
 
   // Generate time slots based on store working hours for this component
@@ -860,6 +860,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     deliveryTime: normalizeDeliveryTime(order.deliveryTime || ''),
     status: order.status || 'pending',
     notes: cleanNotes(order.customerNotes || ''),
+    branchId: order.branchId || null,
   });
 
   // Extract order metadata (discounts and manual price override) from order notes
@@ -1673,8 +1674,28 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                 )}
               </div>
             </div>
-            {order.branchId && (() => {
-              const bm = adminBranches.find((br: any) => br.id === order.branchId);
+            {branchesEnabled && (isAdmin ? (
+              <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 shadow-sm shrink-0 min-w-[120px]">
+                <div className="text-xs text-purple-500 mb-1">{tCommon('branch.selectedBranch')}</div>
+                <Select
+                  value={editedOrder.branchId ? String(editedOrder.branchId) : 'none'}
+                  onValueChange={(v) => setEditedOrder(prev => ({ ...prev, branchId: v === 'none' ? null : parseInt(v) }))}
+                >
+                  <SelectTrigger className="text-xs h-7 border-purple-300 bg-white text-purple-800 w-full px-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="z-[10000] bg-white">
+                    <SelectItem value="none"><span className="text-gray-400">{adminT('branches.noBranch') || '—'}</span></SelectItem>
+                    {(adminBranches as any[]).map((br: any) => (
+                      <SelectItem key={br.id} value={String(br.id)}>
+                        {getLocalizedField(br, 'name', i18n.language as any) || br.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (order.branchId ? (() => {
+              const bm = adminBranches.find((br: any) => br.id === (editedOrder.branchId || order.branchId));
               if (!bm) return null;
               const bmName = getLocalizedField(bm, 'name', i18n.language as any) || bm.name;
               return (
@@ -1683,7 +1704,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                   <div className="font-medium text-purple-800 text-sm">{bmName}</div>
                 </div>
               );
-            })()}
+            })() : null))}
           </div>
           {/* Second row: Total amount and Status */}
           <div className="flex justify-between items-center gap-2">
@@ -1769,8 +1790,28 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                 )}
               </div>
             </div>
-            {order.branchId && (() => {
-              const b = adminBranches.find((br: any) => br.id === order.branchId);
+            {branchesEnabled && (isAdmin ? (
+              <div className="bg-purple-50 border border-purple-200 rounded-lg px-3 py-2 shadow-sm min-w-[140px]">
+                <div className="text-xs text-purple-500 mb-1">{tCommon('branch.selectedBranch')}</div>
+                <Select
+                  value={editedOrder.branchId ? String(editedOrder.branchId) : 'none'}
+                  onValueChange={(v) => setEditedOrder(prev => ({ ...prev, branchId: v === 'none' ? null : parseInt(v) }))}
+                >
+                  <SelectTrigger className="text-xs h-7 border-purple-300 bg-white text-purple-800 w-full px-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="z-[10000] bg-white">
+                    <SelectItem value="none"><span className="text-gray-400">{adminT('branches.noBranch') || '—'}</span></SelectItem>
+                    {(adminBranches as any[]).map((br: any) => (
+                      <SelectItem key={br.id} value={String(br.id)}>
+                        {getLocalizedField(br, 'name', i18n.language as any) || br.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (editedOrder.branchId ? (() => {
+              const b = adminBranches.find((br: any) => br.id === editedOrder.branchId);
               if (!b) return null;
               const bName = getLocalizedField(b, 'name', i18n.language as any) || b.name;
               return (
@@ -1779,7 +1820,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                   <div className="font-medium text-purple-800">{bName}</div>
                 </div>
               );
-            })()}
+            })() : null))}
             <div className="bg-white rounded-lg px-3 py-2 shadow-sm min-w-[160px]">
               <div className="text-xs text-gray-500">{adminT('orders.orderStatus')}</div>
               <Select
@@ -6692,6 +6733,8 @@ export default function AdminDashboard() {
                     adminT={adminT}
                     tCommon={commonT}
                     isRTL={isRTL}
+                    isAdmin={isAdmin}
+                    branchesEnabled={branchesEnabled}
                   />
                 )}
               </DialogContent>

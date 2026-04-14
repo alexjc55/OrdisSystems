@@ -1297,6 +1297,7 @@
     "editBranch": "Edit Branch",
     "deleteBranch": "Delete Branch",
     "noBranches": "No branches found",
+    "noBranch": "Not selected",
     "name": "Name",
     "namePlaceholder": "Enter branch name",
     "sortOrder": "Order",

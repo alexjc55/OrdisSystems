@@ -1174,6 +1174,7 @@
     "editBranch": "تحرير الفرع",
     "deleteBranch": "حذف الفرع",
     "noBranches": "لا توجد فروع",
+    "noBranch": "غير محدد",
     "name": "الاسم",
     "namePlaceholder": "أدخل اسم الفرع",
     "sortOrder": "الترتيب",
