@@ -142,7 +142,8 @@ export interface IStorage {
   getBranchById(id: number): Promise<Branch | undefined>;
   createBranch(branch: InsertBranch): Promise<Branch>;
   updateBranch(id: number, branch: Partial<InsertBranch>): Promise<Branch>;
-  deleteBranch(id: number): Promise<void>;
+  deleteBranch(id: number, transferToBranchId?: number | null): Promise<void>;
+  getOrderCountByBranch(branchId: number): Promise<number>;
   getUserBranches(userId: string): Promise<number[]>;
   setUserBranches(userId: string, branchIds: number[]): Promise<void>;
   getProductBranchAvailability(productId: number): Promise<ProductBranchAvailability[]>;
@@ -1944,11 +1945,24 @@ export class DatabaseStorage implements IStorage {
     return branch;
   }
 
-  async deleteBranch(id: number): Promise<void> {
+  async deleteBranch(id: number, transferToBranchId?: number | null): Promise<void> {
     const db = await this.getDatabase();
-    // Nullify branchId on orders (no cascade set), cascade handles userBranches & productBranchAvailability
-    await db.update(orders).set({ branchId: null }).where(eq(orders.branchId, id));
+    // Transfer or nullify branchId on orders (no cascade set), cascade handles userBranches & productBranchAvailability
+    if (transferToBranchId) {
+      await db.update(orders).set({ branchId: transferToBranchId }).where(eq(orders.branchId, id));
+    } else {
+      await db.update(orders).set({ branchId: null }).where(eq(orders.branchId, id));
+    }
     await db.delete(branches).where(eq(branches.id, id));
+  }
+
+  async getOrderCountByBranch(branchId: number): Promise<number> {
+    const db = await this.getDatabase();
+    const [result] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(orders)
+      .where(eq(orders.branchId, branchId));
+    return result?.count || 0;
   }
 
   async getUserBranches(userId: string): Promise<number[]> {

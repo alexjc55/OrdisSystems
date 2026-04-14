@@ -106,12 +106,26 @@ router.put("/admin/branches/:id", requireBranches, requireAdmin, async (req, res
   }
 });
 
+// GET /api/admin/branches/:id/order-count
+router.get("/admin/branches/:id/order-count", requireBranches, requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) return res.status(400).json({ message: "Invalid branch id" });
+    const count = await storage.getOrderCountByBranch(id);
+    res.json({ count });
+  } catch (error) {
+    console.error("Error fetching branch order count:", error);
+    res.status(500).json({ message: "Failed to fetch order count" });
+  }
+});
+
 // DELETE /api/admin/branches/:id
 router.delete("/admin/branches/:id", requireBranches, requireAdmin, async (req, res) => {
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid branch id" });
-    await storage.deleteBranch(id);
+    const transferTo = req.body?.transferTo ? parseInt(req.body.transferTo) : null;
+    await storage.deleteBranch(id, transferTo || undefined);
     res.json({ message: "Branch deleted" });
   } catch (error) {
     console.error("Error deleting branch:", error);

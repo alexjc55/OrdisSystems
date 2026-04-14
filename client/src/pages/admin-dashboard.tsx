@@ -3904,13 +3904,15 @@ export default function AdminDashboard() {
   });
 
   const deleteBranchMutation = useMutation({
-    mutationFn: async (id: number) => {
-      return await apiRequest('DELETE', `/api/admin/branches/${id}`);
+    mutationFn: async ({ id, transferTo }: { id: number; transferTo?: number | null }) => {
+      return await apiRequest('DELETE', `/api/admin/branches/${id}`, { transferTo: transferTo || null });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches/limit-status'] });
       queryClient.refetchQueries({ queryKey: ['/api/admin/branches'] });
+      setIsBranchDeleteDialogOpen(false);
+      setBranchDeleteTarget(null);
       toast({ title: adminT('branches.deleteSuccess') });
     },
     onError: () => {
@@ -3929,6 +3931,16 @@ export default function AdminDashboard() {
   const [branchFormSortOrder, setBranchFormSortOrder] = useState(1);
   const [selectedBranchesToDelete, setSelectedBranchesToDelete] = useState<Set<number>>(new Set());
   const [isDeletingLimitBranches, setIsDeletingLimitBranches] = useState(false);
+  // Regular branch delete dialog (with optional order transfer)
+  const [branchDeleteTarget, setBranchDeleteTarget] = useState<any>(null);
+  const [branchDeleteOrderCount, setBranchDeleteOrderCount] = useState(0);
+  const [branchDeleteOrderCountLoading, setBranchDeleteOrderCountLoading] = useState(false);
+  const [branchDeleteTransferTo, setBranchDeleteTransferTo] = useState<string>('none');
+  const [isBranchDeleteDialogOpen, setIsBranchDeleteDialogOpen] = useState(false);
+  // Limit-exceeded modal step 2 (order transfer mapping per branch)
+  const [limitModalStep, setLimitModalStep] = useState<1 | 2>(1);
+  const [limitBranchOrderCounts, setLimitBranchOrderCounts] = useState<Record<number, number>>({});
+  const [limitOrderTransferMap, setLimitOrderTransferMap] = useState<Record<number, string>>({});
 
   // Pagination configuration
   const itemsPerPage = storeSettings?.defaultItemsPerPage || 10;
@@ -4583,21 +4595,52 @@ export default function AdminDashboard() {
     );
   }
 
-  const handleDeleteOverLimitBranches = async () => {
-    if (selectedBranchesToDelete.size < branchOverLimitCount) return;
+  const doDeleteSelectedBranches = async (transferMap: Record<number, string>) => {
     setIsDeletingLimitBranches(true);
     try {
       for (const branchId of selectedBranchesToDelete) {
-        await apiRequest('DELETE', `/api/admin/branches/${branchId}`);
+        const transferToStr = transferMap[branchId];
+        const transferTo = transferToStr && transferToStr !== 'none' ? parseInt(transferToStr) : null;
+        await apiRequest('DELETE', `/api/admin/branches/${branchId}`, { transferTo });
       }
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/branches/limit-status'] });
       refetchLimitStatus();
       setSelectedBranchesToDelete(new Set());
+      setLimitModalStep(1);
+      setLimitBranchOrderCounts({});
+      setLimitOrderTransferMap({});
       toast({ title: adminT('branches.deleteSuccess') });
     } catch {
       toast({ title: adminT('actions.error'), description: adminT('branches.deleteError'), variant: 'destructive' });
     } finally {
+      setIsDeletingLimitBranches(false);
+    }
+  };
+
+  const handleDeleteOverLimitBranches = async () => {
+    if (selectedBranchesToDelete.size < branchOverLimitCount) return;
+    setIsDeletingLimitBranches(true);
+    try {
+      const counts: Record<number, number> = {};
+      for (const branchId of selectedBranchesToDelete) {
+        const res = await fetch(`/api/admin/branches/${branchId}/order-count`);
+        const data = await res.json();
+        counts[branchId] = data.count || 0;
+      }
+      setLimitBranchOrderCounts(counts);
+      const hasOrdersAnywhere = Object.values(counts).some(c => c > 0);
+      if (hasOrdersAnywhere) {
+        const initMap: Record<number, string> = {};
+        for (const branchId of selectedBranchesToDelete) initMap[branchId] = 'none';
+        setLimitOrderTransferMap(initMap);
+        setLimitModalStep(2);
+        setIsDeletingLimitBranches(false);
+        return;
+      }
+      await doDeleteSelectedBranches({});
+    } catch {
+      toast({ title: adminT('actions.error'), description: adminT('branches.deleteError'), variant: 'destructive' });
       setIsDeletingLimitBranches(false);
     }
   };
@@ -4822,46 +4865,122 @@ export default function AdminDashboard() {
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 110 18A9 9 0 0112 3z" /></svg>
               </div>
-              <h2 className="text-lg font-semibold text-gray-900">{adminT('branches.limitExceeded')}</h2>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">{adminT('branches.limitExceeded')}</h2>
+                {limitModalStep === 2 && (
+                  <p className="text-xs text-gray-500">{adminT('branches.stepTransferOrders') || 'Шаг 2: перенос заказов'}</p>
+                )}
+              </div>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {adminT('branches.limitExceededDesc')
-                .replace('{count}', String(branchLimitStatus?.currentCount || 0))
-                .replace('{max}', String(branchMaxAllowed ?? 0))}
-            </p>
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-700 mb-2">{adminT('branches.limitExceededSelectTitle')}</p>
-              {(branchLimitStatus?.branches || []).map((branch: any) => (
-                <label key={branch.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
-                  <Checkbox
-                    checked={selectedBranchesToDelete.has(branch.id)}
-                    onCheckedChange={(checked) => {
-                      setSelectedBranchesToDelete(prev => {
-                        const next = new Set(prev);
-                        if (checked) next.add(branch.id); else next.delete(branch.id);
-                        return next;
-                      });
-                    }}
-                  />
-                  <span className="text-sm text-gray-800">{branch.name}</span>
-                  <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${branch.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {branch.isActive ? adminT('branches.active') : adminT('branches.inactive')}
-                  </span>
-                </label>
-              ))}
-            </div>
-            {selectedBranchesToDelete.size < branchOverLimitCount && (
-              <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                {adminT('branches.mustSelectMinimum').replace('{count}', String(branchOverLimitCount))}
-              </p>
+
+            {limitModalStep === 1 && (
+              <>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {adminT('branches.limitExceededDesc')
+                    .replace('{count}', String(branchLimitStatus?.currentCount || 0))
+                    .replace('{max}', String(branchMaxAllowed ?? 0))}
+                </p>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-700 mb-2">{adminT('branches.limitExceededSelectTitle')}</p>
+                  {(branchLimitStatus?.branches || []).map((branch: any) => (
+                    <label key={branch.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                      <Checkbox
+                        checked={selectedBranchesToDelete.has(branch.id)}
+                        onCheckedChange={(checked) => {
+                          setSelectedBranchesToDelete(prev => {
+                            const next = new Set(prev);
+                            if (checked) next.add(branch.id); else next.delete(branch.id);
+                            return next;
+                          });
+                        }}
+                      />
+                      <span className="text-sm text-gray-800">{branch.name}</span>
+                      <span className={`ml-auto text-xs px-2 py-0.5 rounded-full ${branch.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {branch.isActive ? adminT('branches.active') : adminT('branches.inactive')}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {selectedBranchesToDelete.size < branchOverLimitCount && (
+                  <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    {adminT('branches.mustSelectMinimum').replace('{count}', String(branchOverLimitCount))}
+                  </p>
+                )}
+                <Button
+                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  disabled={selectedBranchesToDelete.size < branchOverLimitCount || isDeletingLimitBranches}
+                  onClick={handleDeleteOverLimitBranches}
+                >
+                  {isDeletingLimitBranches ? adminT('branches.deletingBranches') : adminT('branches.deleteSelected')}
+                </Button>
+              </>
             )}
-            <Button
-              className="w-full bg-red-600 hover:bg-red-700 text-white"
-              disabled={selectedBranchesToDelete.size < branchOverLimitCount || isDeletingLimitBranches}
-              onClick={handleDeleteOverLimitBranches}
-            >
-              {isDeletingLimitBranches ? adminT('branches.deletingBranches') : adminT('branches.deleteSelected')}
-            </Button>
+
+            {limitModalStep === 2 && (
+              <>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {adminT('branches.transferOrdersDesc') || 'Некоторые удаляемые филиалы содержат заказы. Укажите куда перенести заказы каждого филиала.'}
+                </p>
+                <div className="space-y-3">
+                  {Array.from(selectedBranchesToDelete).map((branchId) => {
+                    const branch = (branchLimitStatus?.branches || []).find((b: any) => b.id === branchId);
+                    const count = limitBranchOrderCounts[branchId] || 0;
+                    const remainingBranches = (branchLimitStatus?.branches || []).filter((b: any) => !selectedBranchesToDelete.has(b.id));
+                    return (
+                      <div key={branchId} className="bg-gray-50 rounded-lg p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-800">{branch?.name}</span>
+                          {count > 0 ? (
+                            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                              {adminT('branches.ordersCount') ? adminT('branches.ordersCount').replace('{count}', String(count)) : `${count} заказов`}
+                            </span>
+                          ) : (
+                            <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                              {adminT('branches.noOrders') || 'Заказов нет'}
+                            </span>
+                          )}
+                        </div>
+                        {count > 0 && (
+                          <Select
+                            value={limitOrderTransferMap[branchId] || 'none'}
+                            onValueChange={(v) => setLimitOrderTransferMap(prev => ({ ...prev, [branchId]: v }))}
+                          >
+                            <SelectTrigger className="w-full text-sm h-9 bg-white">
+                              <SelectValue placeholder={adminT('branches.selectTransferTarget') || 'Перенести заказы в...'} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border border-gray-200 shadow-lg z-[10100]">
+                              <SelectItem value="none">
+                                <span className="text-gray-500">{adminT('branches.leaveWithoutBranch') || 'Оставить без филиала'}</span>
+                              </SelectItem>
+                              {remainingBranches.map((b: any) => (
+                                <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => { setLimitModalStep(1); setLimitBranchOrderCounts({}); setLimitOrderTransferMap({}); }}
+                    disabled={isDeletingLimitBranches}
+                  >
+                    {adminT('actions.back') || 'Назад'}
+                  </Button>
+                  <Button
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                    disabled={isDeletingLimitBranches}
+                    onClick={() => doDeleteSelectedBranches(limitOrderTransferMap)}
+                  >
+                    {isDeletingLimitBranches ? adminT('branches.deletingBranches') : adminT('branches.confirmDeleteAndTransfer') || 'Подтвердить и удалить'}
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
@@ -7571,28 +7690,28 @@ export default function AdminDashboard() {
                                     >
                                       <Pencil className="h-3 w-3" />
                                     </Button>
-                                    <AlertDialog>
-                                      <AlertDialogTrigger asChild>
-                                        <Button variant="outline" size="sm" className="h-8 px-2 text-xs text-red-600 border-red-200 hover:bg-red-50">
-                                          <Trash2 className="h-3 w-3" />
-                                        </Button>
-                                      </AlertDialogTrigger>
-                                      <AlertDialogContent className={isRTL ? 'rtl' : ''}>
-                                        <AlertDialogHeader>
-                                          <AlertDialogTitle className={isRTL ? 'text-right' : 'text-left'}>{adminT('branches.deleteBranch')}</AlertDialogTitle>
-                                          <AlertDialogDescription className={isRTL ? 'text-right' : 'text-left'}>{adminT('branches.deleteConfirm')}</AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter className={isRTL ? 'flex-row-reverse' : ''}>
-                                          <AlertDialogCancel>{adminT('actions.cancel')}</AlertDialogCancel>
-                                          <AlertDialogAction
-                                            onClick={() => deleteBranchMutation.mutate(branch.id)}
-                                            className="bg-red-600 hover:bg-red-700"
-                                          >
-                                            {adminT('actions.delete')}
-                                          </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                      </AlertDialogContent>
-                                    </AlertDialog>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="h-8 px-2 text-xs text-red-600 border-red-200 hover:bg-red-50"
+                                      onClick={async () => {
+                                        setBranchDeleteTarget(branch);
+                                        setBranchDeleteTransferTo('none');
+                                        setBranchDeleteOrderCountLoading(true);
+                                        setIsBranchDeleteDialogOpen(true);
+                                        try {
+                                          const res = await fetch(`/api/admin/branches/${branch.id}/order-count`);
+                                          const data = await res.json();
+                                          setBranchDeleteOrderCount(data.count || 0);
+                                        } catch {
+                                          setBranchDeleteOrderCount(0);
+                                        } finally {
+                                          setBranchDeleteOrderCountLoading(false);
+                                        }
+                                      }}
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
                                   </div>
                                 </TableCell>
                               </TableRow>
@@ -7700,6 +7819,77 @@ export default function AdminDashboard() {
                     >
                       {editingBranch ? adminT('actions.update') : adminT('actions.create')}
                     </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Branch Delete Dialog (with order transfer) */}
+              <Dialog open={isBranchDeleteDialogOpen} onOpenChange={(open) => { if (!open) { setIsBranchDeleteDialogOpen(false); setBranchDeleteTarget(null); } }}>
+                <DialogContent className={`max-w-md ${isRTL ? 'rtl' : 'ltr'}`}>
+                  <DialogHeader>
+                    <DialogTitle className={`flex items-center gap-2 text-red-700 ${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}>
+                      <Trash2 className="h-4 w-4" />
+                      {adminT('branches.deleteBranch')}
+                    </DialogTitle>
+                    <DialogDescription className={isRTL ? 'text-right' : 'text-left'}>
+                      {branchDeleteTarget?.name}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    {branchDeleteOrderCountLoading ? (
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
+                        {adminT('branches.checkingOrders') || 'Проверка заказов...'}
+                      </div>
+                    ) : branchDeleteOrderCount > 0 ? (
+                      <div className="space-y-3">
+                        <div className="bg-orange-50 border border-orange-200 rounded-lg px-3 py-2 text-sm text-orange-800">
+                          {(adminT('branches.hasOrdersWarning') || 'Этот филиал содержит {count} заказов. Выберите куда их перенести.').replace('{count}', String(branchDeleteOrderCount))}
+                        </div>
+                        <div>
+                          <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {adminT('branches.transferOrdersTo') || 'Перенести заказы в'}
+                          </label>
+                          <Select value={branchDeleteTransferTo} onValueChange={setBranchDeleteTransferTo}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border border-gray-200 shadow-lg z-[10100]">
+                              <SelectItem value="none">
+                                <span className="text-gray-500">{adminT('branches.leaveWithoutBranch') || 'Оставить без филиала'}</span>
+                              </SelectItem>
+                              {(branches as any[]).filter((b: any) => b.id !== branchDeleteTarget?.id).map((b: any) => (
+                                <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className={`text-sm text-gray-600 ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {adminT('branches.deleteConfirm')}
+                      </p>
+                    )}
+                    <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <Button
+                        variant="outline"
+                        className="flex-1"
+                        onClick={() => { setIsBranchDeleteDialogOpen(false); setBranchDeleteTarget(null); }}
+                        disabled={deleteBranchMutation.isPending}
+                      >
+                        {adminT('actions.cancel')}
+                      </Button>
+                      <Button
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                        disabled={deleteBranchMutation.isPending || branchDeleteOrderCountLoading}
+                        onClick={() => {
+                          const transferTo = branchDeleteTransferTo !== 'none' ? parseInt(branchDeleteTransferTo) : null;
+                          deleteBranchMutation.mutate({ id: branchDeleteTarget.id, transferTo });
+                        }}
+                      >
+                        {deleteBranchMutation.isPending ? adminT('branches.deletingBranches') : adminT('actions.delete')}
+                      </Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
