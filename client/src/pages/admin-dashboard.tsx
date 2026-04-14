@@ -8255,6 +8255,17 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         availabilityStatus: status,
         isAvailable: status !== 'completely_unavailable',
       }));
+      // Auto-derive global availabilityStatus from branch statuses to eliminate conflict
+      const branchStatuses = Object.values(branchAvailability) as string[];
+      if (branchStatuses.length > 0) {
+        if (branchStatuses.every(s => s === 'completely_unavailable')) {
+          finalData.availabilityStatus = 'completely_unavailable';
+        } else if (branchStatuses.some(s => s === 'available')) {
+          finalData.availabilityStatus = 'available';
+        } else {
+          finalData.availabilityStatus = 'out_of_stock_today';
+        }
+      }
     }
     
     console.log('Submitting product data:', finalData);
@@ -8516,34 +8527,37 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="availabilityStatus"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
-                  <Select onValueChange={(value) => {
-                    field.onChange(value);
-                    handleFieldChange('availabilityStatus', value, false);
-                  }} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="text-sm">
-                        <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="available" className="text-sm">{adminT('products.dialog.statusAvailable')}</SelectItem>
-                      <SelectItem value="completely_unavailable" className="text-sm">{adminT('products.dialog.statusUnavailable')}</SelectItem>
-                      <SelectItem value="out_of_stock_today" className="text-sm">{adminT('products.dialog.statusOutOfStock')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription className="text-xs text-gray-500">
-                    {adminT('products.dialog.statusDescription')}
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+            {/* Global availability: only shown when branches are disabled — otherwise branch section handles it */}
+            {!branchesEnabled && (
+              <FormField
+                control={form.control}
+                name="availabilityStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
+                    <Select onValueChange={(value) => {
+                      field.onChange(value);
+                      handleFieldChange('availabilityStatus', value, false);
+                    }} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="text-sm">
+                          <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="available" className="text-sm">{adminT('products.dialog.statusAvailable')}</SelectItem>
+                        <SelectItem value="completely_unavailable" className="text-sm">{adminT('products.dialog.statusUnavailable')}</SelectItem>
+                        <SelectItem value="out_of_stock_today" className="text-sm">{adminT('products.dialog.statusOutOfStock')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription className="text-xs text-gray-500">
+                      {adminT('products.dialog.statusDescription')}
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
