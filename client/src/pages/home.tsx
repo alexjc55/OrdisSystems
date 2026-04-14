@@ -321,6 +321,13 @@ export default function Home() {
 
   const { selectedBranchId, branchesEnabled } = useBranch();
 
+  // Wait for /api/config to load before fetching products so branchesEnabled is known
+  const { data: configData } = useQuery<{ branchesEnabled: boolean }>({
+    queryKey: ['/api/config'],
+    staleTime: 5 * 60 * 1000,
+  });
+  const configLoaded = configData !== undefined;
+
   // Combined translation function that uses correct namespace for each key
   const tCombined = (key: string) => {
     // Keys that should use common translations
@@ -336,16 +343,18 @@ export default function Home() {
 
   const branchQueryParam = branchesEnabled && selectedBranchId ? `?branchId=${selectedBranchId}` : '';
 
-  // Fetch categories
+  // Fetch categories — wait for config so branchesEnabled is settled before request
   const { data: categories = [], isLoading: categoriesLoading } = useQuery<CategoryWithCount[]>({
-    queryKey: ["/api/categories", selectedBranchId],
+    queryKey: ["/api/categories", selectedBranchId, branchesEnabled],
     queryFn: () => fetch(`/api/categories${branchQueryParam}`).then(res => res.json()),
+    enabled: configLoaded,
   });
 
-  // Fetch all products for special offers and search
+  // Fetch all products for special offers and search — wait for config
   const { data: allProducts = [], isLoading: allProductsLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products", selectedBranchId],
+    queryKey: ["/api/products", selectedBranchId, branchesEnabled],
     queryFn: () => fetch(`/api/products${branchQueryParam}`).then(res => res.json()),
+    enabled: configLoaded,
   });
 
   // Get header style from store settings (accessible to all users)
@@ -358,25 +367,25 @@ export default function Home() {
 
   // Fetch products for selected category
   const { data: products = [], isLoading: productsLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products", selectedCategoryId, selectedBranchId],
+    queryKey: ["/api/products", selectedCategoryId, selectedBranchId, branchesEnabled],
     queryFn: () => {
       const params = new URLSearchParams({ categoryId: String(selectedCategoryId) });
       if (branchesEnabled && selectedBranchId) params.set('branchId', String(selectedBranchId));
       return fetch(`/api/products?${params}`).then(res => res.json());
     },
-    enabled: selectedCategoryId !== null,
+    enabled: configLoaded && selectedCategoryId !== null,
     staleTime: 0,
   });
 
   // Search products (branch-aware)
   const { data: searchResults = [], isLoading: searchLoading } = useQuery<ProductWithCategories[]>({
-    queryKey: ["/api/products/search", searchQuery, selectedBranchId],
+    queryKey: ["/api/products/search", searchQuery, selectedBranchId, branchesEnabled],
     queryFn: () => {
       const searchParams = new URLSearchParams({ q: searchQuery });
       if (branchesEnabled && selectedBranchId) searchParams.set('branchId', String(selectedBranchId));
       return fetch(`/api/products/search?${searchParams}`).then(res => res.json());
     },
-    enabled: searchQuery.length > 2,
+    enabled: configLoaded && searchQuery.length > 2,
   });
 
   // Generate SEO data for home page (after all data fetched)
