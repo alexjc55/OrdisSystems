@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import type { Branch } from "@shared/schema";
 
 const BRANCH_STORAGE_KEY = "selectedBranchId";
@@ -49,6 +50,9 @@ export function BranchProvider({ children }: BranchProviderProps) {
   const selectBranch = useCallback((branchId: number) => {
     setSelectedBranchId(branchId);
     localStorage.setItem(BRANCH_STORAGE_KEY, String(branchId));
+    // Clear product and category caches so stale data from other branches isn't shown
+    queryClient.removeQueries({ queryKey: ["/api/products"] });
+    queryClient.removeQueries({ queryKey: ["/api/categories"] });
   }, []);
 
   // If previously selected branch is no longer active, clear it
