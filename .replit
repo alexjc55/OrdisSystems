@@ -50,5 +50,5 @@ integrations = ["javascript_sendgrid:1.0.0", "javascript_database:1.0.0"]
 [userenv]
 
 [userenv.shared]
-BRANCHES_ENABLED = "true"
+BRANCHES_ENABLED = "false"
 MAX_BRANCHES = "5"
