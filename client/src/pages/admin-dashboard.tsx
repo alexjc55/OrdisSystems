@@ -3793,6 +3793,17 @@ export default function AdminDashboard() {
     staleTime: 5 * 60 * 1000,
   });
 
+  // Auto-set product branch filter for workers with a single accessible branch.
+  // This ensures the status filter and mixed-status badges work correctly for them.
+  useEffect(() => {
+    if (!isAdmin && branchesEnabled) {
+      const activeBranches = (branches as any[]).filter((b: any) => b.isActive);
+      if (activeBranches.length === 1) {
+        setSelectedProductBranchFilter(String(activeBranches[0].id));
+      }
+    }
+  }, [isAdmin, branchesEnabled, branches]);
+
   // Branch limit status — check if current count exceeds MAX_BRANCHES config
   const { data: branchLimitStatus, refetch: refetchLimitStatus } = useQuery<{
     maxBranches: number | null;
@@ -5360,7 +5371,12 @@ export default function AdminDashboard() {
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
                             // All branch availability records for this product (for mixed status display)
-                            const allBranchRecords: any[] = branchesEnabled ? (product.allBranchAvailability || product.branchAvailability || []) : [];
+                            // Workers only see their own branches; admins can see allBranchAvailability for full picture
+                            const allBranchRecords: any[] = branchesEnabled
+                              ? (isAdmin
+                                  ? (product.allBranchAvailability || product.branchAvailability || [])
+                                  : (product.branchAvailability || []))
+                              : [];
                             // For workers with branch availability data, use per-branch status
                             const workerBranchStatuses: any[] | null = branchesEnabled && !isAdmin && product.branchAvailability?.length > 0
                               ? product.branchAvailability
