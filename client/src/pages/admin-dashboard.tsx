@@ -5237,7 +5237,7 @@ export default function AdminDashboard() {
                         </SelectContent>
                       </Select>
                     </div>
-                    {branchesEnabled && (branches as any[]).length > 0 && (
+                    {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 1 && (
                       <div className="relative min-w-[160px]">
                         <Building2 className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
                         <Select value={selectedProductBranchFilter} onValueChange={setSelectedProductBranchFilter}>
@@ -5871,8 +5871,8 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                {/* Row 5: Branch filter (only shown when branchesEnabled and branches exist) */}
-                {branchesEnabled && (branches as any[]).length > 0 && (
+                {/* Row 5: Branch filter (only shown when branchesEnabled and >1 branch accessible) */}
+                {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 1 && (
                   <Select value={ordersBranchFilter} onValueChange={setOrdersBranchFilter}>
                     <SelectTrigger className="w-full text-xs h-9">
                       <SelectValue placeholder={adminT('branches.filterByBranch')} />
@@ -5919,7 +5919,7 @@ export default function AdminDashboard() {
                                   className={`text-xs sm:text-sm font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-32`}
                                   style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
                                 >{adminT('orders.orderTotal')}</TableHead>
-                                {branchesEnabled && (branches as any[]).length > 0 && (
+                                {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 1 && (
                                   <TableHead 
                                     className={`text-xs sm:text-sm hidden sm:table-cell font-semibold ${isRTL ? 'text-right' : 'text-center'} w-20 sm:w-28`}
                                     style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
@@ -6134,7 +6134,7 @@ export default function AdminDashboard() {
                                       return formatCurrency(order.totalAmount);
                                     })()}
                                   </TableCell>
-                                  {branchesEnabled && (branches as any[]).length > 0 && (
+                                  {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 1 && (
                                     <TableCell
                                       className={`text-xs sm:text-sm hidden sm:table-cell ${isRTL ? 'text-right' : 'text-center'}`}
                                       style={isRTL ? {textAlign: 'right', direction: 'rtl'} : {textAlign: 'center'}}
