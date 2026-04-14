@@ -88,7 +88,7 @@ export default function BranchSelectionModal({ dismissible = false, onClose }: B
                   <SelectValue placeholder={String(t('branch.selectTitle'))} />
                 </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[300]">
                 {branches.map((branch: Branch) => (
                   <SelectItem key={branch.id} value={String(branch.id)}>
                     {getLocalizedBranchName(branch)}
