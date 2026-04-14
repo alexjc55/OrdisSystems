@@ -1006,19 +1006,9 @@ export default function Checkout() {
               </div>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3">
               <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => {
-                  setPendingBranchId(null);
-                  setBranchCompatResult(null);
-                }}
-              >
-                {tCommon('actions.cancel')}
-              </Button>
-              <Button
-                className="flex-1 bg-primary text-white hover:bg-primary-hover"
+                className="w-full bg-primary text-white hover:bg-primary-hover"
                 onClick={() => {
                   const { toRemove, toDowngrade } = branchCompatResult;
                   toRemove.forEach(item => removeItem(item.product.id));
@@ -1039,6 +1029,16 @@ export default function Checkout() {
                 {branchCompatResult.toRemove.length > 0
                   ? String(tCommon('branch.confirmAndRemove'))
                   : String(tCommon('branch.confirm'))}
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  setPendingBranchId(null);
+                  setBranchCompatResult(null);
+                }}
+              >
+                {tCommon('actions.cancel')}
               </Button>
             </div>
           </div>
