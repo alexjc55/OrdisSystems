@@ -638,6 +638,10 @@
     "confirmAndRemove": "Switch & Remove Unavailable",
     "confirm": "Switch Branch",
     "itemsRemovedTitle": "Some items removed",
-    "itemsRemovedDesc": "Items unavailable in your selected branch were removed from the cart."
+    "itemsRemovedDesc": "Items unavailable in your selected branch were removed from the cart.",
+    "confirmBranchTitle": "Confirm Branch Selection",
+    "confirmBranchDesc": "Please make sure you have selected the correct branch for your order",
+    "orderFrom": "Ordering from:",
+    "confirmBranchBtn": "Yes, continue"
   }
 }

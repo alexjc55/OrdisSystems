@@ -645,6 +645,10 @@
     "confirmAndRemove": "עבור והסר פריטים לא זמינים",
     "confirm": "עבור לסניף",
     "itemsRemovedTitle": "חלק מהפריטים הוסרו",
-    "itemsRemovedDesc": "פריטים שאינם זמינים בסניף שנבחר הוסרו מעגלת הקניות."
+    "itemsRemovedDesc": "פריטים שאינם זמינים בסניף שנבחר הוסרו מעגלת הקניות.",
+    "confirmBranchTitle": "אשר את בחירת הסניף",
+    "confirmBranchDesc": "אנא ודא שבחרת את הסניף הנכון להזמנתך",
+    "orderFrom": "הזמנה מ:",
+    "confirmBranchBtn": "כן, המשך"
   }
 }

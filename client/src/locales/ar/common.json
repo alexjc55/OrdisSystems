@@ -641,7 +641,11 @@
     "confirmAndRemove": "انتقل وأزل العناصر غير المتاحة",
     "confirm": "الانتقال إلى الفرع",
     "itemsRemovedTitle": "تمت إزالة بعض العناصر",
-    "itemsRemovedDesc": "تمت إزالة العناصر غير المتاحة في الفرع المحدد من سلة التسوق."
+    "itemsRemovedDesc": "تمت إزالة العناصر غير المتاحة في الفرع المحدد من سلة التسوق.",
+    "confirmBranchTitle": "تأكيد اختيار الفرع",
+    "confirmBranchDesc": "يرجى التأكد من اختيار الفرع الصحيح لطلبك",
+    "orderFrom": "الطلب من:",
+    "confirmBranchBtn": "نعم، تابع"
   },
   "validation": {
     "firstNameMinLength": "الاسم الأول يجب أن يحتوي على حرفين على الأقل",

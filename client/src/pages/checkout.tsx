@@ -231,6 +231,7 @@ export default function Checkout() {
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
+  const [showBranchConfirmDialog, setShowBranchConfirmDialog] = useState(true);
   const [showBranchChangeDialog, setShowBranchChangeDialog] = useState(false);
   const [pendingBranchId, setPendingBranchId] = useState<number | null>(null);
   const [branchCompatResult, setBranchCompatResult] = useState<{
@@ -261,7 +262,7 @@ export default function Checkout() {
         const toRemove: CartItem[] = [];
         for (const cartItem of items) {
           const inBranch = branchMap.get(cartItem.product.id);
-          if (!inBranch || inBranch.isAvailable === false) {
+          if (!inBranch || inBranch.isAvailable === false || inBranch.availabilityStatus === 'completely_unavailable') {
             toRemove.push(cartItem);
           }
         }
@@ -789,17 +790,67 @@ export default function Checkout() {
         </Button>
       </div>
 
+      {/* Branch confirmation dialog — appears on checkout page load */}
+      {showBranchConfirmDialog && branchesEnabled && selectedBranch && branches.length > 1 && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6">
+            <div className="flex flex-col items-center text-center mb-5">
+              <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-3">
+                <MapPin className="w-7 h-7 text-amber-600" />
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">
+                {String(tCommon('branch.confirmBranchTitle'))}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {String(tCommon('branch.confirmBranchDesc'))}
+              </p>
+            </div>
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-3 mb-5 text-center">
+              <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">
+                {String(tCommon('branch.orderFrom'))}
+              </p>
+              <p className="text-xl font-bold text-gray-900">
+                {getLocalizedField(selectedBranch, 'name', currentLanguage as SupportedLanguage, 'ru')}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 border-gray-300 text-gray-700"
+                onClick={() => {
+                  setShowBranchConfirmDialog(false);
+                  setShowBranchChangeDialog(true);
+                }}
+              >
+                {String(tCommon('branch.changeBranch'))}
+              </Button>
+              <Button
+                className="flex-1 bg-primary text-white hover:bg-primary-hover"
+                onClick={() => setShowBranchConfirmDialog(false)}
+              >
+                {String(tCommon('branch.confirmBranchBtn'))}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Branch indicator - shown when branches feature is active and a branch is selected */}
       {branchesEnabled && selectedBranch && branches.length > 1 && (
-        <div className="mb-4 flex items-center gap-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-          <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-          <span className="text-sm font-medium text-gray-800 flex-1">
-            {String(tCommon('branch.selectedBranch'))}: <strong>{selectedBranch.name}</strong>
-          </span>
+        <div className="mb-4 flex items-center gap-3 p-4 bg-amber-50 border-2 border-amber-300 rounded-xl shadow-sm">
+          <MapPin className="h-5 w-5 text-amber-600 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide leading-tight">
+              {String(tCommon('branch.selectedBranch'))}
+            </p>
+            <p className="text-base font-bold text-gray-900 truncate">
+              {getLocalizedField(selectedBranch, 'name', currentLanguage as SupportedLanguage, 'ru')}
+            </p>
+          </div>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
-            className="text-primary hover:text-primary-hover text-xs px-2 h-7"
+            className="border-amber-400 text-amber-700 hover:bg-amber-100 text-xs flex-shrink-0"
             onClick={() => setShowBranchChangeDialog(true)}
           >
             {String(tCommon('branch.changeBranch'))}
@@ -839,7 +890,7 @@ export default function Checkout() {
                       const toKeep: CartItem[] = [];
                       for (const cartItem of items) {
                         const inBranch = branchMap.get(cartItem.product.id);
-                        if (!inBranch || inBranch.isAvailable === false) {
+                        if (!inBranch || inBranch.isAvailable === false || inBranch.availabilityStatus === 'completely_unavailable') {
                           toRemove.push(cartItem);
                         } else if (
                           inBranch.availabilityStatus === 'out_of_stock_today' &&
