@@ -393,8 +393,8 @@ function Router() {
       {/* Bottom Navigation Bar - Mobile only */}
       <BottomNav />
 
-      {/* Branch Selection Modal - only for customers on non-admin routes */}
-      {!authLoading && !location.startsWith('/admin') && user?.role !== 'admin' && user?.role !== 'worker' && (
+      {/* Branch Selection Modal - shown on non-admin routes for all users */}
+      {!authLoading && !location.startsWith('/admin') && (
         <BranchSelectionModal />
       )}
     </ErrorBoundary>
