@@ -5825,10 +5825,10 @@ export default function AdminDashboard() {
                   <p className={`text-gray-600 mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('orders.description')}</p>
                 </div>
               
-              {/* Controls Row - same pattern as Users section: full-width stacked elements */}
-              <div className="flex flex-col gap-y-3">
-                {/* Row 1: View Mode Toggle - right-aligned for RTL via text-align trick */}
-                <div style={{ textAlign: isRTL ? 'right' : 'left' }}>
+              {/* Controls Row */}
+              <div className="flex flex-col gap-y-2">
+                {/* Row 1: View toggle (left) + Create Order button (right) — side by side on sm+ */}
+                <div className={`flex flex-col sm:flex-row sm:items-center gap-2 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
                   <div style={{ display: 'inline-flex', gap: '4px', padding: '4px', backgroundColor: '#f3f4f6', borderRadius: '8px', flexDirection: isRTL ? 'row-reverse' : 'row' }}>
                     <Button
                       variant={ordersViewMode === "table" ? "default" : "ghost"}
@@ -5849,58 +5849,57 @@ export default function AdminDashboard() {
                       {adminT('common.kanban')}
                     </Button>
                   </div>
+
+                  {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
+                    <Button
+                      onClick={() => setShowCreateOrderDialog(true)}
+                      className={`sm:ml-auto bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse sm:ml-0 sm:mr-auto' : ''}`}
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {adminT('orders.createOrder')}
+                    </Button>
+                  )}
                 </div>
 
-                {/* Row 2: Create Order - full width (like users section) */}
-                {((storeSettings?.workerPermissions as any)?.canCreateOrders !== false) && (
-                  <Button 
-                    onClick={() => setShowCreateOrderDialog(true)}
-                    className={`w-full bg-primary hover:bg-primary text-white flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}
-                    size="sm"
-                  >
-                    <Plus className="h-4 w-4" />
-                    {adminT('orders.createOrder')}
-                  </Button>
-                )}
-
-                {/* Row 3: Status filter - full width */}
-                <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
-                  <SelectTrigger className="w-full text-xs h-9">
-                    <SelectValue placeholder={adminT('orders.filterOrders')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                    <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
-                    <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
-                    <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
-                    <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Row 4: Search - full width */}
-                <div className="relative w-full">
-                  <Search className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 ${isRTL ? 'right-3' : 'left-3'}`} />
-                  <Input
-                    placeholder={adminT('orders.searchOrders')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full h-9 ${isRTL ? 'pr-9 pl-3 text-right' : 'pl-9'}`}
-                  />
-                </div>
-
-                {/* Row 5: Branch filter (only shown when branchesEnabled and >1 branch accessible) */}
-                {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 1 && (
-                  <Select value={ordersBranchFilter} onValueChange={setOrdersBranchFilter}>
-                    <SelectTrigger className="w-full text-xs h-9">
-                      <SelectValue placeholder={adminT('branches.filterByBranch')} />
+                {/* Row 2: Filters in a row on sm+, stacked on mobile — dropdowns together, search last */}
+                <div className={`flex flex-col sm:flex-row sm:items-center gap-2 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                  <Select value={ordersStatusFilter} onValueChange={setOrdersStatusFilter}>
+                    <SelectTrigger className="sm:w-44 text-xs h-9">
+                      <SelectValue placeholder={adminT('orders.filterOrders')} />
                     </SelectTrigger>
                     <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                      <SelectItem value="all">{adminT('branches.allBranches')}</SelectItem>
-                      {(branches as any[]).map((branch: any) => (
-                        <SelectItem key={branch.id} value={String(branch.id)}>{branch.name}</SelectItem>
-                      ))}
+                      <SelectItem value="active">{adminT('orders.activeOrders')}</SelectItem>
+                      <SelectItem value="delivered">{adminT('orders.deliveredOrders')}</SelectItem>
+                      <SelectItem value="cancelled">{adminT('orders.cancelledOrders')}</SelectItem>
+                      <SelectItem value="all">{adminT('orders.allOrders')}</SelectItem>
                     </SelectContent>
                   </Select>
-                )}
+
+                  {branchesEnabled && (branches as any[]).filter((b: any) => b.isActive).length > 1 && (
+                    <Select value={ordersBranchFilter} onValueChange={setOrdersBranchFilter}>
+                      <SelectTrigger className="sm:w-40 text-xs h-9">
+                        <SelectValue placeholder={adminT('branches.filterByBranch')} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+                        <SelectItem value="all">{adminT('branches.allBranches')}</SelectItem>
+                        {(branches as any[]).map((branch: any) => (
+                          <SelectItem key={branch.id} value={String(branch.id)}>{branch.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+
+                  <div className={`relative sm:flex-1 ${isRTL ? 'sm:mr-auto' : ''}`}>
+                    <Search className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 ${isRTL ? 'right-3' : 'left-3'}`} />
+                    <Input
+                      placeholder={adminT('orders.searchOrders')}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className={`w-full h-9 ${isRTL ? 'pr-9 pl-3 text-right' : 'pl-9'}`}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
