@@ -1,0 +1,35 @@
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:7215:33
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:7227:33
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:7242:31
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:7252:33
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:7272:31
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
+admin-dashboard.tsx:7282:33
+Admin Dashboard - systemSettings translation: 
+Object { key: "settings.systemSettings", result: "Системные настройки", currentLanguage: "ru", adminTFunction: "function" }
+admin-dashboard.tsx:7215:33
+Admin Dashboard - systemDescription translation: 
+Object { key: "settings.systemDescription", result: "Управление производительностью и оптимизацией системы", currentLanguage: "ru" }
+admin-dashboard.tsx:7227:33
+Admin Dashboard - cacheManagement translation: 
+Object { key: "settings.cacheManagement", result: "Управление кешем", currentLanguage: "ru" }
+admin-dashboard.tsx:7242:31
+Admin Dashboard - cacheDescription translation: 
+Object { key: "settings.cacheDescription", result: "Очистка кеша приложения для принудительного обновления пользователей", currentLanguage: "ru" }
+admin-dashboard.tsx:7252:33
+Admin Dashboard - imageOptimization translation: 
+Object { key: "settings.imageOptimization", result: "Оптимизация изображений", currentLanguage: "ru" }
+admin-dashboard.tsx:7272:31
+Admin Dashboard - imageOptimizationDescription translation: 
+Object { key: "settings.imageOptimizationDescription", result: "Автоматическая оптимизация всех загруженных изображений товаров для улучшения скорости загрузки", currentLanguage: "ru" }
