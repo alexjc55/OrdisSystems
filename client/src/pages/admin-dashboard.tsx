@@ -15,7 +15,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useModalBackButton } from "@/hooks/useModalBackButton";
+import { useModalBackButton, suppressedHistoryBack } from "@/hooks/useModalBackButton";
 
 import { useAdminTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
@@ -1309,7 +1309,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       if (existingHandler) window.removeEventListener('popstate', existingHandler);
       existingOverlay.remove();
       // Also pop the history entry that was pushed for the old overlay
-      window.history.back();
+      suppressedHistoryBack();
     }
     document.getElementById('order-print-style')?.remove();
 
@@ -1478,7 +1478,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       window.removeEventListener('popstate', onPopState);
       overlay.remove();
       // Pop the extra history entry we pushed when the overlay opened
-      window.history.back();
+      suppressedHistoryBack();
       dispatchReopen();
     };
 
@@ -3424,7 +3424,7 @@ export default function AdminDashboard() {
       if (pushed) {
         orderDialogHistoryRef.current.pushed = false;
         // Pop the history entry we pushed so the browser history stays clean
-        window.history.back();
+        suppressedHistoryBack();
       }
     }
   }, [isOrderFormOpen]);

@@ -10,9 +10,21 @@ import { cn } from "@/lib/utils"
 // modal={false} lets users interact with toasts while the sheet is open.
 // Note: SheetPrimitive.Overlay renders null when modal={false}, so we render
 // our own overlay div inside SheetContent.
-const Sheet = (props: React.ComponentProps<typeof SheetPrimitive.Root>) => (
-  <SheetPrimitive.Root modal={false} {...props} />
-)
+const Sheet = (props: React.ComponentProps<typeof SheetPrimitive.Root>) => {
+  const { onOpenChange, ...rest } = props;
+  return (
+    <SheetPrimitive.Root
+      modal={false}
+      {...rest}
+      onOpenChange={(open) => {
+        if (!open) {
+          console.warn("[Sheet] onOpenChange(false) — закрытие. Стек:", new Error().stack);
+        }
+        onOpenChange?.(open);
+      }}
+    />
+  );
+}
 
 const SheetTrigger = SheetPrimitive.Trigger
 
@@ -62,7 +74,7 @@ interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, onFocusOutside, onPointerDownOutside, ...props }, ref) => (
+>(({ side = "right", className, children, onFocusOutside, onPointerDownOutside, onInteractOutside, ...props }, ref) => (
   <SheetPortal>
     {/*
       Custom backdrop: SheetPrimitive.Overlay returns null when modal={false},
@@ -73,6 +85,7 @@ const SheetContent = React.forwardRef<
       <div
         aria-hidden="true"
         className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0 duration-200"
+        onClick={() => console.warn("[Sheet] Overlay div clicked → закрытие")}
       />
     </SheetPrimitive.Close>
 
@@ -80,15 +93,19 @@ const SheetContent = React.forwardRef<
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
       onFocusOutside={(e) => {
-        // Prevent toast viewport focus from closing the sheet.
+        console.warn("[Sheet] onFocusOutside → preventDefault. target:", (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className?.toString?.()?.slice(0, 60));
         e.preventDefault();
         onFocusOutside?.(e);
       }}
       onPointerDownOutside={(e) => {
-        // Prevent clicking toast elements from closing the sheet.
-        // Overlay clicks are handled by the div above.
+        console.warn("[Sheet] onPointerDownOutside → preventDefault. target:", (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className?.toString?.()?.slice(0, 60));
         e.preventDefault();
         onPointerDownOutside?.(e);
+      }}
+      onInteractOutside={(e) => {
+        console.warn("[Sheet] onInteractOutside → preventDefault. type:", (e.detail as any)?.originalEvent?.type);
+        e.preventDefault();
+        onInteractOutside?.(e);
       }}
       {...props}
     >

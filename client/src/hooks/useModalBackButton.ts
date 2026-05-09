@@ -1,18 +1,23 @@
 import { useEffect, useRef } from "react";
 
 // Global flag to suppress popstate events fired by our own history.back() calls.
-// When a modal closes and calls history.back(), we briefly ignore the resulting
-// popstate so it doesn't accidentally close another modal that just opened.
 let suppressNextPopstate = false;
 
 /**
- * Intercepts the Android/iOS back button (and browser back) to close a modal dialog
- * instead of navigating away from the page.
- *
- * - On open:  pushes a history entry so the back button has something to pop.
- * - On back:  the handler fires, closes the modal; browser already navigated back.
- * - On close via button/X: removes the listener then calls history.back() to pop
- *   the pushed entry, keeping the history stack clean.
+ * Call this instead of raw window.history.back() whenever you want to pop a
+ * history entry that YOU pushed (modal open, overlay, etc.) so that other
+ * useModalBackButton handlers don't misinterpret the resulting popstate as a
+ * real user "back" press and close an unrelated modal.
+ */
+export function suppressedHistoryBack() {
+  suppressNextPopstate = true;
+  window.history.back();
+  setTimeout(() => { suppressNextPopstate = false; }, 500);
+}
+
+/**
+ * Intercepts the Android/iOS back button (and browser back) to close a modal
+ * dialog instead of navigating away from the page.
  */
 export function useModalBackButton(isOpen: boolean, onClose: () => void) {
   const historyRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({
@@ -28,8 +33,9 @@ export function useModalBackButton(isOpen: boolean, onClose: () => void) {
       historyRef.current.pushed = true;
 
       const onPopState = () => {
-        // Skip if this popstate was caused by another modal's cleanup history.back()
-        if (suppressNextPopstate) return;
+        if (suppressNextPopstate) {
+          return;
+        }
         historyRef.current.pushed = false;
         historyRef.current.handler = null;
         window.removeEventListener("popstate", onPopState);
@@ -50,12 +56,7 @@ export function useModalBackButton(isOpen: boolean, onClose: () => void) {
       }
       if (pushed) {
         historyRef.current.pushed = false;
-        // Suppress the popstate this back() will generate so other open modals
-        // don't accidentally receive and react to it.
-        suppressNextPopstate = true;
-        window.history.back();
-        // Clear the flag after a short delay (popstate is always async)
-        setTimeout(() => { suppressNextPopstate = false; }, 200);
+        suppressedHistoryBack();
       }
     }
   }, [isOpen]);

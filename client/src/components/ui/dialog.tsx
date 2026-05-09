@@ -9,9 +9,21 @@ import { cn } from "@/lib/utils"
 // modal={false} lets users interact with toasts while the dialog is open.
 // Note: DialogPrimitive.Overlay renders null when modal={false}, so we render
 // our own overlay div below inside DialogContent.
-const Dialog = (props: React.ComponentProps<typeof DialogPrimitive.Root>) => (
-  <DialogPrimitive.Root modal={false} {...props} />
-)
+const Dialog = (props: React.ComponentProps<typeof DialogPrimitive.Root>) => {
+  const { onOpenChange, ...rest } = props;
+  return (
+    <DialogPrimitive.Root
+      modal={false}
+      {...rest}
+      onOpenChange={(open) => {
+        if (!open) {
+          console.warn("[Dialog] onOpenChange(false) — закрытие диалога. Стек:", new Error().stack);
+        }
+        onOpenChange?.(open);
+      }}
+    />
+  );
+}
 
 const DialogTrigger = DialogPrimitive.Trigger
 
@@ -38,7 +50,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, onFocusOutside, onPointerDownOutside, ...props }, ref) => (
+>(({ className, children, onFocusOutside, onPointerDownOutside, onInteractOutside, ...props }, ref) => (
   <DialogPortal>
     {/*
       Custom backdrop: DialogPrimitive.Overlay returns null when modal={false},
@@ -49,6 +61,7 @@ const DialogContent = React.forwardRef<
       <div
         aria-hidden="true"
         className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0 duration-200"
+        onClick={() => console.warn("[Dialog] Overlay div clicked → закрытие")}
       />
     </DialogPrimitive.Close>
 
@@ -59,15 +72,19 @@ const DialogContent = React.forwardRef<
         className
       )}
       onFocusOutside={(e) => {
-        // Prevent toast viewport focus from closing the dialog.
+        console.warn("[Dialog] onFocusOutside → preventDefault. target:", (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className?.toString?.()?.slice(0, 60));
         e.preventDefault();
         onFocusOutside?.(e);
       }}
       onPointerDownOutside={(e) => {
-        // Prevent clicking toast close button (or other outside elements) from
-        // closing the dialog. Overlay clicks are handled by the div above.
+        console.warn("[Dialog] onPointerDownOutside → preventDefault. target:", (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className?.toString?.()?.slice(0, 60));
         e.preventDefault();
         onPointerDownOutside?.(e);
+      }}
+      onInteractOutside={(e) => {
+        console.warn("[Dialog] onInteractOutside → preventDefault. type:", (e.detail as any)?.originalEvent?.type);
+        e.preventDefault();
+        onInteractOutside?.(e);
       }}
       {...props}
     >
