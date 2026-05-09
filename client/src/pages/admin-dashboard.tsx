@@ -15,7 +15,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { useModalBackButton, suppressedHistoryBack } from "@/hooks/useModalBackButton";
+import { useModalBackButton, suppressedHistoryBack, isPopstateSuppressed } from "@/hooks/useModalBackButton";
 
 import { useAdminTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
@@ -1459,6 +1459,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     };
 
     const onPopState = () => {
+      // Ignore popstate events generated programmatically by suppressedHistoryBack()
+      if (isPopstateSuppressed()) return;
       // Hardware/gesture back button pressed — browser already went back,
       // just close the overlay (no extra history.back() needed)
       document.getElementById('order-print-style')?.remove();
@@ -3398,6 +3400,9 @@ export default function AdminDashboard() {
         // If we popped TO the orderDialog state, that means we came from the print overlay
         // going back one step — the order dialog should remain open
         if (e.state?.orderDialog) return;
+
+        // Ignore popstate events generated programmatically by suppressedHistoryBack()
+        if (isPopstateSuppressed()) return;
 
         // We popped PAST the orderDialog state (real Android back) — close the dialog
         orderDialogHistoryRef.current.pushed = false;
