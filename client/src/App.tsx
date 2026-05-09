@@ -387,8 +387,8 @@ function Router() {
       {/* WhatsApp Chat Widget */}
       <WhatsAppChat />
       
-      {/* Cart Sidebar - Global */}
-      <CartSidebar />
+      {/* Cart Sidebar - shop only, not needed in admin */}
+      {!location.startsWith('/admin') && <CartSidebar />}
       
       {/* Bottom Navigation Bar - Mobile only */}
       <BottomNav />
