@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTranslation } from "@/hooks/use-language";
 import { Upload, X, Image as ImageIcon } from "lucide-react";
@@ -15,20 +13,20 @@ interface ImageUploadProps {
 export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
+  const [isNewlyUploaded, setIsNewlyUploaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t } = useCommonTranslation();
 
-  // Sync preview with value prop
   useEffect(() => {
     setPreview(value || null);
+    setIsNewlyUploaded(false);
   }, [value]);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
         title: t('imageUpload.invalidFormat'),
@@ -38,7 +36,6 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
       return;
     }
 
-    // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({
         title: t('imageUpload.fileTooLarge'),
@@ -60,16 +57,19 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
         credentials: 'include',
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to upload image');
-      }
+      if (!response.ok) throw new Error('Failed to upload image');
 
       const result = await response.json();
       const imageUrl = result.imageUrl;
-      
+
+      if (preview && isNewlyUploaded) {
+        deleteFileFromServer(preview);
+      }
+
       setPreview(imageUrl);
+      setIsNewlyUploaded(true);
       onChange(imageUrl);
-      
+
       toast({
         title: t('imageUpload.uploaded'),
         description: t('imageUpload.uploadSuccess'),
@@ -86,8 +86,22 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
     }
   };
 
+  const deleteFileFromServer = (url: string) => {
+    if (!url || !url.startsWith('/uploads/')) return;
+    fetch('/api/admin/delete-image', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ url }),
+    }).catch(() => {});
+  };
+
   const handleRemove = () => {
+    if (preview && isNewlyUploaded) {
+      deleteFileFromServer(preview);
+    }
     setPreview(null);
+    setIsNewlyUploaded(false);
     onChange('');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -100,8 +114,6 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
 
   return (
     <div className="space-y-4">
-
-      
       {preview ? (
         <div className="relative">
           <div className="relative w-full h-48 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
@@ -119,7 +131,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
                 disabled={disabled}
               >
                 <X className="h-4 w-4 mr-1" />
-{t('imageUpload.remove')}
+                {t('imageUpload.remove')}
               </Button>
             </div>
           </div>
@@ -159,7 +171,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
           <Upload className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
           {uploading ? t('imageUpload.uploading') : t('imageUpload.selectFile')}
         </Button>
-        
+
         {preview && (
           <Button
             type="button"

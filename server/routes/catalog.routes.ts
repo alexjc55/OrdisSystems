@@ -595,4 +595,23 @@ router.post('/upload', isAuthenticated, upload.single('image'), processUploadedI
   }
 });
 
+router.delete('/admin/delete-image', isAuthenticated, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await storage.getUser(userId);
+    if (!user || (user.role !== 'admin' && user.role !== 'worker')) {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+    const { url } = req.body;
+    if (!url || typeof url !== 'string' || !url.startsWith('/uploads/')) {
+      return res.status(400).json({ message: "Invalid or missing url" });
+    }
+    deleteUploadFile(url);
+    res.json({ message: "File deleted" });
+  } catch (error) {
+    console.error("Error deleting image file:", error);
+    res.status(500).json({ message: "Failed to delete file" });
+  }
+});
+
 export default router;
