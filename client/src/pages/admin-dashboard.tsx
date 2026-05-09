@@ -2719,7 +2719,7 @@ function AddItemDialog({ onClose, onAdd, currentOrderItems, searchPlaceholder, a
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog open={true} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-96 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{adminT('orders.addProduct')}</DialogTitle>
@@ -2879,7 +2879,7 @@ function ItemDiscountDialog({
   const finalPrice = basePrice - discountAmount;
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog open={true} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[9999] w-full max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{adminT('orders.itemDiscount')}</DialogTitle>
@@ -3312,10 +3312,23 @@ export default function AdminDashboard() {
   };
 
   // State for forms and filters
-  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
-  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
+  const [isProductFormOpen, _setIsProductFormOpen] = useState(false);
+  const [isCategoryFormOpen, _setIsCategoryFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [editingCategory, setEditingCategory] = useState<any>(null);
+
+  const setIsProductFormOpen = (v: boolean) => {
+    if (!v) {
+      console.log('[setIsProductFormOpen→false]', new Error().stack);
+    }
+    _setIsProductFormOpen(v);
+  };
+  const setIsCategoryFormOpen = (v: boolean) => {
+    if (!v) {
+      console.log('[setIsCategoryFormOpen→false]', new Error().stack);
+    }
+    _setIsCategoryFormOpen(v);
+  };
 
   useModalBackButton(isProductFormOpen, () => { setIsProductFormOpen(false); setEditingProduct(null); });
   useModalBackButton(isCategoryFormOpen, () => { setIsCategoryFormOpen(false); setEditingCategory(null); });
@@ -3541,9 +3554,16 @@ export default function AdminDashboard() {
   const [usersPage, setUsersPage] = useState(1);
 
   // User management state
-  const [isUserFormOpen, setIsUserFormOpen] = useState(false);
+  const [isUserFormOpen, _setIsUserFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDeletionDialogOpen, setIsUserDeletionDialogOpen] = useState(false);
+
+  const setIsUserFormOpen = (v: boolean) => {
+    if (!v) {
+      console.log('[setIsUserFormOpen→false]', new Error().stack);
+    }
+    _setIsUserFormOpen(v);
+  };
 
   useModalBackButton(isUserFormOpen, () => { setIsUserFormOpen(false); setEditingUser(null); });
   const [userToDelete, setUserToDelete] = useState<any>(null);
@@ -8532,7 +8552,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto mx-4">
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">
@@ -9098,7 +9118,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   if (!open) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="sm:max-w-[500px] mx-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
           <DialogTitle className={`text-lg sm:text-xl ${isRTL ? 'text-right' : 'text-left'}`}>
@@ -11658,7 +11678,7 @@ function CancellationReasonDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="sm:max-w-md mx-4">
         <DialogHeader>
           <DialogTitle className="text-lg">{adminT('orders.cancelReason')}</DialogTitle>
@@ -11749,7 +11769,7 @@ function UserDeletionDialog({ open, onClose, user, onConfirm }: {
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={onClose}>
+    <AlertDialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-red-600">
@@ -11882,7 +11902,7 @@ function UserFormDialog({ open, onClose, user, onSubmit, onDelete, branches = []
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={`text-lg ${isRTL ? 'text-right' : 'text-left'}`}>
