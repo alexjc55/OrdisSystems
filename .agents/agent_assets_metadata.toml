@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "7F0YwCyQSa-5AJZOQaR0v"
+uri = "file://backups/dump_20260509_234553.zip"
+type = "unspecified"
+title = "Дамп БД — 09.05.2026 23:45"
