@@ -1265,6 +1265,7 @@ export default function ThemeManager() {
             onPointerDownOutside={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
             onFocusOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
           >
             <DialogHeader>
               <DialogTitle>{adminT("themes.createNew")}</DialogTitle>
@@ -2006,6 +2007,7 @@ export default function ThemeManager() {
             onPointerDownOutside={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
             onFocusOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
           >
             <DialogHeader>
               <DialogTitle>{adminT("themes.editTheme")}: {getThemeName(editingTheme)}</DialogTitle>
