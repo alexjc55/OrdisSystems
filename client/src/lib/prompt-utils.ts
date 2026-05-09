@@ -115,11 +115,10 @@ export function markPWAPromptDismissed(isIOS: boolean = false): void {
 
 // Push Notification Request management
 export function shouldShowPushRequest(userRole?: string): boolean {
-  // Never show push notification prompts to admin or worker users —
-  // they work in the admin panel and must not be interrupted by overlays.
-  if (userRole === 'admin' || userRole === 'worker') {
-    console.log(`🚫 Push request: Skipped (${userRole} user)`);
-    return false;
+  // Admins always see it (for testing)
+  if (userRole === 'admin') {
+    console.log('✅ Push request: Should show (admin user)');
+    return true;
   }
   
   // Check permission status

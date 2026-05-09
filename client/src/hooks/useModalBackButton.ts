@@ -4,11 +4,12 @@ import { useEffect, useRef } from "react";
  * Intercepts the Android/iOS back button (and browser back) to close a modal dialog
  * instead of navigating away from the page.
  *
- * Uses a unique modal key stored in history.state to avoid reacting to
- * unrelated popstate events (file picker navigation, push permission dialog, etc.)
+ * - On open:  pushes a history entry so the back button has something to pop.
+ * - On back:  the handler fires, closes the modal; browser already navigated back.
+ * - On close via button/X: removes the listener then calls history.back() to pop
+ *   the pushed entry, keeping the history stack clean.
  */
 export function useModalBackButton(isOpen: boolean, onClose: () => void) {
-  const modalKey = useRef(`modal_${Math.random().toString(36).slice(2)}`);
   const historyRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({
     pushed: false,
     handler: null,
@@ -18,16 +19,10 @@ export function useModalBackButton(isOpen: boolean, onClose: () => void) {
 
   useEffect(() => {
     if (isOpen) {
-      const key = modalKey.current;
-      window.history.pushState({ modalKey: key }, "", window.location.href);
+      window.history.pushState({ modal: true }, "", window.location.href);
       historyRef.current.pushed = true;
 
-      const onPopState = (e: PopStateEvent) => {
-        // Only handle popstate events that correspond to OUR modal entry.
-        // This prevents file picker navigation, push-permission dialogs,
-        // or any other unrelated popstate from closing this dialog.
-        if (e.state?.modalKey !== key) return;
-
+      const onPopState = () => {
         historyRef.current.pushed = false;
         historyRef.current.handler = null;
         window.removeEventListener("popstate", onPopState);
