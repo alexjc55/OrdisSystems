@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260414-1200';
+const BUILD_TIMESTAMP = '20260509-2240';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
 // Only cache true static assets with content hashes (icons + hashed JS/CSS)
@@ -71,7 +71,12 @@ self.addEventListener('fetch', (event) => {
     return; // Let browser handle normally
   }
 
-  // ③ Static assets with content hash → Cache-first (safe: hashed filenames never change)
+  // ③ Only cache production assets with content hash in /assets/ path.
+  // Vite dev-server modules (e.g. /src/**, /@vite/**, /@fs/**) must NOT be cached
+  // because HMR updates them in-place without changing the URL.
+  const isHashedProductionAsset = url.pathname.startsWith('/assets/');
+  if (!isHashedProductionAsset) return; // Let browser handle dev files normally
+
   event.respondWith(handleStaticAsset(request));
 });
 

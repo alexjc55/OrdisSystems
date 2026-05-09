@@ -17,7 +17,7 @@ const Dialog = (props: React.ComponentProps<typeof DialogPrimitive.Root>) => {
       {...rest}
       onOpenChange={(open) => {
         // Log ALL onOpenChange calls unconditionally so we can debug
-        console.log(`[Dialog] onOpenChange(${open}) called. Stack:`, new Error().stack);
+        console.error(`[Dialog] onOpenChange(${open}) called. Stack:`, new Error().stack);
         onOpenChange?.(open);
       }}
     />

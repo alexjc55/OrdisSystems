@@ -3319,13 +3319,13 @@ export default function AdminDashboard() {
 
   const setIsProductFormOpen = (v: boolean) => {
     if (!v) {
-      console.log('[setIsProductFormOpen→false]', new Error().stack);
+      console.error('[setIsProductFormOpen→false]', new Error().stack);
     }
     _setIsProductFormOpen(v);
   };
   const setIsCategoryFormOpen = (v: boolean) => {
     if (!v) {
-      console.log('[setIsCategoryFormOpen→false]', new Error().stack);
+      console.error('[setIsCategoryFormOpen→false]', new Error().stack);
     }
     _setIsCategoryFormOpen(v);
   };
@@ -3560,7 +3560,7 @@ export default function AdminDashboard() {
 
   const setIsUserFormOpen = (v: boolean) => {
     if (!v) {
-      console.log('[setIsUserFormOpen→false]', new Error().stack);
+      console.error('[setIsUserFormOpen→false]', new Error().stack);
     }
     _setIsUserFormOpen(v);
   };
