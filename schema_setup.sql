@@ -28,78 +28,9 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: drizzle; Type: SCHEMA; Schema: -; Owner: -
---
-
-CREATE SCHEMA drizzle;
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
-
---
--- Name: __drizzle_migrations; Type: TABLE; Schema: drizzle; Owner: -
---
-
-CREATE TABLE drizzle.__drizzle_migrations (
-    id integer NOT NULL,
-    hash text NOT NULL,
-    created_at bigint
-);
-
-
---
--- Name: __drizzle_migrations_id_seq; Type: SEQUENCE; Schema: drizzle; Owner: -
---
-
-CREATE SEQUENCE drizzle.__drizzle_migrations_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: __drizzle_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: drizzle; Owner: -
---
-
-ALTER SEQUENCE drizzle.__drizzle_migrations_id_seq OWNED BY drizzle.__drizzle_migrations.id;
-
-
---
--- Name: __drizzle_migrations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.__drizzle_migrations (
-    id integer NOT NULL,
-    hash text NOT NULL,
-    created_at bigint
-);
-
-
---
--- Name: __drizzle_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.__drizzle_migrations_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: __drizzle_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.__drizzle_migrations_id_seq OWNED BY public.__drizzle_migrations.id;
-
 
 --
 -- Name: branches; Type: TABLE; Schema: public; Owner: -
@@ -1207,20 +1138,6 @@ CREATE TABLE public.users (
 
 
 --
--- Name: __drizzle_migrations id; Type: DEFAULT; Schema: drizzle; Owner: -
---
-
-ALTER TABLE ONLY drizzle.__drizzle_migrations ALTER COLUMN id SET DEFAULT nextval('drizzle.__drizzle_migrations_id_seq'::regclass);
-
-
---
--- Name: __drizzle_migrations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.__drizzle_migrations ALTER COLUMN id SET DEFAULT nextval('public.__drizzle_migrations_id_seq'::regclass);
-
-
---
 -- Name: branches id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1337,22 +1254,6 @@ ALTER TABLE ONLY public.user_addresses ALTER COLUMN id SET DEFAULT nextval('publ
 --
 
 ALTER TABLE ONLY public.user_branches ALTER COLUMN id SET DEFAULT nextval('public.user_branches_id_seq'::regclass);
-
-
---
--- Name: __drizzle_migrations __drizzle_migrations_pkey; Type: CONSTRAINT; Schema: drizzle; Owner: -
---
-
-ALTER TABLE ONLY drizzle.__drizzle_migrations
-    ADD CONSTRAINT __drizzle_migrations_pkey PRIMARY KEY (id);
-
-
---
--- Name: __drizzle_migrations __drizzle_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.__drizzle_migrations
-    ADD CONSTRAINT __drizzle_migrations_pkey PRIMARY KEY (id);
 
 
 --

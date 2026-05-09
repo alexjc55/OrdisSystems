@@ -337,7 +337,7 @@ SELECT 'admin user'    AS what, username AS detail1, role AS detail2, email AS d
   FROM users WHERE id = 'admin-default'
 UNION ALL
 SELECT 'store settings', store_name, default_language, contact_phone
-  FROM store_settings LIMIT 1
+  FROM store_settings
 UNION ALL
 SELECT 'theme', name, CASE WHEN is_active THEN 'active' ELSE 'inactive' END, header_style
   FROM themes WHERE id = 'default_theme_initial';
