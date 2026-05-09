@@ -7,9 +7,9 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-// modal={false} keeps the sheet non-blocking so users can still interact with
-// toast notifications while a sheet is open.
-// Focus leakage is guarded by the onFocusOutside handler in SheetContent.
+// modal={false} lets users interact with toasts while the sheet is open.
+// Note: SheetPrimitive.Overlay renders null when modal={false}, so we render
+// our own overlay div inside SheetContent.
 const Sheet = (props: React.ComponentProps<typeof SheetPrimitive.Root>) => (
   <SheetPrimitive.Root modal={false} {...props} />
 )
@@ -20,13 +20,14 @@ const SheetClose = SheetPrimitive.Close
 
 const SheetPortal = SheetPrimitive.Portal
 
+// Not used directly (Radix returns null for modal={false}), kept for API compat.
 const SheetOverlay = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -45,7 +46,7 @@ const sheetVariants = cva(
           "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
         left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
         right:
-          "inset-y-0 right-0 h-full w-3/4  border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+          "inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
       },
     },
     defaultVariants: {
@@ -61,17 +62,33 @@ interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, onFocusOutside, ...props }, ref) => (
+>(({ side = "right", className, children, onFocusOutside, onPointerDownOutside, ...props }, ref) => (
   <SheetPortal>
-    <SheetOverlay />
+    {/*
+      Custom backdrop: SheetPrimitive.Overlay returns null when modal={false},
+      so we render a plain div. SheetPrimitive.Close asChild makes it close
+      the sheet when clicked.
+    */}
+    <SheetPrimitive.Close asChild>
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0 duration-200"
+      />
+    </SheetPrimitive.Close>
+
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
       onFocusOutside={(e) => {
-        // Prevent focus leaving the sheet (e.g. toast viewport stealing focus)
-        // from closing the sheet involuntarily.
+        // Prevent toast viewport focus from closing the sheet.
         e.preventDefault();
         onFocusOutside?.(e);
+      }}
+      onPointerDownOutside={(e) => {
+        // Prevent clicking toast elements from closing the sheet.
+        // Overlay clicks are handled by the div above.
+        e.preventDefault();
+        onPointerDownOutside?.(e);
       }}
       {...props}
     >

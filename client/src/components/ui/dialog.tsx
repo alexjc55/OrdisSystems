@@ -6,9 +6,9 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-// modal={false} keeps the dialog non-blocking so users can still interact with
-// toast notifications while a dialog is open (e.g. close the toast × button).
-// Focus leakage is guarded by the onFocusOutside handler below.
+// modal={false} lets users interact with toasts while the dialog is open.
+// Note: DialogPrimitive.Overlay renders null when modal={false}, so we render
+// our own overlay div below inside DialogContent.
 const Dialog = (props: React.ComponentProps<typeof DialogPrimitive.Root>) => (
   <DialogPrimitive.Root modal={false} {...props} />
 )
@@ -19,6 +19,7 @@ const DialogPortal = DialogPrimitive.Portal
 
 const DialogClose = DialogPrimitive.Close
 
+// Not used directly (Radix returns null for modal={false}), kept for API compat.
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -37,9 +38,20 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, onFocusOutside, ...props }, ref) => (
+>(({ className, children, onFocusOutside, onPointerDownOutside, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    {/*
+      Custom backdrop: DialogPrimitive.Overlay returns null when modal={false},
+      so we render a plain div. DialogPrimitive.Close asChild makes it close
+      the dialog when clicked (same as clicking the × button).
+    */}
+    <DialogPrimitive.Close asChild>
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0 duration-200"
+      />
+    </DialogPrimitive.Close>
+
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
@@ -47,10 +59,15 @@ const DialogContent = React.forwardRef<
         className
       )}
       onFocusOutside={(e) => {
-        // Prevent focus leaving the dialog (e.g. toast viewport stealing focus)
-        // from closing the dialog involuntarily.
+        // Prevent toast viewport focus from closing the dialog.
         e.preventDefault();
         onFocusOutside?.(e);
+      }}
+      onPointerDownOutside={(e) => {
+        // Prevent clicking toast close button (or other outside elements) from
+        // closing the dialog. Overlay clicks are handled by the div above.
+        e.preventDefault();
+        onPointerDownOutside?.(e);
       }}
       {...props}
     >
