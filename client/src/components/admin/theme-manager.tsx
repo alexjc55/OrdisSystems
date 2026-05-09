@@ -997,89 +997,119 @@ export default function ThemeManager() {
   };
 
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
-    // Use tab-visible field first, fall back to always-present hidden field
-    const getField = (key: string) =>
-      (formData.get(key) as string || formData.get(`_${key}`) as string || "");
-    const nameVal = getField("name").trim();
+    const et = editingTheme as any;
+
+    // getFormField: if input is mounted → use form value (even if empty string).
+    // if input is unmounted (inactive Radix tab) → formData.get() returns null
+    // → fall back to the existing value from editingTheme to avoid data loss.
+    const getFormField = (key: string): string => {
+      const val = formData.get(key);
+      return val !== null ? (val as string) : (et?.[key] ?? "");
+    };
+
+    // Name/description fields also try the always-present _-prefixed hidden inputs
+    const getTextField = (key: string): string => {
+      const direct = formData.get(key) as string | null;
+      if (direct !== null) return direct;
+      const hidden = formData.get(`_${key}`) as string | null;
+      if (hidden !== null) return hidden;
+      return et?.[key] ?? "";
+    };
+
+    const nameVal = getTextField("name").trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
     }
+
     const convertColorToHsl = (color: string | null) => {
       if (!color) return '';
       return color.startsWith('#') ? hexToHsl(color) : color;
     };
 
+    const getColor = (key: string) => convertColorToHsl(getFormField(key));
+
+    // Replaces createMultilingualFormDataUpdate — uses editingTheme as fallback
+    const getMultilingualFields = (baseField: string): Record<string, string> => {
+      const result: Record<string, string> = {};
+      result[baseField] = getFormField(baseField);
+      ['En', 'He', 'Ar'].forEach(lang => {
+        const key = `${baseField}${lang}`;
+        result[key] = getFormField(key);
+      });
+      return result;
+    };
+
     const themeData = {
-      name: getField("name"),
-      name_en: getField("name_en"),
-      name_he: getField("name_he"),
-      name_ar: getField("name_ar"),
-      description: getField("description"),
-      description_en: getField("description_en"),
-      description_he: getField("description_he"),
-      description_ar: getField("description_ar"),
-      primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
-      primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
-      primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
-      primaryLightColor: convertColorToHsl(formData.get("primaryLightColor") as string),
-      secondaryColor: convertColorToHsl(formData.get("secondaryColor") as string),
-      accentColor: convertColorToHsl(formData.get("accentColor") as string),
-      successColor: convertColorToHsl(formData.get("successColor") as string),
-      successLightColor: convertColorToHsl(formData.get("successLightColor") as string),
-      warningColor: convertColorToHsl(formData.get("warningColor") as string),
-      warningLightColor: convertColorToHsl(formData.get("warningLightColor") as string),
-      errorColor: convertColorToHsl(formData.get("errorColor") as string),
-      errorLightColor: convertColorToHsl(formData.get("errorLightColor") as string),
-      infoColor: convertColorToHsl(formData.get("infoColor") as string),
-      infoLightColor: convertColorToHsl(formData.get("infoLightColor") as string),
-      tomorrowColor: convertColorToHsl(formData.get("tomorrowColor") as string),
-      tomorrowDarkColor: convertColorToHsl(formData.get("tomorrowDarkColor") as string),
-      tomorrowLightColor: convertColorToHsl(formData.get("tomorrowLightColor") as string),
-      outOfStockColor: convertColorToHsl(formData.get("outOfStockColor") as string),
-      workingHoursIconColor: convertColorToHsl(formData.get("workingHoursIconColor") as string),
-      contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
-      paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
-      headerStyle: formData.get("headerStyle") as string,
-      bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
-      bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
-      logoUrl: formData.get("logoUrl") as string || themeImages.logoUrl,
-      logoUrl_en: formData.get("logoUrl_en") as string || themeImages.logoUrl_en,
-      logoUrl_he: formData.get("logoUrl_he") as string || themeImages.logoUrl_he,
-      logoUrl_ar: formData.get("logoUrl_ar") as string || themeImages.logoUrl_ar,
-      bannerImageUrl: formData.get("bannerImageUrl") as string || themeImages.bannerImageUrl,
-      bannerImageUrl_en: formData.get("bannerImageUrl_en") as string || themeImages.bannerImageUrl_en,
-      bannerImageUrl_he: formData.get("bannerImageUrl_he") as string || themeImages.bannerImageUrl_he,
-      bannerImageUrl_ar: formData.get("bannerImageUrl_ar") as string || themeImages.bannerImageUrl_ar,
-      // Cart banner settings
+      name: getTextField("name"),
+      name_en: getTextField("name_en"),
+      name_he: getTextField("name_he"),
+      name_ar: getTextField("name_ar"),
+      description: getTextField("description"),
+      description_en: getTextField("description_en"),
+      description_he: getTextField("description_he"),
+      description_ar: getTextField("description_ar"),
+      primaryColor: getColor("primaryColor"),
+      primaryTextColor: getColor("primaryTextColor"),
+      primaryDarkColor: getColor("primaryDarkColor"),
+      primaryLightColor: getColor("primaryLightColor"),
+      secondaryColor: getColor("secondaryColor"),
+      accentColor: getColor("accentColor"),
+      successColor: getColor("successColor"),
+      successLightColor: getColor("successLightColor"),
+      warningColor: getColor("warningColor"),
+      warningLightColor: getColor("warningLightColor"),
+      errorColor: getColor("errorColor"),
+      errorLightColor: getColor("errorLightColor"),
+      infoColor: getColor("infoColor"),
+      infoLightColor: getColor("infoLightColor"),
+      tomorrowColor: getColor("tomorrowColor"),
+      tomorrowDarkColor: getColor("tomorrowDarkColor"),
+      tomorrowLightColor: getColor("tomorrowLightColor"),
+      outOfStockColor: getColor("outOfStockColor"),
+      workingHoursIconColor: getColor("workingHoursIconColor"),
+      contactsIconColor: getColor("contactsIconColor"),
+      paymentDeliveryIconColor: getColor("paymentDeliveryIconColor"),
+      headerStyle: getFormField("headerStyle"),
+      bannerButtonText: getFormField("bannerButtonText") || adminT('themes.buttonTextDefault'),
+      bannerButtonLink: getFormField("bannerButtonLink") || "#categories",
+      logoUrl: themeImages.logoUrl,
+      logoUrl_en: themeImages.logoUrl_en,
+      logoUrl_he: themeImages.logoUrl_he,
+      logoUrl_ar: themeImages.logoUrl_ar,
+      bannerImageUrl: themeImages.bannerImageUrl,
+      bannerImageUrl_en: themeImages.bannerImageUrl_en,
+      bannerImageUrl_he: themeImages.bannerImageUrl_he,
+      bannerImageUrl_ar: themeImages.bannerImageUrl_ar,
+      // Cart banner settings (images come from React state, not form inputs)
       showCartBanner: editVisualSettings.showCartBanner,
       cartBannerType: editCartBannerType,
       cartBannerImage: editCartBannerImage,
-      cartBannerImage_en: formData.get("cartBannerImage_en") as string || "",
-      cartBannerImage_he: formData.get("cartBannerImage_he") as string || "",
-      cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || "",
-      ...createLanguageSpecificUpdate(formData, "cartBannerText", currentLanguage),
-      cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
-      cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
-      // Bottom banners settings
+      cartBannerImage_en: themeImages.cartBannerImage_en,
+      cartBannerImage_he: themeImages.cartBannerImage_he,
+      cartBannerImage_ar: themeImages.cartBannerImage_ar,
+      ...getMultilingualFields("cartBannerText"),
+      cartBannerBgColor: getFormField("cartBannerBgColor") || "#f97316",
+      cartBannerTextColor: getFormField("cartBannerTextColor") || "#ffffff",
+      // Bottom banners settings (images come from React state)
       showBottomBanners: editVisualSettings.showBottomBanners,
       bottomBanner1Url: editBottomBanner1Url,
-      bottomBanner1Url_en: formData.get("bottomBanner1Url_en") as string || "",
-      bottomBanner1Url_he: formData.get("bottomBanner1Url_he") as string || "",
-      bottomBanner1Url_ar: formData.get("bottomBanner1Url_ar") as string || "",
-      bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
+      bottomBanner1Url_en: themeImages.bottomBanner1Url_en,
+      bottomBanner1Url_he: themeImages.bottomBanner1Url_he,
+      bottomBanner1Url_ar: themeImages.bottomBanner1Url_ar,
+      bottomBanner1Link: getFormField("bottomBanner1Link"),
       bottomBanner2Url: editBottomBanner2Url,
-      bottomBanner2Url_en: formData.get("bottomBanner2Url_en") as string || "",
-      bottomBanner2Url_he: formData.get("bottomBanner2Url_he") as string || "",
-      bottomBanner2Url_ar: formData.get("bottomBanner2Url_ar") as string || "",
-      bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
-      modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
-      modernBlock1Text: formData.get("modernBlock1Text") as string || "",
-      modernBlock2Icon: formData.get("modernBlock2Icon") as string || "",
-      modernBlock2Text: formData.get("modernBlock2Text") as string || "",
-      modernBlock3Icon: formData.get("modernBlock3Icon") as string || "",
-      modernBlock3Text: formData.get("modernBlock3Text") as string || "",
-      // Visual display settings - use current React state instead of form data
+      bottomBanner2Url_en: themeImages.bottomBanner2Url_en,
+      bottomBanner2Url_he: themeImages.bottomBanner2Url_he,
+      bottomBanner2Url_ar: themeImages.bottomBanner2Url_ar,
+      bottomBanner2Link: getFormField("bottomBanner2Link"),
+      modernBlock1Icon: getFormField("modernBlock1Icon"),
+      modernBlock1Text: getFormField("modernBlock1Text"),
+      modernBlock2Icon: getFormField("modernBlock2Icon"),
+      modernBlock2Text: getFormField("modernBlock2Text"),
+      modernBlock3Icon: getFormField("modernBlock3Icon"),
+      modernBlock3Text: getFormField("modernBlock3Text"),
+      // Visual display settings — driven by React state, always accurate
       showBannerImage: editVisualSettings.showBannerImage,
       showTitleDescription: editVisualSettings.showTitleDescription,
       showInfoBlocks: editVisualSettings.showInfoBlocks,
@@ -1087,61 +1117,61 @@ export default function ThemeManager() {
       showSpecialOffers: editVisualSettings.showSpecialOffers,
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
-      whatsappPhone: formData.get("whatsappPhone") as string || "",
-      ...createLanguageSpecificUpdate(formData, "whatsappMessage", currentLanguage),
-      whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
-      gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
-      gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
-      gray200Color: convertColorToHsl(formData.get("gray200Color") as string),
-      gray300Color: convertColorToHsl(formData.get("gray300Color") as string),
-      gray400Color: convertColorToHsl(formData.get("gray400Color") as string),
-      gray500Color: convertColorToHsl(formData.get("gray500Color") as string),
-      gray600Color: convertColorToHsl(formData.get("gray600Color") as string),
-      gray700Color: convertColorToHsl(formData.get("gray700Color") as string),
-      gray800Color: convertColorToHsl(formData.get("gray800Color") as string),
-      gray900Color: convertColorToHsl(formData.get("gray900Color") as string),
-      fontFamilyPrimary: formData.get("fontFamilyPrimary") as string,
-      fontFamilySecondary: formData.get("fontFamilySecondary") as string,
-      primaryShadow: formData.get("primaryShadow") as string,
-      successShadow: formData.get("successShadow") as string,
-      warningShadow: formData.get("warningShadow") as string,
-      errorShadow: formData.get("errorShadow") as string,
-      infoShadow: formData.get("infoShadow") as string,
-      tomorrowShadow: formData.get("tomorrowShadow") as string || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
-      grayShadow: formData.get("grayShadow") as string,
-      sliderAutoplay: formData.get("sliderAutoplay") === "true",
-      sliderSpeed: parseInt(formData.get("sliderSpeed") as string) || 5000,
-      sliderEffect: formData.get("sliderEffect") as string || "fade",
-      slide1Image: formData.get("slide1Image") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "slide1Title"),
-      ...createMultilingualFormDataUpdate(formData, "slide1Subtitle"),
-      ...createMultilingualFormDataUpdate(formData, "slide1ButtonText"),
-      slide1ButtonLink: formData.get("slide1ButtonLink") as string || "",
-      slide1TextPosition: formData.get("slide1TextPosition") as string || "left",
-      slide2Image: formData.get("slide2Image") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "slide2Title"),
-      ...createMultilingualFormDataUpdate(formData, "slide2Subtitle"),
-      ...createMultilingualFormDataUpdate(formData, "slide2ButtonText"),
-      slide2ButtonLink: formData.get("slide2ButtonLink") as string || "",
-      slide2TextPosition: formData.get("slide2TextPosition") as string || "left",
-      slide3Image: formData.get("slide3Image") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "slide3Title"),
-      ...createMultilingualFormDataUpdate(formData, "slide3Subtitle"),
-      ...createMultilingualFormDataUpdate(formData, "slide3ButtonText"),
-      slide3ButtonLink: formData.get("slide3ButtonLink") as string || "",
-      slide3TextPosition: formData.get("slide3TextPosition") as string || "left",
-      slide4Image: formData.get("slide4Image") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "slide4Title"),
-      ...createMultilingualFormDataUpdate(formData, "slide4Subtitle"),
-      ...createMultilingualFormDataUpdate(formData, "slide4ButtonText"),
-      slide4ButtonLink: formData.get("slide4ButtonLink") as string || "",
-      slide4TextPosition: formData.get("slide4TextPosition") as string || "left",
-      slide5Image: formData.get("slide5Image") as string || "",
-      ...createMultilingualFormDataUpdate(formData, "slide5Title"),
-      ...createMultilingualFormDataUpdate(formData, "slide5Subtitle"),
-      ...createMultilingualFormDataUpdate(formData, "slide5ButtonText"),
-      slide5ButtonLink: formData.get("slide5ButtonLink") as string || "",
-      slide5TextPosition: formData.get("slide5TextPosition") as string || "left",
+      whatsappPhone: getFormField("whatsappPhone"),
+      ...getMultilingualFields("whatsappMessage"),
+      whiteColor: getColor("whiteColor"),
+      gray50Color: getColor("gray50Color"),
+      gray100Color: getColor("gray100Color"),
+      gray200Color: getColor("gray200Color"),
+      gray300Color: getColor("gray300Color"),
+      gray400Color: getColor("gray400Color"),
+      gray500Color: getColor("gray500Color"),
+      gray600Color: getColor("gray600Color"),
+      gray700Color: getColor("gray700Color"),
+      gray800Color: getColor("gray800Color"),
+      gray900Color: getColor("gray900Color"),
+      fontFamilyPrimary: getFormField("fontFamilyPrimary"),
+      fontFamilySecondary: getFormField("fontFamilySecondary"),
+      primaryShadow: getFormField("primaryShadow"),
+      successShadow: getFormField("successShadow"),
+      warningShadow: getFormField("warningShadow"),
+      errorShadow: getFormField("errorShadow"),
+      infoShadow: getFormField("infoShadow"),
+      tomorrowShadow: getFormField("tomorrowShadow") || "0 4px 14px 0 rgba(147, 51, 234, 0.3)",
+      grayShadow: getFormField("grayShadow"),
+      sliderAutoplay: getFormField("sliderAutoplay") === "true",
+      sliderSpeed: parseInt(getFormField("sliderSpeed")) || (et?.sliderSpeed ?? 5000),
+      sliderEffect: getFormField("sliderEffect") || et?.sliderEffect || "fade",
+      slide1Image: getFormField("slide1Image"),
+      ...getMultilingualFields("slide1Title"),
+      ...getMultilingualFields("slide1Subtitle"),
+      ...getMultilingualFields("slide1ButtonText"),
+      slide1ButtonLink: getFormField("slide1ButtonLink"),
+      slide1TextPosition: getFormField("slide1TextPosition") || et?.slide1TextPosition || "left",
+      slide2Image: getFormField("slide2Image"),
+      ...getMultilingualFields("slide2Title"),
+      ...getMultilingualFields("slide2Subtitle"),
+      ...getMultilingualFields("slide2ButtonText"),
+      slide2ButtonLink: getFormField("slide2ButtonLink"),
+      slide2TextPosition: getFormField("slide2TextPosition") || et?.slide2TextPosition || "left",
+      slide3Image: getFormField("slide3Image"),
+      ...getMultilingualFields("slide3Title"),
+      ...getMultilingualFields("slide3Subtitle"),
+      ...getMultilingualFields("slide3ButtonText"),
+      slide3ButtonLink: getFormField("slide3ButtonLink"),
+      slide3TextPosition: getFormField("slide3TextPosition") || et?.slide3TextPosition || "left",
+      slide4Image: getFormField("slide4Image"),
+      ...getMultilingualFields("slide4Title"),
+      ...getMultilingualFields("slide4Subtitle"),
+      ...getMultilingualFields("slide4ButtonText"),
+      slide4ButtonLink: getFormField("slide4ButtonLink"),
+      slide4TextPosition: getFormField("slide4TextPosition") || et?.slide4TextPosition || "left",
+      slide5Image: getFormField("slide5Image"),
+      ...getMultilingualFields("slide5Title"),
+      ...getMultilingualFields("slide5Subtitle"),
+      ...getMultilingualFields("slide5ButtonText"),
+      slide5ButtonLink: getFormField("slide5ButtonLink"),
+      slide5TextPosition: getFormField("slide5TextPosition") || et?.slide5TextPosition || "left",
     };
 
     updateThemeMutation.mutate({ id: themeId, ...themeData });
