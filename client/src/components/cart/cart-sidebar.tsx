@@ -11,6 +11,7 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { suppressedHistoryBack } from "@/hooks/useModalBackButton";
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
@@ -60,7 +61,7 @@ export default function CartSidebar() {
       }
       if (pushed && !suppressHistoryBackRef.current) {
         backButtonRef.current.pushed = false;
-        window.history.back();
+        suppressedHistoryBack();
       }
       suppressHistoryBackRef.current = false;
     }

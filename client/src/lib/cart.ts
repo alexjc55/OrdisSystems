@@ -117,6 +117,12 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: 'restaurant-cart-storage',
+      // Do NOT persist isOpen — cart should always start closed.
+      // Persisting it caused CartSidebar to push a history entry on admin page
+      // load (if the cart was open when the user last left the shop page),
+      // and its subsequent close would fire an unsuppressed popstate that
+      // closed any open admin modal.
+      partialize: (state) => ({ items: state.items }),
     }
   )
 );

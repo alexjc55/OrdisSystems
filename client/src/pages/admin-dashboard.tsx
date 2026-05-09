@@ -3338,10 +3338,12 @@ export default function AdminDashboard() {
   // Set active tab and update URL
   const setActiveTab = useCallback((newTab: string) => {
     setActiveTabState(newTab);
-    // Update URL without causing re-renders
+    // Update URL without causing re-renders.
+    // Preserve existing history state (e.g. {modal:true} when a dialog is open)
+    // so we don't corrupt the entry that useModalBackButton relies on.
     const url = new URL(window.location.href);
     url.searchParams.set('tab', newTab);
-    window.history.replaceState({}, '', url.toString());
+    window.history.replaceState(window.history.state || {}, '', url.toString());
   }, []);
 
   // Set default tab based on worker permissions - only once on mount
