@@ -7,9 +7,7 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const Sheet = (props: React.ComponentProps<typeof SheetPrimitive.Root>) => (
-  <SheetPrimitive.Root modal={false} {...props} />
-)
+const Sheet = SheetPrimitive.Root
 
 const SheetTrigger = SheetPrimitive.Trigger
 
@@ -58,16 +56,12 @@ interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, onFocusOutside, ...props }, ref) => (
+>(({ side = "right", className, children, ...props }, ref) => (
   <SheetPortal>
     <SheetOverlay />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
-      onFocusOutside={(e) => {
-        e.preventDefault();
-        onFocusOutside?.(e);
-      }}
       {...props}
     >
       {children}
