@@ -1264,6 +1264,7 @@ export default function ThemeManager() {
             className="max-w-4xl max-h-[80vh] overflow-y-auto"
             onPointerDownOutside={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
+            onFocusOutside={(e) => e.preventDefault()}
           >
             <DialogHeader>
               <DialogTitle>{adminT("themes.createNew")}</DialogTitle>
@@ -2004,6 +2005,7 @@ export default function ThemeManager() {
             className="max-w-4xl max-h-[80vh] overflow-y-auto"
             onPointerDownOutside={(e) => e.preventDefault()}
             onInteractOutside={(e) => e.preventDefault()}
+            onFocusOutside={(e) => e.preventDefault()}
           >
             <DialogHeader>
               <DialogTitle>{adminT("themes.editTheme")}: {getThemeName(editingTheme)}</DialogTitle>
