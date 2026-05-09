@@ -60,7 +60,7 @@ const DialogContent = React.forwardRef<
       <div
         aria-hidden="true"
         className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0 duration-200"
-        onClick={() => console.log("[Dialog] Overlay div clicked → close")}
+        onClick={() => console.error("[Dialog] Overlay div clicked → close")}
       />
     </DialogPrimitive.Close>
 

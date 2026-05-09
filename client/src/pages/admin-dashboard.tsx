@@ -3248,6 +3248,13 @@ export default function AdminDashboard() {
   const isAdmin = user?.role === 'admin';
   const queryClient = useQueryClient();
 
+  // DEBUG: track AdminDashboard mount/unmount — fires console.error so it's visible at any filter level
+  useEffect(() => {
+    const id = Date.now();
+    console.error(`[AdminDashboard] MOUNTED instance=${id}`);
+    return () => console.error(`[AdminDashboard] UNMOUNTED instance=${id}`);
+  }, []);
+
   // Force component remount key to prevent stale state issues
   const [componentKey, setComponentKey] = useState(Date.now());
   
@@ -3329,6 +3336,15 @@ export default function AdminDashboard() {
     }
     _setIsCategoryFormOpen(v);
   };
+
+  // DEBUG: track every change to isProductFormOpen
+  const _prevProductFormOpen = useRef(false);
+  useEffect(() => {
+    if (_prevProductFormOpen.current !== isProductFormOpen) {
+      console.error(`[AdminDashboard] isProductFormOpen changed: ${_prevProductFormOpen.current} → ${isProductFormOpen}`, new Error().stack);
+      _prevProductFormOpen.current = isProductFormOpen;
+    }
+  });
 
   useModalBackButton(isProductFormOpen, () => { setIsProductFormOpen(false); setEditingProduct(null); });
   useModalBackButton(isCategoryFormOpen, () => { setIsCategoryFormOpen(false); setEditingCategory(null); });
