@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react";
 
+// Global flag to suppress popstate events fired by our own history.back() calls.
+// When a modal closes and calls history.back(), we briefly ignore the resulting
+// popstate so it doesn't accidentally close another modal that just opened.
+let suppressNextPopstate = false;
+
 /**
  * Intercepts the Android/iOS back button (and browser back) to close a modal dialog
  * instead of navigating away from the page.
@@ -23,6 +28,8 @@ export function useModalBackButton(isOpen: boolean, onClose: () => void) {
       historyRef.current.pushed = true;
 
       const onPopState = () => {
+        // Skip if this popstate was caused by another modal's cleanup history.back()
+        if (suppressNextPopstate) return;
         historyRef.current.pushed = false;
         historyRef.current.handler = null;
         window.removeEventListener("popstate", onPopState);
@@ -43,7 +50,12 @@ export function useModalBackButton(isOpen: boolean, onClose: () => void) {
       }
       if (pushed) {
         historyRef.current.pushed = false;
+        // Suppress the popstate this back() will generate so other open modals
+        // don't accidentally receive and react to it.
+        suppressNextPopstate = true;
         window.history.back();
+        // Clear the flag after a short delay (popstate is always async)
+        setTimeout(() => { suppressNextPopstate = false; }, 200);
       }
     }
   }, [isOpen]);
