@@ -24,7 +24,6 @@ import BranchSelectionModal from "@/components/BranchSelectionModal";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
-import { applyTheme, dbThemeToTheme } from "@/lib/theme-system";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 
@@ -55,19 +54,7 @@ function Router() {
   
   // Handle URL-based language switching
   useUrlLanguage();
-
-  // Load active theme from server and apply CSS variables on startup
-  useEffect(() => {
-    fetch('/api/themes/active', { credentials: 'include' })
-      .then(res => res.ok ? res.json() : null)
-      .then(dbTheme => {
-        if (dbTheme) {
-          applyTheme(dbThemeToTheme(dbTheme));
-        }
-      })
-      .catch(() => { /* keep default theme on error */ });
-  }, []);
-
+  
   // State for notification modal
   const [notificationModal, setNotificationModal] = useState<{
     isOpen: boolean;

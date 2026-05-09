@@ -317,86 +317,14 @@ export function initializeTheme(): void {
   applyTheme(defaultTheme);
 }
 
-/**
- * Maps a flat DB theme record (as returned by /api/themes/active) to the
- * nested Theme object expected by applyTheme().
- */
-export function dbThemeToTheme(db: any): Theme {
-  return {
-    id: db.id,
-    name: db.name,
-    description: db.description || '',
-    colors: {
-      primary:       db.primaryColor       || defaultTheme.colors.primary,
-      primaryText:   db.primaryTextColor   || defaultTheme.colors.primaryText,
-      primaryDark:   db.primaryDarkColor   || defaultTheme.colors.primaryDark,
-      primaryLight:  db.primaryLightColor  || defaultTheme.colors.primaryLight,
-      secondary:     db.secondaryColor     || defaultTheme.colors.secondary,
-      accent:        db.accentColor        || defaultTheme.colors.accent,
-      success:       db.successColor       || defaultTheme.colors.success,
-      successLight:  db.successLightColor  || defaultTheme.colors.successLight,
-      warning:       db.warningColor       || defaultTheme.colors.warning,
-      warningLight:  db.warningLightColor  || defaultTheme.colors.warningLight,
-      error:         db.errorColor         || defaultTheme.colors.error,
-      errorLight:    db.errorLightColor    || defaultTheme.colors.errorLight,
-      info:          db.infoColor          || defaultTheme.colors.info,
-      infoLight:     db.infoLightColor     || defaultTheme.colors.infoLight,
-      tomorrow:      db.tomorrowColor      || defaultTheme.colors.tomorrow,
-      tomorrowLight: db.tomorrowLightColor || defaultTheme.colors.tomorrowLight,
-      outOfStock:    db.outOfStockColor    || defaultTheme.colors.outOfStock,
-      white:         db.whiteColor         || defaultTheme.colors.white,
-      gray50:        db.gray50Color        || defaultTheme.colors.gray50,
-      gray100:       db.gray100Color       || defaultTheme.colors.gray100,
-      gray200:       db.gray200Color       || defaultTheme.colors.gray200,
-      gray300:       db.gray300Color       || defaultTheme.colors.gray300,
-      gray400:       db.gray400Color       || defaultTheme.colors.gray400,
-      gray500:       db.gray500Color       || defaultTheme.colors.gray500,
-      gray600:       db.gray600Color       || defaultTheme.colors.gray600,
-      gray700:       db.gray700Color       || defaultTheme.colors.gray700,
-      gray800:       db.gray800Color       || defaultTheme.colors.gray800,
-      gray900:       db.gray900Color       || defaultTheme.colors.gray900,
-    },
-    typography: {
-      fontFamilyPrimary:   db.fontFamilyPrimary   || defaultTheme.typography.fontFamilyPrimary,
-      fontFamilySecondary: db.fontFamilySecondary || defaultTheme.typography.fontFamilySecondary,
-      fontSizeXs:    defaultTheme.typography.fontSizeXs,
-      fontSizeSm:    defaultTheme.typography.fontSizeSm,
-      fontSizeBase:  defaultTheme.typography.fontSizeBase,
-      fontSizeLg:    defaultTheme.typography.fontSizeLg,
-      fontSizeXl:    defaultTheme.typography.fontSizeXl,
-      fontSize2xl:   defaultTheme.typography.fontSize2xl,
-      fontSize3xl:   defaultTheme.typography.fontSize3xl,
-      fontSize4xl:   defaultTheme.typography.fontSize4xl,
-      fontSize5xl:   defaultTheme.typography.fontSize5xl,
-      fontSize6xl:   defaultTheme.typography.fontSize6xl,
-      fontWeightLight:    defaultTheme.typography.fontWeightLight,
-      fontWeightNormal:   defaultTheme.typography.fontWeightNormal,
-      fontWeightMedium:   defaultTheme.typography.fontWeightMedium,
-      fontWeightSemibold: defaultTheme.typography.fontWeightSemibold,
-      fontWeightBold:     defaultTheme.typography.fontWeightBold,
-    },
-    spacing:      defaultTheme.spacing,
-    borderRadius: defaultTheme.borderRadius,
-    shadows: {
-      sm:       defaultTheme.shadows.sm,
-      md:       defaultTheme.shadows.md,
-      lg:       defaultTheme.shadows.lg,
-      xl:       defaultTheme.shadows.xl,
-      primary:  db.primaryShadow  || defaultTheme.shadows.primary,
-      success:  db.successShadow  || defaultTheme.shadows.success,
-      warning:  db.warningShadow  || defaultTheme.shadows.warning,
-      error:    db.errorShadow    || defaultTheme.shadows.error,
-      info:     db.infoShadow     || defaultTheme.shadows.info,
-      tomorrow: db.tomorrowShadow || defaultTheme.shadows.tomorrow,
-      gray:     db.grayShadow     || defaultTheme.shadows.gray,
-    },
-  };
-}
-
-// Force apply orange theme colors immediately (kept for legacy call sites, now a no-op)
+// Force apply orange theme colors immediately
 export function forceApplyOrangeTheme(): void {
-  // No-op: theme is now loaded from the server via /api/themes/active.
-  // Forcing orange here would override any custom theme the admin has configured.
+  const root = document.documentElement;
+  root.style.setProperty('--color-primary', 'hsl(24.6, 95%, 53.1%)');
+  root.style.setProperty('--color-primary-dark', 'hsl(20.5, 90%, 48%)');
+  root.style.setProperty('--color-primary-light', 'hsl(24.6, 95%, 96%)');
+  root.style.setProperty('--color-secondary', 'hsl(210, 40%, 98%)');
+  root.style.setProperty('--color-accent', 'hsl(210, 40%, 85%)');
 }
 
 // Button variant mappings
