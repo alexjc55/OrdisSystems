@@ -1,0 +1,11 @@
+main.tsx:48 [AdminDashboard] isProductFormOpen changed: false → true Error
+    at https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/src/pages/admin-dashboard.tsx?t=1778367741952:5527:123
+    at commitHookEffectListMount (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:16915:34)
+    at commitPassiveMountOnFiber (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:18156:19)
+    at commitPassiveMountEffects_complete (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:18129:17)
+    at commitPassiveMountEffects_begin (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:18119:15)
+    at commitPassiveMountEffects (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:18109:11)
+    at flushPassiveEffectsImpl (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:19490:11)
+    at flushPassiveEffects (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:19447:22)
+    at commitRootImpl (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:19416:13)
+    at commitRoot (https://491046aa-9b11-42b7-94fd-d84f70bd4f20-00-1td74am7hrwad.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=4ddeda22:19277:13)

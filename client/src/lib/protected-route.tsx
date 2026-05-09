@@ -8,7 +8,8 @@ export function ProtectedRoute({
   component: Component,
 }: {
   path: string;
-  component: () => React.JSX.Element;
+  // Accept any React component type (including lazy-loaded ones)
+  component: React.ComponentType<any>;
 }) {
   const { user, isLoading } = useAuth();
 

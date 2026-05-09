@@ -3248,13 +3248,6 @@ export default function AdminDashboard() {
   const isAdmin = user?.role === 'admin';
   const queryClient = useQueryClient();
 
-  // DEBUG: track AdminDashboard mount/unmount — fires console.error so it's visible at any filter level
-  useEffect(() => {
-    const id = Date.now();
-    console.error(`[AdminDashboard] MOUNTED instance=${id}`);
-    return () => console.error(`[AdminDashboard] UNMOUNTED instance=${id}`);
-  }, []);
-
   // Force component remount key to prevent stale state issues
   const [componentKey, setComponentKey] = useState(Date.now());
   
@@ -3324,27 +3317,8 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [editingCategory, setEditingCategory] = useState<any>(null);
 
-  const setIsProductFormOpen = (v: boolean) => {
-    if (!v) {
-      console.error('[setIsProductFormOpen→false]', new Error().stack);
-    }
-    _setIsProductFormOpen(v);
-  };
-  const setIsCategoryFormOpen = (v: boolean) => {
-    if (!v) {
-      console.error('[setIsCategoryFormOpen→false]', new Error().stack);
-    }
-    _setIsCategoryFormOpen(v);
-  };
-
-  // DEBUG: track every change to isProductFormOpen
-  const _prevProductFormOpen = useRef(false);
-  useEffect(() => {
-    if (_prevProductFormOpen.current !== isProductFormOpen) {
-      console.error(`[AdminDashboard] isProductFormOpen changed: ${_prevProductFormOpen.current} → ${isProductFormOpen}`, new Error().stack);
-      _prevProductFormOpen.current = isProductFormOpen;
-    }
-  });
+  const setIsProductFormOpen = (v: boolean) => { _setIsProductFormOpen(v); };
+  const setIsCategoryFormOpen = (v: boolean) => { _setIsCategoryFormOpen(v); };
 
   useModalBackButton(isProductFormOpen, () => { setIsProductFormOpen(false); setEditingProduct(null); });
   useModalBackButton(isCategoryFormOpen, () => { setIsCategoryFormOpen(false); setEditingCategory(null); });
@@ -3574,12 +3548,7 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUserDeletionDialogOpen, setIsUserDeletionDialogOpen] = useState(false);
 
-  const setIsUserFormOpen = (v: boolean) => {
-    if (!v) {
-      console.error('[setIsUserFormOpen→false]', new Error().stack);
-    }
-    _setIsUserFormOpen(v);
-  };
+  const setIsUserFormOpen = (v: boolean) => { _setIsUserFormOpen(v); };
 
   useModalBackButton(isUserFormOpen, () => { setIsUserFormOpen(false); setEditingUser(null); });
   const [userToDelete, setUserToDelete] = useState<any>(null);

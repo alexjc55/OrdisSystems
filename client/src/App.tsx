@@ -332,9 +332,9 @@ function Router() {
           <Route path="/category/:categoryId" component={Home} />
           <Route path="/all-products" component={Home} />
           <Route path="/auth" component={AuthPage} />
-          <ProtectedRoute path="/admin/analytics" component={() => <AdminAnalytics />} />
-          <ProtectedRoute path="/admin" component={() => <AdminDashboard />} />
-          <ProtectedRoute path="/profile" component={() => <Profile />} />
+          <ProtectedRoute path="/admin/analytics" component={AdminAnalytics} />
+          <ProtectedRoute path="/admin" component={AdminDashboard} />
+          <ProtectedRoute path="/profile" component={Profile} />
           <Route path="/checkout" component={Checkout} />
           <Route path="/thanks" component={ThanksPage} />
           <Route path="/guest-order/:token" component={GuestOrderPage} />

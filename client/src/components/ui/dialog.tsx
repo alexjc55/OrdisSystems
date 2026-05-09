@@ -16,8 +16,6 @@ const Dialog = (props: React.ComponentProps<typeof DialogPrimitive.Root>) => {
       modal={false}
       {...rest}
       onOpenChange={(open) => {
-        // Log ALL onOpenChange calls unconditionally so we can debug
-        console.error(`[Dialog] onOpenChange(${open}) called. Stack:`, new Error().stack);
         onOpenChange?.(open);
       }}
     />
@@ -60,7 +58,6 @@ const DialogContent = React.forwardRef<
       <div
         aria-hidden="true"
         className="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0 duration-200"
-        onClick={() => console.error("[Dialog] Overlay div clicked → close")}
       />
     </DialogPrimitive.Close>
 
@@ -71,17 +68,14 @@ const DialogContent = React.forwardRef<
         className
       )}
       onFocusOutside={(e) => {
-        console.log("[Dialog] onFocusOutside → preventDefault. target:", (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className?.toString?.()?.slice(0, 80));
         e.preventDefault();
         onFocusOutside?.(e);
       }}
       onPointerDownOutside={(e) => {
-        console.log("[Dialog] onPointerDownOutside → preventDefault. target:", (e.target as HTMLElement)?.tagName, (e.target as HTMLElement)?.className?.toString?.()?.slice(0, 80));
         e.preventDefault();
         onPointerDownOutside?.(e);
       }}
       onInteractOutside={(e) => {
-        console.log("[Dialog] onInteractOutside → preventDefault. type:", (e.detail as any)?.originalEvent?.type);
         e.preventDefault();
         onInteractOutside?.(e);
       }}
