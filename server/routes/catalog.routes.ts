@@ -8,6 +8,7 @@ import { BRANCHES_ENABLED } from "../config";
 import { z } from "zod";
 import path from "path";
 import fs from "fs";
+import { deleteUploadFile } from "../utils/delete-upload-file";
 
 const router = Router();
 
@@ -110,6 +111,12 @@ router.put('/categories/:id', isAuthenticated, async (req: any, res) => {
     }
     const id = parseInt(req.params.id);
     const categoryData = insertCategorySchema.partial().parse(req.body);
+    if ('imageUrl' in categoryData) {
+      const existing = await storage.getCategoryById(id);
+      if (existing?.imageUrl && existing.imageUrl !== categoryData.imageUrl) {
+        deleteUploadFile(existing.imageUrl);
+      }
+    }
     const category = await storage.updateCategory(id, categoryData);
     res.json(category);
   } catch (error) {
@@ -128,7 +135,6 @@ router.patch('/categories/:id', isAuthenticated, async (req: any, res) => {
     }
     const id = parseInt(req.params.id);
     const rawData = req.body;
-    console.log('Category update - Raw data received:', JSON.stringify(rawData, null, 2));
     const schemaData = insertCategorySchema.partial().parse(rawData);
     const multilingualFields: any = {};
     const supportedLanguages = ['en', 'he', 'ar'];
@@ -137,9 +143,13 @@ router.patch('/categories/:id', isAuthenticated, async (req: any, res) => {
       if ((rawData as any)[`description_${lang}`] !== undefined) multilingualFields[`description_${lang}`] = (rawData as any)[`description_${lang}`];
     });
     const categoryData = { ...schemaData, ...multilingualFields };
-    console.log('Category update - Final data for storage:', JSON.stringify(categoryData, null, 2));
+    if ('imageUrl' in categoryData) {
+      const existing = await storage.getCategoryById(id);
+      if (existing?.imageUrl && existing.imageUrl !== categoryData.imageUrl) {
+        deleteUploadFile(existing.imageUrl);
+      }
+    }
     const category = await storage.updateCategory(id, categoryData);
-    console.log('Category update - Result from storage:', JSON.stringify(category, null, 2));
     res.json(category);
   } catch (error) {
     console.error("Error updating category:", error);
@@ -156,7 +166,9 @@ router.delete('/categories/:id', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Admin access required" });
     }
     const id = parseInt(req.params.id);
+    const existing = await storage.getCategoryById(id);
     await storage.deleteCategory(id);
+    if (existing?.imageUrl) deleteUploadFile(existing.imageUrl);
     res.json({ success: true });
   } catch (error: any) {
     console.error("Error deleting category:", error);
@@ -343,6 +355,12 @@ router.put('/products/:id', isAuthenticated, async (req: any, res) => {
     const id = parseInt(req.params.id);
     const { branchAvailability, ...rest } = req.body;
     const productData = insertProductSchema.partial().parse(rest);
+    if ('imageUrl' in productData) {
+      const existing = await storage.getProductById(id);
+      if (existing?.imageUrl && existing.imageUrl !== productData.imageUrl) {
+        deleteUploadFile(existing.imageUrl);
+      }
+    }
     const product = await storage.updateProduct(id, productData);
     if (BRANCHES_ENABLED && branchAvailability) {
       const validatedAvailability = z.array(insertProductBranchAvailabilitySchema.omit({ productId: true })).parse(branchAvailability);
@@ -501,16 +519,12 @@ router.delete('/products/:id', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Insufficient permissions" });
     }
     const id = parseInt(req.params.id);
-    console.log(`=== Product Deletion Debug ===`);
-    console.log(`Attempting to delete product with ID: ${id}`);
     const existingProduct = await storage.getProductById(id);
     if (!existingProduct) {
-      console.log(`Product with ID ${id} not found`);
       return res.status(404).json({ message: "Product not found" });
     }
-    console.log(`Found product: ${existingProduct.name}`);
     await storage.deleteProduct(id);
-    console.log(`Successfully deleted product with ID: ${id}`);
+    if (existingProduct.imageUrl) deleteUploadFile(existingProduct.imageUrl);
     clearCachePattern('admin-products');
     clearCachePattern('products');
     res.json({ message: "Product deleted successfully" });

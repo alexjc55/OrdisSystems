@@ -5,6 +5,7 @@ import { getDB } from "../../db";
 import { sql } from "drizzle-orm";
 import { insertThemeSchema } from "@shared/schema";
 import { z } from "zod";
+import { deleteUploadFile, extractThemeImageUrls } from "../../utils/delete-upload-file";
 
 const router = Router();
 
@@ -95,6 +96,12 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
         }
       }
     });
+
+    const existingTheme = await storage.getThemeById(id);
+    const changedImageFields = urlFields.filter(
+      field => field in themeData && existingTheme && (existingTheme as any)[field] && (existingTheme as any)[field] !== themeData[field]
+    );
+    changedImageFields.forEach(field => deleteUploadFile((existingTheme as any)[field]));
 
     const theme = await storage.updateTheme(id, themeData);
 
@@ -308,6 +315,11 @@ router.delete('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
     }
 
     await storage.deleteTheme(id);
+
+    if (theme) {
+      extractThemeImageUrls(theme as unknown as Record<string, any>).forEach(url => deleteUploadFile(url));
+    }
+
     res.status(204).send();
   } catch (error) {
     console.error("Error deleting theme:", error);
