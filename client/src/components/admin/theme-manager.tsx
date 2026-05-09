@@ -848,7 +848,7 @@ export default function ThemeManager() {
   });
 
   const handleCreateTheme = (formData: FormData) => {
-    const nameVal = (formData.get("name") as string || "").trim();
+    const nameVal = themeFields.name.trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
@@ -859,14 +859,14 @@ export default function ThemeManager() {
     };
 
     const themeData = {
-      name: formData.get("name") as string,
-      name_en: formData.get("name_en") as string || "",
-      name_he: formData.get("name_he") as string || "",
-      name_ar: formData.get("name_ar") as string || "",
-      description: formData.get("description") as string,
-      description_en: formData.get("description_en") as string || "",
-      description_he: formData.get("description_he") as string || "",
-      description_ar: formData.get("description_ar") as string || "",
+      name: themeFields.name,
+      name_en: themeFields.name_en,
+      name_he: themeFields.name_he,
+      name_ar: themeFields.name_ar,
+      description: themeFields.description,
+      description_en: themeFields.description_en,
+      description_he: themeFields.description_he,
+      description_ar: themeFields.description_ar,
       primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
       primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
       primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
@@ -994,7 +994,7 @@ export default function ThemeManager() {
   };
 
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
-    const nameVal = (formData.get("name") as string || "").trim();
+    const nameVal = themeFields.name.trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
@@ -1005,14 +1005,14 @@ export default function ThemeManager() {
     };
 
     const themeData = {
-      name: formData.get("name") as string,
-      name_en: formData.get("name_en") as string || "",
-      name_he: formData.get("name_he") as string || "",
-      name_ar: formData.get("name_ar") as string || "",
-      description: formData.get("description") as string,
-      description_en: formData.get("description_en") as string || "",
-      description_he: formData.get("description_he") as string || "",
-      description_ar: formData.get("description_ar") as string || "",
+      name: themeFields.name,
+      name_en: themeFields.name_en,
+      name_he: themeFields.name_he,
+      name_ar: themeFields.name_ar,
+      description: themeFields.description,
+      description_en: themeFields.description_en,
+      description_he: themeFields.description_he,
+      description_ar: themeFields.description_ar,
       primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
       primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
       primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
