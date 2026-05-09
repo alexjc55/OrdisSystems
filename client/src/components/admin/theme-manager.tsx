@@ -1260,7 +1260,11 @@ export default function ThemeManager() {
               {adminT("themes.createTheme")}
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogContent
+            className="max-w-4xl max-h-[80vh] overflow-y-auto"
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onInteractOutside={(e) => e.preventDefault()}
+          >
             <DialogHeader>
               <DialogTitle>{adminT("themes.createNew")}</DialogTitle>
               <DialogDescription>
@@ -1996,7 +2000,11 @@ export default function ThemeManager() {
       {/* Edit Theme Dialog */}
       {editingTheme && (
         <Dialog open={!!editingTheme} onOpenChange={() => setEditingTheme(null)}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogContent
+            className="max-w-4xl max-h-[80vh] overflow-y-auto"
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onInteractOutside={(e) => e.preventDefault()}
+          >
             <DialogHeader>
               <DialogTitle>{adminT("themes.editTheme")}: {getThemeName(editingTheme)}</DialogTitle>
               <DialogDescription>
