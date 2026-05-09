@@ -848,7 +848,10 @@ export default function ThemeManager() {
   });
 
   const handleCreateTheme = (formData: FormData) => {
-    const nameVal = (formData.get("name") as string || "").trim();
+    // Use tab-visible field first, fall back to always-present hidden field
+    const getField = (key: string) =>
+      (formData.get(key) as string || formData.get(`_${key}`) as string || "");
+    const nameVal = getField("name").trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
@@ -859,14 +862,14 @@ export default function ThemeManager() {
     };
 
     const themeData = {
-      name: formData.get("name") as string,
-      name_en: formData.get("name_en") as string || "",
-      name_he: formData.get("name_he") as string || "",
-      name_ar: formData.get("name_ar") as string || "",
-      description: formData.get("description") as string,
-      description_en: formData.get("description_en") as string || "",
-      description_he: formData.get("description_he") as string || "",
-      description_ar: formData.get("description_ar") as string || "",
+      name: getField("name"),
+      name_en: getField("name_en"),
+      name_he: getField("name_he"),
+      name_ar: getField("name_ar"),
+      description: getField("description"),
+      description_en: getField("description_en"),
+      description_he: getField("description_he"),
+      description_ar: getField("description_ar"),
       primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
       primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
       primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
@@ -994,7 +997,10 @@ export default function ThemeManager() {
   };
 
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
-    const nameVal = (formData.get("name") as string || "").trim();
+    // Use tab-visible field first, fall back to always-present hidden field
+    const getField = (key: string) =>
+      (formData.get(key) as string || formData.get(`_${key}`) as string || "");
+    const nameVal = getField("name").trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
@@ -1005,14 +1011,14 @@ export default function ThemeManager() {
     };
 
     const themeData = {
-      name: formData.get("name") as string,
-      name_en: formData.get("name_en") as string || "",
-      name_he: formData.get("name_he") as string || "",
-      name_ar: formData.get("name_ar") as string || "",
-      description: formData.get("description") as string,
-      description_en: formData.get("description_en") as string || "",
-      description_he: formData.get("description_he") as string || "",
-      description_ar: formData.get("description_ar") as string || "",
+      name: getField("name"),
+      name_en: getField("name_en"),
+      name_he: getField("name_he"),
+      name_ar: getField("name_ar"),
+      description: getField("description"),
+      description_en: getField("description_en"),
+      description_he: getField("description_he"),
+      description_ar: getField("description_ar"),
       primaryColor: convertColorToHsl(formData.get("primaryColor") as string),
       primaryTextColor: convertColorToHsl(formData.get("primaryTextColor") as string),
       primaryDarkColor: convertColorToHsl(formData.get("primaryDarkColor") as string),
@@ -1840,6 +1846,17 @@ export default function ThemeManager() {
 
 
               </Tabs>
+
+              {/* Always-present name/description inputs — ensures FormData includes them
+                  regardless of which tab is active (Radix Tabs unmounts inactive tabs) */}
+              <input type="hidden" name="_name" value={themeFields.name} />
+              <input type="hidden" name="_name_en" value={themeFields.name_en} />
+              <input type="hidden" name="_name_he" value={themeFields.name_he} />
+              <input type="hidden" name="_name_ar" value={themeFields.name_ar} />
+              <input type="hidden" name="_description" value={themeFields.description} />
+              <input type="hidden" name="_description_en" value={themeFields.description_en} />
+              <input type="hidden" name="_description_he" value={themeFields.description_he} />
+              <input type="hidden" name="_description_ar" value={themeFields.description_ar} />
 
               {/* Hidden shadow inputs with defaults */}
               <input type="hidden" name="primaryShadow" defaultValue="0 4px 14px 0 rgba(255, 102, 0, 0.3)" />
@@ -2694,6 +2711,17 @@ export default function ThemeManager() {
 
 
               </Tabs>
+
+              {/* Always-present name/description inputs — ensures FormData includes them
+                  regardless of which tab is active (Radix Tabs unmounts inactive tabs) */}
+              <input type="hidden" name="_name" value={themeFields.name} />
+              <input type="hidden" name="_name_en" value={themeFields.name_en} />
+              <input type="hidden" name="_name_he" value={themeFields.name_he} />
+              <input type="hidden" name="_name_ar" value={themeFields.name_ar} />
+              <input type="hidden" name="_description" value={themeFields.description} />
+              <input type="hidden" name="_description_en" value={themeFields.description_en} />
+              <input type="hidden" name="_description_he" value={themeFields.description_he} />
+              <input type="hidden" name="_description_ar" value={themeFields.description_ar} />
 
               {/* Hidden inputs to ensure all theme data is submitted */}
               <input type="hidden" name="fontFamilyPrimary" defaultValue="Poppins, sans-serif" />
