@@ -14,7 +14,7 @@ BEGIN;
 
 -- -----------------------------------------------------------------------------
 -- 1. Admin-пользователь
---    Пароль: admin123 (bcrypt, 12 rounds)
+--    Пароль: admin123  (scrypt, формат hex_hash.salt — используется приложением)
 -- -----------------------------------------------------------------------------
 INSERT INTO users (
     id,
@@ -34,7 +34,7 @@ VALUES (
     'Admin',
     '',
     'admin',
-    '$2b$12$stD79cugS6f/W7JoAbDuWOSqf1VO8aQLXRc4OYxjF1t8.q39GmB3.',
+    'b1efddd06f50b97a5f6ba9407ffc7364c3081f6d6e2601f264ae967a51a9425ca08e126a862a0fe93485a38b0fc9f5c3c1c81ffa657192f44c80a685a06a50ae.edahouse_admin_salt_v1',
     NOW(),
     NOW()
 )
