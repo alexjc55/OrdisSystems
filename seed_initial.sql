@@ -38,7 +38,7 @@ VALUES (
     NOW(),
     NOW()
 )
-ON CONFLICT (username) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 -- -----------------------------------------------------------------------------
 -- 2. Базовые настройки магазина
@@ -328,16 +328,11 @@ VALUES (
 )
 ON CONFLICT DO NOTHING;
 
-COMMIT;
+-- =============================================================================
+-- Проверка результата (внутри транзакции — работает в любом SQL-клиенте)
+-- =============================================================================
+SELECT 'admin user' AS check, id, username, role FROM users WHERE id = 'admin-default';
+SELECT 'store settings' AS check, store_name, default_language FROM store_settings;
+SELECT 'theme' AS check, id, name, is_active FROM themes WHERE id = 'default_theme_initial';
 
--- =============================================================================
--- Проверка результата
--- =============================================================================
-SELECT 'admin user'    AS what, username AS detail1, role AS detail2, email AS detail3
-  FROM users WHERE id = 'admin-default'
-UNION ALL
-SELECT 'store settings', store_name, default_language, contact_phone
-  FROM store_settings
-UNION ALL
-SELECT 'theme', name, CASE WHEN is_active THEN 'active' ELSE 'inactive' END, header_style
-  FROM themes WHERE id = 'default_theme_initial';
+COMMIT;
