@@ -6,6 +6,7 @@ import { getDB } from "../../db";
 import { sql } from "drizzle-orm";
 import { insertStoreSettingsSchema, storeSettings, closedDates, insertClosedDateSchema } from "@shared/schema";
 import { z } from "zod";
+import { deleteUploadFiles } from "../../utils/delete-upload-file";
 
 const router = Router();
 
@@ -374,6 +375,16 @@ router.delete('/admin/danger/all-products', isAuthenticated, async (req: any, re
     const user = await storage.getUser(req.user.id);
     if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
     const db = await getDB();
+
+    // Collect all product image URLs before deleting from DB
+    const rows = await db.execute(sql`SELECT image_url, image_url_en, image_url_he, image_url_ar FROM products`);
+    const imageUrls: string[] = [];
+    for (const row of rows.rows as any[]) {
+      imageUrls.push(row.image_url, row.image_url_en, row.image_url_he, row.image_url_ar);
+    }
+    // Delete files from filesystem
+    deleteUploadFiles(imageUrls);
+
     // Must delete in FK order: junction tables first, then order_items (FK→products), then products
     await db.execute(sql`DELETE FROM product_branch_availability`);
     await db.execute(sql`DELETE FROM product_categories`);
@@ -392,6 +403,13 @@ router.delete('/admin/danger/all-categories', isAuthenticated, async (req: any, 
     const user = await storage.getUser(req.user.id);
     if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
     const db = await getDB();
+
+    // Collect all category image URLs before deleting from DB
+    const rows = await db.execute(sql`SELECT image FROM categories`);
+    const imageUrls: string[] = (rows.rows as any[]).map((r: any) => r.image);
+    // Delete files from filesystem
+    deleteUploadFiles(imageUrls);
+
     // Delete junction table first, then categories (products remain but unlinked)
     await db.execute(sql`DELETE FROM product_categories`);
     await db.execute(sql`DELETE FROM categories`);
