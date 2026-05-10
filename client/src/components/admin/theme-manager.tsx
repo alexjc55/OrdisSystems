@@ -1764,7 +1764,7 @@ export default function ThemeManager() {
                               />
                               <input type="hidden" name="cartBannerImage" value={createCartBannerImage} />
                               <div className="text-xs text-gray-500 mt-1">
-                                {adminT("themes.recommendedSize")}
+                                {adminT("themes.bannerImageSize")}
                               </div>
                             </div>
                           )}
@@ -1844,7 +1844,7 @@ export default function ThemeManager() {
                           </div>
                           
                           <div className="text-xs text-gray-500">
-                            {adminT('themes.imageSize')}
+                            {adminT('themes.bottomBannerImageSize')}
                           </div>
                         </div>
                       )}
@@ -2705,7 +2705,7 @@ export default function ThemeManager() {
                           </div>
                           
                           <div className="text-xs text-gray-500">
-                            {adminT('themes.imageSize')}
+                            {adminT('themes.bottomBannerImageSize')}
                           </div>
                         </div>
                       )}
