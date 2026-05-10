@@ -53,6 +53,9 @@ import {
   CreditCard,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  MessageCircle,
+  Truck,
   TrendingUp,
   Star,
   Plus,
@@ -64,238 +67,277 @@ import {
 } from "lucide-react";
 import type { CategoryWithCount, ProductWithCategories } from "@shared/schema";
 
-// InfoBlocks Component for reusable information cards
+// InfoBlocks Component — redesigned with contacts/hours/delivery cards
 const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
   storeSettings: any;
   t: (key: string) => string;
   currentLanguage: string;
 }) => {
-  if (!storeSettings || storeSettings.showInfoBlocks === false) {
-    return null;
-  }
+  const [hoursExpanded, setHoursExpanded] = useState(false);
+  const [deliveryExpanded, setDeliveryExpanded] = useState(false);
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-      {/* Left Column: Working Hours and Contacts */}
-      <div className="space-y-6">
-        {/* Working Hours */}
-        {storeSettings?.workingHours && (
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-working-hours-icon, hsl(220, 91%, 54%)), var(--color-working-hours-icon, hsl(220, 91%, 54%)))` }}>
-                  <Clock className="h-5 w-5 text-white" />
-                </div>
-                <span className="font-semibold text-lg text-gray-800">{t('workingHours')}</span>
-              </div>
-              <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-              {(() => {
-                try {
-                  const workingHours = storeSettings.workingHours;
-                  if (!workingHours || typeof workingHours !== 'object') {
-                    return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
-                  }
+  if (!storeSettings || storeSettings.showInfoBlocks === false) return null;
 
-                  const dayNames: Record<string, string> = {
-                    monday: t('days.mon'),
-                    tuesday: t('days.tue'), 
-                    wednesday: t('days.wed'),
-                    thursday: t('days.thu'),
-                    friday: t('days.fri'),
-                    saturday: t('days.sat'),
-                    sunday: t('days.sun')
-                  };
+  const isRTL = currentLanguage === 'he' || currentLanguage === 'ar';
+  const phone = storeSettings?.contactPhone;
+  const whatsapp = storeSettings?.whatsappNumber || phone;
+  const address = getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage);
+  const deliveryInfo = getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any);
+  const paymentInfo = getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any);
 
-                  const dayOrder = storeSettings?.weekStartDay === 'sunday' 
-                    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-                    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-                  
-                  const validEntries = dayOrder
-                    .filter(day => workingHours[day] && typeof workingHours[day] === 'string' && workingHours[day].trim() !== '')
-                    .map(day => [day, workingHours[day]]);
+  const hasContacts = !!(phone || storeSettings?.contactEmail || address);
+  const hasHours = !!storeSettings?.workingHours;
+  const hasDeliveryPayment = !!(deliveryInfo || paymentInfo);
 
-                  if (validEntries.length === 0) {
-                    return <p className="text-gray-500 text-sm">{t('notSpecified')}</p>;
-                  }
+  // Live open/closed status
+  const openStatus = (() => {
+    if (!storeSettings?.workingHours) return null;
+    try {
+      const dayKeys = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+      const todayKey = dayKeys[new Date().getDay()];
+      const h = (storeSettings.workingHours as Record<string,string>)[todayKey];
+      if (!h || !h.trim()) return { isOpen: false, until: null };
+      const [start, end] = h.split('-');
+      if (!start || !end) return null;
+      const [sh, sm] = start.trim().split(':').map(Number);
+      const [eh, em] = end.trim().split(':').map(Number);
+      const now = new Date().getHours() * 60 + new Date().getMinutes();
+      return { isOpen: now >= sh*60+sm && now < eh*60+em, until: end.trim() };
+    } catch { return null; }
+  })();
 
-                  const groupedHours: Array<{days: string[], hours: string}> = [];
-                  let currentGroup: {days: string[], hours: string} | null = null;
+  const dayNamesMap: Record<string,string> = {
+    monday: t('days.mon'), tuesday: t('days.tue'), wednesday: t('days.wed'),
+    thursday: t('days.thu'), friday: t('days.fri'), saturday: t('days.sat'), sunday: t('days.sun')
+  };
+  const dayOrder = storeSettings?.weekStartDay === 'sunday'
+    ? ['sunday','monday','tuesday','wednesday','thursday','friday','saturday']
+    : ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 
-                  validEntries.forEach(([day, hours]) => {
-                    if (currentGroup && currentGroup.hours === hours) {
-                      currentGroup.days.push(day);
-                    } else {
-                      if (currentGroup) {
-                        groupedHours.push(currentGroup);
-                      }
-                      currentGroup = { days: [day], hours: hours as string };
-                    }
-                  });
+  const groupHours = (hoursObj: Record<string,string>) => {
+    const valid = dayOrder
+      .filter(d => hoursObj[d] && typeof hoursObj[d] === 'string' && hoursObj[d].trim())
+      .map(d => [d, hoursObj[d]] as [string,string]);
+    const groups: Array<{days: string[], hours: string}> = [];
+    let cur: {days: string[], hours: string} | null = null;
+    valid.forEach(([d, h]) => {
+      if (cur && cur.hours === h) cur.days.push(d);
+      else { if (cur) groups.push(cur); cur = { days: [d], hours: h }; }
+    });
+    if (cur) groups.push(cur);
+    return groups;
+  };
 
-                  if (currentGroup) {
-                    groupedHours.push(currentGroup);
-                  }
+  const fmt = (g: {days: string[]}) =>
+    g.days.length === 1 ? dayNamesMap[g.days[0]] : `${dayNamesMap[g.days[0]]} – ${dayNamesMap[g.days[g.days.length-1]]}`;
 
-                  return (
-                    <div className="space-y-2">
-                      {groupedHours.map((group, index) => {
-                        const daysText = group.days.length === 1 
-                          ? dayNames[group.days[0]]
-                          : group.days.length === 2
-                          ? `${dayNames[group.days[0]]}, ${dayNames[group.days[group.days.length - 1]]}`
-                          : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
-                        
-                        return (
-                          <div key={index} className="text-base sm:text-lg">
-                            <span className="font-bold">{daysText}:</span>
-                            <span className="text-gray-700 ml-2">{group.hours}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                } catch (error) {
-                  console.error('Error rendering working hours:', error);
-                  return <p className="text-gray-500 text-sm">{t('loadingError')}</p>;
-                }
-              })()}
+  const workingGroups = storeSettings?.workingHours ? groupHours(storeSettings.workingHours) : [];
 
-              {/* Delivery hours subsection */}
-              {storeSettings?.deliveryHours && (() => {
-                try {
-                  const deliveryHours = storeSettings.deliveryHours as Record<string, string | null>;
-                  const dayOrder = storeSettings?.weekStartDay === 'sunday'
-                    ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-                    : ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const deliveryHoursGroups: Array<{days: string[], value: string|null}> = storeSettings?.deliveryHours ? (() => {
+    const dh = storeSettings.deliveryHours as Record<string, string|null>;
+    const valid = dayOrder.filter(d => dh[d] !== null && dh[d] !== undefined).map(d => ({ day: d, value: dh[d] }));
+    const groups: Array<{days: string[], value: string|null}> = [];
+    let cur: {days: string[], value: string|null} | null = null;
+    valid.forEach(({ day, value }) => {
+      if (cur && cur.value === value) cur.days.push(day);
+      else { if (cur) groups.push(cur); cur = { days: [day], value }; }
+    });
+    if (cur) groups.push(cur);
+    return groups;
+  })() : [];
 
-                  const dayNames: Record<string, string> = {
-                    monday: t('days.mon'), tuesday: t('days.tue'), wednesday: t('days.wed'),
-                    thursday: t('days.thu'), friday: t('days.fri'), saturday: t('days.sat'), sunday: t('days.sun')
-                  };
+  const cardCls = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden";
+  const rowCls = `flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-b-0 hover:bg-gray-50 transition-colors ${isRTL ? 'flex-row-reverse' : ''}`;
+  const iconWrap = "w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0";
 
-                  const deliveryEntries = dayOrder
-                    .filter(day => deliveryHours[day] !== null && deliveryHours[day] !== undefined)
-                    .map(day => ({ day, value: deliveryHours[day] }));
+  const openLabel = currentLanguage === 'en' ? 'Open until' : currentLanguage === 'he' ? 'פתוח עד' : currentLanguage === 'ar' ? 'مفتوح حتى' : 'Открыто до';
+  const closedLabel = currentLanguage === 'en' ? 'Closed' : currentLanguage === 'he' ? 'סגור' : currentLanguage === 'ar' ? 'مغلق' : 'Закрыто';
+  const msgLabel = currentLanguage === 'en' ? 'Message' : currentLanguage === 'he' ? 'כתוב' : currentLanguage === 'ar' ? 'مراسلة' : 'Написать';
+  const callLabel = currentLanguage === 'en' ? 'Call' : currentLanguage === 'he' ? 'התקשר' : currentLanguage === 'ar' ? 'اتصال' : 'Позвонить';
+  const addrLabel = currentLanguage === 'en' ? 'Store address' : currentLanguage === 'he' ? 'כתובת' : currentLanguage === 'ar' ? 'العنوان' : 'Адрес магазина';
+  const headingLabel = currentLanguage === 'en' ? 'Contact Us' : currentLanguage === 'he' ? 'צרו קשר' : currentLanguage === 'ar' ? 'تواصل معنا' : 'Свяжитесь с нами';
+  const subheadLabel = currentLanguage === 'en' ? 'We are always here to help' : currentLanguage === 'he' ? 'אנחנו תמיד זמינים לעזור' : currentLanguage === 'ar' ? 'نحن دائماً هنا للمساعدة' : 'Мы всегда на связи и готовы помочь';
 
-                  if (deliveryEntries.length === 0) return null;
-
-                  const groupedDelivery: Array<{days: string[], value: string | null}> = [];
-                  let currentGroup: {days: string[], value: string | null} | null = null;
-                  deliveryEntries.forEach(({ day, value }) => {
-                    if (currentGroup && currentGroup.value === value) {
-                      currentGroup.days.push(day);
-                    } else {
-                      if (currentGroup) groupedDelivery.push(currentGroup);
-                      currentGroup = { days: [day], value };
-                    }
-                  });
-                  if (currentGroup) groupedDelivery.push(currentGroup);
-
-                  return (
-                    <div className="mt-3 pt-3 border-t border-gray-100">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{t('delivery')}</p>
-                      <div className="space-y-1.5">
-                        {groupedDelivery.map((group, index) => {
-                          const daysText = group.days.length === 1
-                            ? dayNames[group.days[0]]
-                            : group.days.length === 2
-                            ? `${dayNames[group.days[0]]}, ${dayNames[group.days[group.days.length - 1]]}`
-                            : `${dayNames[group.days[0]]} - ${dayNames[group.days[group.days.length - 1]]}`;
-                          const isClosed = !group.value || group.value === 'closed';
-                          return (
-                            <div key={index} className="text-sm">
-                              <span className="font-semibold">{daysText}:</span>
-                              {isClosed
-                                ? <span className="text-red-500 ml-2">✕</span>
-                                : <span className="text-gray-700 ml-2">{group.value}</span>
-                              }
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                } catch (e) {
-                  return null;
-                }
-              })()}
-              </div>
-            </div>
-          </Card>
-        )}
-
-        {/* Contact Information */}
-        {(storeSettings?.contactPhone || storeSettings?.contactEmail || getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)) && (
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-contacts-icon, hsl(142, 76%, 36%)), var(--color-contacts-icon, hsl(142, 76%, 36%)))` }}>
-                  <Phone className="h-5 w-5 text-white" />
-                </div>
-                <span className="font-semibold text-lg text-gray-800">{t('contacts')}</span>
-              </div>
-              <div className={`space-y-2 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                {storeSettings.contactPhone && (
-                  <div className="text-base sm:text-lg">
-                    <span className="text-gray-700 font-bold">{t('phone')}:</span>
-                    <span className="text-gray-700 ml-2">{storeSettings.contactPhone}</span>
-                    <div className="text-xs text-gray-500 mt-1">WhatsApp</div>
-                  </div>
-                )}
-                {storeSettings.contactEmail && (
-                  <div className="text-base sm:text-lg">
-                    <span className="text-gray-700 font-bold">{t('email')}:</span>
-                    <span className="text-gray-700 ml-2 break-all">{storeSettings.contactEmail}</span>
-                  </div>
-                )}
-                {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage) && (
-                  <div className="text-base sm:text-lg">
-                    <div className="text-gray-700 font-bold mb-1">
-                      {currentLanguage === 'en' ? 'Address' : 
-                       currentLanguage === 'he' ? 'כתובת' : 
-                       currentLanguage === 'ar' ? 'العنوان' : 
-                       'Адрес'}:
-                    </div>
-                    <div className="text-gray-700 break-words leading-relaxed">
-                      {getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
-        )}
+  // ── Contact Card ───────────────────────────────────────────────────
+  const ContactCard = () => (
+    <div className={cardCls}>
+      <div className={`flex items-center gap-3 px-4 py-4 border-b border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={iconWrap} style={{ background: 'var(--color-primary, hsl(25,95%,53%))' }}>
+          <Phone className="w-4 h-4 text-white" />
+        </div>
+        <span className="font-semibold text-gray-900 text-base">{t('contacts')}</span>
       </div>
 
-      {/* Right Column: Delivery & Payment */}
-      {(getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any) || getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any)) && (
-        <div className="flex">
-          <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden flex-1 flex flex-col">
-            <div className="p-6 flex-1 flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-full group-hover:scale-110 transition-transform duration-300" style={{ background: `linear-gradient(to bottom right, var(--color-payment-delivery-icon, hsl(262, 83%, 58%)), var(--color-payment-delivery-icon, hsl(262, 83%, 58%)))` }}>
-                  <CreditCard className="h-5 w-5 text-white" />
-                </div>
-                <span className="font-semibold text-lg text-gray-800">{t('paymentMethod')} & {t('cart.delivery')}</span>
-              </div>
-              <div className={`space-y-4 flex-1 px-0 ${currentLanguage === 'he' ? 'mr-12 pl-4' : 'ml-12 pr-4'}`}>
-                {getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any) && (
-                  <div>
-                    <span className="text-gray-700 text-base font-bold block mb-2">{t('cart.delivery')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any)}</span>
-                  </div>
-                )}
-                {getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any) && (
-                  <div>
-                    <span className="text-gray-700 text-base font-bold block mb-2">{t('paymentMethod')}:</span>
-                    <span className="text-gray-800 text-base leading-relaxed">{getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
+      {phone && (
+        <a href={`tel:${phone}`} className={rowCls}>
+          <div className={iconWrap} style={{ backgroundColor: 'rgba(249,115,22,0.12)' }}>
+            <Phone className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+          </div>
+          <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+            <p className="text-xs text-gray-400">{t('phone')}</p>
+            <p className="font-semibold text-gray-900 text-sm">{phone}</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" style={{ transform: isRTL ? 'scaleX(-1)' : undefined }} />
+        </a>
+      )}
+
+      {whatsapp && (
+        <a href={`https://wa.me/${(whatsapp as string).replace(/\D/g,'')}`} target="_blank" rel="noreferrer" className={rowCls}>
+          <div className={iconWrap} style={{ backgroundColor: 'rgba(37,211,102,0.12)' }}>
+            <MessageCircle className="w-4 h-4 text-green-500" />
+          </div>
+          <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+            <p className="font-semibold text-gray-900 text-sm">WhatsApp</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" style={{ transform: isRTL ? 'scaleX(-1)' : undefined }} />
+        </a>
+      )}
+
+      {address && (
+        <div className={rowCls.replace('hover:bg-gray-50 transition-colors','')}>
+          <div className={iconWrap} style={{ backgroundColor: 'rgba(239,68,68,0.12)' }}>
+            <MapPin className="w-4 h-4 text-red-500" />
+          </div>
+          <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+            <p className="text-xs text-gray-400">{addrLabel}</p>
+            <p className="font-semibold text-gray-900 text-sm">{address}</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" style={{ transform: isRTL ? 'scaleX(-1)' : undefined }} />
         </div>
       )}
+
+      <div className={`p-4 flex gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        {whatsapp && (
+          <a href={`https://wa.me/${(whatsapp as string).replace(/\D/g,'')}`} target="_blank" rel="noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm text-white"
+            style={{ backgroundColor: 'var(--color-primary)' }}>
+            <MessageCircle className="w-4 h-4" />{msgLabel}
+          </a>
+        )}
+        {phone && (
+          <a href={`tel:${phone}`}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl font-semibold text-sm border-2"
+            style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)', backgroundColor: 'rgba(249,115,22,0.06)' }}>
+            <Phone className="w-4 h-4" />{callLabel}
+          </a>
+        )}
+      </div>
+    </div>
+  );
+
+  // ── Hours Card ─────────────────────────────────────────────────────
+  const HoursCard = ({ collapsible = false }: { collapsible?: boolean }) => (
+    <div className={cardCls}>
+      <button
+        type="button"
+        onClick={() => collapsible && setHoursExpanded(v => !v)}
+        className={`w-full flex items-center gap-3 px-4 py-4 ${collapsible ? 'cursor-pointer' : 'cursor-default'} ${isRTL ? 'flex-row-reverse' : ''}`}
+      >
+        <div className={iconWrap} style={{ background: 'var(--color-working-hours-icon, hsl(220,91%,54%))' }}>
+          <Clock className="w-4 h-4 text-white" />
+        </div>
+        <span className={`font-semibold text-gray-900 text-base flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{t('workingHours')}</span>
+        {openStatus && (
+          <span className={`text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap ${openStatus.isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+            {openStatus.isOpen ? `${openLabel} ${openStatus.until}` : closedLabel}
+          </span>
+        )}
+        {collapsible && <ChevronDown className={`w-4 h-4 text-gray-400 ml-1 transition-transform flex-shrink-0 ${hoursExpanded ? 'rotate-180' : ''}`} />}
+      </button>
+
+      {(!collapsible || hoursExpanded) && (
+        <div className="px-4 pb-4 space-y-2">
+          {workingGroups.map((g, i) => (
+            <div key={i} className={`flex items-center justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <span className="text-gray-500">{fmt(g)}</span>
+              <span className="font-medium text-gray-900">{g.hours}</span>
+            </div>
+          ))}
+          {deliveryHoursGroups.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--color-primary)' }}>{t('delivery')}</p>
+              {deliveryHoursGroups.map((g, i) => (
+                <div key={i} className={`flex items-center justify-between text-sm mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <span className="text-gray-500">{fmt(g)}</span>
+                  {!g.value || g.value === 'closed'
+                    ? <span className="text-red-500 font-medium">✕</span>
+                    : <span className="font-medium text-gray-900">{g.value}</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  // ── Delivery & Payment Card ────────────────────────────────────────
+  const DeliveryPaymentCard = ({ collapsible = false }: { collapsible?: boolean }) => (
+    <div className={cardCls}>
+      <button
+        type="button"
+        onClick={() => collapsible && setDeliveryExpanded(v => !v)}
+        className={`w-full flex items-center gap-3 px-4 py-4 border-b border-gray-100 ${collapsible ? 'cursor-pointer' : 'cursor-default'} ${isRTL ? 'flex-row-reverse' : ''}`}
+      >
+        <div className={iconWrap} style={{ background: 'var(--color-payment-delivery-icon, hsl(262,83%,58%))' }}>
+          <Truck className="w-4 h-4 text-white" />
+        </div>
+        <span className={`font-semibold text-gray-900 text-base flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+          {t('cart.delivery')} & {t('paymentMethod')}
+        </span>
+        {collapsible && <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${deliveryExpanded ? 'rotate-180' : ''}`} />}
+      </button>
+
+      {(!collapsible || deliveryExpanded) && (
+        <div className={`p-4 grid grid-cols-1 sm:grid-cols-2 gap-4`}>
+          {deliveryInfo && (
+            <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+              <div className={`${iconWrap} flex-shrink-0 mt-0.5`} style={{ backgroundColor: 'rgba(245,158,11,0.12)' }}>
+                <Truck className="w-4 h-4 text-amber-500" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 text-sm mb-0.5">{t('cart.delivery')}</p>
+                <p className="text-gray-500 text-xs leading-relaxed">{deliveryInfo}</p>
+              </div>
+            </div>
+          )}
+          {paymentInfo && (
+            <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+              <div className={`${iconWrap} flex-shrink-0 mt-0.5`} style={{ backgroundColor: 'rgba(99,102,241,0.12)' }}>
+                <CreditCard className="w-4 h-4 text-indigo-500" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 text-sm mb-0.5">{t('paymentMethod')}</p>
+                <p className="text-gray-500 text-xs leading-relaxed">{paymentInfo}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="mb-12">
+      {/* Section heading */}
+      <div className={`mb-5 ${isRTL ? 'text-right' : ''}`}>
+        <h2 className="text-2xl font-bold text-gray-900">{headingLabel}</h2>
+        <p className="text-gray-400 text-sm mt-0.5">{subheadLabel}</p>
+      </div>
+
+      {/* Desktop: 3 columns */}
+      <div className="hidden md:grid md:grid-cols-3 gap-4">
+        {hasContacts && <ContactCard />}
+        {hasHours && <HoursCard />}
+        {hasDeliveryPayment && <DeliveryPaymentCard />}
+      </div>
+
+      {/* Mobile: vertical stack, hours & delivery collapsible */}
+      <div className="md:hidden space-y-3">
+        {hasContacts && <ContactCard />}
+        {hasHours && <HoursCard collapsible />}
+        {hasDeliveryPayment && <DeliveryPaymentCard collapsible />}
+      </div>
     </div>
   );
 });
