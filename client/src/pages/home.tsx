@@ -31,7 +31,6 @@ import { getLocalizedField, type SupportedLanguage } from "@shared/localization"
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
-import CategorySection from "@/components/menu/category-section";
 import ProductCard from "@/components/menu/product-card";
 import { HeaderVariant } from "@/components/layout/header-variants";
 import SearchInput from "@/components/SearchInput";
@@ -652,16 +651,6 @@ export default function Home() {
         />
       )}
 
-      {/* Category Section - carousel or photo_grid, shown on main page only */}
-      {!selectedCategory && !searchQuery && selectedCategoryId !== 0 && storeSettings?.showCategoryMenu !== false && (
-        <CategorySection
-          categories={categories || []}
-          selectedCategoryId={selectedCategoryId}
-          onCategorySelect={handleCategorySelect}
-          displayStyle={storeSettings?.categoryDisplayStyle || 'default'}
-        />
-      )}
-
       {/* Sticky Filters */}
       <StickyFilters
         showBackButton={!!selectedCategory}
@@ -756,76 +745,148 @@ export default function Home() {
           {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && (
             <div>
               {/* Category Overview */}
-              {categories && categories.length > 0 && (
-                <div id="categories" className="mb-8">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-primary rounded-xl shadow-lg">
-                        <Package className="h-7 w-7 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                          {t('categoriesText')}
-                        </h2>
-                        <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-start md:justify-end mt-6 md:mt-0">
-                      <Button
-                        className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                        asChild
+              {categories && categories.length > 0 && (() => {
+                const displayStyle = storeSettings?.categoryDisplayStyle || 'default';
+
+                if (displayStyle === 'carousel') {
+                  return (
+                    <div id="categories" className="mb-8">
+                      <div
+                        className="flex items-start gap-3 overflow-x-auto pb-2"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                       >
-                        <UTMLink href="/all-products">
-                          <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
-                          {t('allProducts')}
-                        </UTMLink>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-w-0">
-                    {categories.map((category) => (
-                      <UTMLink 
-                        key={category.id}
-                        href={`/category/${category.id}`}
-                      >
-                        <Card 
-                          className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105"
+                        <button
+                          onClick={() => handleCategorySelect(null)}
+                          className={`flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2 rounded-2xl border transition-all duration-200 ${
+                            selectedCategoryId === null
+                              ? 'bg-primary text-white border-primary shadow-md'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary'
+                          }`}
                         >
-                          <CardContent className="p-4 h-32 relative">
-                            <div className="flex items-start gap-3 h-full">
-                              <div className="flex-1 flex flex-col h-full overflow-hidden">
-                                <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
-                                  {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                                </h3>
-                                
-                                <p className="text-gray-600 text-sm leading-tight truncate">
-                                  {(() => {
-                                    const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
-                                    return text.length > 40 ? text.substring(0, 40) + '...' : text;
-                                  })()}
-                                </p>
-                                
-                                <div className="mt-auto">
-                                  <Badge className="px-3 py-1 bg-primary text-white font-semibold text-sm shadow-md">
-                                    {(category as any).productCount || 0} {t('dishesCount')}
-                                  </Badge>
+                          <span className="text-2xl">🛍️</span>
+                          <span className="text-xs font-medium whitespace-nowrap leading-tight">{t('allCategories')}</span>
+                        </button>
+                        {categories.map((category) => {
+                          const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
+                          const isActive = selectedCategoryId === category.id;
+                          return (
+                            <UTMLink key={category.id} href={`/category/${category.id}`}>
+                              <button
+                                onClick={() => handleCategorySelect(category.id)}
+                                className={`flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2 rounded-2xl border transition-all duration-200 ${
+                                  isActive
+                                    ? 'bg-primary text-white border-primary shadow-md'
+                                    : 'bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary'
+                                }`}
+                              >
+                                <span className="text-2xl">{category.icon || '📦'}</span>
+                                <span className="text-xs font-medium whitespace-nowrap leading-tight">{name}</span>
+                              </button>
+                            </UTMLink>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }
+
+                if (displayStyle === 'photo_grid') {
+                  const photoCats = categories.filter((c) => (c as any).image);
+                  if (photoCats.length === 0) return null;
+                  return (
+                    <div id="categories" className="mb-8">
+                      <div className="grid grid-cols-2 gap-3">
+                        {photoCats.map((category) => {
+                          const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
+                          const isActive = selectedCategoryId === category.id;
+                          return (
+                            <UTMLink key={category.id} href={`/category/${category.id}`}>
+                              <div
+                                onClick={() => handleCategorySelect(category.id)}
+                                className={`relative overflow-hidden rounded-xl cursor-pointer group ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                                style={{ aspectRatio: '4/3' }}
+                              >
+                                <img
+                                  src={(category as any).image}
+                                  alt={name}
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                                <div className="absolute bottom-0 left-0 right-0 p-3">
+                                  <p className="text-white font-semibold text-sm leading-tight drop-shadow">{name}</p>
                                 </div>
                               </div>
-                              
-                              <div className="flex-shrink-0 w-16 flex justify-center">
-                                <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
-                                  {category.icon || '📦'}
+                            </UTMLink>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // default style — original card grid
+                return (
+                  <div id="categories" className="mb-8">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-primary rounded-xl shadow-lg">
+                          <Package className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                            {t('categoriesText')}
+                          </h2>
+                          <p className="text-gray-600 font-medium">{t('selectCategoryDescription')}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-start md:justify-end mt-6 md:mt-0">
+                        <Button
+                          className="w-full md:w-auto bg-primary hover:bg-primary-hover !text-white hover:!text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                          asChild
+                        >
+                          <UTMLink href="/all-products">
+                            <Package className="mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
+                            {t('allProducts')}
+                          </UTMLink>
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-w-0">
+                      {categories.map((category) => (
+                        <UTMLink key={category.id} href={`/category/${category.id}`}>
+                          <Card className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 overflow-hidden transform hover:scale-105">
+                            <CardContent className="p-4 h-32 relative">
+                              <div className="flex items-start gap-3 h-full">
+                                <div className="flex-1 flex flex-col h-full overflow-hidden">
+                                  <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors duration-300">
+                                    {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                                  </h3>
+                                  <p className="text-gray-600 text-sm leading-tight truncate">
+                                    {(() => {
+                                      const text = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru') || t('defaultCategoryDescription');
+                                      return text.length > 40 ? text.substring(0, 40) + '...' : text;
+                                    })()}
+                                  </p>
+                                  <div className="mt-auto">
+                                    <Badge className="px-3 py-1 bg-primary text-white font-semibold text-sm shadow-md">
+                                      {(category as any).productCount || 0} {t('dishesCount')}
+                                    </Badge>
+                                  </div>
+                                </div>
+                                <div className="flex-shrink-0 w-16 flex justify-center">
+                                  <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                                    {category.icon || '📦'}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </UTMLink>
-                    ))}
+                            </CardContent>
+                          </Card>
+                        </UTMLink>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Special Offers Section - hide on all products page */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && selectedCategoryId !== 0 && (

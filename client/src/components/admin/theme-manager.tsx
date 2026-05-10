@@ -1588,37 +1588,28 @@ export default function ThemeManager() {
                         fieldName="showInfoBlocks"
                       />
 
-                      <VisualToggleButton 
-                        isEnabled={visualSettings.showCategoryMenu}
-                        onToggle={() => setVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
-                        label={adminT("themes.categoryMenu")}
-                        description={adminT("themes.categoryMenuDescription")}
-                        fieldName="showCategoryMenu"
-                      />
                     </div>
 
-                    {/* Category Display Style - shows only if category menu is enabled */}
-                    {visualSettings.showCategoryMenu && (
-                      <div className="mt-4 space-y-2">
-                        <Label htmlFor="categoryDisplayStyleCreate" className="text-sm font-medium">{adminT("themes.categoryDisplayStyle")}</Label>
-                        <p className="text-xs text-gray-500">{adminT("themes.categoryDisplayStyleDescription")}</p>
-                        <select
-                          name="categoryDisplayStyle"
-                          id="categoryDisplayStyleCreate"
-                          value={visualSettings.categoryDisplayStyle}
-                          onChange={(e) => setVisualSettings(prev => ({ ...prev, categoryDisplayStyle: e.target.value }))}
-                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                        >
-                          <option value="default">{adminT("themes.categoryDisplayDefault")}</option>
-                          <option value="carousel">{adminT("themes.categoryDisplayCarousel")}</option>
-                          <option value="photo_grid">{adminT("themes.categoryDisplayPhotoGrid")}</option>
-                        </select>
-                        {visualSettings.categoryDisplayStyle === 'photo_grid' && (
-                          <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT("themes.categoryPhotoHint")}</p>
-                        )}
-                      </div>
-                    )}
-                    
+                    {/* Category Display Style */}
+                    <div className="mt-4 space-y-2">
+                      <Label htmlFor="categoryDisplayStyleCreate" className="text-sm font-medium">{adminT("themes.categoryDisplayStyle")}</Label>
+                      <p className="text-xs text-gray-500">{adminT("themes.categoryDisplayStyleDescription")}</p>
+                      <select
+                        name="categoryDisplayStyle"
+                        id="categoryDisplayStyleCreate"
+                        value={visualSettings.categoryDisplayStyle}
+                        onChange={(e) => setVisualSettings(prev => ({ ...prev, categoryDisplayStyle: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                      >
+                        <option value="default">{adminT("themes.categoryDisplayDefault")}</option>
+                        <option value="carousel">{adminT("themes.categoryDisplayCarousel")}</option>
+                        <option value="photo_grid">{adminT("themes.categoryDisplayPhotoGrid")}</option>
+                      </select>
+                      {visualSettings.categoryDisplayStyle === 'photo_grid' && (
+                        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT("themes.categoryPhotoHint")}</p>
+                      )}
+                    </div>
+
                     {/* Info Blocks Position - shows only if info blocks are enabled */}
                     {visualSettings.showInfoBlocks && (
                       <div className="mt-4 space-y-2">
@@ -2452,14 +2443,6 @@ export default function ThemeManager() {
                       />
 
                       <VisualToggleButton 
-                        isEnabled={editVisualSettings.showCategoryMenu}
-                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, showCategoryMenu: !prev.showCategoryMenu }))}
-                        label={adminT('themes.categoryMenu')}
-                        description={adminT('themes.categoryMenuDescription')}
-                        fieldName="showCategoryMenu"
-                      />
-
-                      <VisualToggleButton 
                         isEnabled={editVisualSettings.showInfoBlocks}
                         onToggle={() => setEditVisualSettings(prev => ({ ...prev, showInfoBlocks: !prev.showInfoBlocks }))}
                         label={adminT('themes.infoBlocks')}
@@ -2468,27 +2451,25 @@ export default function ThemeManager() {
                       />
                     </div>
 
-                    {/* Category Display Style - shows only if category menu is enabled */}
-                    {editVisualSettings.showCategoryMenu && (
-                      <div className="mt-4 space-y-2">
-                        <Label htmlFor="categoryDisplayStyleEdit" className="text-sm font-medium">{adminT('themes.categoryDisplayStyle')}</Label>
-                        <p className="text-xs text-gray-500">{adminT('themes.categoryDisplayStyleDescription')}</p>
-                        <select
-                          name="categoryDisplayStyle"
-                          id="categoryDisplayStyleEdit"
-                          value={editVisualSettings.categoryDisplayStyle}
-                          onChange={(e) => setEditVisualSettings(prev => ({ ...prev, categoryDisplayStyle: e.target.value }))}
-                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                        >
-                          <option value="default">{adminT('themes.categoryDisplayDefault')}</option>
-                          <option value="carousel">{adminT('themes.categoryDisplayCarousel')}</option>
-                          <option value="photo_grid">{adminT('themes.categoryDisplayPhotoGrid')}</option>
-                        </select>
-                        {editVisualSettings.categoryDisplayStyle === 'photo_grid' && (
-                          <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT('themes.categoryPhotoHint')}</p>
-                        )}
-                      </div>
-                    )}
+                    {/* Category Display Style */}
+                    <div className="mt-4 space-y-2">
+                      <Label htmlFor="categoryDisplayStyleEdit" className="text-sm font-medium">{adminT('themes.categoryDisplayStyle')}</Label>
+                      <p className="text-xs text-gray-500">{adminT('themes.categoryDisplayStyleDescription')}</p>
+                      <select
+                        name="categoryDisplayStyle"
+                        id="categoryDisplayStyleEdit"
+                        value={editVisualSettings.categoryDisplayStyle}
+                        onChange={(e) => setEditVisualSettings(prev => ({ ...prev, categoryDisplayStyle: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                      >
+                        <option value="default">{adminT('themes.categoryDisplayDefault')}</option>
+                        <option value="carousel">{adminT('themes.categoryDisplayCarousel')}</option>
+                        <option value="photo_grid">{adminT('themes.categoryDisplayPhotoGrid')}</option>
+                      </select>
+                      {editVisualSettings.categoryDisplayStyle === 'photo_grid' && (
+                        <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT('themes.categoryPhotoHint')}</p>
+                      )}
+                    </div>
                     
                     {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
                     {editVisualSettings.showInfoBlocks && (
