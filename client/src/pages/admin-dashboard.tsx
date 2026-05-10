@@ -115,7 +115,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
   };
 
   const isImgUrl = (s?: string | null) => !!s && (s.startsWith('/') || s.startsWith('http'));
-  const bgImage = isImgUrl(category.image) ? category.image : isImgUrl(category.icon) ? category.icon : null;
+  // Prefer dedicated image field, fallback to icon if it's a URL
+  const thumbSrc = isImgUrl(category.image) ? category.image : isImgUrl(category.icon) ? category.icon : null;
 
   return (
     <div
@@ -123,15 +124,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
       style={style}
       className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 h-[140px] flex flex-col backdrop-blur-sm hover:border-gray-300"
     >
-      {/* Background photo preview */}
-      {bgImage && (
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${bgImage})` }}
-        />
-      )}
-      {/* Overlay so text stays readable over photo */}
-      <div className={`absolute inset-0 pointer-events-none ${bgImage ? 'bg-black/40' : 'bg-gradient-to-br from-transparent via-white/20 to-transparent'}`} />
+      {/* Subtle gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent pointer-events-none" />
       
       {/* Header with drag handle and actions */}
       <div className="relative flex items-center justify-between p-3 pb-2">
@@ -224,26 +218,32 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           }}
         >
           {/* Category name */}
-          <h3 className={`font-bold text-lg truncate transition-colors leading-tight tracking-wide mb-1 ${bgImage ? 'text-white drop-shadow' : 'text-gray-900 group-hover:text-gray-800 hover:text-blue-600'}`}>
+          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1 hover:text-blue-600">
             {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
           </h3>
 
           {/* Description if exists */}
           {getLocalizedField(category, 'description', i18n.language as SupportedLanguage) && (
-            <p className={`text-xs line-clamp-2 leading-relaxed ${bgImage ? 'text-white/80' : 'text-gray-500 hover:text-gray-700'}`}>
+            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed hover:text-gray-700">
               {getLocalizedField(category, 'description', i18n.language as SupportedLanguage)}
             </p>
           )}
         </div>
         
-        {/* Right container - Icon (only show emoji icon, not URL images — photo is shown as card background) */}
-        {!bgImage && (
-          <div className="flex-shrink-0 flex items-center">
+        {/* Right container - photo thumbnail or emoji icon */}
+        <div className="flex-shrink-0 flex items-center">
+          {thumbSrc ? (
+            <img
+              src={thumbSrc}
+              alt=""
+              className="w-14 h-14 object-cover rounded-lg shadow-sm transform group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
             <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
               {!isImgUrl(category.icon) ? (category.icon || '📦') : '📦'}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Inactive state overlay */}

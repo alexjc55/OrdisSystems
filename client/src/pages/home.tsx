@@ -830,6 +830,10 @@ export default function Home() {
                                 <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)' }} />
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
                                   <p className="text-white font-semibold text-sm md:text-lg leading-tight drop-shadow">{name}</p>
+                                  {(() => {
+                                    const desc = getLocalizedField(category, 'description', currentLanguage as SupportedLanguage, 'ru');
+                                    return desc ? <p className="text-white/80 text-xs md:text-sm mt-0.5 leading-tight line-clamp-1 drop-shadow">{desc}</p> : null;
+                                  })()}
                                 </div>
                               </div>
                             </UTMLink>
