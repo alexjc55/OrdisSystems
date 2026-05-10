@@ -96,8 +96,20 @@
     <!-- Inject store name into splash screen and title as early as possible -->
     <script>
       (function() {
-        var cached = null;
-        try { cached = JSON.parse(sessionStorage.getItem('_storeSettings') || 'null'); } catch(e) {}
+        // Apply primary color to browser chrome and splash screen
+        function applyThemeColor(color) {
+          if (!color) return;
+          var metaTheme = document.querySelector('meta[name="theme-color"]');
+          if (metaTheme) metaTheme.setAttribute('content', color);
+          var metaTile = document.querySelector('meta[name="msapplication-TileColor"]');
+          if (metaTile) metaTile.setAttribute('content', color);
+          var spinner = document.querySelector('.splash-spinner');
+          if (spinner) spinner.style.borderTopColor = color;
+          var logoText = document.getElementById('splash-store-name');
+          if (logoText) logoText.style.color = color;
+        }
+
+        // Apply store name to title/splash
         function applyName(name) {
           if (!name) return;
           var el = document.getElementById('splash-store-name');
@@ -110,9 +122,20 @@
           var appName = document.querySelector('meta[name="application-name"]');
           if (appName && appName.getAttribute('content') === '{{storeName}}') appName.setAttribute('content', name);
         }
-        if (cached && cached.storeName) {
-          applyName(cached.storeName);
-        } else {
+
+        // Try cached data first for instant apply
+        var cachedSettings = null;
+        var cachedTheme = null;
+        try {
+          cachedSettings = JSON.parse(sessionStorage.getItem('_storeSettings') || 'null');
+          cachedTheme = JSON.parse(sessionStorage.getItem('_themeColor') || 'null');
+        } catch(e) {}
+
+        if (cachedSettings && cachedSettings.storeName) applyName(cachedSettings.storeName);
+        if (cachedTheme && cachedTheme.color) applyThemeColor(cachedTheme.color);
+
+        // Fetch store name if not cached
+        if (!cachedSettings || !cachedSettings.storeName) {
           fetch('/api/settings').then(function(r) { return r.json(); }).then(function(d) {
             if (d && d.storeName) {
               try { sessionStorage.setItem('_storeSettings', JSON.stringify({ storeName: d.storeName })); } catch(e) {}
@@ -120,6 +143,14 @@
             }
           }).catch(function() {});
         }
+
+        // Fetch active theme color
+        fetch('/api/themes/active').then(function(r) { return r.json(); }).then(function(d) {
+          if (d && d.primaryColor) {
+            try { sessionStorage.setItem('_themeColor', JSON.stringify({ color: d.primaryColor })); } catch(e) {}
+            applyThemeColor(d.primaryColor);
+          }
+        }).catch(function() {});
       })();
     </script>
     <script type="module" src="/src/main.tsx"></script>

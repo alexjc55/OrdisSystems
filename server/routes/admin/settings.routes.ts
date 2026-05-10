@@ -78,6 +78,9 @@ router.get('/manifest', async (req, res) => {
       return (settings as any)?.[langField] || (settings as any)?.[field] || '';
     };
 
+    const activeTheme = await storage.getActiveTheme();
+    const themeColor = (activeTheme as any)?.primaryColor || '#f97316';
+
     const manifest = {
       name: getPwaField('pwaName') || 'eDAHouse',
       short_name: getPwaField('pwaName')?.split(' ')[0] || 'eDAHouse',
@@ -85,7 +88,7 @@ router.get('/manifest', async (req, res) => {
       start_url: '/',
       display: 'standalone',
       background_color: '#ffffff',
-      theme_color: '#f97316',
+      theme_color: themeColor,
       orientation: 'portrait-primary',
       scope: '/',
       categories: ['food', 'shopping', 'lifestyle'],

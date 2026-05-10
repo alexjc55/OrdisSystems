@@ -90,6 +90,14 @@ function ActiveThemeApplier() {
     set('--color-gray-700', theme.gray700Color);
     set('--color-gray-800', theme.gray800Color);
     set('--color-gray-900', theme.gray900Color);
+
+    // Update browser chrome color (mobile address bar / status bar)
+    if (theme.primaryColor) {
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor) metaThemeColor.setAttribute('content', theme.primaryColor);
+      const metaTileColor = document.querySelector('meta[name="msapplication-TileColor"]');
+      if (metaTileColor) metaTileColor.setAttribute('content', theme.primaryColor);
+    }
   }, [theme]);
 
   return null;
