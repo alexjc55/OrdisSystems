@@ -284,9 +284,9 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
             
               {/* Decorative vignette */}
               <div className="flex items-center justify-center space-x-2 opacity-80 mb-8">
-                <div className="w-8 h-px bg-white/60"></div>
-                <div className="w-2 h-2 border border-white/60 rotate-45"></div>
-                <div className="w-8 h-px bg-white/60"></div>
+                <div className="w-8 h-px bg-[rgba(255,255,255,0.6)]"></div>
+                <div className="w-2 h-2 border border-[rgba(255,255,255,0.6)] rotate-45"></div>
+                <div className="w-8 h-px bg-[rgba(255,255,255,0.6)]"></div>
               </div>
 
               {/* Modern Info Blocks */}
@@ -326,7 +326,7 @@ function MinimalHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSett
         />
         
         {/* Strong White Overlay for readability */}
-        <div className="absolute inset-0 bg-white/85" />
+        <div className="absolute inset-0 bg-[rgba(255,255,255,0.85)]" />
         
         {/* Content - Only show title/description if enabled */}
         {storeSettings?.showTitleDescription !== false && (

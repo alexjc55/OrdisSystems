@@ -240,6 +240,7 @@ button:focus,
   body {
     max-width: 1023px;
     margin: 0 auto;
+    background-color: var(--color-gray-50);
   }
   
   /* Full-width footer override */

@@ -66,6 +66,9 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // White and black wired to CSS variables — controlled by active theme
+        white: 'var(--color-white)',
+        black: 'var(--color-gray-900)',
         // Gray palette wired to CSS variables — controlled by active theme
         gray: {
           50:  'var(--color-gray-50)',

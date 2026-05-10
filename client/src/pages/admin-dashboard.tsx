@@ -129,7 +129,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200 relative z-10"
+            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-[rgba(255,255,255,0.7)] rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200 relative z-10"
           >
             <GripVertical className="h-3.5 w-3.5" />
           </div>
@@ -11086,7 +11086,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   </p>
                   
                   <div className="space-y-2">
-                    <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50">
+                    <div className="text-xs bg-[rgba(255,255,255,0.7)] rounded p-3 border border-blue-200/50">
                       <div className="font-semibold text-blue-900 mb-2">{adminT('analyticsTracking.automaticEvents')}</div>
                       <ul className="space-y-1 text-blue-700">
                         <li className="flex items-center gap-2">
@@ -11107,7 +11107,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       </ul>
                     </div>
                     
-                    <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50">
+                    <div className="text-xs bg-[rgba(255,255,255,0.7)] rounded p-3 border border-blue-200/50">
                       <div className="font-semibold text-blue-900 mb-2">{adminT('analyticsTracking.eventParameters')}</div>
                       <ul className="space-y-1 text-blue-700 font-mono text-xs">
                         <li><code>order_id</code> - {adminT('analyticsTracking.orderIdParam')}</li>
@@ -11199,7 +11199,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <p className="text-sm text-blue-800 mb-3">
                       {adminT('facebookCapi.description')}
                     </p>
-                    <div className="text-xs bg-white/70 rounded p-3 border border-blue-200/50 space-y-2">
+                    <div className="text-xs bg-[rgba(255,255,255,0.7)] rounded p-3 border border-blue-200/50 space-y-2">
                       <div className="font-semibold text-blue-900 mb-2">{adminT('facebookCapi.advantages')}</div>
                       <ul className="space-y-1 text-blue-700">
                         <li className="flex items-center gap-2">

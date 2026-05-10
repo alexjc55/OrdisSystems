@@ -681,15 +681,15 @@
 
 /* Proper select component styling that works with theme system */
 [data-radix-select-trigger] {
-  background: white !important;
-  color: black !important;
-  border: 1px solid #d1d5db !important;
+  background: var(--color-white) !important;
+  color: var(--color-gray-900) !important;
+  border: 1px solid var(--color-gray-300) !important;
   border-radius: 6px !important;
 }
 
 [data-radix-select-content] {
-  background: white !important;
-  border: 1px solid #d1d5db !important;
+  background: var(--color-white) !important;
+  border: 1px solid var(--color-gray-300) !important;
   border-radius: 6px !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }

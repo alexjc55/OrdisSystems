@@ -338,7 +338,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
                   )}
                   
                   {slide.subtitle && (
-                    <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-white/90 leading-relaxed">
+                    <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-[rgba(255,255,255,0.9)] leading-relaxed">
                       {slide.subtitle}
                     </p>
                   )}
@@ -394,7 +394,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
                 className={`w-3 h-3 rounded-full transition-all duration-200 ${
                   index === currentSlide
                     ? 'bg-white'
-                    : 'bg-white/40 hover:bg-white/60'
+                    : 'bg-[rgba(255,255,255,0.4)] hover:bg-[rgba(255,255,255,0.6)]'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
