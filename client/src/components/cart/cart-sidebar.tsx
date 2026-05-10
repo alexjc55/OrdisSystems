@@ -150,7 +150,7 @@ export default function CartSidebar() {
 
   return (
     <div className="fixed inset-0 z-[70] overflow-hidden">
-      <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setCartOpen(false)} />
+      <div className="absolute inset-0" onClick={() => setCartOpen(false)} />
       
       <div className="absolute top-0 h-full w-full max-w-md bg-white shadow-xl cart-sidebar">
         <div className="flex h-full flex-col">
