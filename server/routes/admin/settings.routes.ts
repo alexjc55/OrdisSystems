@@ -80,6 +80,7 @@ router.get('/manifest', async (req, res) => {
 
     const activeTheme = await storage.getActiveTheme();
     const themeColor = (activeTheme as any)?.primaryColor || '#f97316';
+    const splashBg = (activeTheme as any)?.splashBgColor || '#ffffff';
 
     const manifest = {
       name: getPwaField('pwaName') || 'eDAHouse',
@@ -87,7 +88,7 @@ router.get('/manifest', async (req, res) => {
       description: getPwaField('pwaDescription') || 'Готовые блюда с доставкой',
       start_url: '/',
       display: 'standalone',
-      background_color: '#ffffff',
+      background_color: splashBg,
       theme_color: themeColor,
       orientation: 'portrait-primary',
       scope: '/',

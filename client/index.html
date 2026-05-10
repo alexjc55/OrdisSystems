@@ -114,6 +114,11 @@
           if (!color) return;
           var splash = document.getElementById('splash-screen');
           if (splash) splash.style.background = color;
+          // Also update the PWA background-color meta tag
+          var metaBg = document.querySelector('meta[name="background-color"]');
+          if (metaBg) metaBg.setAttribute('content', color);
+          // Update body background before React hydrates
+          document.body.style.backgroundColor = color;
         }
 
         // Apply store name to title/splash
