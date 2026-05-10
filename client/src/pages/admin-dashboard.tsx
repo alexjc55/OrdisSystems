@@ -4339,10 +4339,10 @@ export default function AdminDashboard() {
 
   // ── Danger Zone state & mutations ────────────────────────────────
   const [dangerConfirm, setDangerConfirm] = useState("");
-  const [dangerDialog, setDangerDialog] = useState<"orders"|"users"|"products"|"categories"|null>(null);
+  const [dangerDialog, setDangerDialog] = useState<"orders"|"users"|"products"|"categories"|"push"|null>(null);
 
   const dangerMutation = useMutation({
-    mutationFn: async (target: "orders"|"users"|"products"|"categories") => {
+    mutationFn: async (target: "orders"|"users"|"products"|"categories"|"push") => {
       const res = await fetch(`/api/admin/danger/all-${target}`, {
         method: "DELETE",
         credentials: "include",
@@ -4361,6 +4361,7 @@ export default function AdminDashboard() {
         users: "Все пользователи удалены (кроме вас)",
         products: "Все товары удалены",
         categories: "Все категории удалены",
+        push: "История push-уведомлений очищена",
       };
       toast({ title: "✅ " + labels[target] });
       queryClient.invalidateQueries({ queryKey: ['/api/orders'] });
@@ -7429,7 +7430,7 @@ export default function AdminDashboard() {
                           {currentLanguage === 'en' ? 'Delete all users' : currentLanguage === 'he' ? 'מחק את כל המשתמשים' : currentLanguage === 'ar' ? 'حذف كل المستخدمين' : 'Удалить всех пользователей'}
                         </span>
                         <span className="text-xs text-gray-500 mb-2">
-                          {currentLanguage === 'en' ? 'Removes all users except you (current admin)' : currentLanguage === 'he' ? 'מסיר את כל המשתמשים מלבדך' : currentLanguage === 'ar' ? 'يزيل جميع المستخدمين إلا أنت' : 'Удаляет всех пользователей, кроме вас'}
+                          {currentLanguage === 'en' ? 'Removes all users (except you), their orders and addresses' : currentLanguage === 'he' ? 'מסיר משתמשים, הזמנותיהם וכתובותיהם (מלבדך)' : currentLanguage === 'ar' ? 'يزيل المستخدمين وطلباتهم وعناوينهم (إلا أنت)' : 'Удаляет всех пользователей, их заказы и адреса (кроме вас)'}
                         </span>
                         <Button variant="destructive" size="sm" onClick={() => { setDangerDialog("users"); setDangerConfirm(""); }}>
                           <Trash2 className="w-3.5 h-3.5 mr-1" />
@@ -7464,6 +7465,20 @@ export default function AdminDashboard() {
                           {currentLanguage === 'en' ? 'Delete categories' : currentLanguage === 'he' ? 'מחק קטגוריות' : currentLanguage === 'ar' ? 'حذف الفئات' : 'Удалить категории'}
                         </Button>
                       </div>
+
+                      {/* Delete push history */}
+                      <div className="flex flex-col gap-1 p-4 rounded-lg bg-red-50 border border-red-100">
+                        <span className="font-semibold text-gray-900 text-sm">
+                          {currentLanguage === 'en' ? 'Delete push notification history' : currentLanguage === 'he' ? 'מחק היסטוריית התראות' : currentLanguage === 'ar' ? 'حذف سجل الإشعارات' : 'Удалить историю push-уведомлений'}
+                        </span>
+                        <span className="text-xs text-gray-500 mb-2">
+                          {currentLanguage === 'en' ? 'Clears all sent notifications and subscriptions' : currentLanguage === 'he' ? 'מנקה את כל ההתראות שנשלחו והמנויים' : currentLanguage === 'ar' ? 'يمسح جميع الإشعارات المرسلة والاشتراكات' : 'Очищает историю рассылок и все подписки на уведомления'}
+                        </span>
+                        <Button variant="destructive" size="sm" onClick={() => { setDangerDialog("push"); setDangerConfirm(""); }}>
+                          <Trash2 className="w-3.5 h-3.5 mr-1" />
+                          {currentLanguage === 'en' ? 'Delete push history' : currentLanguage === 'he' ? 'מחק היסטוריה' : currentLanguage === 'ar' ? 'حذف السجل' : 'Удалить историю push'}
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -7482,6 +7497,7 @@ export default function AdminDashboard() {
                       {dangerDialog === 'users' && (currentLanguage === 'en' ? 'This will permanently delete ALL users except your current account.' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל המשתמשים מלבד החשבון שלך.' : currentLanguage === 'ar' ? 'سيتم حذف جميع المستخدمين إلا حسابك الحالي نهائياً.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕХ пользователей, кроме вашего аккаунта.')}
                       {dangerDialog === 'products' && (currentLanguage === 'en' ? 'This will permanently delete ALL products, and also all orders (required by database constraints).' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל המוצרים וההזמנות.' : currentLanguage === 'ar' ? 'سيتم حذف جميع المنتجات والطلبات نهائياً.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕ товары, а также все заказы (требование базы данных).')}
                       {dangerDialog === 'categories' && (currentLanguage === 'en' ? 'This will permanently delete ALL categories. Products will remain but lose their category assignments.' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל הקטגוריות. מוצרים יישמרו ללא קטגוריה.' : currentLanguage === 'ar' ? 'سيتم حذف كل الفئات. تبقى المنتجات بدون فئات.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕ категории. Товары сохранятся, но без категорий.')}
+                      {dangerDialog === 'push' && (currentLanguage === 'en' ? 'This will permanently delete ALL push notification history and ALL subscriber subscriptions. Users will need to re-subscribe.' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל היסטוריית ההתראות ואת כל המנויים. המשתמשים יצטרכו להירשם מחדש.' : currentLanguage === 'ar' ? 'سيتم حذف سجل الإشعارات بالكامل وجميع اشتراكات المستخدمين نهائياً. يجب عليهم الاشتراك مجدداً.' : 'Это БЕЗВОЗВРАТНО удалит всю историю рассылок и ВСЕ подписки пользователей. Им придётся подписаться заново.')}
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-3 py-2">

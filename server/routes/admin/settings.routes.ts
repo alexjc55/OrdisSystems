@@ -353,9 +353,14 @@ router.delete('/admin/danger/all-users', isAuthenticated, async (req: any, res) 
     if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
     const currentUserId = req.user.id;
     const db = await getDB();
+    // Delete order_items first (FK: order_items.order_id → orders.id)
+    await db.execute(sql`DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE user_id != ${currentUserId} AND user_id IS NOT NULL)`);
+    // Delete orders belonging to other users
+    await db.execute(sql`DELETE FROM orders WHERE user_id != ${currentUserId} AND user_id IS NOT NULL`);
+    // Delete user profile data
     await db.execute(sql`DELETE FROM user_addresses WHERE user_id != ${currentUserId}`);
     await db.execute(sql`DELETE FROM user_branches WHERE user_id != ${currentUserId}`);
-    await db.execute(sql`DELETE FROM orders WHERE user_id != ${currentUserId} AND user_id IS NOT NULL`);
+    await db.execute(sql`DELETE FROM push_subscriptions WHERE user_id != ${currentUserId}`);
     await db.execute(sql`DELETE FROM users WHERE id != ${currentUserId}`);
     res.json({ message: 'All users deleted except current admin' });
   } catch (error) {
@@ -394,6 +399,20 @@ router.delete('/admin/danger/all-categories', isAuthenticated, async (req: any, 
   } catch (error) {
     console.error('Error deleting all categories:', error);
     res.status(500).json({ message: 'Failed to delete categories' });
+  }
+});
+
+router.delete('/admin/danger/all-push', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = await storage.getUser(req.user.id);
+    if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
+    const db = await getDB();
+    await db.execute(sql`DELETE FROM marketing_notifications`);
+    await db.execute(sql`DELETE FROM push_subscriptions`);
+    res.json({ message: 'All push history and subscriptions deleted' });
+  } catch (error) {
+    console.error('Error deleting push history:', error);
+    res.status(500).json({ message: 'Failed to delete push history' });
   }
 });
 
