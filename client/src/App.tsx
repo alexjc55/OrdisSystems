@@ -1,6 +1,6 @@
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,6 +24,76 @@ import BranchSelectionModal from "@/components/BranchSelectionModal";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
+
+// Loads the active theme from the server and applies all saved colors to CSS variables.
+// This ensures that admin-configured colors persist across page refreshes.
+function ActiveThemeApplier() {
+  const { data: theme } = useQuery<any>({
+    queryKey: ["/api/themes/active"],
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+
+  useEffect(() => {
+    if (!theme) return;
+    const root = document.documentElement;
+    const set = (cssVar: string, value: string | null | undefined) => {
+      if (value) root.style.setProperty(cssVar, value);
+    };
+
+    // Primary palette
+    set('--color-primary', theme.primaryColor);
+    set('--color-primary-dark', theme.primaryDarkColor);
+    set('--color-primary-light', theme.primaryLightColor);
+    set('--color-primary-foreground', theme.primaryTextColor);
+    // Tailwind variables used by bg-primary, text-primary, hover:bg-primary, etc.
+    set('--primary', theme.primaryColor);
+    set('--primary-foreground', theme.primaryTextColor);
+
+    // Supporting palette
+    set('--color-secondary', theme.secondaryColor);
+    set('--color-accent', theme.accentColor);
+
+    // Status colors
+    set('--color-success', theme.successColor);
+    set('--color-success-light', theme.successLightColor);
+    set('--color-warning', theme.warningColor);
+    set('--color-warning-light', theme.warningLightColor);
+    set('--color-error', theme.errorColor);
+    set('--color-error-light', theme.errorLightColor);
+    set('--color-info', theme.infoColor);
+    set('--color-info-light', theme.infoLightColor);
+
+    // Tomorrow / order-for-tomorrow button
+    set('--color-tomorrow', theme.tomorrowColor);
+    set('--color-tomorrow-dark', theme.tomorrowDarkColor);
+    set('--color-tomorrow-light', theme.tomorrowLightColor);
+    if (theme.tomorrowShadow) {
+      set('--shadow-tomorrow', theme.tomorrowShadow);
+    }
+
+    // Misc
+    set('--color-out-of-stock', theme.outOfStockColor);
+    set('--color-working-hours-icon', theme.workingHoursIconColor);
+    set('--color-contacts-icon', theme.contactsIconColor);
+    set('--color-payment-delivery-icon', theme.paymentDeliveryIconColor);
+
+    // Neutral scale
+    set('--color-white', theme.whiteColor);
+    set('--color-gray-50', theme.gray50Color);
+    set('--color-gray-100', theme.gray100Color);
+    set('--color-gray-200', theme.gray200Color);
+    set('--color-gray-300', theme.gray300Color);
+    set('--color-gray-400', theme.gray400Color);
+    set('--color-gray-500', theme.gray500Color);
+    set('--color-gray-600', theme.gray600Color);
+    set('--color-gray-700', theme.gray700Color);
+    set('--color-gray-800', theme.gray800Color);
+    set('--color-gray-900', theme.gray900Color);
+  }, [theme]);
+
+  return null;
+}
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 
@@ -405,6 +475,7 @@ function App() {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
+        <ActiveThemeApplier />
         <AuthProvider>
           <BranchProvider>
             <TooltipProvider>

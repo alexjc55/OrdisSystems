@@ -171,6 +171,22 @@
 
 /* Custom focus styles for admin form inputs */
 @layer components {
+  /* Tomorrow (order for tomorrow) button — uses CSS variable set by active theme */
+  .btn-tomorrow {
+    background-color: var(--color-tomorrow, hsl(262, 83%, 58%)) !important;
+    color: white !important;
+    border-color: transparent !important;
+  }
+  .btn-tomorrow:hover {
+    background-color: var(--color-tomorrow-dark, hsl(262, 83%, 48%)) !important;
+    box-shadow: var(--shadow-tomorrow, 0 4px 14px 0 rgba(147, 51, 234, 0.3)) !important;
+  }
+  .btn-tomorrow:disabled {
+    opacity: 0.6;
+  }
+}
+
+@layer components {
   .admin-input-focus input:focus,
   .admin-input-focus textarea:focus,
   .admin-input-focus select:focus {

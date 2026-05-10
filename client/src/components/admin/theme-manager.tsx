@@ -553,9 +553,7 @@ export default function ThemeManager() {
 
   const updateThemeMutation = useMutation({
     mutationFn: async ({ id, ...themeData }: Partial<ThemeData> & { id: string }) => {
-      console.log("Updating theme with data:", themeData);
       const res = await apiRequest("PUT", `/api/admin/themes/${id}`, themeData);
-      console.log("Theme update response:", res);
       return res; // apiRequest уже возвращает parsed JSON
     },
     onSuccess: (updatedTheme) => {
@@ -624,7 +622,6 @@ export default function ThemeManager() {
         }
         if (themeToApply.tomorrowDarkColor) {
           root.style.setProperty('--color-tomorrow-dark', convertColorToHsl(themeToApply.tomorrowDarkColor));
-          console.log('Applied --color-tomorrow-dark:', convertColorToHsl(themeToApply.tomorrowDarkColor));
         }
         if (themeToApply.tomorrowLightColor) {
           root.style.setProperty('--color-tomorrow-light', convertColorToHsl(themeToApply.tomorrowLightColor));
@@ -698,7 +695,6 @@ export default function ThemeManager() {
           root.style.setProperty('--color-payment-delivery-icon', convertColorToHsl(updatedTheme.paymentDeliveryIconColor));
         }
         
-        console.log('Applied theme colors to CSS variables');
       }
 
       // Don't automatically activate theme after save - only apply visual changes if it's already active
