@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useState } from "react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -11,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { X, Save } from "lucide-react";
 
 interface CategoryFormProps {
@@ -22,6 +24,7 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
   const queryClient = useQueryClient();
   const { t: adminT } = useAdminTranslation();
   const { t: commonT } = useCommonTranslation();
+  const [categoryImage, setCategoryImage] = useState('');
 
   const categorySchema = z.object({
     name: z.string().min(1, adminT('categories.categoryNameRequired')).max(255, adminT('categories.categoryNameTooLong')),
@@ -61,6 +64,7 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
     mutationFn: async (data: CategoryFormData) => {
       const categoryData = {
         ...data,
+        image: categoryImage || null,
         isActive: true,
       };
       await apiRequest("POST", "/api/categories", categoryData);
@@ -180,6 +184,18 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
                 </FormItem>
               )}
             />
+
+            {/* Category photo for photo_grid display mode */}
+            <div className="space-y-2">
+              <FormLabel>Фото категории (для режима «карточки с фото»)</FormLabel>
+              <ImageUpload
+                value={categoryImage}
+                onChange={(url: string) => setCategoryImage(url)}
+              />
+              <p className="text-xs text-gray-500">
+                Рекомендуемый размер: 400×300 пикселей (соотношение 4:3). Макс. 5 МБ.
+              </p>
+            </div>
 
             <FormField
               control={form.control}

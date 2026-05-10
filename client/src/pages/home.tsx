@@ -31,6 +31,7 @@ import { getLocalizedField, type SupportedLanguage } from "@shared/localization"
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
+import CategorySection from "@/components/menu/category-section";
 import ProductCard from "@/components/menu/product-card";
 import { HeaderVariant } from "@/components/layout/header-variants";
 import SearchInput from "@/components/SearchInput";
@@ -648,6 +649,16 @@ export default function Home() {
         <HeaderVariant 
           storeSettings={storeSettings} 
           style={headerStyle as 'classic' | 'modern' | 'minimal'}
+        />
+      )}
+
+      {/* Category Section - carousel or photo_grid, shown on main page only */}
+      {!selectedCategory && !searchQuery && selectedCategoryId !== 0 && storeSettings?.showCategoryMenu !== false && (
+        <CategorySection
+          categories={categories || []}
+          selectedCategoryId={selectedCategoryId}
+          onCategorySelect={handleCategorySelect}
+          displayStyle={storeSettings?.categoryDisplayStyle || 'default'}
         />
       )}
 

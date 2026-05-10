@@ -67,6 +67,7 @@ export const categories = pgTable("categories", {
   description_he: text("description_he"),
   description_ar: text("description_ar"),
   icon: varchar("icon", { length: 100 }),
+  image: varchar("image", { length: 500 }),
   isActive: boolean("is_active").default(true).notNull(),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow(),
@@ -524,6 +525,9 @@ export const themes = pgTable("themes", {
   
   // Header layout style
   headerStyle: varchar("header_style", { length: 20 }).default("classic"), // "classic", "modern", "minimal"
+
+  // Category section display style
+  categoryDisplayStyle: varchar("category_display_style", { length: 20 }).default("default"), // "default", "carousel", "photo_grid"
   
   // Banner button settings (for minimal header style)
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Russian (base)
@@ -804,6 +808,7 @@ export const insertThemeSchema = z.object({
   contactsIconColor: z.string().nullable().transform(val => val || "hsl(142, 76%, 36%)"),
   paymentDeliveryIconColor: z.string().nullable().transform(val => val || "hsl(262, 83%, 58%)"),
   headerStyle: z.string().nullable().transform(val => val || "classic"),
+  categoryDisplayStyle: z.string().nullable().transform(val => val || "default"),
   splashBgColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   whiteColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   gray50Color: z.string().nullable().transform(val => val || "hsl(210, 40%, 98%)"),

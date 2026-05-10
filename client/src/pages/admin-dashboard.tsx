@@ -339,6 +339,7 @@ const categorySchema = z.object({
   description_he: z.string().optional(),
   description_ar: z.string().optional(),
   icon: z.string().default("🍽️"),
+  image: z.string().optional(),
   isActive: z.boolean().default(true),
 });
 
@@ -9064,6 +9065,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
       description_he: "",
       description_ar: "",
       icon: "🍽️",
+      image: "",
       isActive: true,
     },
   });
@@ -9081,6 +9083,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
           description_he: category.description_he || "",
           description_ar: category.description_ar || "",
           icon: category.icon || "🍽️",
+          image: category.image || "",
           isActive: category.isActive ?? true,
         });
       } else {
@@ -9274,6 +9277,37 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                       </FormItem>
                     );
                   }}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('themes.categoryPhotoHint')}</FormLabel>
+                      <FormControl>
+                        <div className="space-y-2">
+                          {field.value && (
+                            <div className="relative w-full h-32 rounded-lg overflow-hidden border">
+                              <img src={field.value} alt="category" className="w-full h-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={() => field.onChange("")}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                              >×</button>
+                            </div>
+                          )}
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
+                            <ImageUpload
+                              value=""
+                              onChange={(url) => { if (url) field.onChange(url); }}
+                            />
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  )}
                 />
 
                 <FormField

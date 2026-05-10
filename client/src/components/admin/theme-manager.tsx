@@ -461,6 +461,7 @@ export default function ThemeManager() {
     infoBlocksPosition: 'top',
     showSpecialOffers: true,
     showCategoryMenu: true,
+    categoryDisplayStyle: 'default',
     showWhatsAppChat: true,
     showCartBanner: false,
     showBottomBanners: false
@@ -472,6 +473,7 @@ export default function ThemeManager() {
     infoBlocksPosition: 'top',
     showSpecialOffers: true,
     showCategoryMenu: true,
+    categoryDisplayStyle: 'default',
     showWhatsAppChat: true,
     showCartBanner: false,
     showBottomBanners: false
@@ -503,6 +505,7 @@ export default function ThemeManager() {
         infoBlocksPosition: editingTheme.infoBlocksPosition || 'top',
         showSpecialOffers: editingTheme.showSpecialOffers ?? true,
         showCategoryMenu: editingTheme.showCategoryMenu ?? true,
+        categoryDisplayStyle: (editingTheme as any).categoryDisplayStyle || 'default',
         showWhatsAppChat: editingTheme.showWhatsAppChat ?? true,
         showCartBanner: editingTheme.showCartBanner ?? false,
         showBottomBanners: editingTheme.showBottomBanners ?? false
@@ -932,6 +935,7 @@ export default function ThemeManager() {
       infoBlocksPosition: formData.get("infoBlocksPosition") as string || "top",
       showSpecialOffers: formData.get("showSpecialOffers") === "true",
       showCategoryMenu: formData.get("showCategoryMenu") === "true",
+      categoryDisplayStyle: formData.get("categoryDisplayStyle") as string || "default",
       showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
       splashBgColor: formData.get("splashBgColor") as string,
       whiteColor: formData.get("whiteColor") as string,
@@ -1079,6 +1083,7 @@ export default function ThemeManager() {
       infoBlocksPosition: editVisualSettings.infoBlocksPosition,
       showSpecialOffers: editVisualSettings.showSpecialOffers,
       showCategoryMenu: editVisualSettings.showCategoryMenu,
+      categoryDisplayStyle: editVisualSettings.categoryDisplayStyle || "default",
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
       ...createLanguageSpecificUpdate(formData, "whatsappMessage", currentLanguage),
@@ -1591,6 +1596,28 @@ export default function ThemeManager() {
                         fieldName="showCategoryMenu"
                       />
                     </div>
+
+                    {/* Category Display Style - shows only if category menu is enabled */}
+                    {visualSettings.showCategoryMenu && (
+                      <div className="mt-4 space-y-2">
+                        <Label htmlFor="categoryDisplayStyleCreate" className="text-sm font-medium">{adminT("themes.categoryDisplayStyle")}</Label>
+                        <p className="text-xs text-gray-500">{adminT("themes.categoryDisplayStyleDescription")}</p>
+                        <select
+                          name="categoryDisplayStyle"
+                          id="categoryDisplayStyleCreate"
+                          value={visualSettings.categoryDisplayStyle}
+                          onChange={(e) => setVisualSettings(prev => ({ ...prev, categoryDisplayStyle: e.target.value }))}
+                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                        >
+                          <option value="default">{adminT("themes.categoryDisplayDefault")}</option>
+                          <option value="carousel">{adminT("themes.categoryDisplayCarousel")}</option>
+                          <option value="photo_grid">{adminT("themes.categoryDisplayPhotoGrid")}</option>
+                        </select>
+                        {visualSettings.categoryDisplayStyle === 'photo_grid' && (
+                          <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT("themes.categoryPhotoHint")}</p>
+                        )}
+                      </div>
+                    )}
                     
                     {/* Info Blocks Position - shows only if info blocks are enabled */}
                     {visualSettings.showInfoBlocks && (
@@ -2440,6 +2467,28 @@ export default function ThemeManager() {
                         fieldName="showInfoBlocks"
                       />
                     </div>
+
+                    {/* Category Display Style - shows only if category menu is enabled */}
+                    {editVisualSettings.showCategoryMenu && (
+                      <div className="mt-4 space-y-2">
+                        <Label htmlFor="categoryDisplayStyleEdit" className="text-sm font-medium">{adminT('themes.categoryDisplayStyle')}</Label>
+                        <p className="text-xs text-gray-500">{adminT('themes.categoryDisplayStyleDescription')}</p>
+                        <select
+                          name="categoryDisplayStyle"
+                          id="categoryDisplayStyleEdit"
+                          value={editVisualSettings.categoryDisplayStyle}
+                          onChange={(e) => setEditVisualSettings(prev => ({ ...prev, categoryDisplayStyle: e.target.value }))}
+                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                        >
+                          <option value="default">{adminT('themes.categoryDisplayDefault')}</option>
+                          <option value="carousel">{adminT('themes.categoryDisplayCarousel')}</option>
+                          <option value="photo_grid">{adminT('themes.categoryDisplayPhotoGrid')}</option>
+                        </select>
+                        {editVisualSettings.categoryDisplayStyle === 'photo_grid' && (
+                          <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT('themes.categoryPhotoHint')}</p>
+                        )}
+                      </div>
+                    )}
                     
                     {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
                     {editVisualSettings.showInfoBlocks && (
