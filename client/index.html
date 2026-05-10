@@ -109,6 +109,13 @@
           if (logoText) logoText.style.color = color;
         }
 
+        // Apply splash screen background color
+        function applySplashBg(color) {
+          if (!color) return;
+          var splash = document.getElementById('splash-screen');
+          if (splash) splash.style.background = color;
+        }
+
         // Apply store name to title/splash
         function applyName(name) {
           if (!name) return;
@@ -133,6 +140,7 @@
 
         if (cachedSettings && cachedSettings.storeName) applyName(cachedSettings.storeName);
         if (cachedTheme && cachedTheme.color) applyThemeColor(cachedTheme.color);
+        if (cachedTheme && cachedTheme.splashBg) applySplashBg(cachedTheme.splashBg);
 
         // Fetch store name if not cached
         if (!cachedSettings || !cachedSettings.storeName) {
@@ -144,11 +152,14 @@
           }).catch(function() {});
         }
 
-        // Fetch active theme color
+        // Fetch active theme color and splash background
         fetch('/api/themes/active').then(function(r) { return r.json(); }).then(function(d) {
           if (d && d.primaryColor) {
-            try { sessionStorage.setItem('_themeColor', JSON.stringify({ color: d.primaryColor })); } catch(e) {}
+            try { sessionStorage.setItem('_themeColor', JSON.stringify({ color: d.primaryColor, splashBg: d.splashBgColor || null })); } catch(e) {}
             applyThemeColor(d.primaryColor);
+          }
+          if (d && d.splashBgColor) {
+            applySplashBg(d.splashBgColor);
           }
         }).catch(function() {});
       })();

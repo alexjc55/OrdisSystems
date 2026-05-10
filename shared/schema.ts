@@ -595,6 +595,7 @@ export const themes = pgTable("themes", {
   whatsappMessageAr: text("whatsapp_message_ar").default(""),
   
   // Neutral colors
+  splashBgColor: varchar("splash_bg_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   whiteColor: varchar("white_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   gray50Color: varchar("gray50_color", { length: 20 }).notNull().default("hsl(210, 40%, 98%)"),
   gray100Color: varchar("gray100_color", { length: 20 }).notNull().default("hsl(210, 40%, 96%)"),
@@ -803,6 +804,7 @@ export const insertThemeSchema = z.object({
   contactsIconColor: z.string().nullable().transform(val => val || "hsl(142, 76%, 36%)"),
   paymentDeliveryIconColor: z.string().nullable().transform(val => val || "hsl(262, 83%, 58%)"),
   headerStyle: z.string().nullable().transform(val => val || "classic"),
+  splashBgColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   whiteColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   gray50Color: z.string().nullable().transform(val => val || "hsl(210, 40%, 98%)"),
   gray100Color: z.string().nullable().transform(val => val || "hsl(210, 40%, 96%)"),

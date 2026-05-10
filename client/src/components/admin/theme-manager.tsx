@@ -196,6 +196,7 @@ interface ThemeData {
   modernBlock2Text?: string;
   modernBlock3Icon?: string;
   modernBlock3Text?: string;
+  splashBgColor: string;
   whiteColor: string;
   gray50Color: string;
   gray100Color: string;
@@ -668,6 +669,7 @@ export default function ThemeManager() {
         root.style.setProperty('--shadow-tomorrow', `0 4px 14px 0 rgba(${tomorrowRgb[0]}, ${tomorrowRgb[1]}, ${tomorrowRgb[2]}, 0.3)`);
         
         // Update neutral colors
+        root.style.setProperty('--color-splash-bg', convertColorToHsl(updatedTheme.splashBgColor));
         root.style.setProperty('--color-white', convertColorToHsl(updatedTheme.whiteColor));
         root.style.setProperty('--color-gray-50', convertColorToHsl(updatedTheme.gray50Color));
         root.style.setProperty('--color-gray-100', convertColorToHsl(updatedTheme.gray100Color));
@@ -931,6 +933,7 @@ export default function ThemeManager() {
       showSpecialOffers: formData.get("showSpecialOffers") === "true",
       showCategoryMenu: formData.get("showCategoryMenu") === "true",
       showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
+      splashBgColor: formData.get("splashBgColor") as string,
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
       gray100Color: formData.get("gray100Color") as string,
@@ -1079,6 +1082,7 @@ export default function ThemeManager() {
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       whatsappPhone: formData.get("whatsappPhone") as string || "",
       ...createLanguageSpecificUpdate(formData, "whatsappMessage", currentLanguage),
+      splashBgColor: convertColorToHsl(formData.get("splashBgColor") as string),
       whiteColor: convertColorToHsl(formData.get("whiteColor") as string),
       gray50Color: convertColorToHsl(formData.get("gray50Color") as string),
       gray100Color: convertColorToHsl(formData.get("gray100Color") as string),
@@ -1160,6 +1164,7 @@ export default function ThemeManager() {
       workingHoursIconColor: "hsl(220, 91%, 54%)",
       contactsIconColor: "hsl(142, 76%, 36%)",
       paymentDeliveryIconColor: "hsl(262, 83%, 58%)",
+      splashBgColor: "hsl(0, 0%, 100%)",
       whiteColor: "hsl(0, 0%, 100%)",
       gray50Color: "hsl(210, 40%, 98%)",
       gray100Color: "hsl(210, 40%, 96%)",
@@ -1527,6 +1532,7 @@ export default function ThemeManager() {
                     <div>
                       <h5 className="text-sm font-medium mb-2">{adminT("neutralLabels.mainNeutralColors")}</h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label={adminT("neutralLabels.splashBg")} name="splashBgColor" defaultValue="#ffffff" />
                         <ColorInput label={adminT("neutralLabels.white")} name="whiteColor" defaultValue="#ffffff" />
                         <ColorInput label={adminT("neutralLabels.gray100")} name="gray100Color" defaultValue="#f1f5f9" />
                         <ColorInput label={adminT("neutralLabels.gray700")} name="gray700Color" defaultValue="#334155" />
@@ -2375,6 +2381,7 @@ export default function ThemeManager() {
                     <div>
                       <h5 className="text-sm font-medium mb-2">{adminT('themes.mainNeutralColors')}</h5>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ColorInput label={adminT('themes.splashBg')} name="splashBgColor" defaultValue={editingTheme.splashBgColor} />
                         <ColorInput label={adminT('themes.white')} name="whiteColor" defaultValue={editingTheme.whiteColor} />
                         <ColorInput label={adminT('themes.gray100')} name="gray100Color" defaultValue={editingTheme.gray100Color} />
                         <ColorInput label={adminT('themes.gray700')} name="gray700Color" defaultValue={editingTheme.gray700Color} />

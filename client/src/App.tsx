@@ -79,6 +79,7 @@ function ActiveThemeApplier() {
     set('--color-payment-delivery-icon', theme.paymentDeliveryIconColor);
 
     // Neutral scale
+    set('--color-splash-bg', theme.splashBgColor);
     set('--color-white', theme.whiteColor);
     set('--color-gray-50', theme.gray50Color);
     set('--color-gray-100', theme.gray100Color);

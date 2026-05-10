@@ -798,7 +798,8 @@
     "iconsInfo": "Icons Information",
     "warning": "Warning",
     "info": "Information",
-    "white": "White",
+    "splashBg": "Loading Screen Background",
+    "white": "White (site background)",
     "gray100": "Gray 100",
     "gray700": "Gray 700",
     "gray900": "Gray 900",
@@ -913,7 +914,8 @@
   },
   "neutralLabels": {
     "mainNeutralColors": "Main Neutral Colors",
-    "white": "White",
+    "splashBg": "Loading Screen Background",
+    "white": "White (site background)",
     "gray100": "Gray 100 (Background)",
     "gray700": "Gray 700 (Text)",
     "gray900": "Gray 900 (Headings)"
