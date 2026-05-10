@@ -73,8 +73,8 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
   t: (key: string) => string;
   currentLanguage: string;
 }) => {
-  const [hoursExpanded, setHoursExpanded] = useState(false);
-  const [deliveryExpanded, setDeliveryExpanded] = useState(false);
+  const [hoursExpanded, setHoursExpanded] = useState(true);
+  const [deliveryExpanded, setDeliveryExpanded] = useState(true);
 
   if (!storeSettings || storeSettings.showInfoBlocks === false) return null;
 
