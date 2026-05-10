@@ -84,3 +84,15 @@ SELECT 'orders (with branch_id)',      COUNT(*) FROM orders WHERE branch_id IS N
 
 
 ALTER TABLE themes ADD COLUMN IF NOT EXISTS splash_bg_color VARCHAR(20) NOT NULL DEFAULT 'hsl(0, 0%, 100%)';
+
+-- 1. Стиль отображения категорий в настройках магазина
+ALTER TABLE store_settings
+  ADD COLUMN IF NOT EXISTS category_display_style VARCHAR(20) DEFAULT 'default';
+
+-- 2. Стиль отображения категорий в таблице тем
+ALTER TABLE themes
+  ADD COLUMN IF NOT EXISTS category_display_style VARCHAR(20) DEFAULT 'default';
+
+-- 3. Поле для фото категории (если отсутствует)
+ALTER TABLE categories
+  ADD COLUMN IF NOT EXISTS image VARCHAR(500);

@@ -216,7 +216,7 @@
     "categoryMenuDescription": "إظهار قائمة تصفح الفئات",
     "categoryDisplayStyle": "أسلوب عرض الفئات في الصفحة الرئيسية",
     "categoryDisplayStyleDescription": "اختر كيف يظهر قسم الفئات في الصفحة الرئيسية",
-    "categoryDisplayDefault": "الافتراضي (شريط جانبي / تنقل سفلي)",
+    "categoryDisplayDefault": "افتراضي - قائمة",
     "categoryDisplayCarousel": "كاروسيل بالأيقونات",
     "categoryDisplayPhotoGrid": "بطاقات بالصور",
     "categoryPhotoHint": "لوضع بطاقات الصور — ارفع صورة في إعدادات كل فئة",

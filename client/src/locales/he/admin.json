@@ -214,7 +214,7 @@
     "categoryMenuDescription": "הצג תפריט ניווט קטגוריות",
     "categoryDisplayStyle": "סגנון תצוגת קטגוריות בדף הבית",
     "categoryDisplayStyleDescription": "בחרו כיצד נראה בלוק הקטגוריות בדף הבית",
-    "categoryDisplayDefault": "ברירת מחדל (סרגל צד / ניווט תחתון)",
+    "categoryDisplayDefault": "ברירת מחדל - רשימה",
     "categoryDisplayCarousel": "קרוסלה עם אייקונים",
     "categoryDisplayPhotoGrid": "כרטיסיות עם תמונות",
     "categoryPhotoHint": "למצב כרטיסיות עם תמונות — העלו תמונה בהגדרות כל קטגוריה",

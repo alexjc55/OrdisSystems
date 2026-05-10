@@ -727,7 +727,7 @@
     "categoryMenuDescription": "Show category navigation menu",
     "categoryDisplayStyle": "Category Block Style on Home Page",
     "categoryDisplayStyleDescription": "Choose how the category block looks on the home page",
-    "categoryDisplayDefault": "Default (sidebar / bottom navigation)",
+    "categoryDisplayDefault": "Default - list",
     "categoryDisplayCarousel": "Icon Carousel",
     "categoryDisplayPhotoGrid": "Photo Cards",
     "categoryPhotoHint": "For photo cards mode, upload a photo in each category's settings",

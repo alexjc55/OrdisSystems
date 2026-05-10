@@ -216,7 +216,7 @@
     "categoryMenuDescription": "Показывать навигационное меню категорий",
     "categoryDisplayStyle": "Стиль отображения категорий на главной",
     "categoryDisplayStyleDescription": "Выберите как блок категорий выглядит на главной странице",
-    "categoryDisplayDefault": "Как сейчас (боковая панель / нижняя навигация)",
+    "categoryDisplayDefault": "По умолчанию - список",
     "categoryDisplayCarousel": "Карусель с иконками",
     "categoryDisplayPhotoGrid": "Карточки с фотографиями",
     "categoryPhotoHint": "Для режима «карточки с фото» загрузите фото в настройках каждой категории",
