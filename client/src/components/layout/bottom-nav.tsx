@@ -84,7 +84,12 @@ export function BottomNav() {
 
             <div className="flex flex-wrap gap-2">
               <Link href="/" onClick={() => { setIsMenuOpen(false); window.scrollTo({ top: 0, behavior: 'instant' }); }} className="flex-1 min-w-[45%]">
-                <div className="flex items-center justify-center px-3 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer">
+                <div
+                  className="flex items-center justify-center px-3 py-2.5 rounded-lg text-white transition-colors cursor-pointer"
+                  style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-primary-dark, #e55a00)')}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--color-primary, #ff6600)')}
+                >
                   <Utensils className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
                   <span className="font-medium text-sm">{t('menu')}</span>
                 </div>
@@ -109,7 +114,12 @@ export function BottomNav() {
             {user && (user.role === 'admin' || user.role === 'worker') && (
               <div className="flex flex-wrap gap-2">
                 <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="flex-1 min-w-[45%]">
-                  <div className="flex items-center justify-center px-3 py-2.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors cursor-pointer">
+                  <div
+                    className="flex items-center justify-center px-3 py-2.5 rounded-lg text-white transition-colors cursor-pointer"
+                    style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-primary-dark, #e55a00)')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--color-primary, #ff6600)')}
+                  >
                     <Settings className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />
                     <span className="font-medium text-sm">{t('admin')}</span>
                   </div>
@@ -136,11 +146,17 @@ export function BottomNav() {
                         changeLanguage(lang.code);
                         setIsMenuOpen(false);
                       }}
-                      className={`flex items-center justify-center px-3 py-2 rounded-lg transition-colors text-xs flex-1 ${
+                      className="flex items-center justify-center px-3 py-2 rounded-lg transition-colors text-xs flex-1 border"
+                      style={
                         currentLanguage === lang.code
-                          ? 'bg-blue-50 text-blue-600 font-medium border border-blue-200'
-                          : 'text-gray-700 hover:bg-gray-50 border border-gray-200'
-                      }`}
+                          ? {
+                              backgroundColor: 'color-mix(in srgb, var(--color-primary, #ff6600) 10%, white)',
+                              color: 'var(--color-primary, #ff6600)',
+                              borderColor: 'color-mix(in srgb, var(--color-primary, #ff6600) 40%, white)',
+                              fontWeight: 500,
+                            }
+                          : { color: '#374151', borderColor: '#e5e7eb' }
+                      }
                     >
                       {lang.name}
                     </button>
@@ -152,7 +168,10 @@ export function BottomNav() {
             {!isInstalled && isMobile && (
               <div className="border-t border-gray-100 pt-3">
                 <div
-                  className="flex items-center justify-center px-3 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
+                  className="flex items-center justify-center px-3 py-2.5 rounded-lg text-white transition-colors cursor-pointer"
+                  style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
+                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--color-primary-dark, #e55a00)')}
+                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--color-primary, #ff6600)')}
                   onClick={() => {
                     installApp();
                     setIsMenuOpen(false);
@@ -187,9 +206,8 @@ export function BottomNav() {
           <UTMLink
             href="/"
             onClick={handleNavClick}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none ${
-              isActive("/") ? "text-orange-500" : "text-gray-500"
-            }`}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none"
+            style={{ color: isActive("/") ? 'var(--color-primary, #ff6600)' : '#6b7280' }}
           >
             <Home className="h-5 w-5" />
             <span>{t("navigation.home")}</span>
@@ -198,9 +216,8 @@ export function BottomNav() {
           <UTMLink
             href="/profile"
             onClick={handleNavClick}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none ${
-              isActive("/profile") || isActive("/auth") ? "text-orange-500" : "text-gray-500"
-            }`}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none"
+            style={{ color: isActive("/profile") || isActive("/auth") ? 'var(--color-primary, #ff6600)' : '#6b7280' }}
           >
             <User className="h-5 w-5" />
             <span>{t("navigation.profile")}</span>
@@ -216,7 +233,10 @@ export function BottomNav() {
             <div className="relative">
               <ShoppingCart className="h-5 w-5" />
               {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                <span
+                  className="absolute -top-2 -right-2 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1"
+                  style={{ backgroundColor: 'var(--color-primary, #ff6600)' }}
+                >
                   {totalItems}
                 </span>
               )}
@@ -230,9 +250,8 @@ export function BottomNav() {
               setCartOpen(false);
               setIsMenuOpen(prev => !prev);
             }}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none ${
-              isMenuOpen ? "text-orange-500" : "text-gray-500"
-            }`}
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-xs transition-colors outline-none"
+            style={{ color: isMenuOpen ? 'var(--color-primary, #ff6600)' : '#6b7280' }}
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             <span>{t("navigation.menu")}</span>
