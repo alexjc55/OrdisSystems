@@ -59,7 +59,8 @@ import {
   Settings,
   Package,
   Users,
-  Sparkles
+  Sparkles,
+  LayoutGrid
 } from "lucide-react";
 import type { CategoryWithCount, ProductWithCategories } from "@shared/schema";
 
@@ -749,39 +750,36 @@ export default function Home() {
                 const displayStyle = storeSettings?.categoryDisplayStyle || 'default';
 
                 if (displayStyle === 'carousel') {
+                  const pillBase = "flex flex-col items-center justify-start gap-1 rounded-2xl border transition-all duration-200";
+                  const pillActive = "bg-primary text-white border-primary shadow-md";
+                  const pillInactive = "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary";
+                  // mobile: flex-none fixed 88px; desktop: flex-1 min-w-[80px]
+                  const pillSize = "flex-none md:flex-1 md:min-w-[80px]";
                   return (
                     <div id="categories" className="mb-8">
                       <div
-                        className="flex items-start gap-3 overflow-x-auto pb-2"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                        className="flex flex-nowrap gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-x-visible md:pb-0"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                       >
                         <button
                           onClick={() => handleCategorySelect(null)}
-                          className={`flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2 rounded-2xl border transition-all duration-200 ${
-                            selectedCategoryId === null
-                              ? 'bg-primary text-white border-primary shadow-md'
-                              : 'bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary'
-                          }`}
+                          className={`${pillBase} ${pillSize} ${selectedCategoryId === null ? pillActive : pillInactive}`}
+                          style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px' }}
                         >
-                          <span className="text-2xl">🛍️</span>
-                          <span className="text-xs font-medium whitespace-nowrap leading-tight">{t('allCategories')}</span>
+                          <LayoutGrid className="w-7 h-7 flex-shrink-0 mt-0.5" />
+                          <span className="text-xs font-medium leading-tight text-center w-full">{t('allCategories')}</span>
                         </button>
                         {categories.map((category) => {
                           const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
                           const isActive = selectedCategoryId === category.id;
                           return (
-                            <UTMLink key={category.id} href={`/category/${category.id}`}>
-                              <button
-                                onClick={() => handleCategorySelect(category.id)}
-                                className={`flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-2 rounded-2xl border transition-all duration-200 ${
-                                  isActive
-                                    ? 'bg-primary text-white border-primary shadow-md'
-                                    : 'bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary'
-                                }`}
-                              >
-                                <span className="text-2xl">{category.icon || '📦'}</span>
-                                <span className="text-xs font-medium whitespace-nowrap leading-tight">{name}</span>
-                              </button>
+                            <UTMLink key={category.id} href={`/category/${category.id}`}
+                              className={`${pillBase} ${pillSize} ${isActive ? pillActive : pillInactive}`}
+                              style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' }}
+                              onClick={() => handleCategorySelect(category.id)}
+                            >
+                              <span className="text-2xl flex-shrink-0 leading-none mt-0.5">{category.icon || '📦'}</span>
+                              <span className="text-xs font-medium leading-tight text-center w-full">{name}</span>
                             </UTMLink>
                           );
                         })}
@@ -791,14 +789,14 @@ export default function Home() {
                 }
 
                 if (displayStyle === 'photo_grid') {
-                  const photoCats = categories.filter((c) => (c as any).image);
-                  if (photoCats.length === 0) return null;
+                  if (categories.length === 0) return null;
                   return (
                     <div id="categories" className="mb-8">
                       <div className="grid grid-cols-2 gap-3">
-                        {photoCats.map((category) => {
+                        {categories.map((category) => {
                           const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
                           const isActive = selectedCategoryId === category.id;
+                          const hasImage = !!(category as any).image;
                           return (
                             <UTMLink key={category.id} href={`/category/${category.id}`}>
                               <div
@@ -806,11 +804,17 @@ export default function Home() {
                                 className={`relative overflow-hidden rounded-xl cursor-pointer group ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}`}
                                 style={{ aspectRatio: '4/3' }}
                               >
-                                <img
-                                  src={(category as any).image}
-                                  alt={name}
-                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
+                                {hasImage ? (
+                                  <img
+                                    src={(category as any).image}
+                                    alt={name}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-primary flex items-center justify-center transition-opacity duration-300 group-hover:opacity-90">
+                                    <span className="text-5xl">{category.icon || '📦'}</span>
+                                  </div>
+                                )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
                                   <p className="text-white font-semibold text-sm leading-tight drop-shadow">{name}</p>
