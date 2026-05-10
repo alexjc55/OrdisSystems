@@ -5,6 +5,7 @@ import { clearCachePattern, getCache, setCache } from "../../middleware/cache";
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../../facebook-conversions-api";
 import { BRANCHES_ENABLED } from "../../config";
 import bcrypt from "bcryptjs";
+import { deleteUploadFile } from "../../utils/delete-upload-file";
 
 const router = Router();
 
@@ -172,7 +173,10 @@ router.delete('/admin/users/:id', isAuthenticated, async (req: any, res) => {
       return res.status(400).json({ message: "Cannot delete your own account" });
     }
 
+    // Fetch avatar URL before deletion so we can remove the file from disk
+    const targetUser = await storage.getUser(id);
     await storage.deleteUser(id, forceDelete === 'true');
+    if (targetUser?.profileImageUrl) deleteUploadFile(targetUser.profileImageUrl);
     console.log('User deleted successfully:', id);
 
     clearCachePattern('admin-users');
