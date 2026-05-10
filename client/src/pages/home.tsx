@@ -792,7 +792,7 @@ export default function Home() {
                   if (categories.length === 0) return null;
                   return (
                     <div id="categories" className="mb-8">
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {categories.map((category) => {
                           const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
                           const isActive = selectedCategoryId === category.id;
