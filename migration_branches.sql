@@ -80,3 +80,7 @@ UNION ALL
 SELECT 'product_branch_availability', COUNT(*) FROM product_branch_availability
 UNION ALL
 SELECT 'orders (with branch_id)',      COUNT(*) FROM orders WHERE branch_id IS NOT NULL;
+
+
+
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS splash_bg_color VARCHAR(20) NOT NULL DEFAULT 'hsl(0, 0%, 100%)';
