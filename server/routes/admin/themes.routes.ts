@@ -152,6 +152,7 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       if (themeData.infoBlocksPosition !== undefined) updateFields.push(`info_blocks_position = '${themeData.infoBlocksPosition || 'top'}'`);
       if (themeData.showSpecialOffers !== undefined) updateFields.push(`show_special_offers = ${themeData.showSpecialOffers}`);
       if (themeData.showCategoryMenu !== undefined) updateFields.push(`show_category_menu = ${themeData.showCategoryMenu}`);
+      if (themeData.categoryDisplayStyle !== undefined) updateFields.push(`category_display_style = '${themeData.categoryDisplayStyle || 'default'}'`);
       if (themeData.showWhatsAppChat !== undefined) updateFields.push(`show_whatsapp_chat = ${themeData.showWhatsAppChat}`);
       if (themeData.whatsappPhone !== undefined) updateFields.push(`whatsapp_phone_number = '${(themeData.whatsappPhone || '').replace(/'/g, "''")}'`);
       if (themeData.whatsappMessage !== undefined) updateFields.push(`whatsapp_default_message = '${(themeData.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.').replace(/'/g, "''")}'`);
@@ -278,6 +279,7 @@ router.post('/admin/themes/:id/activate', isAuthenticated, async (req: any, res)
       `info_blocks_position = '${theme.infoBlocksPosition || 'top'}'`,
       `show_special_offers = ${theme.showSpecialOffers ?? true}`,
       `show_category_menu = ${theme.showCategoryMenu ?? true}`,
+      `category_display_style = '${theme.categoryDisplayStyle || 'default'}'`,
       `show_whatsapp_chat = ${theme.showWhatsAppChat ?? true}`,
       `whatsapp_phone_number = '${theme.whatsappPhone || ''}'`,
       `whatsapp_default_message = '${theme.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.'}'`,
