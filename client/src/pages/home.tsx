@@ -827,7 +827,7 @@ export default function Home() {
                                     <span className="text-5xl">{emojiIcon}</span>
                                   </div>
                                 )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)' }} />
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
                                   <p className="text-white font-semibold text-sm md:text-base leading-tight drop-shadow">{name}</p>
                                 </div>
