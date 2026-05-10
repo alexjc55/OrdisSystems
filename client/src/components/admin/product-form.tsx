@@ -184,7 +184,10 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           <span className="flex items-center">
-                            <span className="mr-2">{category.icon}</span>
+                            {(category.icon && (category.icon.startsWith('/') || category.icon.startsWith('http')))
+                              ? <img src={category.icon} alt="" className="w-4 h-4 object-cover rounded mr-2 flex-shrink-0" />
+                              : <span className="mr-2">{category.icon || '📦'}</span>
+                            }
                             {category.name}
                           </span>
                         </SelectItem>

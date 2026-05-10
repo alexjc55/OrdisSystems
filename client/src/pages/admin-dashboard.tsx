@@ -114,14 +114,24 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
     zIndex: transform ? 1000 : 'auto',
   };
 
+  const isImgUrl = (s?: string | null) => !!s && (s.startsWith('/') || s.startsWith('http'));
+  const bgImage = isImgUrl(category.image) ? category.image : isImgUrl(category.icon) ? category.icon : null;
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 h-[140px] flex flex-col backdrop-blur-sm hover:border-gray-300"
     >
-      {/* Subtle gradient overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent pointer-events-none" />
+      {/* Background photo preview */}
+      {bgImage && (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${bgImage})` }}
+        />
+      )}
+      {/* Overlay so text stays readable over photo */}
+      <div className={`absolute inset-0 pointer-events-none ${bgImage ? 'bg-black/40' : 'bg-gradient-to-br from-transparent via-white/20 to-transparent'}`} />
       
       {/* Header with drag handle and actions */}
       <div className="relative flex items-center justify-between p-3 pb-2">
@@ -214,32 +224,26 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           }}
         >
           {/* Category name */}
-          <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-gray-800 transition-colors leading-tight tracking-wide mb-1 hover:text-blue-600">
+          <h3 className={`font-bold text-lg truncate transition-colors leading-tight tracking-wide mb-1 ${bgImage ? 'text-white drop-shadow' : 'text-gray-900 group-hover:text-gray-800 hover:text-blue-600'}`}>
             {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
           </h3>
 
           {/* Description if exists */}
           {getLocalizedField(category, 'description', i18n.language as SupportedLanguage) && (
-            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed hover:text-gray-700">
+            <p className={`text-xs line-clamp-2 leading-relaxed ${bgImage ? 'text-white/80' : 'text-gray-500 hover:text-gray-700'}`}>
               {getLocalizedField(category, 'description', i18n.language as SupportedLanguage)}
             </p>
           )}
         </div>
         
-        {/* Right container - Icon */}
-        <div className="flex-shrink-0 flex items-center">
-          <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
-            {category.icon && category.icon.startsWith('/uploads/') ? (
-              <img 
-                src={category.icon} 
-                alt="Category icon" 
-                className="w-12 h-12 object-cover rounded"
-              />
-            ) : (
-              category.icon || '📦'
-            )}
+        {/* Right container - Icon (only show emoji icon, not URL images — photo is shown as card background) */}
+        {!bgImage && (
+          <div className="flex-shrink-0 flex items-center">
+            <div className="text-4xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-sm opacity-80">
+              {!isImgUrl(category.icon) ? (category.icon || '📦') : '📦'}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Inactive state overlay */}
@@ -8663,14 +8667,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             className="rounded border-gray-300"
                           />
                           <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1 flex items-center gap-2">
-                            {category.icon && category.icon.startsWith('/uploads/') ? (
+                            {(category.icon && (category.icon.startsWith('/') || category.icon.startsWith('http'))) ? (
                               <img 
                                 src={category.icon} 
                                 alt="Category icon" 
-                                className="w-4 h-4 object-cover rounded"
+                                className="w-4 h-4 object-cover rounded flex-shrink-0"
                               />
                             ) : (
-                              <span>{category.icon}</span>
+                              <span>{category.icon || '📦'}</span>
                             )}
                             {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                           </label>
