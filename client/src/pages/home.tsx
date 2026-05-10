@@ -817,7 +817,7 @@ export default function Home() {
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                                 <div className="absolute bottom-0 left-0 right-0 p-3">
-                                  <p className="text-white font-semibold text-sm leading-tight drop-shadow">{name}</p>
+                                  <p className="text-white font-semibold text-sm md:text-base leading-tight drop-shadow">{name}</p>
                                 </div>
                               </div>
                             </UTMLink>
