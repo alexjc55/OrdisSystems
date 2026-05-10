@@ -169,7 +169,7 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       </div>
 
       {phone && (
-        <a href={`tel:${phone}`} className={rowCls}>
+        <div className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={iconWrap} style={{ backgroundColor: 'rgba(249,115,22,0.12)' }}>
             <Phone className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
           </div>
@@ -177,24 +177,22 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
             <p className="text-xs text-gray-400">{t('phone')}</p>
             <p className="font-semibold text-gray-900 text-sm">{phone}</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" style={{ transform: isRTL ? 'scaleX(-1)' : undefined }} />
-        </a>
+        </div>
       )}
 
       {whatsapp && (
-        <a href={`https://wa.me/${(whatsapp as string).replace(/\D/g,'')}`} target="_blank" rel="noreferrer" className={rowCls}>
+        <div className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={iconWrap} style={{ backgroundColor: 'rgba(37,211,102,0.12)' }}>
             <MessageCircle className="w-4 h-4 text-green-500" />
           </div>
           <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
             <p className="font-semibold text-gray-900 text-sm">WhatsApp</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" style={{ transform: isRTL ? 'scaleX(-1)' : undefined }} />
-        </a>
+        </div>
       )}
 
       {address && (
-        <div className={rowCls.replace('hover:bg-gray-50 transition-colors','')}>
+        <div className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={iconWrap} style={{ backgroundColor: 'rgba(239,68,68,0.12)' }}>
             <MapPin className="w-4 h-4 text-red-500" />
           </div>
@@ -202,7 +200,6 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
             <p className="text-xs text-gray-400">{addrLabel}</p>
             <p className="font-semibold text-gray-900 text-sm">{address}</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-gray-300 flex-shrink-0" style={{ transform: isRTL ? 'scaleX(-1)' : undefined }} />
         </div>
       )}
 
@@ -231,18 +228,22 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       <button
         type="button"
         onClick={() => collapsible && setHoursExpanded(v => !v)}
-        className={`w-full flex items-center gap-3 px-4 py-4 ${collapsible ? 'cursor-pointer' : 'cursor-default'} ${isRTL ? 'flex-row-reverse' : ''}`}
+        className={`w-full flex flex-col px-4 py-4 ${collapsible ? 'cursor-pointer' : 'cursor-default'}`}
       >
-        <div className={iconWrap} style={{ background: 'var(--color-working-hours-icon, hsl(220,91%,54%))' }}>
-          <Clock className="w-4 h-4 text-white" />
+        <div className={`flex items-center gap-3 w-full ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={iconWrap} style={{ background: 'var(--color-working-hours-icon, hsl(220,91%,54%))' }}>
+            <Clock className="w-4 h-4 text-white" />
+          </div>
+          <span className={`font-semibold text-gray-900 text-base flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{t('workingHours')}</span>
+          {collapsible && <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${hoursExpanded ? 'rotate-180' : ''}`} />}
         </div>
-        <span className={`font-semibold text-gray-900 text-base flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{t('workingHours')}</span>
         {openStatus && (
-          <span className={`text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap ${openStatus.isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-            {openStatus.isOpen ? `${openLabel} ${openStatus.until}` : closedLabel}
-          </span>
+          <div className={`mt-2 ${isRTL ? 'mr-12' : 'ml-12'}`}>
+            <span className={`text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap ${openStatus.isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+              {openStatus.isOpen ? `● ${openLabel} ${openStatus.until}` : `● ${closedLabel}`}
+            </span>
+          </div>
         )}
-        {collapsible && <ChevronDown className={`w-4 h-4 text-gray-400 ml-1 transition-transform flex-shrink-0 ${hoursExpanded ? 'rotate-180' : ''}`} />}
       </button>
 
       {(!collapsible || hoursExpanded) && (
@@ -325,10 +326,12 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
         <p className="text-gray-400 text-sm mt-0.5">{subheadLabel}</p>
       </div>
 
-      {/* Desktop: 3 columns */}
-      <div className="hidden md:grid md:grid-cols-3 gap-4">
-        {hasContacts && <ContactCard />}
-        {hasHours && <HoursCard />}
+      {/* Desktop: contacts + hours in 2 cols, then delivery full-width */}
+      <div className="hidden md:block space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          {hasContacts && <ContactCard />}
+          {hasHours && <HoursCard />}
+        </div>
         {hasDeliveryPayment && <DeliveryPaymentCard />}
       </div>
 
