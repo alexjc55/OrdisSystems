@@ -828,6 +828,7 @@
     "optional": "optional",
     "required": "required",
     "slideImage": "Slide Image",
+    "sliderImageSize": "Recommended size: 1920×600 pixels (16:5 ratio). Max 5 MB.",
     "slideTitle": "Slide Title",
     "slideTitlePlaceholder": "Enter slide title",
     "slideSubtitle": "Slide Subtitle",

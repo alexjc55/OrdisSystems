@@ -211,6 +211,7 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                     }
                   }}
                 />
+                <div className="text-xs text-gray-500">{adminT("themes.sliderImageSize")}</div>
                 <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage} />
               </div>
               
