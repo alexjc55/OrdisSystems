@@ -171,11 +171,11 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       {phone && (
         <div className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={iconWrap} style={{ backgroundColor: 'rgba(249,115,22,0.12)' }}>
-            <Phone className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+            <Phone className="w-5 h-5" style={{ color: 'var(--color-primary)' }} />
           </div>
           <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
             <p className="text-xs text-gray-400">{t('phone')}</p>
-            <p className="font-semibold text-gray-900 text-sm">{phone}</p>
+            <p className="font-semibold text-gray-900 text-base">{phone}</p>
           </div>
         </div>
       )}
@@ -183,10 +183,10 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       {whatsapp && (
         <div className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={iconWrap} style={{ backgroundColor: 'rgba(37,211,102,0.12)' }}>
-            <MessageCircle className="w-4 h-4 text-green-500" />
+            <MessageCircle className="w-5 h-5 text-green-500" />
           </div>
           <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
-            <p className="font-semibold text-gray-900 text-sm">WhatsApp</p>
+            <p className="font-semibold text-gray-900 text-base">WhatsApp</p>
           </div>
         </div>
       )}
@@ -194,11 +194,11 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       {address && (
         <div className={`flex items-center gap-3 px-4 py-3 border-b border-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div className={iconWrap} style={{ backgroundColor: 'rgba(239,68,68,0.12)' }}>
-            <MapPin className="w-4 h-4 text-red-500" />
+            <MapPin className="w-5 h-5 text-red-500" />
           </div>
           <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
             <p className="text-xs text-gray-400">{addrLabel}</p>
-            <p className="font-semibold text-gray-900 text-sm">{address}</p>
+            <p className="font-semibold text-gray-900 text-base">{address}</p>
           </div>
         </div>
       )}
@@ -249,16 +249,16 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
       {(!collapsible || hoursExpanded) && (
         <div className="px-4 pb-4 space-y-2">
           {workingGroups.map((g, i) => (
-            <div key={i} className={`flex items-center justify-between text-sm ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div key={i} className={`flex items-center justify-between text-base ${isRTL ? 'flex-row-reverse' : ''}`}>
               <span className="text-gray-500">{fmt(g)}</span>
               <span className="font-medium text-gray-900">{g.hours}</span>
             </div>
           ))}
           {deliveryHoursGroups.length > 0 && (
             <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--color-primary)' }}>{t('delivery')}</p>
+              <p className="text-sm font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--color-primary)' }}>{t('delivery')}</p>
               {deliveryHoursGroups.map((g, i) => (
-                <div key={i} className={`flex items-center justify-between text-sm mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div key={i} className={`flex items-center justify-between text-base mb-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <span className="text-gray-500">{fmt(g)}</span>
                   {!g.value || g.value === 'closed'
                     ? <span className="text-red-500 font-medium">✕</span>
@@ -294,22 +294,22 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
           {deliveryInfo && (
             <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
               <div className={`${iconWrap} flex-shrink-0 mt-0.5`} style={{ backgroundColor: 'rgba(245,158,11,0.12)' }}>
-                <Truck className="w-4 h-4 text-amber-500" />
+                <Truck className="w-5 h-5 text-amber-500" />
               </div>
               <div>
-                <p className="font-semibold text-gray-900 text-sm mb-0.5">{t('cart.delivery')}</p>
-                <p className="text-gray-500 text-xs leading-relaxed">{deliveryInfo}</p>
+                <p className="font-semibold text-gray-900 text-base mb-1">{t('cart.delivery')}</p>
+                <p className="text-gray-500 text-sm leading-relaxed">{deliveryInfo}</p>
               </div>
             </div>
           )}
           {paymentInfo && (
             <div className={`flex gap-3 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
               <div className={`${iconWrap} flex-shrink-0 mt-0.5`} style={{ backgroundColor: 'rgba(99,102,241,0.12)' }}>
-                <CreditCard className="w-4 h-4 text-indigo-500" />
+                <CreditCard className="w-5 h-5 text-indigo-500" />
               </div>
               <div>
-                <p className="font-semibold text-gray-900 text-sm mb-0.5">{t('paymentMethod')}</p>
-                <p className="text-gray-500 text-xs leading-relaxed">{paymentInfo}</p>
+                <p className="font-semibold text-gray-900 text-base mb-1">{t('paymentMethod')}</p>
+                <p className="text-gray-500 text-sm leading-relaxed">{paymentInfo}</p>
               </div>
             </div>
           )}
