@@ -1101,6 +1101,18 @@ export default function Home() {
         />
       )}
 
+      {/* Information Blocks at bottom position */}
+      {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && 
+       storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "bottom" && (
+        <div className="px-6 pb-6">
+          <InfoBlocks 
+            storeSettings={storeSettings} 
+            t={tCombined} 
+            currentLanguage={currentLanguage} 
+          />
+        </div>
+      )}
+
       {/* Bottom Banners */}
       {storeSettings?.showBottomBanners && (storeSettings?.bottomBanner1Url || storeSettings?.bottomBanner2Url) && (
         <div className="mt-16 mb-8 px-4 sm:px-6 lg:px-8">
@@ -1161,18 +1173,6 @@ export default function Home() {
               )}
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Information Blocks at bottom position */}
-      {!selectedCategory && selectedCategoryId !== 0 && searchQuery.length <= 2 && storeSettings && 
-       storeSettings.showInfoBlocks !== false && storeSettings.infoBlocksPosition === "bottom" && (
-        <div className="px-6 pb-6">
-          <InfoBlocks 
-            storeSettings={storeSettings} 
-            t={tCombined} 
-            currentLanguage={currentLanguage} 
-          />
         </div>
       )}
 
