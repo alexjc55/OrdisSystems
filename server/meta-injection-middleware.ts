@@ -71,12 +71,6 @@ export function metaInjectionMiddleware() {
       return next();
     }
 
-    // Only proceed if Accept header includes HTML
-    const acceptsHtml = req.headers.accept?.includes('text/html');
-    if (!acceptsHtml) {
-      return next();
-    }
-
     try {
       // Determine HTML source (built dist in production)
       const htmlPath = path.resolve(process.cwd(), 'dist/public/index.html');
