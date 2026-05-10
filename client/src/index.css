@@ -1486,13 +1486,15 @@ body, html {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.2);
   margin: 0 4px;
   display: inline-block;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .swiper-pagination-bullet-custom:hover {
-  background: rgb(156, 163, 175);
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .swiper-pagination-bullet-active-custom {
