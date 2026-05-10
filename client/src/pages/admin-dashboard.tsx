@@ -118,10 +118,10 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50/30 to-white border border-gray-200/80 rounded-xl shadow-sm hover:shadow-lg hover:shadow-gray-900/[0.08] transition-all duration-300 h-[140px] flex flex-col backdrop-blur-sm hover:border-gray-300/60"
+      className="group relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white border border-gray-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 h-[140px] flex flex-col backdrop-blur-sm hover:border-gray-300"
     >
       {/* Subtle gradient overlay for depth */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-gray-100/10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent pointer-events-none" />
       
       {/* Header with drag handle and actions */}
       <div className="relative flex items-center justify-between p-3 pb-2">
@@ -129,7 +129,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200/50 relative z-10"
+            className="cursor-grab active:cursor-grabbing p-1.5 -m-1.5 text-gray-400 hover:text-gray-600 hover:bg-white/70 rounded-lg transition-all duration-200 backdrop-blur-sm border border-transparent hover:border-gray-200 relative z-10"
           >
             <GripVertical className="h-3.5 w-3.5" />
           </div>
@@ -156,7 +156,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
             onClick={() => {
               updateCategoryMutation.mutate({ id: category.id, isActive: !category.isActive });
             }}
-            className={`h-7 w-7 p-0 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent ${category.isActive ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50/70 hover:border-emerald-200/50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50/70 hover:border-gray-200/50'}`}
+            className={`h-7 w-7 p-0 rounded-lg backdrop-blur-sm transition-all duration-200 border border-transparent ${category.isActive ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 hover:border-emerald-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50 hover:border-gray-200'}`}
             title={category.isActive ? adminT('categories.hideCategory') : adminT('categories.showCategory')}
           >
             {category.isActive ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
@@ -220,7 +220,7 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
           {/* Description if exists */}
           {getLocalizedField(category, 'description', i18n.language as SupportedLanguage) && (
-            <p className="text-xs text-gray-500/90 line-clamp-2 leading-relaxed hover:text-gray-700">
+            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed hover:text-gray-700">
               {getLocalizedField(category, 'description', i18n.language as SupportedLanguage)}
             </p>
           )}
@@ -244,8 +244,8 @@ function SortableCategoryItem({ category, onEdit, onDelete, adminT, isRTL, setAc
 
       {/* Inactive state overlay */}
       {!category.isActive && (
-        <div className="absolute inset-0 bg-gray-100/80 backdrop-blur-[2px] rounded-xl flex items-center justify-center pointer-events-none">
-          <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200/60 shadow-sm">
+        <div className="absolute inset-0 bg-gray-100 opacity-80 backdrop-blur-[2px] rounded-xl flex items-center justify-center pointer-events-none">
+          <div className="bg-white backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
             <span className="text-sm font-medium text-gray-600">{adminT('categories.hidden')}</span>
           </div>
         </div>
@@ -6937,7 +6937,7 @@ export default function AdminDashboard() {
                     <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                     <div className={`overflow-x-auto table-auto-scroll ${isRTL ? 'rtl-scroll-container' : ''}`}>
                       <Table className={`w-full users-table ${isRTL ? 'rtl' : 'ltr'}`}>
-                        <TableHeader className="bg-gray-50/80">
+                        <TableHeader className="bg-gray-50">
                           <TableRow className="border-b border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.name')}</TableHead>
                             <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('table.role')}</TableHead>
@@ -6952,7 +6952,7 @@ export default function AdminDashboard() {
                         </TableHeader>
                         <TableBody>
                           {filteredUsers.map((user: any) => (
-                            <TableRow key={user.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
+                            <TableRow key={user.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors" dir={isRTL ? 'rtl' : 'ltr'}>
                               <TableCell className="px-3 py-3 text-sm rtl-cell">
                                 <span 
                                   onClick={() => {
@@ -7665,7 +7665,7 @@ export default function AdminDashboard() {
                     <div className={`border border-gray-100 rounded-lg bg-white overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
                       <div className="overflow-x-auto">
                         <Table className="w-full">
-                          <TableHeader className="bg-gray-50/80">
+                          <TableHeader className="bg-gray-50">
                             <TableRow className="border-b border-gray-100">
                               <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.sortOrder')}</TableHead>
                               <TableHead className={`px-3 py-3 text-xs font-medium text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')}</TableHead>
@@ -7675,7 +7675,7 @@ export default function AdminDashboard() {
                           </TableHeader>
                           <TableBody>
                             {(branches as any[]).map((branch: any) => (
-                              <TableRow key={branch.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                              <TableRow key={branch.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                                 <TableCell className="px-3 py-3 text-sm text-gray-600">{branch.sortOrder}</TableCell>
                                 <TableCell className="px-3 py-3 text-sm font-medium">{branch.name}</TableCell>
                                 <TableCell className="px-3 py-3">
