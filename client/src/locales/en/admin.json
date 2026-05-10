@@ -828,7 +828,7 @@
     "optional": "optional",
     "required": "required",
     "slideImage": "Slide Image",
-    "sliderImageSize": "Image fills the full screen. Recommended: at least 1440×720 pixels, 2:1 ratio. Keep important content centered. Max 5 MB.",
+    "sliderImageSize": "Desktop: up to 1023×720 px (~3:2 ratio). Mobile: ~360×468 px (~3:4 ratio). Image is cropped from center — keep important content centered. Recommended minimum: 1023×720 px. Max 5 MB.",
     "slideTitle": "Slide Title",
     "slideTitlePlaceholder": "Enter slide title",
     "slideSubtitle": "Slide Subtitle",
