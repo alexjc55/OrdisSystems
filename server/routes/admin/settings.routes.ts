@@ -354,6 +354,12 @@ router.delete('/admin/danger/all-users', isAuthenticated, async (req: any, res) 
     if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
     const currentUserId = req.user.id;
     const db = await getDB();
+
+    // Collect avatar image URLs before deleting users
+    const avatarRows = await db.execute(sql`SELECT profile_image_url FROM users WHERE id != ${currentUserId}`);
+    const avatarUrls: string[] = (avatarRows.rows as any[]).map((r: any) => r.profile_image_url);
+    deleteUploadFiles(avatarUrls);
+
     // Delete order_items first (FK: order_items.order_id → orders.id)
     await db.execute(sql`DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE user_id != ${currentUserId} AND user_id IS NOT NULL)`);
     // Delete orders belonging to other users
