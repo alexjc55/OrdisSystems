@@ -313,7 +313,8 @@ import {
   BarChart3,
   Printer,
   Building2,
-  Pencil
+  Pencil,
+  AlertTriangle
 } from "lucide-react";
 
 // Validation schemas
@@ -4336,6 +4337,44 @@ export default function AdminDashboard() {
     }
   });
 
+  // ── Danger Zone state & mutations ────────────────────────────────
+  const [dangerConfirm, setDangerConfirm] = useState("");
+  const [dangerDialog, setDangerDialog] = useState<"orders"|"users"|"products"|"categories"|null>(null);
+
+  const dangerMutation = useMutation({
+    mutationFn: async (target: "orders"|"users"|"products"|"categories") => {
+      const res = await fetch(`/api/admin/danger/all-${target}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Ошибка удаления");
+      }
+      return res.json();
+    },
+    onSuccess: (_, target) => {
+      setDangerDialog(null);
+      setDangerConfirm("");
+      const labels: Record<string, string> = {
+        orders: "Все заказы удалены",
+        users: "Все пользователи удалены (кроме вас)",
+        products: "Все товары удалены",
+        categories: "Все категории удалены",
+      };
+      toast({ title: "✅ " + labels[target] });
+      queryClient.invalidateQueries({ queryKey: ['/api/orders'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/orders'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
+    },
+    onError: (err: any) => {
+      toast({ title: "Ошибка", description: err.message, variant: "destructive" });
+    }
+  });
+
   // Test email mutation
   const testEmailMutation = useMutation({
     mutationFn: async (toEmail: string) => {
@@ -7355,6 +7394,122 @@ export default function AdminDashboard() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* ── Danger Zone (admin only) ──────────────────────────── */}
+              {user?.role === 'admin' && (
+                <Card className="border-2 border-red-200">
+                  <CardHeader>
+                    <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 text-red-700 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <AlertTriangle className="h-5 w-5" />
+                      {currentLanguage === 'en' ? 'Danger Zone' : currentLanguage === 'he' ? 'אזור מסוכן' : currentLanguage === 'ar' ? 'منطقة الخطر' : 'Опасная зона'}
+                    </CardTitle>
+                    <CardDescription className="text-red-600">
+                      {currentLanguage === 'en' ? 'Irreversible bulk delete operations. Cannot be undone.' : currentLanguage === 'he' ? 'פעולות מחיקה בלתי הפיכות. לא ניתן לשחזר.' : currentLanguage === 'ar' ? 'عمليات حذف جماعي لا يمكن التراجع عنها.' : 'Необратимые операции массового удаления. Отменить невозможно.'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Delete all orders */}
+                      <div className="flex flex-col gap-1 p-4 rounded-lg bg-red-50 border border-red-100">
+                        <span className="font-semibold text-gray-900 text-sm">
+                          {currentLanguage === 'en' ? 'Delete all orders' : currentLanguage === 'he' ? 'מחק את כל ההזמנות' : currentLanguage === 'ar' ? 'حذف كل الطلبات' : 'Удалить все заказы'}
+                        </span>
+                        <span className="text-xs text-gray-500 mb-2">
+                          {currentLanguage === 'en' ? 'Removes all orders and their items' : currentLanguage === 'he' ? 'מסיר את כל ההזמנות ופריטיהן' : currentLanguage === 'ar' ? 'يزيل جميع الطلبات وعناصرها' : 'Удаляет все заказы и позиции в них'}
+                        </span>
+                        <Button variant="destructive" size="sm" onClick={() => { setDangerDialog("orders"); setDangerConfirm(""); }}>
+                          <Trash2 className="w-3.5 h-3.5 mr-1" />
+                          {currentLanguage === 'en' ? 'Delete orders' : currentLanguage === 'he' ? 'מחק הזמנות' : currentLanguage === 'ar' ? 'حذف الطلبات' : 'Удалить заказы'}
+                        </Button>
+                      </div>
+
+                      {/* Delete all users */}
+                      <div className="flex flex-col gap-1 p-4 rounded-lg bg-red-50 border border-red-100">
+                        <span className="font-semibold text-gray-900 text-sm">
+                          {currentLanguage === 'en' ? 'Delete all users' : currentLanguage === 'he' ? 'מחק את כל המשתמשים' : currentLanguage === 'ar' ? 'حذف كل المستخدمين' : 'Удалить всех пользователей'}
+                        </span>
+                        <span className="text-xs text-gray-500 mb-2">
+                          {currentLanguage === 'en' ? 'Removes all users except you (current admin)' : currentLanguage === 'he' ? 'מסיר את כל המשתמשים מלבדך' : currentLanguage === 'ar' ? 'يزيل جميع المستخدمين إلا أنت' : 'Удаляет всех пользователей, кроме вас'}
+                        </span>
+                        <Button variant="destructive" size="sm" onClick={() => { setDangerDialog("users"); setDangerConfirm(""); }}>
+                          <Trash2 className="w-3.5 h-3.5 mr-1" />
+                          {currentLanguage === 'en' ? 'Delete users' : currentLanguage === 'he' ? 'מחק משתמשים' : currentLanguage === 'ar' ? 'حذف المستخدمين' : 'Удалить пользователей'}
+                        </Button>
+                      </div>
+
+                      {/* Delete all products */}
+                      <div className="flex flex-col gap-1 p-4 rounded-lg bg-red-50 border border-red-100">
+                        <span className="font-semibold text-gray-900 text-sm">
+                          {currentLanguage === 'en' ? 'Delete all products' : currentLanguage === 'he' ? 'מחק את כל המוצרים' : currentLanguage === 'ar' ? 'حذف كل المنتجات' : 'Удалить все товары'}
+                        </span>
+                        <span className="text-xs text-gray-500 mb-2">
+                          {currentLanguage === 'en' ? 'Removes all products and order history' : currentLanguage === 'he' ? 'מסיר את כל המוצרים והזמנות' : currentLanguage === 'ar' ? 'يزيل كل المنتجات وسجل الطلبات' : 'Удаляет все товары и историю заказов'}
+                        </span>
+                        <Button variant="destructive" size="sm" onClick={() => { setDangerDialog("products"); setDangerConfirm(""); }}>
+                          <Trash2 className="w-3.5 h-3.5 mr-1" />
+                          {currentLanguage === 'en' ? 'Delete products' : currentLanguage === 'he' ? 'מחק מוצרים' : currentLanguage === 'ar' ? 'حذف المنتجات' : 'Удалить товары'}
+                        </Button>
+                      </div>
+
+                      {/* Delete all categories */}
+                      <div className="flex flex-col gap-1 p-4 rounded-lg bg-red-50 border border-red-100">
+                        <span className="font-semibold text-gray-900 text-sm">
+                          {currentLanguage === 'en' ? 'Delete all categories' : currentLanguage === 'he' ? 'מחק את כל הקטגוריות' : currentLanguage === 'ar' ? 'حذف كل الفئات' : 'Удалить все категории'}
+                        </span>
+                        <span className="text-xs text-gray-500 mb-2">
+                          {currentLanguage === 'en' ? 'Removes all categories (products kept)' : currentLanguage === 'he' ? 'מסיר את כל הקטגוריות (מוצרים נשמרים)' : currentLanguage === 'ar' ? 'يزيل كل الفئات (تبقى المنتجات)' : 'Удаляет все категории (товары сохраняются)'}
+                        </span>
+                        <Button variant="destructive" size="sm" onClick={() => { setDangerDialog("categories"); setDangerConfirm(""); }}>
+                          <Trash2 className="w-3.5 h-3.5 mr-1" />
+                          {currentLanguage === 'en' ? 'Delete categories' : currentLanguage === 'he' ? 'מחק קטגוריות' : currentLanguage === 'ar' ? 'حذف الفئات' : 'Удалить категории'}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Danger Zone Confirmation Dialog */}
+              <Dialog open={dangerDialog !== null} onOpenChange={(open) => { if (!open) { setDangerDialog(null); setDangerConfirm(""); } }}>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2 text-red-700">
+                      <AlertTriangle className="w-5 h-5" />
+                      {currentLanguage === 'en' ? 'Confirm deletion' : currentLanguage === 'he' ? 'אשר מחיקה' : currentLanguage === 'ar' ? 'تأكيد الحذف' : 'Подтвердите удаление'}
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-700 pt-1">
+                      {dangerDialog === 'orders' && (currentLanguage === 'en' ? 'This will permanently delete ALL orders and order items. This cannot be undone.' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל ההזמנות. לא ניתן לשחזר.' : currentLanguage === 'ar' ? 'سيتم حذف جميع الطلبات نهائياً. لا يمكن التراجع.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕ заказы и их состав. Отменить невозможно.')}
+                      {dangerDialog === 'users' && (currentLanguage === 'en' ? 'This will permanently delete ALL users except your current account.' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל המשתמשים מלבד החשבון שלך.' : currentLanguage === 'ar' ? 'سيتم حذف جميع المستخدمين إلا حسابك الحالي نهائياً.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕХ пользователей, кроме вашего аккаунта.')}
+                      {dangerDialog === 'products' && (currentLanguage === 'en' ? 'This will permanently delete ALL products, and also all orders (required by database constraints).' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל המוצרים וההזמנות.' : currentLanguage === 'ar' ? 'سيتم حذف جميع المنتجات والطلبات نهائياً.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕ товары, а также все заказы (требование базы данных).')}
+                      {dangerDialog === 'categories' && (currentLanguage === 'en' ? 'This will permanently delete ALL categories. Products will remain but lose their category assignments.' : currentLanguage === 'he' ? 'פעולה זו תמחק לצמיתות את כל הקטגוריות. מוצרים יישמרו ללא קטגוריה.' : currentLanguage === 'ar' ? 'سيتم حذف كل الفئات. تبقى المنتجات بدون فئات.' : 'Это БЕЗВОЗВРАТНО удалит ВСЕ категории. Товары сохранятся, но без категорий.')}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-3 py-2">
+                    <p className="text-sm font-medium text-gray-700">
+                      {currentLanguage === 'en' ? 'Type DELETE to confirm:' : currentLanguage === 'he' ? 'הקלד УДАЛИТЬ לאישור:' : currentLanguage === 'ar' ? 'اكتب УДАЛИТЬ للتأكيد:' : 'Введите УДАЛИТЬ для подтверждения:'}
+                    </p>
+                    <Input
+                      value={dangerConfirm}
+                      onChange={e => setDangerConfirm(e.target.value)}
+                      placeholder="УДАЛИТЬ"
+                      className="border-red-300 focus:border-red-500"
+                    />
+                  </div>
+                  <DialogFooter className="gap-2">
+                    <Button variant="outline" onClick={() => { setDangerDialog(null); setDangerConfirm(""); }}>
+                      {currentLanguage === 'en' ? 'Cancel' : currentLanguage === 'he' ? 'ביטול' : currentLanguage === 'ar' ? 'إلغاء' : 'Отмена'}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      disabled={dangerConfirm !== "УДАЛИТЬ" || dangerMutation.isPending}
+                      onClick={() => dangerDialog && dangerMutation.mutate(dangerDialog)}
+                    >
+                      {dangerMutation.isPending ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Trash2 className="w-4 h-4 mr-1" />}
+                      {currentLanguage === 'en' ? 'Delete permanently' : currentLanguage === 'he' ? 'מחק לצמיתות' : currentLanguage === 'ar' ? 'حذف نهائي' : 'Удалить безвозвратно'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
           )}
 

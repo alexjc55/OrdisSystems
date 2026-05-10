@@ -331,4 +331,70 @@ router.delete('/admin/closed-dates/:id', isAuthenticated, async (req: any, res) 
   }
 });
 
+// ── Danger Zone: bulk delete operations (admin only) ──────────────────────────
+
+router.delete('/admin/danger/all-orders', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = await storage.getUser(req.user.id);
+    if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
+    const db = await getDB();
+    await db.execute(sql`DELETE FROM order_items`);
+    await db.execute(sql`DELETE FROM orders`);
+    res.json({ message: 'All orders deleted' });
+  } catch (error) {
+    console.error('Error deleting all orders:', error);
+    res.status(500).json({ message: 'Failed to delete orders' });
+  }
+});
+
+router.delete('/admin/danger/all-users', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = await storage.getUser(req.user.id);
+    if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
+    const currentUserId = req.user.id;
+    const db = await getDB();
+    await db.execute(sql`DELETE FROM user_addresses WHERE user_id != ${currentUserId}`);
+    await db.execute(sql`DELETE FROM user_branches WHERE user_id != ${currentUserId}`);
+    await db.execute(sql`DELETE FROM orders WHERE user_id != ${currentUserId} AND user_id IS NOT NULL`);
+    await db.execute(sql`DELETE FROM users WHERE id != ${currentUserId}`);
+    res.json({ message: 'All users deleted except current admin' });
+  } catch (error) {
+    console.error('Error deleting all users:', error);
+    res.status(500).json({ message: 'Failed to delete users' });
+  }
+});
+
+router.delete('/admin/danger/all-products', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = await storage.getUser(req.user.id);
+    if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
+    const db = await getDB();
+    // Must delete in FK order: junction tables first, then order_items (FK→products), then products
+    await db.execute(sql`DELETE FROM product_branch_availability`);
+    await db.execute(sql`DELETE FROM product_categories`);
+    await db.execute(sql`DELETE FROM order_items`);
+    await db.execute(sql`DELETE FROM orders`);
+    await db.execute(sql`DELETE FROM products`);
+    res.json({ message: 'All products deleted' });
+  } catch (error) {
+    console.error('Error deleting all products:', error);
+    res.status(500).json({ message: 'Failed to delete products' });
+  }
+});
+
+router.delete('/admin/danger/all-categories', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = await storage.getUser(req.user.id);
+    if (!user || user.role !== 'admin') return res.status(403).json({ message: "Admin access required" });
+    const db = await getDB();
+    // Delete junction table first, then categories (products remain but unlinked)
+    await db.execute(sql`DELETE FROM product_categories`);
+    await db.execute(sql`DELETE FROM categories`);
+    res.json({ message: 'All categories deleted' });
+  } catch (error) {
+    console.error('Error deleting all categories:', error);
+    res.status(500).json({ message: 'Failed to delete categories' });
+  }
+});
+
 export default router;
