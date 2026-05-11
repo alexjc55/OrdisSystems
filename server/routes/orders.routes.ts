@@ -176,6 +176,7 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
     const fromName = currentStoreSettings.orderNotificationFromName || 'eDAHouse Store';
     const storeName = currentStoreSettings.storeName || 'eDAHouse';
     const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
+    const activeTheme = await storage.getActiveTheme();
 
     await sendGuestOrderEmail(
       order.id,
@@ -199,7 +200,8 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
       fromName,
       order.orderLanguage || 'ru',
       storeName,
-      baseUrl
+      baseUrl,
+      activeTheme?.primaryColor
     );
 
     res.json({ success: true, message: "Email sent successfully" });
@@ -301,6 +303,8 @@ router.post('/orders/guest', async (req: any, res) => {
           ? (await storage.getBranchById(parsedBranchId))?.name
           : undefined;
 
+        const guestActiveTheme = await storage.getActiveTheme();
+
         await sendNewOrderEmail(
           order.id,
           orderData.guestName || 'Гость',
@@ -321,7 +325,8 @@ router.post('/orders/guest', async (req: any, res) => {
           currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
           currentStoreSettings.defaultLanguage || 'ru',
           currentStoreSettings.storeName || 'eDAHouse',
-          req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined
+          req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
+          guestActiveTheme?.primaryColor
         );
 
         if (guestInfo.email && guestInfo.email.trim()) {
@@ -352,7 +357,8 @@ router.post('/orders/guest', async (req: any, res) => {
             fromName,
             orderData.orderLanguage || 'ru',
             storeName,
-            baseUrl
+            baseUrl,
+            guestActiveTheme?.primaryColor
           );
         }
       }
@@ -501,6 +507,7 @@ router.post('/orders', async (req: any, res) => {
           : undefined;
 
         const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
+        const authActiveTheme = await storage.getActiveTheme();
         await sendNewOrderEmail(
           order.id,
           customerName,
@@ -521,7 +528,8 @@ router.post('/orders', async (req: any, res) => {
           currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
           currentStoreSettings.defaultLanguage || 'ru',
           currentStoreSettings.storeName || 'eDAHouse',
-          req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined
+          req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
+          authActiveTheme?.primaryColor
         );
       }
     } catch (emailError) {

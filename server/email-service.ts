@@ -2,6 +2,37 @@ import sgMail from '@sendgrid/mail';
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 
+// Convert HSL color string (e.g. "hsl(24.6, 95%, 53.1%)") to hex for email clients
+function hslToHex(color: string): string {
+  if (!color) return '#f97316';
+  if (color.startsWith('#')) return color;
+  const match = color.match(/hsl\(\s*([\d.]+)[,\s]+\s*([\d.]+)%[,\s]+\s*([\d.]+)%/);
+  if (!match) return color;
+  const h = parseFloat(match[1]) / 360;
+  const s = parseFloat(match[2]) / 100;
+  const l = parseFloat(match[3]) / 100;
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  };
+  let r: number, g: number, b: number;
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  const toHex = (x: number) => Math.round(x * 255).toString(16).padStart(2, '0');
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 interface EmailParams {
   to: string;
   from: string;
@@ -217,8 +248,10 @@ export async function sendNewOrderEmail(
   fromName: string,
   language: string = 'ru',
   storeName?: string,
-  baseUrl?: string
+  baseUrl?: string,
+  primaryColor?: string
 ): Promise<boolean> {
+  const themeColor = hslToHex(primaryColor || '#f97316');
   
   // Multilingual email templates
   const templates = {
@@ -424,8 +457,8 @@ export async function sendNewOrderEmail(
       <div style="max-width: 600px; margin: 0 auto; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         
         <!-- Header -->
-        <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #f97316;">
-          <h1 style="color: #f97316; margin: 0; font-size: 28px;">${template.title}</h1>
+        <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid ${themeColor};">
+          <h1 style="color: ${themeColor}; margin: 0; font-size: 28px;">${template.title}</h1>
         </div>
 
         <!-- Order Info -->
@@ -453,7 +486,7 @@ export async function sendNewOrderEmail(
             </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
-              <td style="padding: 10px 0; color: #f97316; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
+              <td style="padding: 10px 0; color: ${themeColor}; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
             </tr>
             ${orderDetails.paymentMethod ? `<tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.paymentLabel}</td>
@@ -500,7 +533,7 @@ export async function sendNewOrderEmail(
         <!-- Action Button -->
         <div style="text-align: center; margin-top: 30px;">
           <a href="${baseUrl || process.env.REPLIT_APP_URL || 'http://localhost:5000'}/admin?tab=orders" 
-             style="background-color: #f97316; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+             style="background-color: ${themeColor}; color: white; padding: 15px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
             ${template.viewOrderButton}
           </a>
         </div>
@@ -556,8 +589,10 @@ export async function sendGuestOrderEmail(
   fromName: string,
   language: string = 'ru',
   storeName?: string,
-  baseUrl?: string
+  baseUrl?: string,
+  primaryColor?: string
 ): Promise<boolean> {
+  const themeColor = hslToHex(primaryColor || '#f97316');
   
   // Multilingual email templates for guest orders
   const templates = {
@@ -763,7 +798,7 @@ export async function sendGuestOrderEmail(
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; ${isRTL ? 'direction: rtl;' : ''}">
       <header style="text-align: center; margin-bottom: 30px;">
         <h1 style="color: #2c3e50; margin-bottom: 10px;">${template.title}</h1>
-        <div style="width: 50px; height: 3px; background-color: #3498db; margin: 0 auto;"></div>
+        <div style="width: 50px; height: 3px; background-color: ${themeColor}; margin: 0 auto;"></div>
       </header>
       
       <main>
@@ -790,7 +825,7 @@ export async function sendGuestOrderEmail(
         
         <div style="text-align: center; margin: 30px 0;">
           <p>${template.viewOrderText}</p>
-          <a href="${orderViewUrl}" style="display: inline-block; background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 10px;">${template.viewOrderButton}</a>
+          <a href="${orderViewUrl}" style="display: inline-block; background-color: ${themeColor}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 10px;">${template.viewOrderButton}</a>
         </div>
         
         <div style="background-color: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 5px; padding: 20px; margin: 30px 0;">
