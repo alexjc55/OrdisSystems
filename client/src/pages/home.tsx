@@ -980,15 +980,15 @@ export default function Home() {
 
               {/* Special Offers Section - hide on all products page */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && selectedCategoryId !== 0 && (
-                <div className="mt-12 relative rounded-2xl overflow-hidden">
+                <div className="mt-12 relative rounded-2xl">
                   {/* Tinted background layer */}
                   <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-primary)', opacity: 0.08 }} />
                   <div className="relative p-4 sm:p-5 md:p-8">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 mb-6">
+                  <div className="flex items-center justify-between gap-3 mb-6">
                     <h2 className="text-xl sm:text-2xl font-poppins font-bold text-gray-900 whitespace-nowrap">{t('specialOffers')}</h2>
                     <button
                       onClick={handleViewAllOffers}
-                      className="self-end sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
+                      className="hidden sm:flex flex-shrink-0 items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
                       style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
                       onMouseEnter={e => { const el = e.currentTarget; el.style.backgroundColor = 'var(--color-primary)'; el.style.color = '#ffffff'; }}
                       onMouseLeave={e => { const el = e.currentTarget; el.style.backgroundColor = ''; el.style.color = 'var(--color-primary)'; }}
