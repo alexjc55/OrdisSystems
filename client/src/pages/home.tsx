@@ -1029,7 +1029,6 @@ export default function Home() {
                           nextEl: '.swiper-button-next-custom',
                         }}
                         pagination={{
-                          el: '.swiper-pagination-custom',
                           clickable: true,
                           bulletClass: 'swiper-pagination-bullet-custom',
                           bulletActiveClass: 'swiper-pagination-bullet-active-custom',
@@ -1051,10 +1050,6 @@ export default function Home() {
                         ))}
                       </Swiper>
 
-                      {/* Custom Pagination */}
-                      {specialOffers.length > slidesPerPage && (
-                        <div className="swiper-pagination-custom flex justify-center mt-6 space-x-2"></div>
-                      )}
                     </div>
                   )}
                 </div>
