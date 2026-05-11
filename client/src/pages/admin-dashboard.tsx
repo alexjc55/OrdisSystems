@@ -9688,6 +9688,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
   const [isEmailNotificationsOpen, setIsEmailNotificationsOpen] = useState(false);
   const [isVisualsOpen, setIsVisualsOpen] = useState(false);
   const [isLanguageSettingsOpen, setIsLanguageSettingsOpen] = useState(false);
+  const [isMobileQuickButtonsOpen, setIsMobileQuickButtonsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
 
@@ -9785,6 +9786,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       facebookConversionsApiEnabled: storeSettings?.facebookConversionsApiEnabled || false,
       facebookPixelId: storeSettings?.facebookPixelId || "",
       facebookAccessToken: storeSettings?.facebookAccessToken || "",
+      mobileQuickButtons: (storeSettings as any)?.mobileQuickButtons || [],
     } as any,
   });
 
@@ -10482,6 +10484,62 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
                 </div>
               </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Быстрые кнопки мобильного меню */}
+        <Collapsible open={isMobileQuickButtonsOpen} onOpenChange={setIsMobileQuickButtonsOpen} className="space-y-6">
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent">
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+                {isRTL ? (
+                  <>
+                    {isMobileQuickButtonsOpen ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.mobileQuickButtons')}</h3>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-lg font-semibold flex-1">{adminT('storeSettings.mobileQuickButtons')}</h3>
+                    {isMobileQuickButtonsOpen ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
+                  </>
+                )}
+              </div>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-4">
+            <p className="text-sm text-gray-500">{adminT('storeSettings.mobileQuickButtonsDescription')}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { key: 'orders', label: adminT('tabs.orders') },
+                { key: 'products', label: adminT('tabs.products') },
+                { key: 'categories', label: adminT('tabs.categories') },
+                { key: 'users', label: adminT('tabs.users') },
+                { key: 'analytics', label: adminT('analytics.title') },
+              ].map(({ key, label }) => {
+                const currentButtons: string[] = form.watch('mobileQuickButtons') || [];
+                const isChecked = currentButtons.includes(key);
+                return (
+                  <div
+                    key={key}
+                    onClick={() => {
+                      const next = isChecked
+                        ? currentButtons.filter((k: string) => k !== key)
+                        : [...currentButtons, key];
+                      form.setValue('mobileQuickButtons', next);
+                    }}
+                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${isChecked ? 'border-orange-400 bg-orange-50' : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/30'}`}
+                  >
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${isChecked ? 'border-orange-500 bg-orange-500' : 'border-gray-300'}`}>
+                      {isChecked && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+              ℹ️ {adminT('storeSettings.mobileQuickButtonsNote')}
             </div>
           </CollapsibleContent>
         </Collapsible>

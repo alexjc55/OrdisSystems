@@ -478,7 +478,10 @@ export const storeSettings = pgTable("store_settings", {
   facebookPixelId: varchar("facebook_pixel_id", { length: 50 }),
   facebookConversionsApiEnabled: boolean("facebook_conversions_api_enabled").default(false),
   facebookAccessToken: varchar("facebook_access_token", { length: 500 }), // Store access token in DB
-  
+
+  // Mobile menu quick buttons
+  mobileQuickButtons: jsonb("mobile_quick_buttons").default([]), // Array of section keys shown as quick buttons in mobile menu
+
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

@@ -1,4 +1,4 @@
-import { Home, User, ShoppingCart, Menu, X, Utensils, Settings, BarChart3, Download, LogOut } from "lucide-react";
+import { Home, User, ShoppingCart, Menu, X, Utensils, Settings, BarChart3, Download, LogOut, ClipboardList, Package, Tag, Users } from "lucide-react";
 import { UTMLink } from "@/components/UTMLink";
 import { useCommonTranslation, useAdminTranslation, useLanguage } from "@/hooks/use-language";
 import { useCartStore } from "@/lib/cart";
@@ -134,6 +134,40 @@ export function BottomNav() {
                 )}
               </div>
             )}
+
+            {/* Quick access buttons configured by admin */}
+            {user && (user.role === 'admin' || user.role === 'worker') && (() => {
+              const quickButtons: string[] = (storeSettings as any)?.mobileQuickButtons || [];
+              if (quickButtons.length === 0) return null;
+              const BUTTON_CONFIG: Record<string, { label: () => string; icon: React.ReactNode; url: string; color: string }> = {
+                orders:     { label: () => adminT('tabs.orders'),     icon: <ClipboardList className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=orders',     color: '#2563eb' },
+                products:   { label: () => adminT('tabs.products'),   icon: <Package       className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=products',   color: '#16a34a' },
+                categories: { label: () => adminT('tabs.categories'), icon: <Tag           className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=categories', color: '#9333ea' },
+                users:      { label: () => adminT('tabs.users'),      icon: <Users         className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=users',      color: '#0891b2' },
+                analytics:  { label: () => adminT('analytics.title'), icon: <BarChart3     className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin/analytics',      color: '#7c3aed' },
+              };
+              return (
+                <div className="border-t border-gray-100 pt-3">
+                  <span className="text-xs font-medium text-gray-500 block mb-2">{adminT('storeSettings.quickAccess')}</span>
+                  <div className="flex flex-wrap gap-2">
+                    {quickButtons.filter(k => BUTTON_CONFIG[k]).map(key => {
+                      const cfg = BUTTON_CONFIG[key];
+                      return (
+                        <Link key={key} href={cfg.url} onClick={() => setIsMenuOpen(false)} className="flex-1 min-w-[45%]">
+                          <div
+                            className="flex items-center justify-center px-3 py-2.5 rounded-lg text-white transition-colors cursor-pointer"
+                            style={{ backgroundColor: cfg.color }}
+                          >
+                            {cfg.icon}
+                            <span className="font-medium text-sm">{cfg.label()}</span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {languages.length > 1 && (
               <div className="border-t border-gray-100 pt-3">
