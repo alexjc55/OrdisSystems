@@ -487,9 +487,9 @@ export default function Profile() {
 
           {/* Profile Information */}
           <TabsContent value="profile" className="space-y-6">
-            <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white">
+            <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white" style={{ borderTopWidth: '3px', borderTopColor: 'var(--color-primary, #f97316)' }}>
               {/* Clean profile header */}
-              <div className="px-6 pt-6 pb-5 flex items-center gap-4 border-b border-gray-50">
+              <div className="px-6 pt-6 pb-5 flex items-center gap-4 border-b border-gray-100">
                 <div className="relative flex-shrink-0">
                   <Avatar className="h-16 w-16 ring-2 ring-offset-2" style={{ '--tw-ring-color': 'var(--color-primary, #f97316)' } as React.CSSProperties}>
                     <AvatarImage src={user.profileImageUrl || ""} alt="Profile" />
@@ -567,7 +567,7 @@ export default function Profile() {
                         <span className="text-sm text-gray-800 font-medium">
                           {user.firstName || user.lastName ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : <span className="text-gray-400 font-normal">{t('profile.notSpecified')}</span>}
                         </span>
-                        <button onClick={() => setIsNameEditing(true)} className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <button onClick={() => setIsNameEditing(true)} className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                           <Edit className="h-3.5 w-3.5 text-gray-500" />
                         </button>
                       </div>
@@ -610,7 +610,7 @@ export default function Profile() {
                         <span className="text-sm text-gray-800 font-medium">
                           {user.phone || <span className="text-gray-400 font-normal">{t('profile.notSpecified')}</span>}
                         </span>
-                        <button onClick={() => { setPhoneForm({ phone: user?.phone || "" }); setIsPhoneEditing(true); }} className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <button onClick={() => { setPhoneForm({ phone: user?.phone || "" }); setIsPhoneEditing(true); }} className="flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                           <Edit className="h-3.5 w-3.5 text-gray-500" />
                         </button>
                       </div>
