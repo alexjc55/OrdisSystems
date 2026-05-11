@@ -640,7 +640,8 @@ export class DatabaseStorage implements IStorage {
           )`);
         }
       } else {
-        // Global status filtering (no branch selected)
+        // Global status filtering (no branch selected) — use ONLY global product fields,
+        // never look at product_branch_availability (those are multi-branch leftovers)
         if (status === 'available') {
           conditions.push(sql`(
             ${products.isAvailable} = true
@@ -650,21 +651,9 @@ export class DatabaseStorage implements IStorage {
           conditions.push(sql`(
             ${products.isAvailable} = false
             OR ${products.availabilityStatus} = 'completely_unavailable'
-            OR EXISTS (
-              SELECT 1 FROM product_branch_availability pba
-              WHERE pba.product_id = ${products.id}
-              AND pba.availability_status = 'completely_unavailable'
-            )
           )`);
         } else if (status === 'out_of_stock_today') {
-          conditions.push(sql`(
-            ${products.availabilityStatus} = 'out_of_stock_today'
-            OR EXISTS (
-              SELECT 1 FROM product_branch_availability pba
-              WHERE pba.product_id = ${products.id}
-              AND pba.availability_status = 'out_of_stock_today'
-            )
-          )`);
+          conditions.push(eq(products.availabilityStatus, 'out_of_stock_today'));
         }
       }
     }
