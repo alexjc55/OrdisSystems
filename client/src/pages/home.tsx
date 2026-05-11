@@ -975,7 +975,7 @@ export default function Home() {
                 <div className="mt-12 rounded-2xl px-6 pt-6 pb-8" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
-                      <h2 className="text-lg md:text-2xl font-poppins font-bold text-gray-900 whitespace-nowrap">{t('specialOffers')}</h2>
+                      <h2 className="text-xl md:text-2xl font-poppins font-bold text-gray-900 whitespace-nowrap">{t('specialOffers')}</h2>
                     </div>
                     
                     {/* Navigation Arrows */}
