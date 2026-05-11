@@ -1033,7 +1033,7 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent showClose={false} className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0">
+          <DialogContent showClose={false} className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[calc(90vh-4.5rem)] sm:max-h-[90vh] overflow-y-auto p-0">
             <DialogHeader className="sr-only">
               <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
               <DialogDescription>{t('profile.orderFullInfo')}</DialogDescription>
@@ -1079,7 +1079,7 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <div className="p-4 sm:p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-4 pb-6 sm:pb-6">
                   {/* Info grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {/* Delivery info */}
