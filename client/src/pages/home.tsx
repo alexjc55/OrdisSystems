@@ -892,10 +892,12 @@ export default function Home() {
                           className="md:col-start-3"
                           onClick={() => handleCategorySelect(0)}
                         >
-                          <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 cursor-pointer transition-opacity hover:opacity-80"
+                          <div className="w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 cursor-pointer transition-all duration-200 hover:text-white group"
                             style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
+                            onMouseEnter={e => (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--color-primary)'}
+                            onMouseLeave={e => (e.currentTarget as HTMLElement).style.backgroundColor = ''}
                           >
-                            <span className="font-semibold text-sm">{t('allProducts')}</span>
+                            <span className="font-semibold text-base">{t('allProducts')}</span>
                             <LayoutGrid className="h-5 w-5 flex-shrink-0" />
                           </div>
                         </UTMLink>
