@@ -1556,6 +1556,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 </head>
 <body>
   <div id="prt-bar">
+    <button onclick="window.close()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;cursor:pointer;font-size:13px;color:#fff;font-family:Arial,sans-serif;">← ${l('backToOrder')}</button>
     <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 18px;background:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#f97316;font-family:Arial,sans-serif;">🖨 ${l('printOrder')}</button>
     <span style="font-size:13px;color:#fff;opacity:0.9;">${l('order')} #${order.id} — ${storeName}</span>
   </div>
