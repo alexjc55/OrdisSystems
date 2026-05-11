@@ -58,17 +58,44 @@ router.get('/orders/:id/reorder-items', isAuthenticated, async (req: any, res) =
     const order = userOrders.find(o => o.id === orderId);
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    const items = await Promise.all(
+    const branchId = req.query.branchId ? parseInt(req.query.branchId as string) : null;
+
+    // Fetch all products from the order in parallel
+    const productEntries = await Promise.all(
       order.items.map(async (item: any) => {
         const product = await storage.getProductById(item.productId);
         if (!product) return null;
         if (!product.isAvailable) return null;
-        if (product.availabilityStatus === 'completely_unavailable') return null;
         return { product, quantity: item.quantity };
       })
     );
+    const validEntries = productEntries.filter(Boolean) as { product: any; quantity: number }[];
 
-    const available = items.filter(Boolean);
+    // Apply branch-specific availability overrides when branchId is provided
+    let available: { product: any; quantity: number }[];
+    if (branchId && !isNaN(branchId) && validEntries.length > 0) {
+      const productIds = validEntries.map(e => e.product.id);
+      const branchOverrides = await storage.getProductsBranchAvailabilityByBranchIds(productIds, [branchId]);
+      const overrideMap = new Map(branchOverrides.map((o: any) => [o.productId, o]));
+
+      available = validEntries.filter(({ product }) => {
+        const override = overrideMap.get(product.id);
+        if (override) {
+          // Branch has an explicit record — hide if marked completely unavailable
+          return override.isAvailable && override.availabilityStatus !== 'completely_unavailable';
+        }
+        // No branch override — fall back to global status
+        return product.availabilityStatus !== 'completely_unavailable';
+      }).map(({ product, quantity }) => {
+        // Merge branch override into product so cart sees correct availability status
+        const override = overrideMap.get(product.id);
+        return { product: override ? { ...product, availabilityStatus: override.availabilityStatus, stockStatus: override.stockStatus } : product, quantity };
+      });
+    } else {
+      // Single-branch / no branch: global availability only
+      available = validEntries.filter(({ product }) => product.availabilityStatus !== 'completely_unavailable');
+    }
+
     res.json({ items: available, totalRequested: order.items.length });
   } catch (error) {
     console.error("Error fetching reorder items:", error);

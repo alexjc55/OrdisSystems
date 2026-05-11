@@ -39,7 +39,7 @@ export default function Profile() {
   const { currentLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const queryClient = useQueryClient();
-  const { branches, branchesEnabled } = useBranch();
+  const { branches, branchesEnabled, selectedBranchId } = useBranch();
   const { addItem, setCartOpen } = useCartStore();
   const [isReordering, setIsReordering] = useState(false);
 
@@ -317,7 +317,8 @@ export default function Profile() {
   const handleReorder = async (orderId: number) => {
     setIsReordering(true);
     try {
-      const res = await fetch(`/api/orders/${orderId}/reorder-items`, { credentials: 'include' });
+      const branchParam = branchesEnabled && selectedBranchId ? `?branchId=${selectedBranchId}` : '';
+      const res = await fetch(`/api/orders/${orderId}/reorder-items${branchParam}`, { credentials: 'include' });
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
       if (!data.items || data.items.length === 0) {
