@@ -314,8 +314,7 @@ import {
   Printer,
   Building2,
   Pencil,
-  AlertTriangle,
-  Smartphone
+  AlertTriangle
 } from "lucide-react";
 
 // Validation schemas
@@ -10515,7 +10514,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 { key: 'products', label: adminT('tabs.products') },
                 { key: 'categories', label: adminT('tabs.categories') },
                 { key: 'users', label: adminT('tabs.users') },
-                { key: 'analytics', label: adminT('analytics.title') },
               ].map(({ key, label }) => {
                 const currentButtons: string[] = form.watch('mobileQuickButtons') || [];
                 const isChecked = currentButtons.includes(key);

@@ -144,7 +144,6 @@ export function BottomNav() {
                 products:   { label: () => adminT('tabs.products'),   icon: <Package       className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=products',   color: '#16a34a' },
                 categories: { label: () => adminT('tabs.categories'), icon: <Tag           className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=categories', color: '#9333ea' },
                 users:      { label: () => adminT('tabs.users'),      icon: <Users         className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin?tab=users',      color: '#0891b2' },
-                analytics:  { label: () => adminT('analytics.title'), icon: <BarChart3     className="h-4 w-4 mr-2 rtl:ml-2 rtl:mr-0" />, url: '/admin/analytics',      color: '#7c3aed' },
               };
               return (
                 <div className="border-t border-gray-100 pt-3">
@@ -153,15 +152,22 @@ export function BottomNav() {
                     {quickButtons.filter(k => BUTTON_CONFIG[k]).map(key => {
                       const cfg = BUTTON_CONFIG[key];
                       return (
-                        <Link key={key} href={cfg.url} onClick={() => setIsMenuOpen(false)} className="flex-1 min-w-[45%]">
+                        <button
+                          key={key}
+                          className="flex-1 min-w-[45%]"
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            window.location.href = cfg.url;
+                          }}
+                        >
                           <div
-                            className="flex items-center justify-center px-3 py-2.5 rounded-lg text-white transition-colors cursor-pointer"
+                            className="flex items-center justify-center px-3 py-2.5 rounded-lg text-white transition-colors cursor-pointer w-full"
                             style={{ backgroundColor: cfg.color }}
                           >
                             {cfg.icon}
                             <span className="font-medium text-sm">{cfg.label()}</span>
                           </div>
-                        </Link>
+                        </button>
                       );
                     })}
                   </div>
