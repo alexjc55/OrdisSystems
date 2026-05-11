@@ -910,62 +910,77 @@ export default function Profile() {
                   {t('profile.allOrdersAndStatuses')}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="block">
+              <CardContent className="block p-0">
                 {orders && orders.length > 0 ? (
-                  <div className="space-y-2">
-                    {orders.slice((ordersPage - 1) * ORDERS_PER_PAGE, ordersPage * ORDERS_PER_PAGE).map((order) => {
-                      const discounts = parseOrderDiscounts(order.customerNotes || '');
-                      const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
-                      const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
-                      const deliveryFee = parseFloat(order.deliveryFee || '0');
-                      const originalTotal = originalSubtotal + deliveryFee;
+                  <div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100 bg-gray-50/60">
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5 w-20">#</th>
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5 w-36">{t('profile.orderDate') || 'Дата'}</th>
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5">{t('profile.orderStatusLabel') || 'Статус'}</th>
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5">{t('profile.orderItems') || 'Состав'}</th>
+                            <th className="text-right font-medium text-gray-500 px-4 py-2.5 w-28">{t('profile.orderTotal') || 'Сумма'}</th>
+                            <th className="w-8"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {orders.slice((ordersPage - 1) * ORDERS_PER_PAGE, ordersPage * ORDERS_PER_PAGE).map((order) => {
+                            const discounts = parseOrderDiscounts(order.customerNotes || '');
+                            const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
+                            const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
+                            const deliveryFee = parseFloat(order.deliveryFee || '0');
+                            const originalTotal = originalSubtotal + deliveryFee;
 
-                      return (
-                        <button
-                          key={order.id}
-                          onClick={() => handleViewOrderDetails(order)}
-                          className="w-full text-left border border-gray-200 rounded-lg px-4 py-3 hover:border-orange-300 hover:bg-orange-50/30 transition-all bg-white group"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="w-28 flex-shrink-0">
-                              <div className="font-bold text-gray-900 text-sm">#{order.id}</div>
-                              <div className="text-xs text-gray-400 mt-0.5">
-                                {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}
-                                {' '}
-                                {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : ''}
-                              </div>
-                            </div>
-                            <div className="flex-shrink-0">{getStatusBadge(order.status)}</div>
-                            <div className="flex-1 min-w-0 text-sm text-gray-600 truncate">
-                              {order.items.slice(0, 2).map((item, idx) => (
-                                <span key={idx}>
-                                  {idx > 0 && ', '}
-                                  {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                                </span>
-                              ))}
-                              {order.items.length > 2 && (
-                                <span className="text-gray-400"> +{order.items.length - 2}</span>
-                              )}
-                            </div>
-                            <div className="flex-shrink-0 flex items-center gap-1.5">
-                              {hasDiscounts ? (
-                                <div className="text-right">
-                                  <div className="text-xs text-gray-400 line-through">{formatCurrency(originalTotal)}</div>
-                                  <div className="font-bold text-red-600 text-sm">{formatCurrency(parseFloat(order.totalAmount))}</div>
-                                </div>
-                              ) : (
-                                <div className="font-bold text-gray-900 text-sm">{formatCurrency(parseFloat(order.totalAmount))}</div>
-                              )}
-                              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-orange-500 transition-colors" />
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
+                            return (
+                              <tr
+                                key={order.id}
+                                onClick={() => handleViewOrderDetails(order)}
+                                className="border-b border-gray-100 last:border-0 hover:bg-orange-50/40 cursor-pointer transition-colors group"
+                              >
+                                <td className="px-4 py-3 font-semibold text-gray-800">#{order.id}</td>
+                                <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                                  <div>{order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}</div>
+                                  <div className="text-xs text-gray-400">{order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : ''}</div>
+                                </td>
+                                <td className="px-4 py-3">{getStatusBadge(order.status)}</td>
+                                <td className="px-4 py-3 text-gray-600 max-w-[200px]">
+                                  <div className="truncate">
+                                    {order.items.slice(0, 2).map((item, idx) => (
+                                      <span key={idx}>
+                                        {idx > 0 && ', '}
+                                        {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                                      </span>
+                                    ))}
+                                    {order.items.length > 2 && (
+                                      <span className="text-gray-400"> +{order.items.length - 2}</span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-4 py-3 text-right">
+                                  {hasDiscounts ? (
+                                    <>
+                                      <div className="text-xs text-gray-400 line-through">{formatCurrency(originalTotal)}</div>
+                                      <div className="font-bold text-red-600">{formatCurrency(parseFloat(order.totalAmount))}</div>
+                                    </>
+                                  ) : (
+                                    <div className="font-semibold text-gray-900">{formatCurrency(parseFloat(order.totalAmount))}</div>
+                                  )}
+                                </td>
+                                <td className="px-2 py-3 text-gray-300 group-hover:text-orange-500 transition-colors">
+                                  <ChevronRight className="h-4 w-4" />
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
 
                     {/* Pagination */}
                     {orders.length > ORDERS_PER_PAGE && (
-                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                      <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/40">
                         <span className="text-xs text-gray-400">
                           {(ordersPage - 1) * ORDERS_PER_PAGE + 1}–{Math.min(ordersPage * ORDERS_PER_PAGE, orders.length)} {t('profile.of') || 'из'} {orders.length}
                         </span>
@@ -1018,7 +1033,7 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0 [&>button]:hidden">
+          <DialogContent showClose={false} className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0">
             <DialogHeader className="sr-only">
               <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
               <DialogDescription>{t('profile.orderFullInfo')}</DialogDescription>
