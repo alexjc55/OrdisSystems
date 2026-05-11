@@ -1012,27 +1012,27 @@ export default function Profile() {
 
             {selectedOrder && (
               <div>
-                {/* Colorful header */}
-                <div className="bg-gradient-to-r from-orange-500 to-orange-400 rounded-t-lg text-white">
+                {/* Clean header */}
+                <div className="rounded-t-lg bg-white border-b border-gray-100" style={{ borderTopWidth: '3px', borderTopColor: 'var(--color-primary, #f97316)' }}>
                   {/* Close button row */}
                   <div className="flex justify-end px-3 pt-3">
-                    <DialogClose className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors text-white">
+                    <DialogClose className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-500">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </DialogClose>
                   </div>
                   {/* Header content */}
                   <div className="flex items-end justify-between flex-wrap gap-3 px-5 pb-5">
                     <div>
-                      <div className="text-sm font-medium opacity-80">{t('profile.orderDetails')}</div>
-                      <div className="text-2xl font-bold">#{selectedOrder.id}</div>
-                      <div className="text-sm opacity-80 mt-0.5">
+                      <div className="text-xs font-medium text-gray-400 uppercase tracking-wide">{t('profile.orderDetails')}</div>
+                      <div className="text-2xl font-bold text-gray-900 mt-0.5">#{selectedOrder.id}</div>
+                      <div className="text-sm text-gray-500 mt-0.5">
                         {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-3xl font-bold">{formatCurrency(parseFloat(selectedOrder.totalAmount))}</div>
-                      <div className="mt-1">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
+                      <div className="text-3xl font-bold text-gray-900">{formatCurrency(parseFloat(selectedOrder.totalAmount))}</div>
+                      <div className="mt-2">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary, #f97316) 10%, white)', color: 'var(--color-primary, #f97316)', borderColor: 'color-mix(in srgb, var(--color-primary, #f97316) 30%, white)' }}>
                           {(() => {
                             switch (selectedOrder.status) {
                               case 'pending': return tShop('orderStatus.pending');
