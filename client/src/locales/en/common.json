@@ -118,6 +118,10 @@
     "subtotal": "Subtotal",
     "orderDiscount": "Order Discount",
     "orderComments": "Order Comments",
+    "reorderButton": "Reorder",
+    "reorderSuccess": "Items added to cart",
+    "reorderPartial": "Some items were unavailable and not added",
+    "reorderNone": "All items from this order are currently unavailable",
     "email": "Email"
   },
   "order": {

@@ -48,6 +48,34 @@ router.get('/orders/my', isAuthenticated, async (req: any, res) => {
   }
 });
 
+router.get('/orders/:id/reorder-items', isAuthenticated, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const orderId = parseInt(req.params.id);
+    if (isNaN(orderId)) return res.status(400).json({ message: "Invalid order id" });
+
+    const userOrders = await storage.getOrders(userId);
+    const order = userOrders.find(o => o.id === orderId);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    const items = await Promise.all(
+      order.items.map(async (item: any) => {
+        const product = await storage.getProductById(item.productId);
+        if (!product) return null;
+        if (!product.isAvailable) return null;
+        if (product.availabilityStatus === 'completely_unavailable') return null;
+        return { product, quantity: item.quantity };
+      })
+    );
+
+    const available = items.filter(Boolean);
+    res.json({ items: available, totalRequested: order.items.length });
+  } catch (error) {
+    console.error("Error fetching reorder items:", error);
+    res.status(500).json({ message: "Failed to fetch reorder items" });
+  }
+});
+
 router.get('/orders/guest/:token', async (req, res) => {
   try {
     const { token } = req.params;

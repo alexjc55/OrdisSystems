@@ -22,12 +22,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency, formatQuantity, getUnitShortLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
-import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload, ChevronDown, ChevronRight, Truck, Calendar, Phone, CreditCard } from "lucide-react";
+import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload, ChevronDown, ChevronRight, Truck, Calendar, Phone, CreditCard, RefreshCw } from "lucide-react";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UTMLink as Link } from "@/components/UTMLink";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
 import type { OrderWithItems, UserAddress } from "@shared/schema";
+import { useCartStore } from "@/lib/cart";
 
 export default function Profile() {
   const { user, isLoading, isAuthenticated, logoutMutation } = useAuth();
@@ -39,6 +40,8 @@ export default function Profile() {
   const { storeSettings } = useStoreSettings();
   const queryClient = useQueryClient();
   const { branches, branchesEnabled } = useBranch();
+  const { addItem, setCartOpen } = useCartStore();
+  const [isReordering, setIsReordering] = useState(false);
 
   // SEO for profile page — multilingual
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
@@ -309,6 +312,33 @@ export default function Profile() {
   const handleViewOrderDetails = (order: OrderWithItems) => {
     setSelectedOrder(order);
     setIsOrderDetailsOpen(true);
+  };
+
+  const handleReorder = async (orderId: number) => {
+    setIsReordering(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/reorder-items`, { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed');
+      const data = await res.json();
+      if (!data.items || data.items.length === 0) {
+        toast({ title: t('profile.reorderNone'), variant: 'destructive' });
+        return;
+      }
+      data.items.forEach(({ product, quantity }: { product: any; quantity: number }) => {
+        addItem(product, quantity);
+      });
+      setIsOrderDetailsOpen(false);
+      setCartOpen(true);
+      if (data.items.length < data.totalRequested) {
+        toast({ title: t('profile.reorderSuccess'), description: t('profile.reorderPartial') });
+      } else {
+        toast({ title: t('profile.reorderSuccess') });
+      }
+    } catch {
+      toast({ title: t('common.error'), variant: 'destructive' });
+    } finally {
+      setIsReordering(false);
+    }
   };
 
   const parseOrderDiscounts = (customerNotes: string) => {
@@ -1213,6 +1243,19 @@ export default function Profile() {
                       <p className="text-sm text-gray-700">{selectedOrder.customerNotes}</p>
                     </div>
                   )}
+
+                  {/* Reorder footer */}
+                  <div className="pt-2 flex justify-end">
+                    <Button
+                      onClick={() => handleReorder(selectedOrder.id)}
+                      disabled={isReordering}
+                      className="gap-2 text-white"
+                      style={{ backgroundColor: 'var(--color-primary, #f97316)' }}
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isReordering ? 'animate-spin' : ''}`} />
+                      {isReordering ? t('common.loading') : t('profile.reorderButton')}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}

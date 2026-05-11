@@ -118,6 +118,10 @@
     "subtotal": "סכום ביניים",
     "orderDiscount": "הנחת הזמנה",
     "orderComments": "הערות להזמנה",
+    "reorderButton": "הזמן שוב",
+    "reorderSuccess": "הפריטים נוספו לעגלה",
+    "reorderPartial": "חלק מהפריטים אינם זמינים ולא נוספו",
+    "reorderNone": "כל הפריטים מהזמנה זו אינם זמינים כרגע",
     "email": "אימייל"
   },
   "order": {

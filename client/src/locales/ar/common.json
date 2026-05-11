@@ -104,6 +104,10 @@
     "subtotal": "المجموع الفرعي",
     "orderDiscount": "خصم الطلب",
     "orderComments": "تعليقات الطلب",
+    "reorderButton": "إعادة الطلب",
+    "reorderSuccess": "تمت إضافة العناصر إلى السلة",
+    "reorderPartial": "بعض العناصر غير متاحة ولم تُضف",
+    "reorderNone": "جميع عناصر هذا الطلب غير متاحة حالياً",
     "email": "البريد الإلكتروني"
   },
   "order": {
