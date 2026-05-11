@@ -568,14 +568,6 @@ export default function Home() {
     }
   }, [navigate]);
 
-  const handleViewAllOffers = useCallback(() => {
-    setSelectedCategoryId(0);
-    setCategoryFilter("all");
-    setDiscountFilter("discount");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    navigate('/all-products');
-  }, [navigate]);
-
   const handleResetView = useCallback(() => {
     setSelectedCategoryId(null);
     setSearchQuery("");
@@ -980,30 +972,34 @@ export default function Home() {
 
               {/* Special Offers Section - hide on all products page */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && selectedCategoryId !== 0 && (
-                <div className="mt-12 relative rounded-2xl">
-                  {/* Tinted background layer */}
-                  <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-primary)', opacity: 0.08 }} />
-                  <div className="relative p-4 sm:p-5 md:p-8">
-                  <div className="flex items-center justify-between gap-3 mb-6">
-                    <h2 className="text-xl sm:text-2xl font-poppins font-bold text-gray-900 whitespace-nowrap">{t('specialOffers')}</h2>
-                    <button
-                      onClick={handleViewAllOffers}
-                      className="hidden sm:flex flex-shrink-0 items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
-                      style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
-                      onMouseEnter={e => { const el = e.currentTarget; el.style.backgroundColor = 'var(--color-primary)'; el.style.color = '#ffffff'; }}
-                      onMouseLeave={e => { const el = e.currentTarget; el.style.backgroundColor = ''; el.style.color = 'var(--color-primary)'; }}
-                    >
-                      <span>{t('viewAllOffers')}</span>
-                      {(currentLanguage === 'he' || currentLanguage === 'ar') ?
-                        <ChevronLeft className="h-4 w-4 flex-shrink-0" /> :
-                        <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                      }
-                    </button>
+                <div className="mt-12">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
+                    </div>
+                    
+                    {/* Navigation Arrows */}
+                    {specialOffers.length > slidesPerPage && (
+                      <div className="hidden md:flex items-center gap-2">
+                        <button
+                          className="swiper-button-prev-custom w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary transition-colors shadow-sm"
+                        >
+                          {(currentLanguage === 'he' || currentLanguage === 'ar') ? 
+                            <ChevronRight className="h-4 w-4" /> : 
+                            <ChevronLeft className="h-4 w-4" />
+                          }
+                        </button>
+                        <button
+                          className="swiper-button-next-custom w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary transition-colors shadow-sm"
+                        >
+                          {(currentLanguage === 'he' || currentLanguage === 'ar') ? 
+                            <ChevronLeft className="h-4 w-4" /> : 
+                            <ChevronRight className="h-4 w-4" />
+                          }
+                        </button>
+                      </div>
+                    )}
                   </div>
-
-                  {/* Hidden swiper nav arrows (still functional) */}
-                  <button className="swiper-button-prev-custom hidden" aria-hidden="true" />
-                  <button className="swiper-button-next-custom hidden" aria-hidden="true" />
                   
                   {allProductsLoading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1061,7 +1057,6 @@ export default function Home() {
                       )}
                     </div>
                   )}
-                  </div>{/* end relative p-5 md:p-8 */}
                 </div>
               )}
             </div>
