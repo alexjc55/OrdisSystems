@@ -17,6 +17,33 @@ declare global {
 
 const scryptAsync = promisify(scrypt);
 
+const SUPER_ADMIN_ID = "__superadmin__";
+
+function getSuperAdminUser(): SelectUser {
+  return {
+    id: SUPER_ADMIN_ID,
+    username: process.env.SUPER_ADMIN_LOGIN || "superadmin",
+    email: null,
+    password: null,
+    firstName: "Super",
+    lastName: "Admin",
+    phone: null,
+    role: "admin",
+    createdAt: new Date(),
+    loyaltyPoints: 0,
+    pushSubscription: null,
+    pushNotificationsEnabled: false,
+    marketingNotificationsEnabled: false,
+  } as unknown as SelectUser;
+}
+
+function isSuperAdminCredentials(username: string, password: string): boolean {
+  const login = process.env.SUPER_ADMIN_LOGIN;
+  const pwd = process.env.SUPER_ADMIN_PASSWORD;
+  if (!login || !pwd) return false;
+  return username === login && password === pwd;
+}
+
 async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
   const buf = (await scryptAsync(password, salt, 64)) as Buffer;
@@ -39,12 +66,12 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: new PostgresSessionStore({ 
       pool, 
-      createTableIfMissing: false // Don't create table, it already exists
+      createTableIfMissing: false
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // T009: Use HTTPS cookies in production
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 24 * 60 * 60 * 1000,
     },
   };
 
@@ -56,7 +83,6 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
-        // Convert username to lowercase for case-insensitive lookup
         const user = await storage.getUserByUsername(username.toLowerCase());
         if (!user || !user.password || !(await comparePasswords(password, user.password))) {
           return done(null, false);
@@ -71,6 +97,9 @@ export function setupAuth(app: Express) {
   passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: string, done) => {
     try {
+      if (id === SUPER_ADMIN_ID) {
+        return done(null, getSuperAdminUser());
+      }
       const user = await storage.getUser(id);
       done(null, user);
     } catch (error) {
@@ -82,7 +111,6 @@ export function setupAuth(app: Express) {
     try {
       const { username, email, password, firstName, lastName, phone, claimToken } = req.body;
       
-      // Check if username or email already exists (case-insensitive)
       const existingUser = await storage.getUserByUsername(username.toLowerCase());
       if (existingUser) {
         return res.status(400).json({ message: "Имя пользователя уже занято" });
@@ -95,7 +123,6 @@ export function setupAuth(app: Express) {
         }
       }
 
-      // Create user with hashed password and lowercase username
       const hashedPassword = await hashPassword(password);
       const user = await storage.createUser({
         username: username.toLowerCase(),
@@ -111,7 +138,6 @@ export function setupAuth(app: Express) {
         if (err) return next(err);
         
         let claimedOrder = null;
-        // Try to claim guest order if claimToken is provided
         if (claimToken && typeof claimToken === 'string') {
           try {
             claimedOrder = await storage.claimGuestOrder(claimToken, user.id);
@@ -120,7 +146,6 @@ export function setupAuth(app: Express) {
             }
           } catch (claimError) {
             console.error("Error claiming guest order during registration:", claimError);
-            // Don't fail registration if claim fails, just log it
           }
         }
         
@@ -135,7 +160,19 @@ export function setupAuth(app: Express) {
     }
   });
 
-  app.post("/api/login", passport.authenticate("local"), (req, res) => {
+  // Super-admin login intercept — checked before Passport
+  app.post("/api/login", async (req, res, next) => {
+    const { username, password } = req.body;
+    if (isSuperAdminCredentials(username, password)) {
+      const superAdmin = getSuperAdminUser();
+      req.login(superAdmin, (err) => {
+        if (err) return next(err);
+        return res.status(200).json(superAdmin);
+      });
+      return;
+    }
+    next();
+  }, passport.authenticate("local"), (req, res) => {
     res.status(200).json(req.user);
   });
 

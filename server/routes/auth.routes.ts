@@ -11,6 +11,9 @@ const router = Router();
 router.get('/auth/user', isAuthenticated, async (req: any, res) => {
   try {
     const userId = req.user.id;
+    if (userId === '__superadmin__') {
+      return res.json(req.user);
+    }
     const user = await storage.getUser(userId);
     res.json(user);
   } catch (error) {
@@ -22,6 +25,9 @@ router.get('/auth/user', isAuthenticated, async (req: any, res) => {
 router.get('/auth/my-branches', isAuthenticated, async (req: any, res) => {
   try {
     const userId = req.user.id;
+    if (userId === '__superadmin__') {
+      return res.json([]); // superadmin sees all branches
+    }
     const user = await storage.getUser(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
     if (user.role === 'admin') {
