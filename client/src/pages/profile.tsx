@@ -392,12 +392,12 @@ export default function Profile() {
         {/* Profile Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {/* Orders card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, #fb923c 100%)' }}>
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, color-mix(in srgb, var(--color-primary, #f97316) 70%, white) 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-orange-100 mb-1">{t('profile.totalOrders')}</p>
+                <p className="text-sm font-medium text-white/80 mb-1">{t('profile.totalOrders')}</p>
                 <p className="text-4xl font-bold tracking-tight">{totalOrders}</p>
                 {activeOrders > 0 && (
                   <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium">
@@ -413,14 +413,14 @@ export default function Profile() {
           </div>
 
           {/* Spent card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)' }}>
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-secondary, #10b981) 0%, color-mix(in srgb, var(--color-secondary, #10b981) 70%, white) 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-emerald-100 mb-1">{t('profile.totalSpent')}</p>
+                <p className="text-sm font-medium text-white/80 mb-1">{t('profile.totalSpent')}</p>
                 <p className="text-3xl font-bold tracking-tight leading-tight">{formatCurrency(totalSpent)}</p>
-                <p className="mt-2 text-xs text-emerald-100">{t('profile.allTime')}</p>
+                <p className="mt-2 text-xs text-white/70">{t('profile.allTime')}</p>
               </div>
               <div className="rounded-xl bg-white/20 p-2.5">
                 <CreditCard className="h-6 w-6" />
@@ -429,14 +429,14 @@ export default function Profile() {
           </div>
 
           {/* Status card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' }}>
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-accent, #8b5cf6) 0%, color-mix(in srgb, var(--color-accent, #8b5cf6) 70%, white) 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-100 mb-1">{t('profile.status')}</p>
+                <p className="text-sm font-medium text-white/80 mb-1">{t('profile.status')}</p>
                 <p className="text-xl font-bold">{t('profile.regularCustomer')}</p>
-                <p className="mt-2 text-xs text-purple-100">
+                <p className="mt-2 text-xs text-white/70">
                   {t('profile.memberSince')} {new Date(user.createdAt || '').toLocaleDateString()}
                 </p>
               </div>
