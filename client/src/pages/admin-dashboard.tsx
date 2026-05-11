@@ -1979,7 +1979,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                   {storeSettingsData?.deliveryTimeMode === 'disabled' ? (
                     <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-100 text-gray-500">
                       <Clock className="mr-2 h-4 w-4" />
-                      {adminT('settings.deliveryTimeDisabled')}
+                      {adminT('storeSettings.deliveryTimeDisabled')}
                     </div>
                   ) : storeSettingsData?.deliveryTimeMode === 'half_day' ? (
                     <Select
@@ -2092,7 +2092,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                 {storeSettingsData?.deliveryTimeMode === 'disabled' ? (
                   <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-100 text-gray-500 h-8">
                     <Clock className="mr-2 h-4 w-4" />
-                    {adminT('settings.deliveryTimeDisabled')}
+                    {adminT('storeSettings.deliveryTimeDisabled')}
                   </div>
                 ) : storeSettingsData?.deliveryTimeMode === 'half_day' ? (
                   <Select
