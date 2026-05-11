@@ -390,45 +390,61 @@ export default function Profile() {
         </div>
 
         {/* Profile Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('profile.totalOrders')}</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalOrders}</div>
-              <p className="text-xs text-muted-foreground">
-                {activeOrders} {t('profile.active')}
-              </p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* Orders card */}
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' }}>
+            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+            <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
+            <div className="relative flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-100 mb-1">{t('profile.totalOrders')}</p>
+                <p className="text-4xl font-bold tracking-tight">{totalOrders}</p>
+                {activeOrders > 0 && (
+                  <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium">
+                    <Clock className="h-3 w-3" />
+                    {activeOrders} {t('profile.active')}
+                  </div>
+                )}
+              </div>
+              <div className="rounded-xl bg-white/20 p-2.5">
+                <ShoppingCart className="h-6 w-6" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('profile.totalSpent')}</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(totalSpent)}</div>
-              <p className="text-xs text-muted-foreground">
-                {t('profile.allTime')}
-              </p>
-            </CardContent>
-          </Card>
+          {/* Spent card */}
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)' }}>
+            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+            <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
+            <div className="relative flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-emerald-100 mb-1">{t('profile.totalSpent')}</p>
+                <p className="text-3xl font-bold tracking-tight leading-tight">{formatCurrency(totalSpent)}</p>
+                <p className="mt-2 text-xs text-emerald-100">{t('profile.allTime')}</p>
+              </div>
+              <div className="rounded-xl bg-white/20 p-2.5">
+                <CreditCard className="h-6 w-6" />
+              </div>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('profile.status')}</CardTitle>
-              <User className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-bold">{t('profile.regularCustomer')}</div>
-              <p className="text-xs text-muted-foreground">
-                {t('profile.memberSince')} {new Date(user.createdAt || '').toLocaleDateString()}
-              </p>
-            </CardContent>
-          </Card>
+          {/* Status card */}
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)' }}>
+            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
+            <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
+            <div className="relative flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-purple-100 mb-1">{t('profile.status')}</p>
+                <p className="text-xl font-bold">{t('profile.regularCustomer')}</p>
+                <p className="mt-2 text-xs text-purple-100">
+                  {t('profile.memberSince')} {new Date(user.createdAt || '').toLocaleDateString()}
+                </p>
+              </div>
+              <div className="rounded-xl bg-white/20 p-2.5">
+                <CheckCircle className="h-6 w-6" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
@@ -477,208 +493,167 @@ export default function Profile() {
 
           {/* Profile Information */}
           <TabsContent value="profile" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  {t('profile.profileInfo')}
-                </CardTitle>
-                <CardDescription>
-                  {t('profile.profileInfoDescription')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Avatar Section */}
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="relative">
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage src={user.profileImageUrl || ""} alt="Profile" />
-                        <AvatarFallback className="text-lg">
-                          {user.firstName ? user.firstName[0] : user.username[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
-                        onClick={() => setIsAvatarDialogOpen(true)}
-                      >
-                        <Camera className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-sm font-medium">{user.firstName || user.username}</div>
-                      <div className="text-xs text-gray-500">{t('profile.clickToChangePhoto')}</div>
-                    </div>
+            <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white">
+              {/* Gradient banner + avatar */}
+              <div className="relative h-28" style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 60%, #fbbf24 100%)' }}>
+                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, white 0%, transparent 60%)' }} />
+                {/* Avatar centered on banner bottom edge */}
+                <div className="absolute -bottom-10 left-6 rtl:left-auto rtl:right-6">
+                  <div className="relative">
+                    <Avatar className="h-20 w-20 border-4 border-white shadow-lg">
+                      <AvatarImage src={user.profileImageUrl || ""} alt="Profile" />
+                      <AvatarFallback className="text-xl font-bold bg-orange-100 text-orange-600">
+                        {user.firstName ? user.firstName[0].toUpperCase() : user.username[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <button
+                      onClick={() => setIsAvatarDialogOpen(true)}
+                      className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-white border-2 border-gray-200 shadow flex items-center justify-center hover:bg-gray-50 transition-colors"
+                    >
+                      <Camera className="h-3.5 w-3.5 text-gray-600" />
+                    </button>
                   </div>
+                </div>
+                {/* Name on banner right side */}
+                <div className="absolute bottom-3 left-32 rtl:left-auto rtl:right-32">
+                  <p className="text-white font-semibold text-lg leading-tight drop-shadow">
+                    {user.firstName || user.lastName
+                      ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
+                      : user.username}
+                  </p>
+                  <p className="text-orange-100 text-xs">{user.email}</p>
+                </div>
+              </div>
 
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">{t('profile.fullName')}</label>
-                      <div className="mt-1 flex items-center gap-2">
-                        {isNameEditing ? (
-                          <div className="space-y-3 w-full">
-                            <div>
-                              <Label className="text-xs text-gray-600">{t('profile.firstName')}</Label>
-                              <Input
-                                type="text"
-                                placeholder={t('profile.enterFirstName')}
-                                value={nameForm.firstName}
-                                onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div>
-                              <Label className="text-xs text-gray-600">{t('profile.lastName')}</Label>
-                              <Input
-                                type="text"
-                                placeholder={t('profile.enterLastName')}
-                                value={nameForm.lastName}
-                                onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div className="flex gap-2 pt-2">
-                              <Button
-                                size="sm"
-                                onClick={() => updateNameMutation.mutate(nameForm)}
-                                disabled={updateNameMutation.isPending}
-                                className="bg-orange-500 hover:bg-orange-600 text-white"
-                              >
-                                {updateNameMutation.isPending ? t('status.saving') : t('actions.save')}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setIsNameEditing(false);
-                                  setNameForm({
-                                    firstName: user?.firstName || "",
-                                    lastName: user?.lastName || ""
-                                  });
-                                }}
-                              >
-                                {t('actions.cancel')}
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="text-sm text-gray-900 flex-1">
-                              {user.firstName || user.lastName 
-                                ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
-                                : t('profile.notSpecified')
-                              }
-                            </div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setIsNameEditing(true)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </div>
+              {/* Fields */}
+              <div className="pt-14 px-6 pb-6 space-y-0 divide-y divide-gray-50">
+                {/* Full name row */}
+                <div className="py-4 flex items-start gap-4">
+                  <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-orange-50">
+                    <User className="h-4 w-4 text-orange-500" />
                   </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">Email</label>
-                      <div className="mt-1 text-sm text-gray-900">{user.email}</div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">{t('profile.phone')}</label>
-                      <div className="mt-1">
-                        {isPhoneEditing ? (
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-xs text-gray-600">{t('profile.phoneNumber')}</Label>
-                              <Input
-                                type="tel"
-                                placeholder="+972-XX-XXX-XXXX"
-                                value={phoneForm.phone}
-                                onChange={(e) => setPhoneForm({ phone: e.target.value })}
-                                className="mt-1"
-                              />
-                            </div>
-                            <div className="flex gap-2 pt-2">
-                              <Button
-                                size="sm"
-                                onClick={() => updatePhoneMutation.mutate(phoneForm.phone)}
-                                disabled={updatePhoneMutation.isPending}
-                                className="bg-orange-500 hover:bg-orange-600 text-white"
-                              >
-                                {updatePhoneMutation.isPending ? t('status.saving') : t('actions.save')}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setIsPhoneEditing(false);
-                                  setPhoneForm({ phone: user?.phone || "" });
-                                }}
-                              >
-                                {t('actions.cancel')}
-                              </Button>
-                            </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-400 mb-1">{t('profile.fullName')}</p>
+                    {isNameEditing ? (
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <Label className="text-xs text-gray-500">{t('profile.firstName')}</Label>
+                            <Input
+                              type="text"
+                              placeholder={t('profile.enterFirstName')}
+                              value={nameForm.firstName}
+                              onChange={(e) => setNameForm({ ...nameForm, firstName: e.target.value })}
+                              className="mt-1 h-8 text-sm"
+                            />
                           </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-900 flex-1">
-                              {user.phone || t('profile.notSpecified')}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setPhoneForm({ phone: user?.phone || "" });
-                                setIsPhoneEditing(true);
-                              }}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
+                          <div>
+                            <Label className="text-xs text-gray-500">{t('profile.lastName')}</Label>
+                            <Input
+                              type="text"
+                              placeholder={t('profile.enterLastName')}
+                              value={nameForm.lastName}
+                              onChange={(e) => setNameForm({ ...nameForm, lastName: e.target.value })}
+                              className="mt-1 h-8 text-sm"
+                            />
                           </div>
-                        )}
+                        </div>
+                        <div className="flex gap-2 pt-1">
+                          <Button size="sm" onClick={() => updateNameMutation.mutate(nameForm)} disabled={updateNameMutation.isPending} className="h-7 text-xs bg-orange-500 hover:bg-orange-600 text-white">
+                            {updateNameMutation.isPending ? t('status.saving') : t('actions.save')}
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setIsNameEditing(false); setNameForm({ firstName: user?.firstName || "", lastName: user?.lastName || "" }); }}>
+                            {t('actions.cancel')}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700">{t('profile.registrationDate')}</label>
-                      <div className="mt-1 text-sm text-gray-900">
-                        {new Date(user.createdAt || '').toLocaleDateString('ru-RU')}
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-800 font-medium">
+                          {user.firstName || user.lastName ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : <span className="text-gray-400 font-normal">{t('profile.notSpecified')}</span>}
+                        </span>
+                        <button onClick={() => setIsNameEditing(true)} className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                          <Edit className="h-3.5 w-3.5 text-gray-500" />
+                        </button>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">{t('profile.quickActions')}</h3>
-                  <div className="flex gap-4">
-                    <Button 
-                      onClick={() => window.location.href = '/'}
-                      className="bg-orange-500 hover:bg-orange-600 text-white"
-                      style={{ backgroundColor: 'hsl(16, 100%, 60%)' }}
-                    >
-                      {t('navigation.goToMenu')}
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => logoutMutation.mutate(undefined, {
-                        onSuccess: () => {
-                          navigate("/");
-                          window.scrollTo(0, 0);
-                        }
-                      })}
-                      disabled={logoutMutation.isPending}
-                    >
-                      {logoutMutation.isPending ? t('common.saving') : t('auth.logout')}
-                    </Button>
+                {/* Email row */}
+                <div className="py-4 flex items-center gap-4">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50">
+                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-400 mb-0.5">Email</p>
+                    <p className="text-sm text-gray-800 font-medium truncate">{user.email}</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Phone row */}
+                <div className="py-4 flex items-start gap-4">
+                  <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-green-50">
+                    <Phone className="h-4 w-4 text-green-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-400 mb-1">{t('profile.phone')}</p>
+                    {isPhoneEditing ? (
+                      <div className="space-y-2">
+                        <Input type="tel" placeholder="+972-XX-XXX-XXXX" value={phoneForm.phone} onChange={(e) => setPhoneForm({ phone: e.target.value })} className="h-8 text-sm" />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => updatePhoneMutation.mutate(phoneForm.phone)} disabled={updatePhoneMutation.isPending} className="h-7 text-xs bg-orange-500 hover:bg-orange-600 text-white">
+                            {updatePhoneMutation.isPending ? t('status.saving') : t('actions.save')}
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => { setIsPhoneEditing(false); setPhoneForm({ phone: user?.phone || "" }); }}>
+                            {t('actions.cancel')}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-800 font-medium">
+                          {user.phone || <span className="text-gray-400 font-normal">{t('profile.notSpecified')}</span>}
+                        </span>
+                        <button onClick={() => { setPhoneForm({ phone: user?.phone || "" }); setIsPhoneEditing(true); }} className="ml-auto flex h-7 w-7 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                          <Edit className="h-3.5 w-3.5 text-gray-500" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Member since row */}
+                <div className="py-4 flex items-center gap-4">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-purple-50">
+                    <Calendar className="h-4 w-4 text-purple-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-gray-400 mb-0.5">{t('profile.registrationDate')}</p>
+                    <p className="text-sm text-gray-800 font-medium">{new Date(user.createdAt || '').toLocaleDateString('ru-RU')}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick actions footer */}
+              <div className="px-6 pb-6 pt-2 flex flex-wrap gap-3 border-t border-gray-50">
+                <Button
+                  onClick={() => window.location.href = '/'}
+                  className="flex-1 sm:flex-none text-white"
+                  style={{ backgroundColor: 'var(--color-primary, #f97316)' }}
+                >
+                  {t('navigation.goToMenu')}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 sm:flex-none"
+                  onClick={() => logoutMutation.mutate(undefined, { onSuccess: () => { navigate("/"); window.scrollTo(0, 0); } })}
+                  disabled={logoutMutation.isPending}
+                >
+                  {logoutMutation.isPending ? t('common.saving') : t('auth.logout')}
+                </Button>
+              </div>
+            </div>
           </TabsContent>
 
           {/* Security Tab */}
