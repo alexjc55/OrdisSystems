@@ -918,10 +918,10 @@ export default function Profile() {
                         <thead>
                           <tr className="border-b border-gray-100 bg-gray-50/60">
                             <th className="text-left font-medium text-gray-500 px-4 py-2.5 w-20">#</th>
-                            <th className="text-left font-medium text-gray-500 px-4 py-2.5 w-36">{t('profile.orderDate') || 'Дата'}</th>
-                            <th className="text-left font-medium text-gray-500 px-4 py-2.5">{t('profile.orderStatusLabel') || 'Статус'}</th>
-                            <th className="text-left font-medium text-gray-500 px-4 py-2.5">{t('profile.orderItems') || 'Состав'}</th>
-                            <th className="text-right font-medium text-gray-500 px-4 py-2.5 w-28">{t('profile.orderTotal') || 'Сумма'}</th>
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5 w-36">{t('profile.date')}</th>
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5">{t('profile.status')}</th>
+                            <th className="text-left font-medium text-gray-500 px-4 py-2.5">{t('profile.items')}</th>
+                            <th className="text-right font-medium text-gray-500 px-4 py-2.5 w-28">{t('profile.amount')}</th>
                             <th className="w-8"></th>
                           </tr>
                         </thead>
@@ -982,7 +982,7 @@ export default function Profile() {
                     {orders.length > ORDERS_PER_PAGE && (
                       <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 bg-gray-50/40">
                         <span className="text-xs text-gray-400">
-                          {(ordersPage - 1) * ORDERS_PER_PAGE + 1}–{Math.min(ordersPage * ORDERS_PER_PAGE, orders.length)} {t('profile.of') || 'из'} {orders.length}
+                          {(ordersPage - 1) * ORDERS_PER_PAGE + 1}–{Math.min(ordersPage * ORDERS_PER_PAGE, orders.length)} {t('of')} {orders.length}
                         </span>
                         <div className="flex gap-1">
                           <button
