@@ -488,39 +488,40 @@ export default function Profile() {
           {/* Profile Information */}
           <TabsContent value="profile" className="space-y-6">
             <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white">
-              {/* Gradient banner + avatar */}
-              <div className="relative h-28" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, #fbbf24 100%)' }}>
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, white 0%, transparent 60%)' }} />
-                {/* Avatar on banner bottom-left edge */}
-                <div className="absolute -bottom-10 left-6 rtl:left-auto rtl:right-6">
-                  <div className="relative">
-                    <Avatar className="h-20 w-20 border-4 border-white shadow-lg">
-                      <AvatarImage src={user.profileImageUrl || ""} alt="Profile" />
-                      <AvatarFallback className="text-xl font-bold bg-orange-100 text-orange-600">
-                        {user.firstName ? user.firstName[0].toUpperCase() : user.username[0].toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <button
-                      onClick={() => setIsAvatarDialogOpen(true)}
-                      className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-white border-2 border-gray-200 shadow flex items-center justify-center hover:bg-gray-50 transition-colors"
-                    >
-                      <Camera className="h-3.5 w-3.5 text-gray-600" />
-                    </button>
-                  </div>
+              {/* Clean profile header */}
+              <div className="px-6 pt-6 pb-5 flex items-center gap-4 border-b border-gray-50">
+                <div className="relative flex-shrink-0">
+                  <Avatar className="h-16 w-16 ring-2 ring-offset-2" style={{ '--tw-ring-color': 'var(--color-primary, #f97316)' } as React.CSSProperties}>
+                    <AvatarImage src={user.profileImageUrl || ""} alt="Profile" />
+                    <AvatarFallback className="text-lg font-bold" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary, #f97316) 12%, white)', color: 'var(--color-primary, #f97316)' }}>
+                      {user.firstName ? user.firstName[0].toUpperCase() : user.username[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <button
+                    onClick={() => setIsAvatarDialogOpen(true)}
+                    className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
+                  >
+                    <Camera className="h-3 w-3 text-gray-500" />
+                  </button>
                 </div>
-                {/* Name — right of avatar, with right padding so it never touches edge */}
-                <div className="absolute bottom-3 left-32 right-4 rtl:left-4 rtl:right-32 overflow-hidden">
-                  <p className="text-white font-semibold text-base leading-tight drop-shadow truncate">
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-semibold text-gray-900 truncate">
                     {user.firstName || user.lastName
                       ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
                       : user.username}
                   </p>
-                  <p className="text-white/70 text-xs truncate">{user.email}</p>
+                  <p className="text-sm text-gray-400 truncate mt-0.5">{user.email}</p>
+                  <div className="mt-2">
+                    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary, #f97316) 10%, white)', color: 'var(--color-primary, #f97316)' }}>
+                      <CheckCircle className="h-3 w-3" />
+                      {t('profile.regularCustomer')}
+                    </span>
+                  </div>
                 </div>
               </div>
 
               {/* Fields */}
-              <div className="pt-14 px-6 pb-6 space-y-0 divide-y divide-gray-50">
+              <div className="px-6 pb-6 space-y-0 divide-y divide-gray-50">
                 {/* Full name row */}
                 <div className="py-4 flex items-start gap-4">
                   <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-orange-50">
