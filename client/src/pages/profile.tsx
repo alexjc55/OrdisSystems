@@ -392,7 +392,7 @@ export default function Profile() {
         {/* Profile Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {/* Orders card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' }}>
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, #fb923c 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
@@ -456,48 +456,39 @@ export default function Profile() {
             <TabsTrigger value="orders" className="whitespace-nowrap px-4 py-1.5 text-sm font-medium">{t('profile.ordersTab')}</TabsTrigger>
           </TabsList>
 
-          {/* Mobile Dropdown */}
-          <div className="md:hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="w-full justify-between">
-                  <span>
-                    {activeTab === 'profile' && t('profile.profileTab')}
-                    {activeTab === 'security' && t('profile.securityTab')}
-                    {activeTab === 'addresses' && t('profile.addressesTab')}
-                    {activeTab === 'orders' && t('profile.ordersTab')}
-                  </span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-full" align="start">
-                <DropdownMenuItem onClick={() => setActiveTab('profile')}>
-                  <User className="h-4 w-4 mr-2" />
-                  {t('profile.profileTab')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('security')}>
-                  <Shield className="h-4 w-4 mr-2" />
-                  {t('profile.securityTab')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('addresses')}>
-                  <MapPin className="h-4 w-4 mr-2" />
-                  {t('profile.addressesTab')}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setActiveTab('orders')}>
-                  <Package className="h-4 w-4 mr-2" />
-                  {t('profile.ordersTab')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* Mobile tab pills */}
+          <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 pb-1 min-w-max">
+              {[
+                { value: 'profile',   icon: <User    className="h-3.5 w-3.5" />, label: t('profile.profileTab')   },
+                { value: 'security',  icon: <Shield  className="h-3.5 w-3.5" />, label: t('profile.securityTab')  },
+                { value: 'addresses', icon: <MapPin  className="h-3.5 w-3.5" />, label: t('profile.addressesTab') },
+                { value: 'orders',    icon: <Package className="h-3.5 w-3.5" />, label: t('profile.ordersTab')    },
+              ].map(tab => (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                    activeTab === tab.value
+                      ? 'text-white shadow-sm'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  style={activeTab === tab.value ? { backgroundColor: 'var(--color-primary, #f97316)' } : {}}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Profile Information */}
           <TabsContent value="profile" className="space-y-6">
             <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white">
               {/* Gradient banner + avatar */}
-              <div className="relative h-28" style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 60%, #fbbf24 100%)' }}>
+              <div className="relative h-28" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, #fbbf24 100%)' }}>
                 <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 80% 50%, white 0%, transparent 60%)' }} />
-                {/* Avatar centered on banner bottom edge */}
+                {/* Avatar on banner bottom-left edge */}
                 <div className="absolute -bottom-10 left-6 rtl:left-auto rtl:right-6">
                   <div className="relative">
                     <Avatar className="h-20 w-20 border-4 border-white shadow-lg">
@@ -514,14 +505,14 @@ export default function Profile() {
                     </button>
                   </div>
                 </div>
-                {/* Name on banner right side */}
-                <div className="absolute bottom-3 left-32 rtl:left-auto rtl:right-32">
-                  <p className="text-white font-semibold text-lg leading-tight drop-shadow">
+                {/* Name — right of avatar, with right padding so it never touches edge */}
+                <div className="absolute bottom-3 left-32 right-4 rtl:left-4 rtl:right-32 overflow-hidden">
+                  <p className="text-white font-semibold text-base leading-tight drop-shadow truncate">
                     {user.firstName || user.lastName
                       ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
                       : user.username}
                   </p>
-                  <p className="text-orange-100 text-xs">{user.email}</p>
+                  <p className="text-white/70 text-xs truncate">{user.email}</p>
                 </div>
               </div>
 
@@ -636,17 +627,18 @@ export default function Profile() {
               </div>
 
               {/* Quick actions footer */}
-              <div className="px-6 pb-6 pt-2 flex flex-wrap gap-3 border-t border-gray-50">
+              <div className="px-6 pb-6 pt-4 flex flex-col sm:flex-row gap-3 border-t border-gray-50">
                 <Button
                   onClick={() => window.location.href = '/'}
-                  className="flex-1 sm:flex-none text-white"
+                  className="w-full sm:w-auto sm:flex-1 text-white whitespace-nowrap"
                   style={{ backgroundColor: 'var(--color-primary, #f97316)' }}
                 >
                   {t('navigation.goToMenu')}
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 sm:flex-none"
+                  className="w-full sm:w-auto sm:flex-1 whitespace-nowrap"
+                  style={{ borderColor: 'var(--color-primary, #f97316)', color: 'var(--color-primary, #f97316)' }}
                   onClick={() => logoutMutation.mutate(undefined, { onSuccess: () => { navigate("/"); window.scrollTo(0, 0); } })}
                   disabled={logoutMutation.isPending}
                 >
