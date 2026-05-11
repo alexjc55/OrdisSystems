@@ -975,7 +975,6 @@ export default function Home() {
                 <div className="mt-12">
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
-                      <span className="mr-3 text-2xl">🔥</span>
                       <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
                     </div>
                     
