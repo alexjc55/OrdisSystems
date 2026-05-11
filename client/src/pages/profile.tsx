@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -908,9 +908,9 @@ export default function Profile() {
                   {t('profile.allOrdersAndStatuses')}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="block">
                 {orders && orders.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {orders.map((order) => {
                       const discounts = parseOrderDiscounts(order.customerNotes || '');
                       const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
@@ -989,7 +989,7 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0 [&>button:last-child]:text-white [&>button:last-child]:opacity-90 [&>button:last-child]:hover:opacity-100 [&>button:last-child]:drop-shadow-sm">
+          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0 [&>button:last-child]:hidden">
             <DialogHeader className="sr-only">
               <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
               <DialogDescription>{t('profile.orderFullInfo')}</DialogDescription>
@@ -998,8 +998,15 @@ export default function Profile() {
             {selectedOrder && (
               <div>
                 {/* Colorful header */}
-                <div className="bg-gradient-to-r from-orange-500 to-orange-400 p-5 rounded-t-lg text-white">
-                  <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="bg-gradient-to-r from-orange-500 to-orange-400 rounded-t-lg text-white">
+                  {/* Close button row */}
+                  <div className="flex justify-end px-3 pt-3">
+                    <DialogClose className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </DialogClose>
+                  </div>
+                  {/* Header content */}
+                  <div className="flex items-end justify-between flex-wrap gap-3 px-5 pb-5">
                     <div>
                       <div className="text-sm font-medium opacity-80">{t('profile.orderDetails')}</div>
                       <div className="text-2xl font-bold">#{selectedOrder.id}</div>
