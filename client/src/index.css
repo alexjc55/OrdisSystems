@@ -1683,6 +1683,11 @@ html[lang="ar"] .whatsapp-button {
   body:has(.bottom-nav) {
     padding-bottom: 68px;
   }
+
+  /* Prevent all modals from being hidden behind the bottom navigation bar */
+  body:has(.bottom-nav) [role="dialog"] {
+    max-height: calc(90vh - 4.5rem) !important;
+  }
 }
 
 /* Remove focus ring from bottom nav buttons */
