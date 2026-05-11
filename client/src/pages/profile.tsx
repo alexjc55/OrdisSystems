@@ -391,8 +391,8 @@ export default function Profile() {
 
         {/* Profile Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {/* Orders card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, color-mix(in srgb, var(--color-primary, #f97316) 70%, white) 100%)' }}>
+          {/* Orders card — primary color */}
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, color-mix(in srgb, var(--color-primary, #f97316) 75%, black) 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
@@ -412,8 +412,8 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Spent card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-secondary, #10b981) 0%, color-mix(in srgb, var(--color-secondary, #10b981) 70%, white) 100%)' }}>
+          {/* Spent card — primary darkened */}
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary, #f97316) 60%, black) 0%, color-mix(in srgb, var(--color-primary, #f97316) 40%, black) 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
@@ -428,8 +428,8 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Status card */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-accent, #8b5cf6) 0%, color-mix(in srgb, var(--color-accent, #8b5cf6) 70%, white) 100%)' }}>
+          {/* Status card — primary + slate mix */}
+          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary, #f97316) 40%, #1e293b) 0%, #1e293b 100%)' }}>
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
             <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
             <div className="relative flex items-start justify-between">
