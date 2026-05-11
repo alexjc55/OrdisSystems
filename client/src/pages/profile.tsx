@@ -922,54 +922,46 @@ export default function Profile() {
                         <button
                           key={order.id}
                           onClick={() => handleViewOrderDetails(order)}
-                          className="w-full text-left border border-gray-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-md transition-all bg-white group"
+                          className="w-full text-left border border-gray-200 rounded-lg px-4 py-3 hover:border-orange-300 hover:bg-orange-50/30 transition-all bg-white group"
                         >
-                          <div className="flex items-start justify-between gap-3">
-                            {/* Left: order # + date */}
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                                <ShoppingCart className="h-5 w-5 text-orange-500" />
+                          <div className="flex items-center gap-4">
+                            {/* Order # + date */}
+                            <div className="w-28 flex-shrink-0">
+                              <div className="font-bold text-gray-900 text-sm">#{order.id}</div>
+                              <div className="text-xs text-gray-400 mt-0.5">
+                                {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}
+                                {' '}
+                                {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : ''}
                               </div>
-                              <div>
-                                <div className="font-semibold text-gray-900">#{order.id}</div>
-                                <div className="text-xs text-gray-500 flex items-center gap-1">
-                                  <Calendar className="h-3 w-3" />
-                                  {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}
-                                  {' '}
-                                  {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : ''}
+                            </div>
+
+                            {/* Status */}
+                            <div className="flex-shrink-0">{getStatusBadge(order.status)}</div>
+
+                            {/* Items */}
+                            <div className="flex-1 min-w-0 text-sm text-gray-600 truncate">
+                              {order.items.slice(0, 2).map((item, idx) => (
+                                <span key={idx}>
+                                  {idx > 0 && ', '}
+                                  {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                                </span>
+                              ))}
+                              {order.items.length > 2 && (
+                                <span className="text-gray-400"> +{order.items.length - 2}</span>
+                              )}
+                            </div>
+
+                            {/* Total + arrow */}
+                            <div className="flex-shrink-0 flex items-center gap-1.5">
+                              {hasDiscounts ? (
+                                <div className="text-right">
+                                  <div className="text-xs text-gray-400 line-through">{formatCurrency(originalTotal)}</div>
+                                  <div className="font-bold text-red-600 text-sm">{formatCurrency(parseFloat(order.totalAmount))}</div>
                                 </div>
-                              </div>
-                            </div>
-
-                            {/* Center: status + items */}
-                            <div className="flex-1 min-w-0">
-                              <div className="mb-1.5">{getStatusBadge(order.status)}</div>
-                              <div className="text-sm text-gray-600 truncate">
-                                {order.items.slice(0, 2).map((item, idx) => (
-                                  <span key={idx}>
-                                    {idx > 0 && ', '}
-                                    {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                                  </span>
-                                ))}
-                                {order.items.length > 2 && (
-                                  <span className="text-gray-400"> +{order.items.length - 2}</span>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Right: total + arrow */}
-                            <div className="flex-shrink-0 flex items-center gap-2">
-                              <div className="text-right">
-                                {hasDiscounts ? (
-                                  <>
-                                    <div className="text-xs text-gray-400 line-through">{formatCurrency(originalTotal)}</div>
-                                    <div className="font-bold text-red-600">{formatCurrency(parseFloat(order.totalAmount))}</div>
-                                  </>
-                                ) : (
-                                  <div className="font-bold text-gray-900">{formatCurrency(parseFloat(order.totalAmount))}</div>
-                                )}
-                              </div>
-                              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-orange-500 transition-colors flex-shrink-0" />
+                              ) : (
+                                <div className="font-bold text-gray-900 text-sm">{formatCurrency(parseFloat(order.totalAmount))}</div>
+                              )}
+                              <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-orange-500 transition-colors" />
                             </div>
                           </div>
                         </button>
@@ -997,7 +989,7 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0">
+          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0 [&>button:last-child]:text-white [&>button:last-child]:opacity-90 [&>button:last-child]:hover:opacity-100 [&>button:last-child]:drop-shadow-sm">
             <DialogHeader className="sr-only">
               <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
               <DialogDescription>{t('profile.orderFullInfo')}</DialogDescription>
