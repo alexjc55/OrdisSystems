@@ -314,7 +314,8 @@ import {
   Printer,
   Building2,
   Pencil,
-  AlertTriangle
+  AlertTriangle,
+  Smartphone
 } from "lucide-react";
 
 // Validation schemas
@@ -10491,18 +10492,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         {/* Быстрые кнопки мобильного меню */}
         <Collapsible open={isMobileQuickButtonsOpen} onOpenChange={setIsMobileQuickButtonsOpen} className="space-y-6">
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent">
-              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
-                {isRTL ? (
-                  <>
-                    {isMobileQuickButtonsOpen ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
-                    <h3 className="text-lg font-semibold flex-1 text-right">{adminT('storeSettings.mobileQuickButtons')}</h3>
-                  </>
+            <Button
+              variant="ghost"
+              className="flex items-center justify-between w-full p-0 h-auto hover:bg-transparent"
+            >
+              <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
+                <Smartphone className="h-5 w-5 text-primary" />
+                <h3 className={`text-lg font-semibold flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.mobileQuickButtons')}</h3>
+                {isMobileQuickButtonsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-gray-500" />
                 ) : (
-                  <>
-                    <h3 className="text-lg font-semibold flex-1">{adminT('storeSettings.mobileQuickButtons')}</h3>
-                    {isMobileQuickButtonsOpen ? <ChevronUp className="h-5 w-5 text-gray-500" /> : <ChevronDown className="h-5 w-5 text-gray-500" />}
-                  </>
+                  <ChevronDown className="h-5 w-5 text-gray-500" />
                 )}
               </div>
             </Button>
