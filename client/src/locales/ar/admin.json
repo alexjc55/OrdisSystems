@@ -876,6 +876,7 @@
     "deliveryInfo": "معلومات التوصيل",
     "deliveryInfoPlaceholder": "أدخل معلومات التوصيل",
     "deliveryTimeModeLabel": "وضع وقت التوصيل",
+    "deliveryTimeDisabled": "وقت التوصيل معطل",
     "selectDeliveryTimeMode": "اختر وضع وقت التوصيل",
     "paymentInfo": "معلومات الدفع",
     "cashOnDelivery": "نقداً عند الاستلام",

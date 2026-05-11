@@ -592,6 +592,7 @@
     "deliveryInfo": "Delivery Information",
     "deliveryInfoPlaceholder": "Enter delivery information",
     "deliveryTimeModeLabel": "Delivery Time Mode",
+    "deliveryTimeDisabled": "Delivery time disabled",
     "selectDeliveryTimeMode": "Select delivery time mode",
     "paymentInfo": "Payment Information",
     "cashOnDelivery": "Cash on Delivery",

@@ -560,6 +560,7 @@
     "deliveryInfo": "מידע על משלוח",
     "deliveryInfoPlaceholder": "הכנס מידע על משלוח",
     "deliveryTimeModeLabel": "מצב זמן משלוח",
+    "deliveryTimeDisabled": "זמן המשלוח מושבת",
     "selectDeliveryTimeMode": "בחר מצב זמן משלוח",
     "paymentInfo": "מידע על תשלום",
     "cashOnDelivery": "מזומן בקבלה",

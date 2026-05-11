@@ -1059,6 +1059,7 @@
     "deliveryInfo": "Информация о доставке",
     "deliveryInfoPlaceholder": "Введите информацию о доставке",
     "deliveryTimeModeLabel": "Режим времени доставки",
+    "deliveryTimeDisabled": "Время доставки отключено",
     "selectDeliveryTimeMode": "Выберите режим времени доставки",
     "paymentInfo": "Информация об оплате",
     "cashOnDelivery": "Наличными при получении",
