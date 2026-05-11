@@ -96,3 +96,6 @@ ALTER TABLE themes
 -- 3. Поле для фото категории (если отсутствует)
 ALTER TABLE categories
   ADD COLUMN IF NOT EXISTS image VARCHAR(500);
+
+ALTER TABLE store_settings 
+ADD COLUMN IF NOT EXISTS mobile_quick_buttons jsonb DEFAULT '[]'::jsonb;
