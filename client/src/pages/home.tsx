@@ -552,6 +552,7 @@ export default function Home() {
 
   const handleCategorySelect = useCallback((categoryId: number | null) => {
     setSelectedCategoryId(categoryId);
+    setCategoryFilter(categoryId !== null && categoryId !== 0 ? categoryId.toString() : "all");
     // Don't clear search query when switching categories
     
     // Прокрутка к началу страницы при выборе категории
