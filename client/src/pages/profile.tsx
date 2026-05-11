@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { formatCurrency, formatQuantity, getUnitShortLabel, formatDeliveryTimeRange, type ProductUnit } from "@/lib/currency";
-import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload, ChevronDown } from "lucide-react";
+import { User, ShoppingCart, Clock, Package, CheckCircle, Plus, Edit, Trash2, MapPin, Lock, Shield, Camera, Upload, ChevronDown, ChevronRight, Truck, Calendar, Phone, CreditCard } from "lucide-react";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UTMLink as Link } from "@/components/UTMLink";
@@ -910,82 +910,72 @@ export default function Profile() {
               </CardHeader>
               <CardContent>
                 {orders && orders.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{t('profile.order')}</TableHead>
-                        <TableHead>{t('profile.date')}</TableHead>
-                        <TableHead>{t('profile.status')}</TableHead>
-                        <TableHead>{t('profile.items')}</TableHead>
-                        <TableHead>{t('profile.amount')}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {orders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell className="font-medium">#{order.id}</TableCell>
-                          <TableCell>
-                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}
-                            <div className="text-xs text-gray-500">
-                              {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              }) : '—'}
+                  <div className="space-y-3">
+                    {orders.map((order) => {
+                      const discounts = parseOrderDiscounts(order.customerNotes || '');
+                      const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
+                      const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
+                      const deliveryFee = parseFloat(order.deliveryFee || '0');
+                      const originalTotal = originalSubtotal + deliveryFee;
+
+                      return (
+                        <button
+                          key={order.id}
+                          onClick={() => handleViewOrderDetails(order)}
+                          className="w-full text-left border border-gray-200 rounded-xl p-4 hover:border-orange-300 hover:shadow-md transition-all bg-white group"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            {/* Left: order # + date */}
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                <ShoppingCart className="h-5 w-5 text-orange-500" />
+                              </div>
+                              <div>
+                                <div className="font-semibold text-gray-900">#{order.id}</div>
+                                <div className="text-xs text-gray-500 flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {order.createdAt ? new Date(order.createdAt).toLocaleDateString('ru-RU') : '—'}
+                                  {' '}
+                                  {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : ''}
+                                </div>
+                              </div>
                             </div>
-                          </TableCell>
-                          <TableCell>{getStatusBadge(order.status)}</TableCell>
-                          <TableCell>
-                            <div className="max-w-xs">
-                              <button
-                                onClick={() => handleViewOrderDetails(order)}
-                                className="text-left hover:text-orange-600 transition-colors"
-                              >
-                                {order.items.slice(0, 2).map((item, index) => (
-                                  <div key={index} className="text-sm">
-                                    {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')} ({formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)})
-                                  </div>
+
+                            {/* Center: status + items */}
+                            <div className="flex-1 min-w-0">
+                              <div className="mb-1.5">{getStatusBadge(order.status)}</div>
+                              <div className="text-sm text-gray-600 truncate">
+                                {order.items.slice(0, 2).map((item, idx) => (
+                                  <span key={idx}>
+                                    {idx > 0 && ', '}
+                                    {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                                  </span>
                                 ))}
                                 {order.items.length > 2 && (
-                                  <div className="text-xs text-gray-500">
-                                    +{order.items.length - 2} {t('profile.more')}
-                                  </div>
+                                  <span className="text-gray-400"> +{order.items.length - 2}</span>
                                 )}
-                                <div className="text-xs text-orange-600 mt-1">
-                                  {t('profile.details')} →
-                                </div>
-                              </button>
+                              </div>
                             </div>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {(() => {
-                              const discounts = parseOrderDiscounts(order.customerNotes || '');
-                              const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
-                              
-                              if (hasDiscounts) {
-                                // Calculate original total without discounts
-                                const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
-                                const deliveryFee = parseFloat(order.deliveryFee || '0');
-                                const originalTotal = originalSubtotal + deliveryFee;
-                                
-                                return (
-                                  <div className="flex flex-col items-end">
-                                    <span className="text-xs text-gray-500 line-through">
-                                      {formatCurrency(originalTotal)}
-                                    </span>
-                                    <span className="text-red-600 font-medium">
-                                      {formatCurrency(parseFloat(order.totalAmount))}
-                                    </span>
-                                  </div>
-                                );
-                              }
-                              
-                              return formatCurrency(parseFloat(order.totalAmount));
-                            })()}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+
+                            {/* Right: total + arrow */}
+                            <div className="flex-shrink-0 flex items-center gap-2">
+                              <div className="text-right">
+                                {hasDiscounts ? (
+                                  <>
+                                    <div className="text-xs text-gray-400 line-through">{formatCurrency(originalTotal)}</div>
+                                    <div className="font-bold text-red-600">{formatCurrency(parseFloat(order.totalAmount))}</div>
+                                  </>
+                                ) : (
+                                  <div className="font-bold text-gray-900">{formatCurrency(parseFloat(order.totalAmount))}</div>
+                                )}
+                              </div>
+                              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-orange-500 transition-colors flex-shrink-0" />
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 ) : (
                   <div className="text-center py-8">
                     <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -1007,146 +997,147 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent className="sm:max-w-4xl w-[95vw] sm:w-full max-h-[90vh] sm:max-h-[80vh] overflow-y-auto p-4 sm:p-6">
-            <DialogHeader className="mb-4">
-              <DialogTitle className="text-lg sm:text-xl">{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
-              <DialogDescription className="text-xs sm:text-sm mt-1">
-                {t('profile.orderFullInfo')} {selectedOrder?.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                }) : ''}
-              </DialogDescription>
+          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0">
+            <DialogHeader className="sr-only">
+              <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
+              <DialogDescription>{t('profile.orderFullInfo')}</DialogDescription>
             </DialogHeader>
 
             {selectedOrder && (
-              <div className="space-y-4 sm:space-y-6">
-                {/* Order Status and Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">{t('profile.orderInformation')}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">{t('profile.status')}:</span>
-                        {getStatusBadge(selectedOrder.status)}
+              <div>
+                {/* Colorful header */}
+                <div className="bg-gradient-to-r from-orange-500 to-orange-400 p-5 rounded-t-lg text-white">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                      <div className="text-sm font-medium opacity-80">{t('profile.orderDetails')}</div>
+                      <div className="text-2xl font-bold">#{selectedOrder.id}</div>
+                      <div className="text-sm opacity-80 mt-0.5">
+                        {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">{t('profile.createdDate')}:</span>
-                        <span className="text-sm">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleDateString('ru-RU') : '—'}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold">{formatCurrency(parseFloat(selectedOrder.totalAmount))}</div>
+                      <div className="mt-1">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
+                          {(() => {
+                            switch (selectedOrder.status) {
+                              case 'pending': return tShop('orderStatus.pending');
+                              case 'confirmed': return tShop('orderStatus.confirmed');
+                              case 'preparing': return tShop('orderStatus.preparing');
+                              case 'ready': return tShop('orderStatus.ready');
+                              case 'delivered': return tShop('orderStatus.delivered');
+                              case 'cancelled': return tShop('orderStatus.cancelled');
+                              default: return selectedOrder.status;
+                            }
+                          })()}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">{t('profile.paymentMethod')}:</span>
-                        <span className="text-sm">{selectedOrder.paymentMethod === 'cash' ? t('profile.cash') : t('profile.card')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 sm:p-6 space-y-4">
+                  {/* Info grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Delivery info */}
+                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 space-y-3">
+                      <div className="flex items-center gap-2 text-blue-700 font-semibold text-sm">
+                        <Truck className="h-4 w-4" />
+                        {t('profile.delivery')}
+                      </div>
+                      {selectedOrder.customerPhone && (
+                        <div className="flex items-start gap-2 text-sm">
+                          <Phone className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">{selectedOrder.customerPhone}</span>
+                        </div>
+                      )}
+                      {selectedOrder.deliveryAddress && (
+                        <div className="flex items-start gap-2 text-sm">
+                          <MapPin className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">{selectedOrder.deliveryAddress}</span>
+                        </div>
+                      )}
+                      {selectedOrder.deliveryDate && (
+                        <div className="flex items-start gap-2 text-sm">
+                          <Calendar className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">{new Date(selectedOrder.deliveryDate).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                      )}
+                      {selectedOrder.deliveryTime && (
+                        <div className="flex items-start gap-2 text-sm">
+                          <Clock className="h-4 w-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">{formatDeliveryTimeRange(selectedOrder.deliveryTime, t)}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Payment info */}
+                    <div className="bg-green-50 border border-green-100 rounded-xl p-4 space-y-3">
+                      <div className="flex items-center gap-2 text-green-700 font-semibold text-sm">
+                        <CreditCard className="h-4 w-4" />
+                        {t('profile.paymentMethod')}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CreditCard className="h-4 w-4 text-green-400 flex-shrink-0" />
+                        {selectedOrder.paymentMethod === 'cash' ? t('profile.cash') : selectedOrder.paymentMethod === 'card' ? t('profile.card') : selectedOrder.paymentMethod}
                       </div>
                       {branchesEnabled && selectedOrder.branchId && (() => {
                         const orderBranch = branches.find(b => b.id === selectedOrder.branchId);
                         if (!orderBranch) return null;
                         const branchName = getLocalizedField(orderBranch, 'name', currentLanguage as SupportedLanguage);
                         return (
-                          <div className="flex justify-between">
-                            <span className="text-sm text-gray-600">{t('branch.selectedBranch')}:</span>
-                            <span className="text-sm font-medium">{branchName}</span>
+                          <div className="flex items-center gap-2 text-sm text-gray-700">
+                            <Package className="h-4 w-4 text-green-400 flex-shrink-0" />
+                            {branchName}
                           </div>
                         );
                       })()}
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
 
-                  <Card>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm">{t('profile.delivery')}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">{t('profile.phone')}:</span>
-                        <span className="text-sm">{selectedOrder.customerPhone}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">{t('profile.address')}:</span>
-                        <span className="text-sm max-w-48 text-right">{selectedOrder.deliveryAddress}</span>
-                      </div>
-                      {selectedOrder.deliveryDate && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">{t('profile.deliveryDate')}:</span>
-                          <span className="text-sm">{new Date(selectedOrder.deliveryDate).toLocaleDateString('ru-RU')}</span>
-                        </div>
-                      )}
-                      {selectedOrder.deliveryTime && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">{t('profile.deliveryTime')}:</span>
-                          <span className="text-sm">{formatDeliveryTimeRange(selectedOrder.deliveryTime, t)}</span>
-                        </div>
-                      )}
-                      {selectedOrder.paymentMethod && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-600">{t('profile.paymentMethod')}:</span>
-                          <span className="text-sm">{selectedOrder.paymentMethod}</span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Order Items */}
-                <Card>
-                  <CardHeader className="p-3 sm:p-6 pb-2 sm:pb-3">
-                    <CardTitle className="text-sm sm:text-base">{t('profile.orderItems')}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-3 sm:p-6 pt-0">
-                    {/* Mobile view - compact cards */}
-                    <div className="sm:hidden space-y-3">
+                  {/* Order Items */}
+                  <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="bg-gray-50 px-4 py-2.5 border-b border-gray-200 flex items-center gap-2">
+                      <Package className="h-4 w-4 text-gray-500" />
+                      <span className="font-semibold text-sm text-gray-700">{t('profile.orderItems')}</span>
+                      <span className="ml-auto text-xs text-gray-400">{selectedOrder.items.length} {t('profile.items')}</span>
+                    </div>
+                    <div className="divide-y divide-gray-100">
                       {selectedOrder.items.map((item, index) => {
                         const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
                         const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
                         const originalPrice = parseFloat(item.totalPrice);
                         let finalPrice = originalPrice;
-                        
                         if (itemDiscount) {
-                          if (itemDiscount.type === 'percentage') {
-                            finalPrice = originalPrice * (1 - itemDiscount.value / 100);
-                          } else if (itemDiscount.type === 'amount') {
-                            finalPrice = Math.max(0, originalPrice - itemDiscount.value);
-                          }
+                          if (itemDiscount.type === 'percentage') finalPrice = originalPrice * (1 - itemDiscount.value / 100);
+                          else if (itemDiscount.type === 'amount') finalPrice = Math.max(0, originalPrice - itemDiscount.value);
                         }
+                        const unit = (item.product.unit || "100g") as ProductUnit;
+                        const unitLabel = unit === 'piece' ? tShop('units.perPiece') : unit === 'kg' ? tShop('units.perKg') : unit === '100ml' ? tShop('units.per100ml') : tShop('units.per100g');
 
                         return (
-                          <div key={item.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                            <div className="flex justify-between items-start mb-2">
-                              <h4 className="font-medium text-sm text-gray-900 dark:text-gray-100 flex-1 mr-2">
+                          <div key={item.id} className="flex items-center gap-3 px-4 py-3">
+                            <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0 text-xs font-bold text-orange-600">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm text-gray-900 truncate">
                                 {getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}
-                              </h4>
-                              <div className="text-right">
-                                {itemDiscount && (
-                                  <span className="text-xs text-gray-500 line-through block">
-                                    {formatCurrency(originalPrice)}
-                                  </span>
-                                )}
-                                <span className={`text-sm font-semibold ${itemDiscount ? 'text-red-600' : 'text-gray-900 dark:text-gray-100'}`}>
-                                  {formatCurrency(finalPrice)}
-                                </span>
+                              </div>
+                              <div className="text-xs text-gray-500 mt-0.5" dir="ltr">
+                                {formatQuantity(parseFloat(item.quantity), unit, tShop)} · {formatCurrency(item.product.price)} {unitLabel}
                               </div>
                             </div>
-                            <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                              <div>{formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}</div>
-                              <div>
-                                {(() => {
-                                  const unit = (item.product.unit || "100g") as ProductUnit;
-                                  switch (unit) {
-                                    case 'piece': return `${formatCurrency(item.product.price)} ${tShop('units.perPiece')}`;
-                                    case 'kg': return `${formatCurrency(item.product.price)} ${tShop('units.perKg')}`;
-                                    case '100g': return `${formatCurrency(item.product.price)} ${tShop('units.per100g')}`;
-                                    case '100ml': return `${formatCurrency(item.product.price)} ${tShop('units.per100ml')}`;
-                                    default: return formatCurrency(item.product.price);
-                                  }
-                                })()}
+                            <div className="text-right flex-shrink-0">
+                              {itemDiscount && (
+                                <div className="text-xs text-gray-400 line-through">{formatCurrency(originalPrice)}</div>
+                              )}
+                              <div className={`font-semibold text-sm ${itemDiscount ? 'text-red-600' : 'text-gray-900'}`}>
+                                {formatCurrency(finalPrice)}
                               </div>
                               {itemDiscount && (
-                                <div className="text-red-600">
-                                  {t('profile.discount')}: -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
+                                <div className="text-xs text-red-500">
+                                  -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
                                 </div>
                               )}
                             </div>
@@ -1155,156 +1146,60 @@ export default function Profile() {
                       })}
                     </div>
 
-                    {/* Desktop/Tablet view - table */}
-                    <div className="hidden sm:block overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>{t('profile.product')}</TableHead>
-                            <TableHead>{t('profile.quantity')}</TableHead>
-                            <TableHead>{t('profile.unitPrice')}</TableHead>
-                            <TableHead>{t('profile.discount')}</TableHead>
-                            <TableHead className="text-right">{t('profile.total')}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {selectedOrder.items.map((item, index) => {
-                            const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
-                            const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
-                            const originalPrice = parseFloat(item.totalPrice);
-                            let finalPrice = originalPrice;
-                            
-                            if (itemDiscount) {
-                              if (itemDiscount.type === 'percentage') {
-                                finalPrice = originalPrice * (1 - itemDiscount.value / 100);
-                              } else if (itemDiscount.type === 'amount') {
-                                finalPrice = Math.max(0, originalPrice - itemDiscount.value);
-                              }
-                            }
-
-                            return (
-                              <TableRow key={item.id}>
-                                <TableCell>
-                                  <div className="font-medium">{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</div>
-                                </TableCell>
-                                <TableCell dir="ltr">
-                                  {formatQuantity(parseFloat(item.quantity), (item.product.unit || "100g") as ProductUnit, tShop)}
-                                </TableCell>
-                                <TableCell>
-                                  {(() => {
-                                    const unit = (item.product.unit || "100g") as ProductUnit;
-                                    switch (unit) {
-                                      case 'piece': return `${formatCurrency(item.product.price)} ${tShop('units.perPiece')}`;
-                                      case 'kg': return `${formatCurrency(item.product.price)} ${tShop('units.perKg')}`;
-                                      case '100g': return `${formatCurrency(item.product.price)} ${tShop('units.per100g')}`;
-                                      case '100ml': return `${formatCurrency(item.product.price)} ${tShop('units.per100ml')}`;
-                                      default: return formatCurrency(item.product.price);
-                                    }
-                                  })()}
-                                </TableCell>
-                                <TableCell>
-                                  {itemDiscount ? (
-                                    <span className="text-red-600">
-                                      -{itemDiscount.type === 'percentage' ? `${itemDiscount.value}%` : formatCurrency(itemDiscount.value)}
-                                    </span>
-                                  ) : '—'}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex flex-col items-end">
-                                    {itemDiscount && (
-                                      <span className="text-xs text-gray-500 line-through">
-                                        {formatCurrency(originalPrice)}
-                                      </span>
-                                    )}
-                                    <span className={itemDiscount ? 'text-red-600 font-medium' : ''}>
-                                      {formatCurrency(finalPrice)}
-                                    </span>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Order Total */}
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="space-y-2">
-                      {(() => {
-                        const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
-                        const subtotal = selectedOrder.items.reduce((sum, item, index) => {
-                          let itemPrice = parseFloat(item.totalPrice);
-                          const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
-                          
-                          if (itemDiscount) {
-                            if (itemDiscount.type === 'percentage') {
-                              itemPrice = itemPrice * (1 - itemDiscount.value / 100);
-                            } else if (itemDiscount.type === 'amount') {
-                              itemPrice = Math.max(0, itemPrice - itemDiscount.value);
-                            }
-                          }
-                          return sum + itemPrice;
-                        }, 0);
-                        
-                        const deliveryFee = parseFloat(selectedOrder.deliveryFee || '0');
-                        const orderDiscount = discounts?.orderDiscount;
-                        let finalSubtotal = subtotal;
-                        
-                        if (orderDiscount) {
-                          if (orderDiscount.type === 'percentage') {
-                            finalSubtotal = subtotal * (1 - orderDiscount.value / 100);
-                          } else if (orderDiscount.type === 'amount') {
-                            finalSubtotal = Math.max(0, subtotal - orderDiscount.value);
-                          }
+                    {/* Totals inside items block */}
+                    {(() => {
+                      const discounts = parseOrderDiscounts(selectedOrder.customerNotes || '');
+                      const subtotal = selectedOrder.items.reduce((sum, item, index) => {
+                        let itemPrice = parseFloat(item.totalPrice);
+                        const itemDiscount = discounts?.itemDiscounts?.[String(index + 1)];
+                        if (itemDiscount) {
+                          if (itemDiscount.type === 'percentage') itemPrice = itemPrice * (1 - itemDiscount.value / 100);
+                          else if (itemDiscount.type === 'amount') itemPrice = Math.max(0, itemPrice - itemDiscount.value);
                         }
+                        return sum + itemPrice;
+                      }, 0);
+                      const deliveryFee = parseFloat(selectedOrder.deliveryFee || '0');
+                      const orderDiscount = discounts?.orderDiscount;
+                      let finalSubtotal = subtotal;
+                      if (orderDiscount) {
+                        if (orderDiscount.type === 'percentage') finalSubtotal = subtotal * (1 - orderDiscount.value / 100);
+                        else if (orderDiscount.type === 'amount') finalSubtotal = Math.max(0, subtotal - orderDiscount.value);
+                      }
+                      return (
+                        <div className="border-t border-gray-200 bg-gray-50 px-4 py-3 space-y-1.5">
+                          <div className="flex justify-between text-sm text-gray-600">
+                            <span>{t('profile.subtotal')}</span>
+                            <span>{formatCurrency(subtotal)}</span>
+                          </div>
+                          {orderDiscount && (
+                            <div className="flex justify-between text-sm text-red-600">
+                              <span>{t('profile.orderDiscount')}</span>
+                              <span>-{orderDiscount.type === 'percentage' ? `${orderDiscount.value}%` : formatCurrency(orderDiscount.value)}</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between text-sm text-gray-600">
+                            <span>{t('profile.delivery')}</span>
+                            <span>{formatCurrency(deliveryFee)}</span>
+                          </div>
+                          <div className="flex justify-between font-bold text-base text-gray-900 border-t border-gray-200 pt-2 mt-1">
+                            <span>{t('profile.total')}</span>
+                            <span className="text-orange-600">{formatCurrency(parseFloat(selectedOrder.totalAmount))}</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
 
-                        return (
-                          <>
-                            <div className="flex justify-between">
-                              <span>{t('profile.subtotal')}:</span>
-                              <span>{formatCurrency(subtotal)}</span>
-                            </div>
-                            {orderDiscount && (
-                              <div className="flex justify-between text-red-600">
-                                <span>{t('profile.orderDiscount')}:</span>
-                                <span>
-                                  -{orderDiscount.type === 'percentage' ? `${orderDiscount.value}%` : formatCurrency(orderDiscount.value)}
-                                  {orderDiscount.type === 'percentage' && ` (${formatCurrency(subtotal - finalSubtotal)})`}
-                                </span>
-                              </div>
-                            )}
-                            <div className="flex justify-between">
-                              <span>{t('profile.delivery')}:</span>
-                              <span>{formatCurrency(deliveryFee)}</span>
-                            </div>
-                            <div className="flex justify-between text-lg font-bold border-t pt-2">
-                              <span>{t('profile.total')}:</span>
-                              <span>{formatCurrency(parseFloat(selectedOrder.totalAmount))}</span>
-                            </div>
-                          </>
-                        );
-                      })()}
+                  {/* Customer Notes */}
+                  {selectedOrder.customerNotes &&
+                   !selectedOrder.customerNotes.includes('[DISCOUNTS:') &&
+                   !selectedOrder.customerNotes.includes('[ORDER_DATA:') && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                      <div className="text-xs font-semibold text-yellow-700 mb-1">{t('profile.orderComments')}</div>
+                      <p className="text-sm text-gray-700">{selectedOrder.customerNotes}</p>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Customer Notes */}
-                {selectedOrder.customerNotes && 
-                 !selectedOrder.customerNotes.includes('[DISCOUNTS:') && 
-                 !selectedOrder.customerNotes.includes('[ORDER_DATA:') && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-sm">{t('profile.orderComments')}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm">{selectedOrder.customerNotes}</p>
-                    </CardContent>
-                  </Card>
-                )}
+                  )}
+                </div>
               </div>
             )}
           </DialogContent>
