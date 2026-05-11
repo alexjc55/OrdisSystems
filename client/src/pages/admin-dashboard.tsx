@@ -1977,9 +1977,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                   </Popover>
                   {/* Delivery time based on store settings */}
                   {storeSettingsData?.deliveryTimeMode === 'disabled' ? (
-                    <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-100 text-gray-500">
-                      <Clock className="mr-2 h-4 w-4" />
-                      {adminT('storeSettings.deliveryTimeDisabled')}
+                    <div className="relative flex items-center">
+                      <Clock className="absolute left-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={editedOrder.deliveryTime || ""}
+                        onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                        placeholder={adminT('orders.selectTime') + ' (' + adminT('themes.optional') + ')'}
+                        className="pl-8 pr-3 py-1.5 text-sm border border-input rounded-md h-8 w-full bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                      />
                     </div>
                   ) : storeSettingsData?.deliveryTimeMode === 'half_day' ? (
                     <Select
@@ -2090,9 +2096,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                 </Popover>
                 {/* Delivery time based on store settings */}
                 {storeSettingsData?.deliveryTimeMode === 'disabled' ? (
-                  <div className="flex items-center px-3 py-2 text-sm border rounded-md bg-gray-100 text-gray-500 h-8">
-                    <Clock className="mr-2 h-4 w-4" />
-                    {adminT('storeSettings.deliveryTimeDisabled')}
+                  <div className="relative flex items-center">
+                    <Clock className="absolute left-2.5 h-4 w-4 text-gray-400 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={editedOrder.deliveryTime || ""}
+                      onChange={(e) => setEditedOrder(prev => ({ ...prev, deliveryTime: e.target.value }))}
+                      placeholder={adminT('orders.selectTime') + ' (' + adminT('themes.optional') + ')'}
+                      className="pl-8 pr-3 py-1.5 text-sm border border-input rounded-md h-8 w-full bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                    />
                   </div>
                 ) : storeSettingsData?.deliveryTimeMode === 'half_day' ? (
                   <Select
