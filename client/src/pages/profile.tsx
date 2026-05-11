@@ -79,6 +79,8 @@ export default function Profile() {
   const [isPhoneEditing, setIsPhoneEditing] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
+  const [ordersPage, setOrdersPage] = useState(1);
+  const ORDERS_PER_PAGE = 10;
   const [isAvatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
 
   // Android back button: close dialogs instead of navigating away
@@ -911,7 +913,7 @@ export default function Profile() {
               <CardContent className="block">
                 {orders && orders.length > 0 ? (
                   <div className="space-y-2">
-                    {orders.map((order) => {
+                    {orders.slice((ordersPage - 1) * ORDERS_PER_PAGE, ordersPage * ORDERS_PER_PAGE).map((order) => {
                       const discounts = parseOrderDiscounts(order.customerNotes || '');
                       const hasDiscounts = discounts && (discounts.orderDiscount || Object.keys(discounts.itemDiscounts || {}).length > 0);
                       const originalSubtotal = order.items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0);
@@ -925,7 +927,6 @@ export default function Profile() {
                           className="w-full text-left border border-gray-200 rounded-lg px-4 py-3 hover:border-orange-300 hover:bg-orange-50/30 transition-all bg-white group"
                         >
                           <div className="flex items-center gap-4">
-                            {/* Order # + date */}
                             <div className="w-28 flex-shrink-0">
                               <div className="font-bold text-gray-900 text-sm">#{order.id}</div>
                               <div className="text-xs text-gray-400 mt-0.5">
@@ -934,11 +935,7 @@ export default function Profile() {
                                 {order.createdAt ? new Date(order.createdAt).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : ''}
                               </div>
                             </div>
-
-                            {/* Status */}
                             <div className="flex-shrink-0">{getStatusBadge(order.status)}</div>
-
-                            {/* Items */}
                             <div className="flex-1 min-w-0 text-sm text-gray-600 truncate">
                               {order.items.slice(0, 2).map((item, idx) => (
                                 <span key={idx}>
@@ -950,8 +947,6 @@ export default function Profile() {
                                 <span className="text-gray-400"> +{order.items.length - 2}</span>
                               )}
                             </div>
-
-                            {/* Total + arrow */}
                             <div className="flex-shrink-0 flex items-center gap-1.5">
                               {hasDiscounts ? (
                                 <div className="text-right">
@@ -967,6 +962,40 @@ export default function Profile() {
                         </button>
                       );
                     })}
+
+                    {/* Pagination */}
+                    {orders.length > ORDERS_PER_PAGE && (
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                        <span className="text-xs text-gray-400">
+                          {(ordersPage - 1) * ORDERS_PER_PAGE + 1}–{Math.min(ordersPage * ORDERS_PER_PAGE, orders.length)} {t('profile.of') || 'из'} {orders.length}
+                        </span>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => setOrdersPage(p => Math.max(1, p - 1))}
+                            disabled={ordersPage === 1}
+                            className="px-3 py-1 text-xs rounded border border-gray-200 text-gray-600 disabled:opacity-30 hover:border-orange-300 hover:text-orange-600 transition-colors"
+                          >
+                            ←
+                          </button>
+                          {Array.from({ length: Math.ceil(orders.length / ORDERS_PER_PAGE) }, (_, i) => i + 1).map(page => (
+                            <button
+                              key={page}
+                              onClick={() => setOrdersPage(page)}
+                              className={`px-3 py-1 text-xs rounded border transition-colors ${page === ordersPage ? 'bg-orange-500 border-orange-500 text-white' : 'border-gray-200 text-gray-600 hover:border-orange-300 hover:text-orange-600'}`}
+                            >
+                              {page}
+                            </button>
+                          ))}
+                          <button
+                            onClick={() => setOrdersPage(p => Math.min(Math.ceil(orders.length / ORDERS_PER_PAGE), p + 1))}
+                            disabled={ordersPage === Math.ceil(orders.length / ORDERS_PER_PAGE)}
+                            className="px-3 py-1 text-xs rounded border border-gray-200 text-gray-600 disabled:opacity-30 hover:border-orange-300 hover:text-orange-600 transition-colors"
+                          >
+                            →
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -989,7 +1018,7 @@ export default function Profile() {
 
         {/* Order Details Modal */}
         <Dialog open={isOrderDetailsOpen} onOpenChange={setIsOrderDetailsOpen}>
-          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0 [&>button:last-child]:hidden">
+          <DialogContent className="sm:max-w-3xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-0 [&>button]:hidden">
             <DialogHeader className="sr-only">
               <DialogTitle>{t('profile.orderDetails')} #{selectedOrder?.id}</DialogTitle>
               <DialogDescription>{t('profile.orderFullInfo')}</DialogDescription>
