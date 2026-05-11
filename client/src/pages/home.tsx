@@ -984,13 +984,13 @@ export default function Home() {
                   {/* Tinted background layer */}
                   <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-primary)', opacity: 0.08 }} />
                   <div className="relative p-5 md:p-8">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-                    <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
+                  <div className="flex items-center justify-between gap-3 mb-6">
+                    <h2 className="text-lg sm:text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
 
                     {/* View all offers button */}
                     <button
                       onClick={handleViewAllOffers}
-                      className="self-start sm:self-auto flex items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
+                      className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
                       style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
                       onMouseEnter={e => { const el = e.currentTarget; el.style.backgroundColor = 'var(--color-primary)'; el.style.color = '#ffffff'; }}
                       onMouseLeave={e => { const el = e.currentTarget; el.style.backgroundColor = ''; el.style.color = 'var(--color-primary)'; }}
