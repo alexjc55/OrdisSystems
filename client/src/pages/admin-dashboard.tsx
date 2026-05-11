@@ -5456,12 +5456,12 @@ export default function AdminDashboard() {
                         <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
                           <SelectValue placeholder={adminT('products.productStatus')} />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg min-w-max">
-                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap">{adminT('products.allProducts')}</SelectItem>
-                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap">{adminT('products.availableProducts')}</SelectItem>
-                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap">{adminT('products.unavailableProducts')}</SelectItem>
-                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap">{adminT('products.preorderProducts')}</SelectItem>
-                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap">{adminT('products.productsWithDiscount')}</SelectItem>
+                        <SelectContent className="bg-white border border-gray-200 shadow-lg w-[185px]">
+                          <SelectItem value="all" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap pr-4">{adminT('products.allProducts')}</SelectItem>
+                          <SelectItem value="available" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap pr-4">{adminT('products.availableProducts')}</SelectItem>
+                          <SelectItem value="unavailable" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap pr-4">{adminT('products.unavailableProducts')}</SelectItem>
+                          <SelectItem value="out_of_stock_today" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap pr-4">{adminT('products.preorderProducts')}</SelectItem>
+                          <SelectItem value="with_discount" className="text-gray-900 hover:bg-gray-100 whitespace-nowrap pr-4">{adminT('products.productsWithDiscount')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
