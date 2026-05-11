@@ -654,7 +654,7 @@ export default function Profile() {
 
           {/* Security Tab */}
           <TabsContent value="security" className="space-y-6">
-            <Card>
+            <Card style={{ borderTopWidth: '3px', borderTopColor: 'var(--color-primary, #f97316)' }}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
@@ -718,7 +718,7 @@ export default function Profile() {
 
           {/* Address Management */}
           <TabsContent value="addresses" className="space-y-6">
-            <Card>
+            <Card style={{ borderTopWidth: '3px', borderTopColor: 'var(--color-primary, #f97316)' }}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
@@ -871,7 +871,7 @@ export default function Profile() {
 
           {/* Order History */}
           <TabsContent value="orders" className="space-y-6">
-            <Card>
+            <Card style={{ borderTopWidth: '3px', borderTopColor: 'var(--color-primary, #f97316)' }}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
