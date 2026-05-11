@@ -985,20 +985,34 @@ export default function Home() {
                   <div className="absolute inset-0 rounded-2xl" style={{ backgroundColor: 'var(--color-primary)', opacity: 0.08 }} />
                   <div className="relative p-5 md:p-8">
                   <div className="flex items-center justify-between gap-3 mb-6">
-                    <h2 className="text-lg sm:text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
+                    <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
 
-                    {/* View all offers button */}
+                    {/* Mobile: icon-only button */}
                     <button
                       onClick={handleViewAllOffers}
-                      className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
+                      className="sm:hidden flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-200"
+                      style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
+                      onMouseEnter={e => { const el = e.currentTarget; el.style.backgroundColor = 'var(--color-primary)'; el.style.color = '#ffffff'; }}
+                      onMouseLeave={e => { const el = e.currentTarget; el.style.backgroundColor = ''; el.style.color = 'var(--color-primary)'; }}
+                    >
+                      {(currentLanguage === 'he' || currentLanguage === 'ar') ?
+                        <ChevronLeft className="h-5 w-5" /> :
+                        <ChevronRight className="h-5 w-5" />
+                      }
+                    </button>
+
+                    {/* Desktop: full text button */}
+                    <button
+                      onClick={handleViewAllOffers}
+                      className="hidden sm:flex flex-shrink-0 items-center gap-2 px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
                       style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
                       onMouseEnter={e => { const el = e.currentTarget; el.style.backgroundColor = 'var(--color-primary)'; el.style.color = '#ffffff'; }}
                       onMouseLeave={e => { const el = e.currentTarget; el.style.backgroundColor = ''; el.style.color = 'var(--color-primary)'; }}
                     >
                       <span>{t('viewAllOffers')}</span>
                       {(currentLanguage === 'he' || currentLanguage === 'ar') ?
-                        <ChevronLeft className="h-4 w-4 flex-shrink-0" /> :
-                        <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                        <ChevronLeft className="h-4 w-4" /> :
+                        <ChevronRight className="h-4 w-4" />
                       }
                     </button>
                   </div>
