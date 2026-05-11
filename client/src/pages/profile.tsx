@@ -391,58 +391,61 @@ export default function Profile() {
 
         {/* Profile Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {/* Orders card — primary color */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, var(--color-primary, #f97316) 0%, color-mix(in srgb, var(--color-primary, #f97316) 75%, black) 100%)' }}>
-            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
-            <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
-            <div className="relative flex items-start justify-between">
+          {/* Orders card */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-white/80 mb-1">{t('profile.totalOrders')}</p>
-                <p className="text-4xl font-bold tracking-tight">{totalOrders}</p>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('profile.totalOrders')}</p>
+                <p className="text-4xl font-bold text-gray-900 tracking-tight">{totalOrders}</p>
                 {activeOrders > 0 && (
-                  <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-medium">
+                  <div className="mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary, #f97316) 12%, white)', color: 'var(--color-primary, #f97316)' }}>
                     <Clock className="h-3 w-3" />
                     {activeOrders} {t('profile.active')}
                   </div>
                 )}
               </div>
-              <div className="rounded-xl bg-white/20 p-2.5">
-                <ShoppingCart className="h-6 w-6" />
+              <div className="rounded-xl p-2.5" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary, #f97316) 12%, white)' }}>
+                <ShoppingCart className="h-6 w-6" style={{ color: 'var(--color-primary, #f97316)' }} />
               </div>
+            </div>
+            <div className="mt-3 h-1 rounded-full bg-gray-100">
+              <div className="h-1 rounded-full" style={{ width: `${Math.min(100, totalOrders * 5)}%`, backgroundColor: 'var(--color-primary, #f97316)' }} />
             </div>
           </div>
 
-          {/* Spent card — primary darkened */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary, #f97316) 60%, black) 0%, color-mix(in srgb, var(--color-primary, #f97316) 40%, black) 100%)' }}>
-            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
-            <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
-            <div className="relative flex items-start justify-between">
+          {/* Spent card */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-white/80 mb-1">{t('profile.totalSpent')}</p>
-                <p className="text-3xl font-bold tracking-tight leading-tight">{formatCurrency(totalSpent)}</p>
-                <p className="mt-2 text-xs text-white/70">{t('profile.allTime')}</p>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('profile.totalSpent')}</p>
+                <p className="text-3xl font-bold text-gray-900 tracking-tight leading-tight">{formatCurrency(totalSpent)}</p>
+                <p className="mt-2 text-xs text-gray-400">{t('profile.allTime')}</p>
               </div>
-              <div className="rounded-xl bg-white/20 p-2.5">
-                <CreditCard className="h-6 w-6" />
+              <div className="rounded-xl p-2.5 bg-emerald-50">
+                <CreditCard className="h-6 w-6 text-emerald-500" />
               </div>
+            </div>
+            <div className="mt-3 h-1 rounded-full bg-gray-100">
+              <div className="h-1 rounded-full bg-emerald-400" style={{ width: `${Math.min(100, totalSpent / 100)}%` }} />
             </div>
           </div>
 
-          {/* Status card — primary + slate mix */}
-          <div className="relative overflow-hidden rounded-2xl p-5 text-white shadow-md" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary, #f97316) 40%, #1e293b) 0%, #1e293b 100%)' }}>
-            <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-white/10" />
-            <div className="absolute -right-1 bottom-0 h-16 w-16 rounded-full bg-white/10" />
-            <div className="relative flex items-start justify-between">
+          {/* Status card */}
+          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm font-medium text-white/80 mb-1">{t('profile.status')}</p>
-                <p className="text-xl font-bold">{t('profile.regularCustomer')}</p>
-                <p className="mt-2 text-xs text-white/70">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('profile.status')}</p>
+                <p className="text-xl font-bold text-gray-900">{t('profile.regularCustomer')}</p>
+                <p className="mt-2 text-xs text-gray-400">
                   {t('profile.memberSince')} {new Date(user.createdAt || '').toLocaleDateString()}
                 </p>
               </div>
-              <div className="rounded-xl bg-white/20 p-2.5">
-                <CheckCircle className="h-6 w-6" />
+              <div className="rounded-xl p-2.5 bg-violet-50">
+                <CheckCircle className="h-6 w-6 text-violet-500" />
               </div>
+            </div>
+            <div className="mt-3 h-1 rounded-full bg-gray-100">
+              <div className="h-1 rounded-full bg-violet-400" style={{ width: '100%' }} />
             </div>
           </div>
         </div>
