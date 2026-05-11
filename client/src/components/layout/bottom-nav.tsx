@@ -12,7 +12,7 @@ export function BottomNav() {
   const { t } = useCommonTranslation();
   const { t: adminT } = useAdminTranslation();
   const { items, toggleCart, setCartOpen } = useCartStore();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { storeSettings } = useStoreSettings();
@@ -157,7 +157,15 @@ export function BottomNav() {
                           className="flex-1 min-w-[45%]"
                           onClick={() => {
                             setIsMenuOpen(false);
-                            window.location.href = cfg.url;
+                            if (location === '/admin') {
+                              // Already on admin — switch tab via event, no page reload
+                              const url = new URL(window.location.href);
+                              url.searchParams.set('tab', key);
+                              window.history.pushState({}, '', url.toString());
+                              window.dispatchEvent(new CustomEvent('adminQuickNav', { detail: { tab: key } }));
+                            } else {
+                              setLocation(cfg.url);
+                            }
                           }}
                         >
                           <div

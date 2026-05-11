@@ -3370,6 +3370,16 @@ export default function AdminDashboard() {
     window.history.replaceState(window.history.state || {}, '', url.toString());
   }, []);
 
+  // Listen for quick-nav events from bottom-nav (avoids full page reload)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const tab = (e as CustomEvent).detail?.tab;
+      if (tab) setActiveTab(tab);
+    };
+    window.addEventListener('adminQuickNav', handler);
+    return () => window.removeEventListener('adminQuickNav', handler);
+  }, [setActiveTab]);
+
   // Set default tab based on worker permissions - only once on mount
   useEffect(() => {
     if (user?.role === "worker" && storeSettings && activeTab === "products") {
@@ -9904,6 +9914,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         facebookConversionsApiEnabled: storeSettings?.facebookConversionsApiEnabled || false,
         facebookPixelId: storeSettings?.facebookPixelId || "",
         facebookAccessToken: storeSettings?.facebookAccessToken || "",
+        mobileQuickButtons: (storeSettings as any)?.mobileQuickButtons || [],
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
