@@ -886,6 +886,19 @@ export default function Home() {
                           );
                         })}
                       </div>
+                      <div className="flex justify-center mt-4">
+                        <Button
+                          variant="outline"
+                          className="gap-2 rounded-full px-6 border-gray-300 text-gray-600 hover:border-primary hover:text-primary transition-colors"
+                          onClick={() => handleCategorySelect(0)}
+                          asChild
+                        >
+                          <UTMLink href="/all-products">
+                            <Package className="h-4 w-4" />
+                            {t('allProducts')}
+                          </UTMLink>
+                        </Button>
+                      </div>
                     </div>
                   );
                 }
