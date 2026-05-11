@@ -1604,26 +1604,25 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
-      // All platforms: inject @media print CSS and call window.print() directly.
-      // This avoids any intermediate windows or extra taps.
-      const ps = document.createElement('style');
-      ps.id = 'order-print-style';
-      ps.textContent = `@media print {
-        @page { margin: 1cm; }
-        body > *:not(#order-print-overlay) { display: none !important; }
-        #order-print-bar { display: none !important; }
-        #order-print-overlay { position:static !important; overflow:visible !important; height:auto !important; }
-        .screen-info { display: none !important; }
-        .print-info  { display: block !important; }
-        #order-print-content td, #order-print-content th { border: 1px solid #999 !important; }
-        .info-td-no-border { border: none !important; }
-        -webkit-print-color-adjust: exact; print-color-adjust: exact;
-      }`;
-      document.head.appendChild(ps);
-      window.print();
-      const removePs = () => document.getElementById('order-print-style')?.remove();
-      window.addEventListener('afterprint', removePs, { once: true });
-      setTimeout(removePs, 30_000);
+      // Open the prepared print document in a new window so that on iOS Safari
+      // window.print() only sees the order HTML — not the admin page behind it.
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.open();
+        printWin.document.write(printDocHtml);
+        printWin.document.close();
+        let printed = false;
+        const doPrint = () => {
+          if (printed) return;
+          printed = true;
+          printWin.focus();
+          printWin.print();
+        };
+        // Primary: wait for full load then print
+        printWin.onload = doPrint;
+        // Fallback for iOS Safari where onload may not fire on document.write
+        setTimeout(doPrint, 900);
+      }
     });
   };
 
