@@ -1624,6 +1624,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
         // Fallback for iOS Safari where onload may not fire on document.write
         setTimeout(doPrint, 900);
       }
+      // Close the main-page overlay immediately — the new window is the only UI now.
+      // This avoids a double-preview situation where the user must dismiss two screens.
+      closeOverlay();
     });
   };
 
