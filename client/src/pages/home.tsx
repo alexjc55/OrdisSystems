@@ -972,7 +972,7 @@ export default function Home() {
 
               {/* Special Offers Section - hide on all products page */}
               {specialOffers.length > 0 && storeSettings?.showSpecialOffers !== false && selectedCategoryId !== 0 && (
-                <div className="mt-12">
+                <div className="mt-12 rounded-2xl px-6 pt-6" style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center">
                       <h2 className="text-2xl font-poppins font-bold text-gray-900">{t('specialOffers')}</h2>
