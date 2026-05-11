@@ -640,15 +640,19 @@ export class DatabaseStorage implements IStorage {
           )`);
         }
       } else {
-        // Global status filtering (no branch selected) - also consider per-branch overrides
+        // Global status filtering (no branch selected)
         if (status === 'available') {
-          conditions.push(eq(products.isAvailable, true));
+          conditions.push(sql`(
+            ${products.isAvailable} = true
+            AND ${products.availabilityStatus} != 'completely_unavailable'
+          )`);
         } else if (status === 'unavailable') {
           conditions.push(sql`(
             ${products.isAvailable} = false
+            OR ${products.availabilityStatus} = 'completely_unavailable'
             OR EXISTS (
               SELECT 1 FROM product_branch_availability pba
-              WHERE pba.product_id = products.id
+              WHERE pba.product_id = ${products.id}
               AND pba.availability_status = 'completely_unavailable'
             )
           )`);
@@ -657,7 +661,7 @@ export class DatabaseStorage implements IStorage {
             ${products.availabilityStatus} = 'out_of_stock_today'
             OR EXISTS (
               SELECT 1 FROM product_branch_availability pba
-              WHERE pba.product_id = products.id
+              WHERE pba.product_id = ${products.id}
               AND pba.availability_status = 'out_of_stock_today'
             )
           )`);
@@ -878,6 +882,7 @@ export class DatabaseStorage implements IStorage {
       .update(products)
       .set({ 
         availabilityStatus,
+        isAvailable: availabilityStatus !== "completely_unavailable",
         isActive: availabilityStatus !== "completely_unavailable",
         updatedAt: new Date() 
       })
