@@ -136,3 +136,26 @@ ALTER TABLE themes
   ADD COLUMN IF NOT EXISTS slide5_image_en VARCHAR(500),
   ADD COLUMN IF NOT EXISTS slide5_image_he VARCHAR(500),
   ADD COLUMN IF NOT EXISTS slide5_image_ar VARCHAR(500);
+
+
+-- Таблица themes (шаблоны оформления)
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS cart_banner_image_en varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS cart_banner_image_he varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS cart_banner_image_ar varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS bottom_banner1_url_en varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS bottom_banner1_url_he varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS bottom_banner1_url_ar varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS bottom_banner2_url_en varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS bottom_banner2_url_he varchar(500);
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS bottom_banner2_url_ar varchar(500);
+
+-- Таблица store_settings (активные настройки магазина)
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS cart_banner_image_en varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS cart_banner_image_he varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS cart_banner_image_ar varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS bottom_banner1_url_en varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS bottom_banner1_url_he varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS bottom_banner1_url_ar varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS bottom_banner2_url_en varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS bottom_banner2_url_he varchar(500);
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS bottom_banner2_url_ar varchar(500);

@@ -58,12 +58,13 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   const defaultLanguage: SupportedLanguage = (storeSettings?.defaultLanguage as SupportedLanguage) || 'ru';
   const slides: SlideData[] = [];
   for (let i = 1; i <= 5; i++) {
-    // Use language-specific image with fallback to default language image
-    const langImageField = getLangField(`slide${i}Image`, currentLanguage, defaultLanguage);
-    const defaultImageField = getLangField(`slide${i}Image`, defaultLanguage, defaultLanguage);
-    const langImage = storeSettings?.[langImageField] || storeSettings?.[`slide${i}_image_${currentLanguage}`];
-    const fallbackImage = storeSettings?.[defaultImageField] || storeSettings?.[`slide${i}_image`];
-    const slideImage = langImage || fallbackImage;
+    // Image fields use underscore format: slide1Image (ru base), slide1Image_en, slide1Image_he, slide1Image_ar
+    // (different from text fields which use camelCase: slide1TitleHe)
+    const baseImage = storeSettings?.[`slide${i}Image`] || '';
+    const langImage = currentLanguage !== defaultLanguage
+      ? (storeSettings?.[`slide${i}Image_${currentLanguage}`] || '')
+      : baseImage;
+    const slideImage = langImage || baseImage;
     if (slideImage) {
       slides.push({
         image: slideImage,
