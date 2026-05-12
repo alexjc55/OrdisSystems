@@ -752,7 +752,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     enabled: !!branchesEnabled,
   });
 
-  const { data: barcodeConfig } = useQuery({
+  const { data: barcodeConfig } = useQuery<{ enabled: boolean }>({
     queryKey: ['/api/barcode/config'],
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
@@ -2168,7 +2168,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
               <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('orders.addProduct')}
             </Button>
-            {(barcodeConfig as any)?.enabled && (
+            {barcodeConfig?.enabled && (
               <Button 
                 size="sm" 
                 onClick={() => setShowBarcodeScanner(true)}
@@ -8453,12 +8453,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   });
 
   // Fetch active theme to know the category display style
-  const { data: activeTheme } = useQuery({
+  const { data: activeTheme } = useQuery<{ categoryDisplayStyle?: string }>({
     queryKey: ['/api/themes/active'],
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
   });
-  const categoryDisplayStyle = (activeTheme as any)?.categoryDisplayStyle || 'default';
+  const categoryDisplayStyle = activeTheme?.categoryDisplayStyle || 'default';
   const showCategoryIcons = categoryDisplayStyle !== 'photo_grid';
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',

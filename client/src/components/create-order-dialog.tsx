@@ -292,7 +292,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
   });
 
   // Fetch barcode config to conditionally show scan button
-  const { data: barcodeConfig } = useQuery({
+  const { data: barcodeConfig } = useQuery<{ enabled: boolean }>({
     queryKey: ['/api/barcode/config'],
     enabled: dialogOpen,
   });
@@ -974,7 +974,7 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                         className="pl-10"
                       />
                     </div>
-                    {(barcodeConfig as any)?.enabled && (
+                    {barcodeConfig?.enabled && (
                       <Button 
                         type="button" 
                         variant="outline"
