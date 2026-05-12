@@ -8451,6 +8451,15 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     queryKey: ['/api/barcode/config'],
     queryFn: () => apiRequest('GET', '/api/barcode/config'),
   });
+
+  // Fetch active theme to know the category display style
+  const { data: activeTheme } = useQuery({
+    queryKey: ['/api/themes/active'],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+  const categoryDisplayStyle = (activeTheme as any)?.categoryDisplayStyle || 'default';
+  const showCategoryIcons = categoryDisplayStyle !== 'photo_grid';
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',
     baseFields: ['name', 'description', 'ingredients']
@@ -8877,14 +8886,16 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                             className="rounded border-gray-300"
                           />
                           <label htmlFor={`category-${category.id}`} className="text-sm cursor-pointer flex-1 flex items-center gap-2">
-                            {(category.icon && (category.icon.startsWith('/') || category.icon.startsWith('http'))) ? (
-                              <img 
-                                src={category.icon} 
-                                alt="Category icon" 
-                                className="w-4 h-4 object-cover rounded flex-shrink-0"
-                              />
-                            ) : (
-                              <span>{category.icon || '📦'}</span>
+                            {showCategoryIcons && (
+                              (category.icon && (category.icon.startsWith('/') || category.icon.startsWith('http'))) ? (
+                                <img 
+                                  src={category.icon} 
+                                  alt="Category icon" 
+                                  className="w-4 h-4 object-cover rounded flex-shrink-0"
+                                />
+                              ) : (
+                                <span>{category.icon || '📦'}</span>
+                              )
                             )}
                             {getLocalizedField(category, "name", i18n.language as SupportedLanguage)}
                           </label>
