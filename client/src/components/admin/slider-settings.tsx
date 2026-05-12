@@ -260,81 +260,107 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
               </div>
               
               {/* Show content fields only if image exists or it's slide 1 */}
-              {(hasImage || slideNumber === 1) && (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(hasImage || slideNumber === 1) && (() => {
+                // Compute language-specific field names for this slide
+                const cap = (l: string) => l.charAt(0).toUpperCase() + l.slice(1);
+                const langSuffix = currentLanguage === 'ru' ? '' : cap(currentLanguage);
+                const titleFieldName = `slide${slideNumber}Title${langSuffix}`;
+                const subtitleFieldName = `slide${slideNumber}Subtitle${langSuffix}`;
+                const buttonTextFieldName = `slide${slideNumber}ButtonText${langSuffix}`;
+                const otherLangs: SupportedLanguage[] = (['ru', 'en', 'he', 'ar'] as SupportedLanguage[]).filter(l => l !== currentLanguage);
+
+                // Get stored value for a specific language
+                const getStoredValue = (baseField: string, lang: SupportedLanguage): string => {
+                  const suffix = lang === 'ru' ? '' : cap(lang);
+                  const key = `${baseField}${suffix}` as keyof typeof defaultValues;
+                  return (defaultValues[key] as string) || '';
+                };
+
+                return (
+                  <>
+                    {/* Hidden inputs for all non-active languages so all language values always get submitted */}
+                    {otherLangs.map(lang => (
+                      <React.Fragment key={lang}>
+                        <input type="hidden" name={`slide${slideNumber}Title${lang === 'ru' ? '' : cap(lang)}`} value={getStoredValue(`slide${slideNumber}Title`, lang)} />
+                        <input type="hidden" name={`slide${slideNumber}Subtitle${lang === 'ru' ? '' : cap(lang)}`} value={getStoredValue(`slide${slideNumber}Subtitle`, lang)} />
+                        <input type="hidden" name={`slide${slideNumber}ButtonText${lang === 'ru' ? '' : cap(lang)}`} value={getStoredValue(`slide${slideNumber}ButtonText`, lang)} />
+                      </React.Fragment>
+                    ))}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor={`${titleFieldName}${id}`}>{adminT("themes.slideTitle")}</Label>
+                        <Input
+                          type="text"
+                          name={titleFieldName}
+                          id={`${titleFieldName}${id}`}
+                          defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}Title`, currentLanguage) || ''}
+                          placeholder={adminT("themes.slideTitlePlaceholder")}
+                          className="text-sm"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor={`slide${slideNumber}TextPosition${id}`}>{adminT("themes.textPosition")}</Label>
+                        <select
+                          name={`slide${slideNumber}TextPosition`}
+                          id={`slide${slideNumber}TextPosition${id}`}
+                          defaultValue={defaultValues[`slide${slideNumber}TextPosition` as keyof typeof defaultValues] as string || "left-center"}
+                          className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                        >
+                          <option value="left-top">{adminT("themes.textLeftTop")}</option>
+                          <option value="left-center">{adminT("themes.textLeftCenter")}</option>
+                          <option value="left-bottom">{adminT("themes.textLeftBottom")}</option>
+                          <option value="center-top">{adminT("themes.textCenterTop")}</option>
+                          <option value="center-center">{adminT("themes.textCenterCenter")}</option>
+                          <option value="center-bottom">{adminT("themes.textCenterBottom")}</option>
+                          <option value="right-top">{adminT("themes.textRightTop")}</option>
+                          <option value="right-center">{adminT("themes.textRightCenter")}</option>
+                          <option value="right-bottom">{adminT("themes.textRightBottom")}</option>
+                        </select>
+                      </div>
+                    </div>
+                    
                     <div className="space-y-2">
-                      <Label htmlFor={`slide${slideNumber}Title${id}`}>{adminT("themes.slideTitle")}</Label>
-                      <Input
-                        type="text"
-                        name={`slide${slideNumber}Title`}
-                        id={`slide${slideNumber}Title${id}`}
-                        defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}Title`, currentLanguage) || ''}
-                        placeholder={adminT("themes.slideTitlePlaceholder")}
+                      <Label htmlFor={`${subtitleFieldName}${id}`}>{adminT("themes.slideSubtitle")}</Label>
+                      <Textarea
+                        name={subtitleFieldName}
+                        id={`${subtitleFieldName}${id}`}
+                        defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}Subtitle`, currentLanguage) || ''}
+                        placeholder={adminT("themes.slideSubtitlePlaceholder")}
+                        rows={2}
                         className="text-sm"
                       />
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label htmlFor={`slide${slideNumber}TextPosition${id}`}>{adminT("themes.textPosition")}</Label>
-                      <select
-                        name={`slide${slideNumber}TextPosition`}
-                        id={`slide${slideNumber}TextPosition${id}`}
-                        defaultValue={defaultValues[`slide${slideNumber}TextPosition` as keyof typeof defaultValues] as string || "left-center"}
-                        className="w-full px-3 py-2 border rounded-md bg-white text-sm"
-                      >
-                        <option value="left-top">{adminT("themes.textLeftTop")}</option>
-                        <option value="left-center">{adminT("themes.textLeftCenter")}</option>
-                        <option value="left-bottom">{adminT("themes.textLeftBottom")}</option>
-                        <option value="center-top">{adminT("themes.textCenterTop")}</option>
-                        <option value="center-center">{adminT("themes.textCenterCenter")}</option>
-                        <option value="center-bottom">{adminT("themes.textCenterBottom")}</option>
-                        <option value="right-top">{adminT("themes.textRightTop")}</option>
-                        <option value="right-center">{adminT("themes.textRightCenter")}</option>
-                        <option value="right-bottom">{adminT("themes.textRightBottom")}</option>
-                      </select>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor={`${buttonTextFieldName}${id}`}>{adminT("themes.buttonText")}</Label>
+                        <Input
+                          type="text"
+                          name={buttonTextFieldName}
+                          id={`${buttonTextFieldName}${id}`}
+                          defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}ButtonText`, currentLanguage) || ''}
+                          placeholder={adminT("themes.buttonTextPlaceholder")}
+                          className="text-sm"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor={`slide${slideNumber}ButtonLink${id}`}>{adminT("themes.buttonLink")}</Label>
+                        <Input
+                          type="text"
+                          name={`slide${slideNumber}ButtonLink`}
+                          id={`slide${slideNumber}ButtonLink${id}`}
+                          defaultValue={defaultValues[`slide${slideNumber}ButtonLink` as keyof typeof defaultValues] as string || ''}
+                          placeholder={adminT("themes.buttonLinkPlaceholder")}
+                          className="text-sm"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor={`slide${slideNumber}Subtitle${id}`}>{adminT("themes.slideSubtitle")}</Label>
-                    <Textarea
-                      name={`slide${slideNumber}Subtitle`}
-                      id={`slide${slideNumber}Subtitle${id}`}
-                      defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}Subtitle`, currentLanguage) || ''}
-                      placeholder={adminT("themes.slideSubtitlePlaceholder")}
-                      rows={2}
-                      className="text-sm"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor={`slide${slideNumber}ButtonText${id}`}>{adminT("themes.buttonText")}</Label>
-                      <Input
-                        type="text"
-                        name={`slide${slideNumber}ButtonText`}
-                        id={`slide${slideNumber}ButtonText${id}`}
-                        defaultValue={getLocalizedFieldForAdmin(defaultValues, `slide${slideNumber}ButtonText`, currentLanguage) || ''}
-                        placeholder={adminT("themes.buttonTextPlaceholder")}
-                        className="text-sm"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor={`slide${slideNumber}ButtonLink${id}`}>{adminT("themes.buttonLink")}</Label>
-                      <Input
-                        type="text"
-                        name={`slide${slideNumber}ButtonLink`}
-                        id={`slide${slideNumber}ButtonLink${id}`}
-                        defaultValue={defaultValues[`slide${slideNumber}ButtonLink` as keyof typeof defaultValues] as string || ''}
-                        placeholder={adminT("themes.buttonLinkPlaceholder")}
-                        className="text-sm"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                  </>
+                );
+              })()}
             </div>
           );
         })}

@@ -165,15 +165,18 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       if (themeData.whatsappMessageHe !== undefined) updateFields.push(`whatsapp_default_message_he = '${(themeData.whatsappMessageHe || '').replace(/'/g, "''")}'`);
       if (themeData.whatsappMessageAr !== undefined) updateFields.push(`whatsapp_default_message_ar = '${(themeData.whatsappMessageAr || '').replace(/'/g, "''")}'`);
 
+      // Trigger slider update if ANY slider-related field was submitted from the form
       const hasSliderContent = () => {
+        if (themeData.sliderAutoplay !== undefined) return true;
+        if (themeData.sliderSpeed !== undefined) return true;
+        if (themeData.sliderEffect !== undefined) return true;
         for (let i = 1; i <= 5; i++) {
-          if (themeData[`slide${i}Image`] && themeData[`slide${i}Image`].trim() !== '') return true;
-          if (themeData[`slide${i}Title`] && themeData[`slide${i}Title`].trim() !== '') return true;
-          if (themeData[`slide${i}Subtitle`] && themeData[`slide${i}Subtitle`].trim() !== '') return true;
+          if (`slide${i}Image` in themeData) return true;
+          if (`slide${i}Title` in themeData) return true;
+          if (`slide${i}TitleEn` in themeData) return true;
+          if (`slide${i}TitleHe` in themeData) return true;
+          if (`slide${i}TitleAr` in themeData) return true;
         }
-        if (themeData.sliderAutoplay !== undefined && themeData.sliderAutoplay !== false) return true;
-        if (themeData.sliderSpeed !== undefined && themeData.sliderSpeed !== 5000) return true;
-        if (themeData.sliderEffect !== undefined && themeData.sliderEffect !== 'fade') return true;
         return false;
       };
 
@@ -188,8 +191,17 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
           if (themeData[`slide${i}Image_he`] !== undefined) updateFields.push(`slide${i}_image_he = '${(themeData[`slide${i}Image_he`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Image_ar`] !== undefined) updateFields.push(`slide${i}_image_ar = '${(themeData[`slide${i}Image_ar`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}TitleEn`] !== undefined) updateFields.push(`slide${i}_title_en = '${(themeData[`slide${i}TitleEn`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}TitleHe`] !== undefined) updateFields.push(`slide${i}_title_he = '${(themeData[`slide${i}TitleHe`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}TitleAr`] !== undefined) updateFields.push(`slide${i}_title_ar = '${(themeData[`slide${i}TitleAr`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Subtitle`] !== undefined) updateFields.push(`slide${i}_subtitle = '${(themeData[`slide${i}Subtitle`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}SubtitleEn`] !== undefined) updateFields.push(`slide${i}_subtitle_en = '${(themeData[`slide${i}SubtitleEn`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}SubtitleHe`] !== undefined) updateFields.push(`slide${i}_subtitle_he = '${(themeData[`slide${i}SubtitleHe`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}SubtitleAr`] !== undefined) updateFields.push(`slide${i}_subtitle_ar = '${(themeData[`slide${i}SubtitleAr`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}ButtonText`] !== undefined) updateFields.push(`slide${i}_button_text = '${(themeData[`slide${i}ButtonText`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}ButtonTextEn`] !== undefined) updateFields.push(`slide${i}_button_text_en = '${(themeData[`slide${i}ButtonTextEn`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}ButtonTextHe`] !== undefined) updateFields.push(`slide${i}_button_text_he = '${(themeData[`slide${i}ButtonTextHe`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}ButtonTextAr`] !== undefined) updateFields.push(`slide${i}_button_text_ar = '${(themeData[`slide${i}ButtonTextAr`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}ButtonLink`] !== undefined) updateFields.push(`slide${i}_button_link = '${(themeData[`slide${i}ButtonLink`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}TextPosition`] !== undefined) updateFields.push(`slide${i}_text_position = '${themeData[`slide${i}TextPosition`] || 'left'}'`);
         }
