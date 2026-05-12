@@ -59,7 +59,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   // Extract slides data from storeSettings with proper field mapping and multilingual support
   const slides: SlideData[] = [];
   for (let i = 1; i <= 5; i++) {
-    // Use language-specific image with fallback to base (Russian)
+    // Use language-specific image with fallback to base image (no language suffix)
     const langSuffix = currentLanguage !== 'ru' ? `_${currentLanguage}` : '';
     const langImage = langSuffix
       ? storeSettings?.[`slide${i}Image${langSuffix}`] || storeSettings?.[`slide${i}_image${langSuffix}`]
