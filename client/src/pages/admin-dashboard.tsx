@@ -8437,6 +8437,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   
   const { toast } = useToast();
   const { i18n } = useTranslation();
+
+  // Check if barcode system is enabled to conditionally show barcode field
+  const { data: barcodeConfig } = useQuery({
+    queryKey: ['/api/barcode/config'],
+    queryFn: () => apiRequest('GET', '/api/barcode/config'),
+  });
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',
     baseFields: ['name', 'description', 'ingredients']
@@ -8963,30 +8969,32 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="barcode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('barcode.field')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={adminT('barcode.fieldDescription')}
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        handleFieldChange('barcode', e.target.value, false);
-                      }}
-                      className="text-sm"
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs text-gray-500">
-                    {adminT('barcode.fieldDescription')}
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+            {barcodeConfig?.enabled && (
+              <FormField
+                control={form.control}
+                name="barcode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm">{adminT('barcode.field')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={adminT('barcode.fieldDescription')}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          handleFieldChange('barcode', e.target.value, false);
+                        }}
+                        className="text-sm"
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs text-gray-500">
+                      {adminT('barcode.fieldDescription')}
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Global availability: only shown when branches are disabled — otherwise branch section handles it */}
             {!branchesEnabled && (
