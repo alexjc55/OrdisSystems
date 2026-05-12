@@ -1081,24 +1081,24 @@ export default function ThemeManager() {
       // Cart banner settings
       showCartBanner: editVisualSettings.showCartBanner,
       cartBannerType: editCartBannerType,
-      cartBannerImage: editCartBannerImage,
-      cartBannerImage_en: formData.get("cartBannerImage_en") as string || "",
-      cartBannerImage_he: formData.get("cartBannerImage_he") as string || "",
-      cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || "",
+      cartBannerImage: formData.get("cartBannerImage") as string || themeImages.cartBannerImage,
+      cartBannerImage_en: formData.get("cartBannerImage_en") as string || themeImages.cartBannerImage_en,
+      cartBannerImage_he: formData.get("cartBannerImage_he") as string || themeImages.cartBannerImage_he,
+      cartBannerImage_ar: formData.get("cartBannerImage_ar") as string || themeImages.cartBannerImage_ar,
       ...createLanguageSpecificUpdate(formData, "cartBannerText", currentLanguage),
       cartBannerBgColor: formData.get("cartBannerBgColor") as string || "#f97316",
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
       showBottomBanners: editVisualSettings.showBottomBanners,
-      bottomBanner1Url: editBottomBanner1Url,
-      bottomBanner1Url_en: formData.get("bottomBanner1Url_en") as string || "",
-      bottomBanner1Url_he: formData.get("bottomBanner1Url_he") as string || "",
-      bottomBanner1Url_ar: formData.get("bottomBanner1Url_ar") as string || "",
+      bottomBanner1Url: formData.get("bottomBanner1Url") as string || themeImages.bottomBanner1Url,
+      bottomBanner1Url_en: formData.get("bottomBanner1Url_en") as string || themeImages.bottomBanner1Url_en,
+      bottomBanner1Url_he: formData.get("bottomBanner1Url_he") as string || themeImages.bottomBanner1Url_he,
+      bottomBanner1Url_ar: formData.get("bottomBanner1Url_ar") as string || themeImages.bottomBanner1Url_ar,
       bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
-      bottomBanner2Url: editBottomBanner2Url,
-      bottomBanner2Url_en: formData.get("bottomBanner2Url_en") as string || "",
-      bottomBanner2Url_he: formData.get("bottomBanner2Url_he") as string || "",
-      bottomBanner2Url_ar: formData.get("bottomBanner2Url_ar") as string || "",
+      bottomBanner2Url: formData.get("bottomBanner2Url") as string || themeImages.bottomBanner2Url,
+      bottomBanner2Url_en: formData.get("bottomBanner2Url_en") as string || themeImages.bottomBanner2Url_en,
+      bottomBanner2Url_he: formData.get("bottomBanner2Url_he") as string || themeImages.bottomBanner2Url_he,
+      bottomBanner2Url_ar: formData.get("bottomBanner2Url_ar") as string || themeImages.bottomBanner2Url_ar,
       bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
@@ -1800,14 +1800,19 @@ export default function ThemeManager() {
 
                           {createCartBannerType === 'image' && (
                             <div>
-                              <Label htmlFor="cartBannerImageCreate" className="text-sm font-medium">{adminT("themes.bannerImage")}</Label>
+                              <Label className="text-sm font-medium">{adminT("themes.bannerImage")} ({i18n.language.toUpperCase()})</Label>
                               <ImageUpload
-                                value={createCartBannerImage}
+                                value={i18n.language === 'ru' ? themeImages.cartBannerImage : (themeImages as any)[`cartBannerImage_${i18n.language}`] || ''}
                                 onChange={(url: string) => {
-                                  setCreateCartBannerImage(url);
+                                  const fieldName = i18n.language === 'ru' ? 'cartBannerImage' : `cartBannerImage_${i18n.language}`;
+                                  setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                                 }}
                               />
-                              <input type="hidden" name="cartBannerImage" value={createCartBannerImage} />
+                              {i18n.language !== 'ru' && <input type="hidden" name="cartBannerImage" value={themeImages.cartBannerImage} />}
+                              {i18n.language !== 'en' && <input type="hidden" name="cartBannerImage_en" value={themeImages.cartBannerImage_en} />}
+                              {i18n.language !== 'he' && <input type="hidden" name="cartBannerImage_he" value={themeImages.cartBannerImage_he} />}
+                              {i18n.language !== 'ar' && <input type="hidden" name="cartBannerImage_ar" value={themeImages.cartBannerImage_ar} />}
+                              <input type="hidden" name={i18n.language === 'ru' ? 'cartBannerImage' : `cartBannerImage_${i18n.language}`} value={i18n.language === 'ru' ? themeImages.cartBannerImage : (themeImages as any)[`cartBannerImage_${i18n.language}`] || ''} />
                               <div className="text-xs text-gray-500 mt-1">
                                 {adminT("themes.bannerImageSize")}
                               </div>
@@ -1839,14 +1844,19 @@ export default function ThemeManager() {
                             <div className="space-y-3">
                               <h6 className="text-sm font-medium text-gray-700">{adminT("themes.firstBanner")}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner1UrlCreate" className="text-sm">{adminT("themes.bannerImage")}</Label>
+                                <Label className="text-sm">{adminT("themes.bannerImage")} ({i18n.language.toUpperCase()})</Label>
                                 <ImageUpload
-                                  value={createBottomBanner1Url}
+                                  value={i18n.language === 'ru' ? themeImages.bottomBanner1Url : (themeImages as any)[`bottomBanner1Url_${i18n.language}`] || ''}
                                   onChange={(url: string) => {
-                                    setCreateBottomBanner1Url(url);
+                                    const fieldName = i18n.language === 'ru' ? 'bottomBanner1Url' : `bottomBanner1Url_${i18n.language}`;
+                                    setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner1Url" value={createBottomBanner1Url} />
+                                {i18n.language !== 'ru' && <input type="hidden" name="bottomBanner1Url" value={themeImages.bottomBanner1Url} />}
+                                {i18n.language !== 'en' && <input type="hidden" name="bottomBanner1Url_en" value={themeImages.bottomBanner1Url_en} />}
+                                {i18n.language !== 'he' && <input type="hidden" name="bottomBanner1Url_he" value={themeImages.bottomBanner1Url_he} />}
+                                {i18n.language !== 'ar' && <input type="hidden" name="bottomBanner1Url_ar" value={themeImages.bottomBanner1Url_ar} />}
+                                <input type="hidden" name={i18n.language === 'ru' ? 'bottomBanner1Url' : `bottomBanner1Url_${i18n.language}`} value={i18n.language === 'ru' ? themeImages.bottomBanner1Url : (themeImages as any)[`bottomBanner1Url_${i18n.language}`] || ''} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner1LinkCreate" className="text-sm">{adminT("themes.link")}</Label>
@@ -1865,14 +1875,19 @@ export default function ThemeManager() {
                             <div className="space-y-3">
                               <h6 className="text-sm font-medium text-gray-700">{adminT("themes.secondBanner")}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner2UrlCreate" className="text-sm">{adminT("themes.bannerImage")}</Label>
+                                <Label className="text-sm">{adminT("themes.bannerImage")} ({i18n.language.toUpperCase()})</Label>
                                 <ImageUpload
-                                  value={createBottomBanner2Url}
+                                  value={i18n.language === 'ru' ? themeImages.bottomBanner2Url : (themeImages as any)[`bottomBanner2Url_${i18n.language}`] || ''}
                                   onChange={(url: string) => {
-                                    setCreateBottomBanner2Url(url);
+                                    const fieldName = i18n.language === 'ru' ? 'bottomBanner2Url' : `bottomBanner2Url_${i18n.language}`;
+                                    setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner2Url" value={createBottomBanner2Url} />
+                                {i18n.language !== 'ru' && <input type="hidden" name="bottomBanner2Url" value={themeImages.bottomBanner2Url} />}
+                                {i18n.language !== 'en' && <input type="hidden" name="bottomBanner2Url_en" value={themeImages.bottomBanner2Url_en} />}
+                                {i18n.language !== 'he' && <input type="hidden" name="bottomBanner2Url_he" value={themeImages.bottomBanner2Url_he} />}
+                                {i18n.language !== 'ar' && <input type="hidden" name="bottomBanner2Url_ar" value={themeImages.bottomBanner2Url_ar} />}
+                                <input type="hidden" name={i18n.language === 'ru' ? 'bottomBanner2Url' : `bottomBanner2Url_${i18n.language}`} value={i18n.language === 'ru' ? themeImages.bottomBanner2Url : (themeImages as any)[`bottomBanner2Url_${i18n.language}`] || ''} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner2LinkCreate" className="text-sm">{adminT("themes.link")}</Label>
@@ -2676,14 +2691,19 @@ export default function ThemeManager() {
 
                           {editCartBannerType === 'image' && (
                             <div>
-                              <Label htmlFor="cartBannerImage" className="text-sm font-medium">{adminT("themes.bannerImageField")}</Label>
+                              <Label className="text-sm font-medium">{adminT("themes.bannerImageField")} ({i18n.language.toUpperCase()})</Label>
                               <ImageUpload
-                                value={editCartBannerImage}
+                                value={i18n.language === 'ru' ? themeImages.cartBannerImage : (themeImages as any)[`cartBannerImage_${i18n.language}`] || ''}
                                 onChange={(url: string) => {
-                                  setEditCartBannerImage(url);
+                                  const fieldName = i18n.language === 'ru' ? 'cartBannerImage' : `cartBannerImage_${i18n.language}`;
+                                  setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                                 }}
                               />
-                              <input type="hidden" name="cartBannerImage" value={editCartBannerImage} />
+                              {i18n.language !== 'ru' && <input type="hidden" name="cartBannerImage" value={themeImages.cartBannerImage} />}
+                              {i18n.language !== 'en' && <input type="hidden" name="cartBannerImage_en" value={themeImages.cartBannerImage_en} />}
+                              {i18n.language !== 'he' && <input type="hidden" name="cartBannerImage_he" value={themeImages.cartBannerImage_he} />}
+                              {i18n.language !== 'ar' && <input type="hidden" name="cartBannerImage_ar" value={themeImages.cartBannerImage_ar} />}
+                              <input type="hidden" name={i18n.language === 'ru' ? 'cartBannerImage' : `cartBannerImage_${i18n.language}`} value={i18n.language === 'ru' ? themeImages.cartBannerImage : (themeImages as any)[`cartBannerImage_${i18n.language}`] || ''} />
                               <div className="text-xs text-gray-500 mt-1">
                                 {adminT("themes.bannerImageSize")}
                               </div>
@@ -2715,14 +2735,19 @@ export default function ThemeManager() {
                             <div className="space-y-3">
                               <h6 className="text-sm font-medium text-gray-700">{adminT('themes.firstBanner')}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner1Url" className="text-sm">{adminT('themes.imageField')}</Label>
+                                <Label className="text-sm">{adminT('themes.imageField')} ({i18n.language.toUpperCase()})</Label>
                                 <ImageUpload
-                                  value={editBottomBanner1Url}
+                                  value={i18n.language === 'ru' ? themeImages.bottomBanner1Url : (themeImages as any)[`bottomBanner1Url_${i18n.language}`] || ''}
                                   onChange={(url: string) => {
-                                    setEditBottomBanner1Url(url);
+                                    const fieldName = i18n.language === 'ru' ? 'bottomBanner1Url' : `bottomBanner1Url_${i18n.language}`;
+                                    setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner1Url" value={editBottomBanner1Url} />
+                                {i18n.language !== 'ru' && <input type="hidden" name="bottomBanner1Url" value={themeImages.bottomBanner1Url} />}
+                                {i18n.language !== 'en' && <input type="hidden" name="bottomBanner1Url_en" value={themeImages.bottomBanner1Url_en} />}
+                                {i18n.language !== 'he' && <input type="hidden" name="bottomBanner1Url_he" value={themeImages.bottomBanner1Url_he} />}
+                                {i18n.language !== 'ar' && <input type="hidden" name="bottomBanner1Url_ar" value={themeImages.bottomBanner1Url_ar} />}
+                                <input type="hidden" name={i18n.language === 'ru' ? 'bottomBanner1Url' : `bottomBanner1Url_${i18n.language}`} value={i18n.language === 'ru' ? themeImages.bottomBanner1Url : (themeImages as any)[`bottomBanner1Url_${i18n.language}`] || ''} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner1Link" className="text-sm">{adminT('themes.linkField')}</Label>
@@ -2741,14 +2766,19 @@ export default function ThemeManager() {
                             <div className="space-y-3">
                               <h6 className="text-sm font-medium text-gray-700">{adminT('themes.secondBanner')}</h6>
                               <div>
-                                <Label htmlFor="bottomBanner2Url" className="text-sm">{adminT('themes.imageField')}</Label>
+                                <Label className="text-sm">{adminT('themes.imageField')} ({i18n.language.toUpperCase()})</Label>
                                 <ImageUpload
-                                  value={editBottomBanner2Url}
+                                  value={i18n.language === 'ru' ? themeImages.bottomBanner2Url : (themeImages as any)[`bottomBanner2Url_${i18n.language}`] || ''}
                                   onChange={(url: string) => {
-                                    setEditBottomBanner2Url(url);
+                                    const fieldName = i18n.language === 'ru' ? 'bottomBanner2Url' : `bottomBanner2Url_${i18n.language}`;
+                                    setThemeImages(prev => ({ ...prev, [fieldName]: url }));
                                   }}
                                 />
-                                <input type="hidden" name="bottomBanner2Url" value={editBottomBanner2Url} />
+                                {i18n.language !== 'ru' && <input type="hidden" name="bottomBanner2Url" value={themeImages.bottomBanner2Url} />}
+                                {i18n.language !== 'en' && <input type="hidden" name="bottomBanner2Url_en" value={themeImages.bottomBanner2Url_en} />}
+                                {i18n.language !== 'he' && <input type="hidden" name="bottomBanner2Url_he" value={themeImages.bottomBanner2Url_he} />}
+                                {i18n.language !== 'ar' && <input type="hidden" name="bottomBanner2Url_ar" value={themeImages.bottomBanner2Url_ar} />}
+                                <input type="hidden" name={i18n.language === 'ru' ? 'bottomBanner2Url' : `bottomBanner2Url_${i18n.language}`} value={i18n.language === 'ru' ? themeImages.bottomBanner2Url : (themeImages as any)[`bottomBanner2Url_${i18n.language}`] || ''} />
                               </div>
                               <div>
                                 <Label htmlFor="bottomBanner2Link" className="text-sm">{adminT('themes.linkField')}</Label>

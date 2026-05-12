@@ -365,10 +365,10 @@ export default function CartSidebar() {
                     </div>
                   )}
                   
-                  {storeSettings.cartBannerType === "image" && storeSettings.cartBannerImage && (
+                  {storeSettings.cartBannerType === "image" && (getLocalizedField(storeSettings, 'cartBannerImage', currentLanguage as SupportedLanguage, 'ru') || storeSettings.cartBannerImage) && (
                     <div className="rounded-xl overflow-hidden shadow-md">
                       <img 
-                        src={storeSettings.cartBannerImage} 
+                        src={getLocalizedField(storeSettings, 'cartBannerImage', currentLanguage as SupportedLanguage, 'ru') || storeSettings.cartBannerImage} 
                         alt="Cart Banner"
                         className="w-full h-auto max-h-[120px] object-cover"
                         style={{ maxHeight: "120px" }}

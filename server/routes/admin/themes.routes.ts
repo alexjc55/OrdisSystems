@@ -138,6 +138,9 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       if (themeData.showCartBanner !== undefined) updateFields.push(`show_cart_banner = ${themeData.showCartBanner}`);
       if (themeData.cartBannerType !== undefined) updateFields.push(`cart_banner_type = '${themeData.cartBannerType || 'text'}'`);
       if (themeData.cartBannerImage !== undefined) updateFields.push(`cart_banner_image = '${(themeData.cartBannerImage || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).cartBannerImage_en !== undefined) updateFields.push(`cart_banner_image_en = '${((themeData as any).cartBannerImage_en || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).cartBannerImage_he !== undefined) updateFields.push(`cart_banner_image_he = '${((themeData as any).cartBannerImage_he || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).cartBannerImage_ar !== undefined) updateFields.push(`cart_banner_image_ar = '${((themeData as any).cartBannerImage_ar || '').replace(/'/g, "''")}'`);
       if (themeData.cartBannerText !== undefined) updateFields.push(`cart_banner_text = '${(themeData.cartBannerText || '').replace(/'/g, "''")}'`);
       if (themeData.cartBannerTextEn !== undefined) updateFields.push(`cart_banner_text_en = '${(themeData.cartBannerTextEn || '').replace(/'/g, "''")}'`);
       if (themeData.cartBannerTextHe !== undefined) updateFields.push(`cart_banner_text_he = '${(themeData.cartBannerTextHe || '').replace(/'/g, "''")}'`);
@@ -147,8 +150,14 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
 
       if (themeData.showBottomBanners !== undefined) updateFields.push(`show_bottom_banners = ${themeData.showBottomBanners}`);
       if (themeData.bottomBanner1Url !== undefined) updateFields.push(`bottom_banner1_url = '${themeData.bottomBanner1Url || ''}'`);
+      if ((themeData as any).bottomBanner1Url_en !== undefined) updateFields.push(`bottom_banner1_url_en = '${(themeData as any).bottomBanner1Url_en || ''}'`);
+      if ((themeData as any).bottomBanner1Url_he !== undefined) updateFields.push(`bottom_banner1_url_he = '${(themeData as any).bottomBanner1Url_he || ''}'`);
+      if ((themeData as any).bottomBanner1Url_ar !== undefined) updateFields.push(`bottom_banner1_url_ar = '${(themeData as any).bottomBanner1Url_ar || ''}'`);
       if (themeData.bottomBanner1Link !== undefined) updateFields.push(`bottom_banner1_link = '${themeData.bottomBanner1Link || ''}'`);
       if (themeData.bottomBanner2Url !== undefined) updateFields.push(`bottom_banner2_url = '${themeData.bottomBanner2Url || ''}'`);
+      if ((themeData as any).bottomBanner2Url_en !== undefined) updateFields.push(`bottom_banner2_url_en = '${(themeData as any).bottomBanner2Url_en || ''}'`);
+      if ((themeData as any).bottomBanner2Url_he !== undefined) updateFields.push(`bottom_banner2_url_he = '${(themeData as any).bottomBanner2Url_he || ''}'`);
+      if ((themeData as any).bottomBanner2Url_ar !== undefined) updateFields.push(`bottom_banner2_url_ar = '${(themeData as any).bottomBanner2Url_ar || ''}'`);
       if (themeData.bottomBanner2Link !== undefined) updateFields.push(`bottom_banner2_link = '${themeData.bottomBanner2Link || ''}'`);
 
       if (themeData.showBannerImage !== undefined) updateFields.push(`show_banner_image = ${themeData.showBannerImage}`);
@@ -273,11 +282,14 @@ router.post('/admin/themes/:id/activate', isAuthenticated, async (req: any, res)
     const cartBannerFields = [
       `show_cart_banner = ${theme.showCartBanner ?? false}`,
       `cart_banner_type = '${theme.cartBannerType || 'text'}'`,
-      `cart_banner_image = '${theme.cartBannerImage || ''}'`,
-      `cart_banner_text = '${theme.cartBannerText || ''}'`,
-      `cart_banner_text_en = '${theme.cartBannerTextEn || ''}'`,
-      `cart_banner_text_he = '${theme.cartBannerTextHe || ''}'`,
-      `cart_banner_text_ar = '${theme.cartBannerTextAr || ''}'`,
+      `cart_banner_image = '${(theme.cartBannerImage || '').replace(/'/g, "''")}'`,
+      `cart_banner_image_en = '${((theme as any).cartBannerImage_en || '').replace(/'/g, "''")}'`,
+      `cart_banner_image_he = '${((theme as any).cartBannerImage_he || '').replace(/'/g, "''")}'`,
+      `cart_banner_image_ar = '${((theme as any).cartBannerImage_ar || '').replace(/'/g, "''")}'`,
+      `cart_banner_text = '${(theme.cartBannerText || '').replace(/'/g, "''")}'`,
+      `cart_banner_text_en = '${(theme.cartBannerTextEn || '').replace(/'/g, "''")}'`,
+      `cart_banner_text_he = '${(theme.cartBannerTextHe || '').replace(/'/g, "''")}'`,
+      `cart_banner_text_ar = '${(theme.cartBannerTextAr || '').replace(/'/g, "''")}'`,
       `cart_banner_bg_color = '${theme.cartBannerBgColor || '#f97316'}'`,
       `cart_banner_text_color = '${theme.cartBannerTextColor || '#ffffff'}'`
     ];
@@ -285,10 +297,16 @@ router.post('/admin/themes/:id/activate', isAuthenticated, async (req: any, res)
 
     const bottomBannerFields = [
       `show_bottom_banners = ${theme.showBottomBanners ?? false}`,
-      `bottom_banner1_url = '${theme.bottomBanner1Url || ''}'`,
-      `bottom_banner1_link = '${theme.bottomBanner1Link || ''}'`,
-      `bottom_banner2_url = '${theme.bottomBanner2Url || ''}'`,
-      `bottom_banner2_link = '${theme.bottomBanner2Link || ''}'`
+      `bottom_banner1_url = '${(theme.bottomBanner1Url || '').replace(/'/g, "''")}'`,
+      `bottom_banner1_url_en = '${((theme as any).bottomBanner1Url_en || '').replace(/'/g, "''")}'`,
+      `bottom_banner1_url_he = '${((theme as any).bottomBanner1Url_he || '').replace(/'/g, "''")}'`,
+      `bottom_banner1_url_ar = '${((theme as any).bottomBanner1Url_ar || '').replace(/'/g, "''")}'`,
+      `bottom_banner1_link = '${(theme.bottomBanner1Link || '').replace(/'/g, "''")}'`,
+      `bottom_banner2_url = '${(theme.bottomBanner2Url || '').replace(/'/g, "''")}'`,
+      `bottom_banner2_url_en = '${((theme as any).bottomBanner2Url_en || '').replace(/'/g, "''")}'`,
+      `bottom_banner2_url_he = '${((theme as any).bottomBanner2Url_he || '').replace(/'/g, "''")}'`,
+      `bottom_banner2_url_ar = '${((theme as any).bottomBanner2Url_ar || '').replace(/'/g, "''")}'`,
+      `bottom_banner2_link = '${(theme.bottomBanner2Link || '').replace(/'/g, "''")}'`
     ];
     await db.execute(sql.raw(`UPDATE store_settings SET ${bottomBannerFields.join(', ')} WHERE id = 1`));
 

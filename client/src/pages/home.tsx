@@ -1130,7 +1130,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Banner 1 */}
-              {storeSettings?.bottomBanner1Url && (
+              {(getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings?.bottomBanner1Url) && (
                 <div className="relative overflow-hidden rounded-lg shadow-lg group">
                   {storeSettings?.bottomBanner1Link ? (
                     <a 
@@ -1140,7 +1140,7 @@ export default function Home() {
                       className="block"
                     >
                       <img
-                        src={storeSettings.bottomBanner1Url}
+                        src={getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner1Url}
                         alt={t('banner1')}
                         className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -1148,7 +1148,7 @@ export default function Home() {
                     </a>
                   ) : (
                     <img
-                      src={storeSettings.bottomBanner1Url}
+                      src={getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner1Url}
                       alt={t('banner1')}
                       className="w-full h-64 md:h-80 object-cover"
                     />
@@ -1157,7 +1157,7 @@ export default function Home() {
               )}
 
               {/* Banner 2 */}
-              {storeSettings?.bottomBanner2Url && (
+              {(getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings?.bottomBanner2Url) && (
                 <div className="relative overflow-hidden rounded-lg shadow-lg group">
                   {storeSettings?.bottomBanner2Link ? (
                     <a 
@@ -1167,7 +1167,7 @@ export default function Home() {
                       className="block"
                     >
                       <img
-                        src={storeSettings.bottomBanner2Url}
+                        src={getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner2Url}
                         alt={t('banner2')}
                         className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
@@ -1175,7 +1175,7 @@ export default function Home() {
                     </a>
                   ) : (
                     <img
-                      src={storeSettings.bottomBanner2Url}
+                      src={getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner2Url}
                       alt={t('banner2')}
                       className="w-full h-64 md:h-80 object-cover"
                     />

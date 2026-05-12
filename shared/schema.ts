@@ -229,8 +229,14 @@ export const storeSettings = pgTable("store_settings", {
   showCategoryMenu: boolean("show_category_menu").default(true),
   weekStartDay: varchar("week_start_day", { length: 10 }).default("monday"), // "monday" or "sunday"
   bottomBanner1Url: varchar("bottom_banner1_url", { length: 500 }),
+  bottomBanner1Url_en: varchar("bottom_banner1_url_en", { length: 500 }),
+  bottomBanner1Url_he: varchar("bottom_banner1_url_he", { length: 500 }),
+  bottomBanner1Url_ar: varchar("bottom_banner1_url_ar", { length: 500 }),
   bottomBanner1Link: varchar("bottom_banner1_link", { length: 500 }),
   bottomBanner2Url: varchar("bottom_banner2_url", { length: 500 }),
+  bottomBanner2Url_en: varchar("bottom_banner2_url_en", { length: 500 }),
+  bottomBanner2Url_he: varchar("bottom_banner2_url_he", { length: 500 }),
+  bottomBanner2Url_ar: varchar("bottom_banner2_url_ar", { length: 500 }),
   bottomBanner2Link: varchar("bottom_banner2_link", { length: 500 }),
   showBottomBanners: boolean("show_bottom_banners").default(false),
   defaultItemsPerPage: integer("default_items_per_page").default(10), // Default pagination size
@@ -253,6 +259,9 @@ export const storeSettings = pgTable("store_settings", {
   bannerButtonLink: varchar("banner_button_link", { length: 500 }).default("#categories"), // Banner button link
   bannerImageUrl: varchar("banner_image_url", { length: 500 }), // Main banner image URL
   cartBannerImage: varchar("cart_banner_image", { length: 500 }), // Banner image URL
+  cartBannerImage_en: varchar("cart_banner_image_en", { length: 500 }),
+  cartBannerImage_he: varchar("cart_banner_image_he", { length: 500 }),
+  cartBannerImage_ar: varchar("cart_banner_image_ar", { length: 500 }),
   cartBannerText: text("cart_banner_text"), // Banner text content
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"), // Background color for text banner
   cartBannerTextColor: varchar("cart_banner_text_color", { length: 7 }).default("#ffffff"), // Text color for text banner
