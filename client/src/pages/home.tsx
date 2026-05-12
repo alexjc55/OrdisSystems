@@ -1138,24 +1138,26 @@ export default function Home() {
               {(getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings?.bottomBanner1Url) && (
                 <div className="relative overflow-hidden rounded-lg shadow-lg group bg-gray-100">
                   {storeSettings?.bottomBanner1Link ? (
-                    <a 
-                      href={storeSettings.bottomBanner1Link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <img
-                        src={getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner1Url}
-                        alt={t('banner1')}
-                        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    </a>
+                    <>
+                      <a 
+                        href={storeSettings.bottomBanner1Link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <img
+                          src={getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner1Url}
+                          alt={t('banner1')}
+                          className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </a>
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 pointer-events-none"></div>
+                    </>
                   ) : (
                     <img
                       src={getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner1Url}
                       alt={t('banner1')}
-                      className="w-full h-64 md:h-80 object-cover"
+                      className="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
                 </div>
@@ -1165,24 +1167,26 @@ export default function Home() {
               {(getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings?.bottomBanner2Url) && (
                 <div className="relative overflow-hidden rounded-lg shadow-lg group bg-gray-100">
                   {storeSettings?.bottomBanner2Link ? (
-                    <a 
-                      href={storeSettings.bottomBanner2Link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <img
-                        src={getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner2Url}
-                        alt={t('banner2')}
-                        className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    </a>
+                    <>
+                      <a 
+                        href={storeSettings.bottomBanner2Link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block"
+                      >
+                        <img
+                          src={getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner2Url}
+                          alt={t('banner2')}
+                          className="w-full h-64 md:h-80 object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </a>
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 pointer-events-none"></div>
+                    </>
                   ) : (
                     <img
                       src={getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings.bottomBanner2Url}
                       alt={t('banner2')}
-                      className="w-full h-64 md:h-80 object-cover"
+                      className="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
                 </div>

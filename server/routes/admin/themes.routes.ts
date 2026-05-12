@@ -94,12 +94,16 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       'slide5Image_en', 'slide5Image_he', 'slide5Image_ar'
     ];
 
+    // Link fields must be explicitly clearable — an empty value means "remove the link"
+    const clearableFields = ['bottomBanner1Link', 'bottomBanner2Link'];
+
     Object.keys(body).forEach(key => {
       const val = body[key];
       if (val === null || val === undefined) return;
       // Never overwrite existing image/URL fields with an empty string — preserve the DB value
       if (urlFields.includes(key) && val === '') return;
-      if (val !== '' || key.startsWith('slider') || key.startsWith('slide')) {
+      // Always include explicitly clearable fields (even empty) so the user can remove a link
+      if (clearableFields.includes(key) || val !== '' || key.startsWith('slider') || key.startsWith('slide')) {
         themeData[key] = val;
       }
     });
