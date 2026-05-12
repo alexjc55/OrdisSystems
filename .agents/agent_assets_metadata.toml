@@ -12,3 +12,9 @@ id = "Vu26SwdgmNfnJSavvQ_Q2"
 uri = "file://db_dump_20260512_194035.zip"
 type = "unspecified"
 title = "Дамп базы данных — 12.05.2026"
+
+[[outputs]]
+id = "wX6bljxPRBRrUzL4LYLZd"
+uri = "file://db_dump_20260512.zip"
+type = "unspecified"
+title = "Дамп базы данных — 12.05.2026"
