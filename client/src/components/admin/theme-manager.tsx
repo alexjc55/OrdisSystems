@@ -2582,7 +2582,7 @@ export default function ThemeManager() {
                               name="whatsappPhone"
                               id="whatsappPhone"
                               defaultValue={editingTheme?.whatsappPhone || ""}
-                              placeholder="+972501234567"
+                              placeholder={adminT("themes.phoneNumberPlaceholder")}
                               className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                             />
                             <div className="text-xs text-gray-500 mt-1">
@@ -2651,7 +2651,7 @@ export default function ThemeManager() {
 
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                  <Label htmlFor="cartBannerBgColor" className="text-sm">Цвет фона</Label>
+                                  <Label htmlFor="cartBannerBgColor" className="text-sm">{adminT('themes.backgroundColor')}</Label>
                                   <Input
                                     type="color"
                                     name="cartBannerBgColor"
@@ -2661,7 +2661,7 @@ export default function ThemeManager() {
                                   />
                                 </div>
                                 <div>
-                                  <Label htmlFor="cartBannerTextColor" className="text-sm">Цвет текста</Label>
+                                  <Label htmlFor="cartBannerTextColor" className="text-sm">{adminT('themes.textColor')}</Label>
                                   <Input
                                     type="color"
                                     name="cartBannerTextColor"
