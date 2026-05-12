@@ -1935,7 +1935,7 @@ export default function ThemeManager() {
                   </Badge>
                 )}
               </div>
-              <CardDescription>{theme.description}</CardDescription>
+              <CardDescription>{getThemeDescription(theme)}</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Color Preview */}
