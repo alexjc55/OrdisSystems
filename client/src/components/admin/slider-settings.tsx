@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -125,6 +125,39 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
       result[`${n}_ar`] = (defaultValues as any)[`slide${n}Image_ar`] || '';
     });
     return result;
+  });
+
+  // Re-sync images state when defaultValues arrive with real data (handles race condition
+  // where storeSettings/editingTheme load after the component has already mounted)
+  const prevImagesRef = useRef<string>('');
+  useEffect(() => {
+    const incoming = slides.flatMap(n => [
+      (defaultValues as any)[`slide${n}Image`] || '',
+      (defaultValues as any)[`slide${n}Image_en`] || '',
+      (defaultValues as any)[`slide${n}Image_he`] || '',
+      (defaultValues as any)[`slide${n}Image_ar`] || '',
+    ]).join('|');
+
+    if (incoming === prevImagesRef.current) return;
+    prevImagesRef.current = incoming;
+
+    // Only update slots that now have a real URL and the slot is currently empty
+    // (so we never wipe edits the user has already made)
+    setAllSlideImages(prev => {
+      const next = { ...prev };
+      let changed = false;
+      slides.forEach(n => {
+        const ru = (defaultValues as any)[`slide${n}Image`] || '';
+        const en = (defaultValues as any)[`slide${n}Image_en`] || '';
+        const he = (defaultValues as any)[`slide${n}Image_he`] || '';
+        const ar = (defaultValues as any)[`slide${n}Image_ar`] || '';
+        if (ru && !next[`${n}_ru`]) { next[`${n}_ru`] = ru; changed = true; }
+        if (en && !next[`${n}_en`]) { next[`${n}_en`] = en; changed = true; }
+        if (he && !next[`${n}_he`]) { next[`${n}_he`] = he; changed = true; }
+        if (ar && !next[`${n}_ar`]) { next[`${n}_ar`] = ar; changed = true; }
+      });
+      return changed ? next : prev;
+    });
   });
 
   // Returns the displayed image for the current language (lang-specific or fallback to Russian base)

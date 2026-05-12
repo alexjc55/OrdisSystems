@@ -95,10 +95,12 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
     ];
 
     Object.keys(body).forEach(key => {
-      if (body[key] !== null && body[key] !== undefined) {
-        if (urlFields.includes(key) || body[key] !== '' || key.startsWith('slider') || key.startsWith('slide')) {
-          themeData[key] = body[key];
-        }
+      const val = body[key];
+      if (val === null || val === undefined) return;
+      // Never overwrite existing image/URL fields with an empty string — preserve the DB value
+      if (urlFields.includes(key) && val === '') return;
+      if (val !== '' || key.startsWith('slider') || key.startsWith('slide')) {
+        themeData[key] = val;
       }
     });
 
@@ -195,10 +197,11 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
         if (themeData.sliderEffect !== undefined) updateFields.push(`slider_effect = '${themeData.sliderEffect || 'fade'}'`);
 
         for (let i = 1; i <= 5; i++) {
-          if (themeData[`slide${i}Image`] !== undefined) updateFields.push(`slide${i}_image = '${(themeData[`slide${i}Image`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Image_en`] !== undefined) updateFields.push(`slide${i}_image_en = '${(themeData[`slide${i}Image_en`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Image_he`] !== undefined) updateFields.push(`slide${i}_image_he = '${(themeData[`slide${i}Image_he`] || '').replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Image_ar`] !== undefined) updateFields.push(`slide${i}_image_ar = '${(themeData[`slide${i}Image_ar`] || '').replace(/'/g, "''")}'`);
+          // Only update image URLs when non-empty — empty string must never overwrite an existing URL
+          if (themeData[`slide${i}Image`]) updateFields.push(`slide${i}_image = '${themeData[`slide${i}Image`].replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Image_en`]) updateFields.push(`slide${i}_image_en = '${themeData[`slide${i}Image_en`].replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Image_he`]) updateFields.push(`slide${i}_image_he = '${themeData[`slide${i}Image_he`].replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Image_ar`]) updateFields.push(`slide${i}_image_ar = '${themeData[`slide${i}Image_ar`].replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}TitleEn`] !== undefined) updateFields.push(`slide${i}_title_en = '${(themeData[`slide${i}TitleEn`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}TitleHe`] !== undefined) updateFields.push(`slide${i}_title_he = '${(themeData[`slide${i}TitleHe`] || '').replace(/'/g, "''")}'`);

@@ -1125,13 +1125,18 @@ export default function Home() {
       )}
 
       {/* Bottom Banners */}
-      {storeSettings?.showBottomBanners && (storeSettings?.bottomBanner1Url || storeSettings?.bottomBanner2Url) && (
+      {storeSettings?.showBottomBanners && (
+        storeSettings?.bottomBanner1Url || storeSettings?.bottomBanner2Url ||
+        (storeSettings as any)?.bottomBanner1Url_en || (storeSettings as any)?.bottomBanner2Url_en ||
+        (storeSettings as any)?.bottomBanner1Url_he || (storeSettings as any)?.bottomBanner2Url_he ||
+        (storeSettings as any)?.bottomBanner1Url_ar || (storeSettings as any)?.bottomBanner2Url_ar
+      ) && (
         <div className="mt-16 mb-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Banner 1 */}
               {(getLocalizedField(storeSettings, 'bottomBanner1Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings?.bottomBanner1Url) && (
-                <div className="relative overflow-hidden rounded-lg shadow-lg group">
+                <div className="relative overflow-hidden rounded-lg shadow-lg group bg-gray-100">
                   {storeSettings?.bottomBanner1Link ? (
                     <a 
                       href={storeSettings.bottomBanner1Link}
@@ -1158,7 +1163,7 @@ export default function Home() {
 
               {/* Banner 2 */}
               {(getLocalizedField(storeSettings, 'bottomBanner2Url', currentLanguage as SupportedLanguage, 'ru') || storeSettings?.bottomBanner2Url) && (
-                <div className="relative overflow-hidden rounded-lg shadow-lg group">
+                <div className="relative overflow-hidden rounded-lg shadow-lg group bg-gray-100">
                   {storeSettings?.bottomBanner2Link ? (
                     <a 
                       href={storeSettings.bottomBanner2Link}
