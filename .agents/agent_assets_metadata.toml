@@ -6,3 +6,9 @@ id = "7F0YwCyQSa-5AJZOQaR0v"
 uri = "file://backups/dump_20260509_234553.zip"
 type = "unspecified"
 title = "Дамп БД — 09.05.2026 23:45"
+
+[[outputs]]
+id = "Vu26SwdgmNfnJSavvQ_Q2"
+uri = "file://db_dump_20260512_194035.zip"
+type = "unspecified"
+title = "Дамп базы данных — 12.05.2026"
