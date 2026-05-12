@@ -155,16 +155,16 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       if (themeData.cartBannerTextColor !== undefined) updateFields.push(`cart_banner_text_color = '${themeData.cartBannerTextColor || '#ffffff'}'`);
 
       if (themeData.showBottomBanners !== undefined) updateFields.push(`show_bottom_banners = ${themeData.showBottomBanners}`);
-      if (themeData.bottomBanner1Url !== undefined) updateFields.push(`bottom_banner1_url = '${themeData.bottomBanner1Url || ''}'`);
-      if ((themeData as any).bottomBanner1Url_en !== undefined) updateFields.push(`bottom_banner1_url_en = '${(themeData as any).bottomBanner1Url_en || ''}'`);
-      if ((themeData as any).bottomBanner1Url_he !== undefined) updateFields.push(`bottom_banner1_url_he = '${(themeData as any).bottomBanner1Url_he || ''}'`);
-      if ((themeData as any).bottomBanner1Url_ar !== undefined) updateFields.push(`bottom_banner1_url_ar = '${(themeData as any).bottomBanner1Url_ar || ''}'`);
-      if (themeData.bottomBanner1Link !== undefined) updateFields.push(`bottom_banner1_link = '${themeData.bottomBanner1Link || ''}'`);
-      if (themeData.bottomBanner2Url !== undefined) updateFields.push(`bottom_banner2_url = '${themeData.bottomBanner2Url || ''}'`);
-      if ((themeData as any).bottomBanner2Url_en !== undefined) updateFields.push(`bottom_banner2_url_en = '${(themeData as any).bottomBanner2Url_en || ''}'`);
-      if ((themeData as any).bottomBanner2Url_he !== undefined) updateFields.push(`bottom_banner2_url_he = '${(themeData as any).bottomBanner2Url_he || ''}'`);
-      if ((themeData as any).bottomBanner2Url_ar !== undefined) updateFields.push(`bottom_banner2_url_ar = '${(themeData as any).bottomBanner2Url_ar || ''}'`);
-      if (themeData.bottomBanner2Link !== undefined) updateFields.push(`bottom_banner2_link = '${themeData.bottomBanner2Link || ''}'`);
+      if (themeData.bottomBanner1Url !== undefined) updateFields.push(`bottom_banner1_url = '${(themeData.bottomBanner1Url || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).bottomBanner1Url_en !== undefined) updateFields.push(`bottom_banner1_url_en = '${((themeData as any).bottomBanner1Url_en || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).bottomBanner1Url_he !== undefined) updateFields.push(`bottom_banner1_url_he = '${((themeData as any).bottomBanner1Url_he || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).bottomBanner1Url_ar !== undefined) updateFields.push(`bottom_banner1_url_ar = '${((themeData as any).bottomBanner1Url_ar || '').replace(/'/g, "''")}'`);
+      if (themeData.bottomBanner1Link !== undefined) updateFields.push(`bottom_banner1_link = '${(themeData.bottomBanner1Link || '').replace(/'/g, "''")}'`);
+      if (themeData.bottomBanner2Url !== undefined) updateFields.push(`bottom_banner2_url = '${(themeData.bottomBanner2Url || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).bottomBanner2Url_en !== undefined) updateFields.push(`bottom_banner2_url_en = '${((themeData as any).bottomBanner2Url_en || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).bottomBanner2Url_he !== undefined) updateFields.push(`bottom_banner2_url_he = '${((themeData as any).bottomBanner2Url_he || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).bottomBanner2Url_ar !== undefined) updateFields.push(`bottom_banner2_url_ar = '${((themeData as any).bottomBanner2Url_ar || '').replace(/'/g, "''")}'`);
+      if (themeData.bottomBanner2Link !== undefined) updateFields.push(`bottom_banner2_link = '${(themeData.bottomBanner2Link || '').replace(/'/g, "''")}'`);
 
       if (themeData.showBannerImage !== undefined) updateFields.push(`show_banner_image = ${themeData.showBannerImage}`);
       if (themeData.showTitleDescription !== undefined) updateFields.push(`show_title_description = ${themeData.showTitleDescription}`);
