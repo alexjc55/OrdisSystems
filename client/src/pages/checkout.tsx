@@ -438,6 +438,18 @@ export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [selectedGuestPaymentMethod, setSelectedGuestPaymentMethod] = useState("");
   const [selectedRegisterPaymentMethod, setSelectedRegisterPaymentMethod] = useState("");
+
+  // Auto-select payment method when there is exactly one enabled option
+  useEffect(() => {
+    if (!storeSettings?.paymentMethods || !Array.isArray(storeSettings.paymentMethods)) return;
+    const enabled = storeSettings.paymentMethods.filter((m: any) => m.enabled !== false);
+    if (enabled.length !== 1) return;
+    const only = enabled[0].name;
+    if (!selectedPaymentMethod) setSelectedPaymentMethod(only);
+    if (!selectedGuestPaymentMethod) setSelectedGuestPaymentMethod(only);
+    if (!selectedRegisterPaymentMethod) setSelectedRegisterPaymentMethod(only);
+  }, [storeSettings?.paymentMethods]);
+
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [guestDatePickerOpen, setGuestDatePickerOpen] = useState(false);
   const [registerDatePickerOpen, setRegisterDatePickerOpen] = useState(false);
