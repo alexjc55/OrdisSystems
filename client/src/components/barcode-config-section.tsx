@@ -187,7 +187,14 @@ export function BarcodeConfigSection() {
                         type="button"
                         variant="ghost"
                         size="default"
-                        onClick={() => field.onChange(!field.value)}
+                        disabled={updateBarcodeConfigMutation.isPending}
+                        onClick={() => {
+                          const newValue = !field.value;
+                          field.onChange(newValue);
+                          // Auto-save immediately when toggling
+                          const current = barcodeForm.getValues();
+                          updateBarcodeConfigMutation.mutate({ ...current, enabled: newValue });
+                        }}
                         className={`h-12 w-12 p-0 rounded-lg transition-all duration-200 flex-shrink-0 ${
                           field.value 
                             ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-2 border-emerald-300 shadow-sm' 
@@ -195,7 +202,7 @@ export function BarcodeConfigSection() {
                         }`}
                         title={field.value ? adminT('barcode.disable') : adminT('barcode.enable')}
                       >
-                        {field.value ? <Eye className="h-6 w-6" /> : <EyeOff className="h-6 w-6" />}
+                        {updateBarcodeConfigMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : field.value ? <Eye className="h-6 w-6" /> : <EyeOff className="h-6 w-6" />}
                       </Button>
                     </FormControl>
                   </FormItem>
@@ -314,20 +321,23 @@ export function BarcodeConfigSection() {
             )}
           </div>
 
-          <Button
-            type="submit"
-            disabled={updateBarcodeConfigMutation.isPending}
-            className="w-full md:w-auto"
-          >
-            {updateBarcodeConfigMutation.isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-{adminT('actions.saving')}
-              </>
-            ) : (
-              adminT('actions.save')
-            )}
-          </Button>
+          {/* Save button only shown when fields are visible */}
+          {isEnabled && (
+            <Button
+              type="submit"
+              disabled={updateBarcodeConfigMutation.isPending}
+              className="w-full md:w-auto"
+            >
+              {updateBarcodeConfigMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  {adminT('actions.saving')}
+                </>
+              ) : (
+                adminT('actions.save')
+              )}
+            </Button>
+          )}
         </form>
       </Form>
 
