@@ -823,7 +823,13 @@ const baseThemeSchema = createInsertSchema(themes).omit({
 export const insertThemeSchema = z.object({
   id: z.string().optional(),
   name: z.string(),
+  name_en: z.string().nullable().optional(),
+  name_he: z.string().nullable().optional(),
+  name_ar: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
+  description_en: z.string().nullable().optional(),
+  description_he: z.string().nullable().optional(),
+  description_ar: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
   primaryColor: z.string().nullable().transform(val => val || "hsl(24.6, 95%, 53.1%)"),
   primaryTextColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
