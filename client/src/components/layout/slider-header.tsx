@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
 import { useLanguage } from '@/hooks/use-language';
 
+// Get the field name for a given language (base language has no suffix = plain field name)
+function getLangField(baseField: string, lang: SupportedLanguage, defaultLanguage: SupportedLanguage): string {
+  if (lang === defaultLanguage) return baseField;
+  const cap = lang.charAt(0).toUpperCase() + lang.slice(1);
+  return `${baseField}${cap}`;
+}
+
 // Import multilingual helper function with fallback to default language
 function getMultilingualValue(
   storeSettings: any,
@@ -12,23 +19,14 @@ function getMultilingualValue(
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  let langField: string;
-  
-  if (currentLanguage === 'ru') {
-    langField = baseField;
-  } else {
-    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
-    langField = `${baseField}${capitalizedLang}`;
-  }
-  
-  // Try to get value for current language, fallback to default language if empty
+  const langField = getLangField(baseField, currentLanguage, defaultLanguage);
   const currentValue = storeSettings?.[langField];
   if (currentValue && currentValue.trim() !== '') {
     return currentValue;
   }
-  
-  // Fallback to default language (Russian)
-  return storeSettings?.[baseField] || '';
+  // Fallback to default language
+  const defaultField = getLangField(baseField, defaultLanguage, defaultLanguage);
+  return storeSettings?.[defaultField] || '';
 }
 
 interface SliderHeaderProps {
@@ -57,21 +55,21 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   // Extract slides data from storeSettings with proper field mapping and multilingual support
+  const defaultLanguage: SupportedLanguage = (storeSettings?.defaultLanguage as SupportedLanguage) || 'ru';
   const slides: SlideData[] = [];
   for (let i = 1; i <= 5; i++) {
-    // Use language-specific image with fallback to base image (no language suffix)
-    const langSuffix = currentLanguage !== 'ru' ? `_${currentLanguage}` : '';
-    const langImage = langSuffix
-      ? storeSettings?.[`slide${i}Image${langSuffix}`] || storeSettings?.[`slide${i}_image${langSuffix}`]
-      : null;
-    const baseImage = storeSettings?.[`slide${i}Image`] || storeSettings?.[`slide${i}_image`];
-    const slideImage = langImage || baseImage;
+    // Use language-specific image with fallback to default language image
+    const langImageField = getLangField(`slide${i}Image`, currentLanguage, defaultLanguage);
+    const defaultImageField = getLangField(`slide${i}Image`, defaultLanguage, defaultLanguage);
+    const langImage = storeSettings?.[langImageField] || storeSettings?.[`slide${i}_image_${currentLanguage}`];
+    const fallbackImage = storeSettings?.[defaultImageField] || storeSettings?.[`slide${i}_image`];
+    const slideImage = langImage || fallbackImage;
     if (slideImage) {
       slides.push({
         image: slideImage,
-        title: getMultilingualValue(storeSettings, `slide${i}Title`, currentLanguage),
-        subtitle: getMultilingualValue(storeSettings, `slide${i}Subtitle`, currentLanguage),
-        buttonText: getMultilingualValue(storeSettings, `slide${i}ButtonText`, currentLanguage),
+        title: getMultilingualValue(storeSettings, `slide${i}Title`, currentLanguage, defaultLanguage),
+        subtitle: getMultilingualValue(storeSettings, `slide${i}Subtitle`, currentLanguage, defaultLanguage),
+        buttonText: getMultilingualValue(storeSettings, `slide${i}ButtonText`, currentLanguage, defaultLanguage),
         buttonLink: storeSettings?.[`slide${i}ButtonLink`] || storeSettings?.[`slide${i}_button_link`] || '',
         textPosition: storeSettings?.[`slide${i}TextPosition`] || storeSettings?.[`slide${i}_text_position`] || 'left-center'
       });
@@ -84,10 +82,10 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
       <div className="relative h-[60vh] md:h-[80vh] bg-gradient-to-br from-primary to-primary-hover flex items-center justify-center">
         <div className="text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            {getMultilingualValue(storeSettings, 'storeName', currentLanguage) || "eDAHouse"}
+            {getMultilingualValue(storeSettings, 'storeName', currentLanguage, defaultLanguage) || "eDAHouse"}
           </h1>
           <p className="text-xl md:text-2xl opacity-90">
-            {getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage) || t('welcome')}
+            {getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage, defaultLanguage) || t('welcome')}
           </p>
         </div>
       </div>
