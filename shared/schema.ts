@@ -323,6 +323,24 @@ export const storeSettings = pgTable("store_settings", {
   slide5ButtonText: varchar("slide5_button_text", { length: 100 }),
   slide5ButtonLink: varchar("slide5_button_link", { length: 500 }),
   slide5TextPosition: varchar("slide5_text_position", { length: 20 }).default("left-center"),
+
+  // Slide images - per-language variants (base = Russian)
+  slide1Image_en: varchar("slide1_image_en", { length: 500 }),
+  slide1Image_he: varchar("slide1_image_he", { length: 500 }),
+  slide1Image_ar: varchar("slide1_image_ar", { length: 500 }),
+  slide2Image_en: varchar("slide2_image_en", { length: 500 }),
+  slide2Image_he: varchar("slide2_image_he", { length: 500 }),
+  slide2Image_ar: varchar("slide2_image_ar", { length: 500 }),
+  slide3Image_en: varchar("slide3_image_en", { length: 500 }),
+  slide3Image_he: varchar("slide3_image_he", { length: 500 }),
+  slide3Image_ar: varchar("slide3_image_ar", { length: 500 }),
+  slide4Image_en: varchar("slide4_image_en", { length: 500 }),
+  slide4Image_he: varchar("slide4_image_he", { length: 500 }),
+  slide4Image_ar: varchar("slide4_image_ar", { length: 500 }),
+  slide5Image_en: varchar("slide5_image_en", { length: 500 }),
+  slide5Image_he: varchar("slide5_image_he", { length: 500 }),
+  slide5Image_ar: varchar("slide5_image_ar", { length: 500 }),
+
   barcodeWeightEnd: integer("barcode_weight_end").default(10),
   barcodeWeightUnit: varchar("barcode_weight_unit").default("grams"),
   
@@ -629,6 +647,23 @@ export const themes = pgTable("themes", {
   tomorrowShadow: varchar("tomorrow_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(147, 51, 234, 0.3)"),
   grayShadow: varchar("gray_shadow", { length: 100 }).notNull().default("0 4px 14px 0 rgba(107, 114, 128, 0.3)"),
   
+  // Slide images - per-language variants (base = Russian)
+  slide1Image_en: varchar("slide1_image_en", { length: 500 }),
+  slide1Image_he: varchar("slide1_image_he", { length: 500 }),
+  slide1Image_ar: varchar("slide1_image_ar", { length: 500 }),
+  slide2Image_en: varchar("slide2_image_en", { length: 500 }),
+  slide2Image_he: varchar("slide2_image_he", { length: 500 }),
+  slide2Image_ar: varchar("slide2_image_ar", { length: 500 }),
+  slide3Image_en: varchar("slide3_image_en", { length: 500 }),
+  slide3Image_he: varchar("slide3_image_he", { length: 500 }),
+  slide3Image_ar: varchar("slide3_image_ar", { length: 500 }),
+  slide4Image_en: varchar("slide4_image_en", { length: 500 }),
+  slide4Image_he: varchar("slide4_image_he", { length: 500 }),
+  slide4Image_ar: varchar("slide4_image_ar", { length: 500 }),
+  slide5Image_en: varchar("slide5_image_en", { length: 500 }),
+  slide5Image_he: varchar("slide5_image_he", { length: 500 }),
+  slide5Image_ar: varchar("slide5_image_ar", { length: 500 }),
+
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

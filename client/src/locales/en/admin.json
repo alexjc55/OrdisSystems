@@ -840,6 +840,7 @@
     "required": "required",
     "slideImage": "Slide Image",
     "sliderImageSize": "Desktop: up to 1023×720 px (~3:2 ratio). Mobile: ~360×468 px (~3:4 ratio). Image is cropped from center — keep important content centered. Recommended minimum: 1023×720 px. Max 5 MB.",
+    "slideFallbackImage": "Showing the base language image. Upload your own for this language.",
     "slideTitle": "Slide Title",
     "slideTitlePlaceholder": "Enter slide title",
     "slideSubtitle": "Slide Subtitle",

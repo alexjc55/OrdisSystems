@@ -86,7 +86,12 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       'cartBannerImage', 'cartBannerImage_en', 'cartBannerImage_he', 'cartBannerImage_ar',
       'bottomBanner1Url', 'bottomBanner1Url_en', 'bottomBanner1Url_he', 'bottomBanner1Url_ar',
       'bottomBanner2Url', 'bottomBanner2Url_en', 'bottomBanner2Url_he', 'bottomBanner2Url_ar',
-      'slide1Image', 'slide2Image', 'slide3Image', 'slide4Image', 'slide5Image'
+      'slide1Image', 'slide2Image', 'slide3Image', 'slide4Image', 'slide5Image',
+      'slide1Image_en', 'slide1Image_he', 'slide1Image_ar',
+      'slide2Image_en', 'slide2Image_he', 'slide2Image_ar',
+      'slide3Image_en', 'slide3Image_he', 'slide3Image_ar',
+      'slide4Image_en', 'slide4Image_he', 'slide4Image_ar',
+      'slide5Image_en', 'slide5Image_he', 'slide5Image_ar'
     ];
 
     Object.keys(body).forEach(key => {
@@ -179,6 +184,9 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
 
         for (let i = 1; i <= 5; i++) {
           if (themeData[`slide${i}Image`] !== undefined) updateFields.push(`slide${i}_image = '${(themeData[`slide${i}Image`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Image_en`] !== undefined) updateFields.push(`slide${i}_image_en = '${(themeData[`slide${i}Image_en`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Image_he`] !== undefined) updateFields.push(`slide${i}_image_he = '${(themeData[`slide${i}Image_he`] || '').replace(/'/g, "''")}'`);
+          if (themeData[`slide${i}Image_ar`] !== undefined) updateFields.push(`slide${i}_image_ar = '${(themeData[`slide${i}Image_ar`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Subtitle`] !== undefined) updateFields.push(`slide${i}_subtitle = '${(themeData[`slide${i}Subtitle`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}ButtonText`] !== undefined) updateFields.push(`slide${i}_button_text = '${(themeData[`slide${i}ButtonText`] || '').replace(/'/g, "''")}'`);

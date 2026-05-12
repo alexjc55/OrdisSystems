@@ -17,12 +17,14 @@ interface SliderSettingsProps {
     sliderSpeed?: number;
     sliderEffect?: string;
     slide1Image?: string;
+    slide1Image_en?: string;
+    slide1Image_he?: string;
+    slide1Image_ar?: string;
     slide1Title?: string;
     slide1Subtitle?: string;
     slide1ButtonText?: string;
     slide1ButtonLink?: string;
     slide1TextPosition?: string;
-    // Multilingual fields for slide 1
     slide1TitleEn?: string;
     slide1SubtitleEn?: string;
     slide1ButtonTextEn?: string;
@@ -33,12 +35,14 @@ interface SliderSettingsProps {
     slide1SubtitleAr?: string;
     slide1ButtonTextAr?: string;
     slide2Image?: string;
+    slide2Image_en?: string;
+    slide2Image_he?: string;
+    slide2Image_ar?: string;
     slide2Title?: string;
     slide2Subtitle?: string;
     slide2ButtonText?: string;
     slide2ButtonLink?: string;
     slide2TextPosition?: string;
-    // Multilingual fields for slide 2
     slide2TitleEn?: string;
     slide2SubtitleEn?: string;
     slide2ButtonTextEn?: string;
@@ -49,12 +53,14 @@ interface SliderSettingsProps {
     slide2SubtitleAr?: string;
     slide2ButtonTextAr?: string;
     slide3Image?: string;
+    slide3Image_en?: string;
+    slide3Image_he?: string;
+    slide3Image_ar?: string;
     slide3Title?: string;
     slide3Subtitle?: string;
     slide3ButtonText?: string;
     slide3ButtonLink?: string;
     slide3TextPosition?: string;
-    // Multilingual fields for slide 3
     slide3TitleEn?: string;
     slide3SubtitleEn?: string;
     slide3ButtonTextEn?: string;
@@ -65,12 +71,14 @@ interface SliderSettingsProps {
     slide3SubtitleAr?: string;
     slide3ButtonTextAr?: string;
     slide4Image?: string;
+    slide4Image_en?: string;
+    slide4Image_he?: string;
+    slide4Image_ar?: string;
     slide4Title?: string;
     slide4Subtitle?: string;
     slide4ButtonText?: string;
     slide4ButtonLink?: string;
     slide4TextPosition?: string;
-    // Multilingual fields for slide 4
     slide4TitleEn?: string;
     slide4SubtitleEn?: string;
     slide4ButtonTextEn?: string;
@@ -81,12 +89,14 @@ interface SliderSettingsProps {
     slide4SubtitleAr?: string;
     slide4ButtonTextAr?: string;
     slide5Image?: string;
+    slide5Image_en?: string;
+    slide5Image_he?: string;
+    slide5Image_ar?: string;
     slide5Title?: string;
     slide5Subtitle?: string;
     slide5ButtonText?: string;
     slide5ButtonLink?: string;
     slide5TextPosition?: string;
-    // Multilingual fields for slide 5
     slide5TitleEn?: string;
     slide5SubtitleEn?: string;
     slide5ButtonTextEn?: string;
@@ -104,16 +114,41 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
   const currentLanguage = i18n.language as SupportedLanguage;
 
   const slides = [1, 2, 3, 4, 5];
-  
-  // Track image URLs for each slide
-  const [slideImages, setSlideImages] = useState<{[key: number]: string}>(() => {
-    const initialImages: {[key: number]: string} = {};
-    slides.forEach(slideNumber => {
-      const slideImage = defaultValues[`slide${slideNumber}Image` as keyof typeof defaultValues] as string;
-      initialImages[slideNumber] = slideImage || '';
+
+  // Store all images per slide per language: key = `${slideNum}_${lang}`
+  const [allSlideImages, setAllSlideImages] = useState<{[key: string]: string}>(() => {
+    const result: {[key: string]: string} = {};
+    slides.forEach(n => {
+      result[`${n}_ru`] = (defaultValues as any)[`slide${n}Image`] || '';
+      result[`${n}_en`] = (defaultValues as any)[`slide${n}Image_en`] || '';
+      result[`${n}_he`] = (defaultValues as any)[`slide${n}Image_he`] || '';
+      result[`${n}_ar`] = (defaultValues as any)[`slide${n}Image_ar`] || '';
     });
-    return initialImages;
+    return result;
   });
+
+  // Returns the displayed image for the current language (lang-specific or fallback to Russian base)
+  const getDisplayImage = (slideNum: number): string => {
+    const lang = currentLanguage === 'ru' ? 'ru' : currentLanguage;
+    return allSlideImages[`${slideNum}_${lang}`] || allSlideImages[`${slideNum}_ru`] || '';
+  };
+
+  // Returns true if the current language has its own image (not just the fallback)
+  const hasOwnImage = (slideNum: number): boolean => {
+    if (currentLanguage === 'ru') return !!allSlideImages[`${slideNum}_ru`];
+    return !!allSlideImages[`${slideNum}_${currentLanguage}`];
+  };
+
+  // The field name for the hidden input for the current language
+  const getFieldName = (slideNum: number): string => {
+    if (currentLanguage === 'ru') return `slide${slideNum}Image`;
+    return `slide${slideNum}Image_${currentLanguage}`;
+  };
+
+  const handleImageChange = (slideNum: number, url: string) => {
+    const langKey = currentLanguage === 'ru' ? 'ru' : currentLanguage;
+    setAllSlideImages(prev => ({ ...prev, [`${slideNum}_${langKey}`]: url }));
+  };
 
   return (
     <div className="space-y-6">
@@ -179,8 +214,9 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
         </div>
         
         {slides.map((slideNumber) => {
-          const slideImage = slideImages[slideNumber] || '';
-          const hasImage = slideImage && slideImage.trim() !== '';
+          const displayImage = getDisplayImage(slideNumber);
+          const isFallback = !hasOwnImage(slideNumber) && currentLanguage !== 'ru' && !!allSlideImages[`${slideNumber}_ru`];
+          const hasImage = !!displayImage;
           
           return (
             <div key={slideNumber} className="p-4 border rounded-lg space-y-4">
@@ -200,19 +236,27 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
                 <Label htmlFor={`slide${slideNumber}Image${id}`}>
                   {adminT("themes.slideImage")} {slideNumber === 1 && `(${adminT("themes.required")})`}
                 </Label>
+
+                {/* Fallback notice when viewing non-Russian lang and no own image */}
+                {isFallback && (
+                  <div className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+                    {adminT("themes.slideFallbackImage") || "Показывается изображение базового языка. Загрузите своё для этого языка."}
+                  </div>
+                )}
+
                 <ImageUpload
-                  value={slideImage}
+                  value={displayImage}
                   onChange={(url: string) => {
-                    setSlideImages(prev => ({...prev, [slideNumber]: url}));
-                    // Update the hidden input value
-                    const hiddenInput = document.querySelector(`input[name="slide${slideNumber}Image"]`) as HTMLInputElement;
-                    if (hiddenInput) {
-                      hiddenInput.value = url;
-                    }
+                    handleImageChange(slideNumber, url);
                   }}
                 />
                 <div className="text-xs text-gray-500">{adminT("themes.sliderImageSize")}</div>
-                <input type="hidden" name={`slide${slideNumber}Image`} value={slideImage} />
+
+                {/* Hidden inputs for ALL language variants so the form always sends all values */}
+                <input type="hidden" name={`slide${slideNumber}Image`} value={allSlideImages[`${slideNumber}_ru`] || ''} />
+                <input type="hidden" name={`slide${slideNumber}Image_en`} value={allSlideImages[`${slideNumber}_en`] || ''} />
+                <input type="hidden" name={`slide${slideNumber}Image_he`} value={allSlideImages[`${slideNumber}_he`] || ''} />
+                <input type="hidden" name={`slide${slideNumber}Image_ar`} value={allSlideImages[`${slideNumber}_ar`] || ''} />
               </div>
               
               {/* Show content fields only if image exists or it's slide 1 */}

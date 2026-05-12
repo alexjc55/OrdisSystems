@@ -39,6 +39,11 @@ export function extractThemeImageUrls(theme: Record<string, any>): string[] {
     "bottomBanner1Url", "bottomBanner1Url_en", "bottomBanner1Url_he", "bottomBanner1Url_ar",
     "bottomBanner2Url", "bottomBanner2Url_en", "bottomBanner2Url_he", "bottomBanner2Url_ar",
     "slide1Image", "slide2Image", "slide3Image", "slide4Image", "slide5Image",
+    "slide1Image_en", "slide1Image_he", "slide1Image_ar",
+    "slide2Image_en", "slide2Image_he", "slide2Image_ar",
+    "slide3Image_en", "slide3Image_he", "slide3Image_ar",
+    "slide4Image_en", "slide4Image_he", "slide4Image_ar",
+    "slide5Image_en", "slide5Image_he", "slide5Image_ar",
   ];
   return imageFields
     .map((f) => theme[f] as string | undefined)
