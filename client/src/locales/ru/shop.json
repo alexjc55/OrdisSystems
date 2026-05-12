@@ -609,6 +609,7 @@
   "orderStatus": {
     "pending": "Ожидает подтверждения",
     "confirmed": "Подтвержден",
+    "preparing": "Готовится",
     "ready": "Готов к выдаче",
     "delivered": "Доставлен",
     "cancelled": "Отменен"

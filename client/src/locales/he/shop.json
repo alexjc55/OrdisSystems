@@ -609,6 +609,7 @@
   "orderStatus": {
     "pending": "ממתין לאישור",
     "confirmed": "מאושר",
+    "preparing": "בהכנה",
     "ready": "מוכן לאיסוף",
     "delivered": "נמסר",
     "cancelled": "בוטל"

@@ -167,6 +167,7 @@
   "orderStatus": {
     "pending": "Pending confirmation",
     "confirmed": "Confirmed",
+    "preparing": "Preparing",
     "ready": "Ready for pickup",
     "delivered": "Delivered",
     "cancelled": "Cancelled"

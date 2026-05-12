@@ -567,6 +567,7 @@
   "orderStatus": {
     "pending": "في انتظار التأكيد",
     "confirmed": "مؤكد",
+    "preparing": "قيد التحضير",
     "ready": "جاهز للاستلام",
     "delivered": "تم التسليم",
     "cancelled": "ملغي"
