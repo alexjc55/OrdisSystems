@@ -752,6 +752,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     enabled: !!branchesEnabled,
   });
 
+  const { data: barcodeConfig } = useQuery({
+    queryKey: ['/api/barcode/config'],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
   // Generate time slots based on store working hours for this component
   const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday', deliveryHours?: any) => {
     if (!selectedDate) return [];
@@ -2162,14 +2168,16 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
               <Plus className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
               {adminT('orders.addProduct')}
             </Button>
-            <Button 
-              size="sm" 
-              onClick={() => setShowBarcodeScanner(true)}
-              className="text-xs btn-info w-full sm:w-auto"
-            >
-              <Camera className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-              {adminT('barcode.scanBarcode')}
-            </Button>
+            {(barcodeConfig as any)?.enabled && (
+              <Button 
+                size="sm" 
+                onClick={() => setShowBarcodeScanner(true)}
+                className="text-xs btn-info w-full sm:w-auto"
+              >
+                <Camera className={`h-3 w-3 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+                {adminT('barcode.scanBarcode')}
+              </Button>
+            )}
           </div>
         </div>
         {/* Desktop Table View */}

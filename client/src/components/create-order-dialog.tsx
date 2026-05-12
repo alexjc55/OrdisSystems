@@ -291,6 +291,12 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
     enabled: dialogOpen, // Only fetch when dialog is open
   });
 
+  // Fetch barcode config to conditionally show scan button
+  const { data: barcodeConfig } = useQuery({
+    queryKey: ['/api/barcode/config'],
+    enabled: dialogOpen,
+  });
+
   // Fetch products for selection
   const { data: products } = useQuery({
     queryKey: ['/api/products'],
@@ -968,14 +974,16 @@ export default function CreateOrderDialog({ trigger, isOpen, onClose, onSuccess 
                         className="pl-10"
                       />
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="outline"
-                      onClick={() => setIsScannerOpen(true)}
-                    >
-                      <Scan className="w-4 h-4 mr-2" />
-                      {adminT('orders.productSelection.scanBarcode')}
-                    </Button>
+                    {(barcodeConfig as any)?.enabled && (
+                      <Button 
+                        type="button" 
+                        variant="outline"
+                        onClick={() => setIsScannerOpen(true)}
+                      >
+                        <Scan className="w-4 h-4 mr-2" />
+                        {adminT('orders.productSelection.scanBarcode')}
+                      </Button>
+                    )}
                   </div>
 
                   {/* Available products */}
