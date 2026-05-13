@@ -400,7 +400,10 @@ export class DatabaseStorage implements IStorage {
           eq(products.isActive, true),
           eq(productCategories.categoryId, categoryId)
         ))
-        .orderBy(products.sortOrder, products.name);
+        .orderBy(
+          sql`CASE WHEN ${products.sortOrder} = 0 THEN 999999 ELSE ${products.sortOrder} END`,
+          products.name
+        );
 
       // Group by product and collect categories
       const productMap = new Map<number, ProductWithCategories>();
@@ -690,7 +693,10 @@ export class DatabaseStorage implements IStorage {
       const secondaryOrder = sortField === 'price'
         ? (sortDirection === 'desc' ? desc(products.price) : asc(products.price))
         : (sortDirection === 'desc' ? desc(products.name) : asc(products.name));
-      orderBy = [asc(products.sortOrder), secondaryOrder];
+      orderBy = [
+        sql`CASE WHEN ${products.sortOrder} = 0 THEN 999999 ELSE ${products.sortOrder} END`,
+        secondaryOrder
+      ];
     } else if (sortField === 'price') {
       orderBy = sortDirection === 'desc' ? desc(products.price) : asc(products.price);
     } else if (sortField === 'sortOrder') {
