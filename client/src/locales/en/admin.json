@@ -234,6 +234,8 @@
       "statusOutOfStock": "Out of stock today",
       "statusUnavailable": "Completely unavailable",
       "statusDescription": "Status affects product display",
+      "sortOrderLabel": "Sort Order",
+      "sortOrderDescription": "Determines the product position within a category. Lower number = higher position. Not applied in the 'All products' view.",
       "specialOfferLabel": "Special Offer",
       "specialOfferDescription": "Product will be marked as special offer",
       "discountSettings": "Discount Settings",

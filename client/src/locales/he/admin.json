@@ -780,6 +780,8 @@
       "available": "זמין",
       "outOfStock": "אזל במלאי",
       "comingSoon": "בקרוב",
+      "sortOrderLabel": "סדר מיון",
+      "sortOrderDescription": "קובע את מיקום המוצר בתוך הקטגוריה. מספר קטן יותר = מיקום גבוה יותר. לא חל בתצוגת 'כל המוצרים'.",
       "specialOfferLabel": "הצעה מיוחדת",
       "discountLabel": "סוג הנחה",
       "discountPlaceholder": "בחר סוג הנחה",

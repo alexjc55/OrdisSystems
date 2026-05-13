@@ -557,6 +557,8 @@
       "statusOutOfStock": "نفد المخزون اليوم",
       "statusUnavailable": "غير متوفر تماماً",
       "statusDescription": "الحالة تؤثر على عرض المنتج",
+      "sortOrderLabel": "ترتيب العرض",
+      "sortOrderDescription": "يحدد موضع المنتج داخل الفئة. الرقم الأصغر = موضع أعلى. لا يُطبَّق في قسم 'جميع المنتجات'.",
       "specialOfferLabel": "عرض خاص",
       "specialOfferDescription": "المنتج سيُعلم كعرض خاص",
       "discountSettings": "إعدادات الخصم",

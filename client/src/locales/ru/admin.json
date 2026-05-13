@@ -560,6 +560,8 @@
       "statusOutOfStock": "Нет в наличии сегодня",
       "statusUnavailable": "Полностью недоступен",
       "statusDescription": "Статус влияет на отображение товара",
+      "sortOrderLabel": "Порядок сортировки",
+      "sortOrderDescription": "Определяет порядок товара внутри категории. Меньшее число — выше. В разделе «Все товары» не применяется.",
       "specialOfferLabel": "Специальное предложение",
       "specialOfferDescription": "Товар будет отмечен как специальное предложение",
       "discountSettings": "Настройки скидки",
