@@ -8787,7 +8787,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         />
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-3">
             <FormField
               control={form.control}
               name="name"
@@ -8992,87 +8992,80 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               )}
             />
 
-            {barcodeConfig?.enabled && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Global availability: only shown when branches are disabled — otherwise branch section handles it */}
+              {!branchesEnabled && (
+                <FormField
+                  control={form.control}
+                  name="availabilityStatus"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
+                      <Select onValueChange={(value) => {
+                        field.onChange(value);
+                        handleFieldChange('availabilityStatus', value, false);
+                      }} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="text-sm">
+                            <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="available" className="text-sm">{adminT('products.dialog.statusAvailable')}</SelectItem>
+                          <SelectItem value="completely_unavailable" className="text-sm">{adminT('products.dialog.statusUnavailable')}</SelectItem>
+                          <SelectItem value="out_of_stock_today" className="text-sm">{adminT('products.dialog.statusOutOfStock')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
-                name="barcode"
+                name="sortOrder"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm">{adminT('barcode.field')}</FormLabel>
+                    <FormLabel className="text-sm">{adminT('products.dialog.sortOrderLabel')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={adminT('barcode.fieldDescription')}
-                        {...field}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          handleFieldChange('barcode', e.target.value, false);
-                        }}
+                        type="number"
+                        placeholder="0"
                         className="text-sm"
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                       />
                     </FormControl>
-                    <FormDescription className="text-xs text-gray-500">
-                      {adminT('barcode.fieldDescription')}
-                    </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
-            )}
 
-            {/* Global availability: only shown when branches are disabled — otherwise branch section handles it */}
-            {!branchesEnabled && (
-              <FormField
-                control={form.control}
-                name="availabilityStatus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm">{adminT('products.dialog.availabilityLabel')}</FormLabel>
-                    <Select onValueChange={(value) => {
-                      field.onChange(value);
-                      handleFieldChange('availabilityStatus', value, false);
-                    }} value={field.value}>
+              {barcodeConfig?.enabled && (
+                <FormField
+                  control={form.control}
+                  name="barcode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('barcode.field')}</FormLabel>
                       <FormControl>
-                        <SelectTrigger className="text-sm">
-                          <SelectValue placeholder={adminT('products.dialog.availabilityPlaceholder')} />
-                        </SelectTrigger>
+                        <Input
+                          placeholder={adminT('barcode.fieldPlaceholder') || ''}
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleFieldChange('barcode', e.target.value, false);
+                          }}
+                          className="text-sm"
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="available" className="text-sm">{adminT('products.dialog.statusAvailable')}</SelectItem>
-                        <SelectItem value="completely_unavailable" className="text-sm">{adminT('products.dialog.statusUnavailable')}</SelectItem>
-                        <SelectItem value="out_of_stock_today" className="text-sm">{adminT('products.dialog.statusOutOfStock')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription className="text-xs text-gray-500">
-                      {adminT('products.dialog.statusDescription')}
-                    </FormDescription>
-                    <FormMessage className="text-xs" />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            <FormField
-              control={form.control}
-              name="sortOrder"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm">{adminT('products.dialog.sortOrderLabel') || 'Порядок сортировки'}</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      className="text-sm"
-                      {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs text-gray-500">
-                    {adminT('products.dialog.sortOrderDescription') || 'Определяет порядок товара внутри категории. Меньшее число — выше. В разделе «Все товары» не применяется.'}
-                  </FormDescription>
-                  <FormMessage className="text-xs" />
-                </FormItem>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
               )}
-            />
+            </div>
 
             <FormField
               control={form.control}
