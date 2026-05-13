@@ -712,7 +712,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(products)
       .where(whereClause)
-      .orderBy(orderBy)
+      .orderBy(...(Array.isArray(orderBy) ? orderBy : [orderBy]))
       .limit(limit)
       .offset(offset);
 
