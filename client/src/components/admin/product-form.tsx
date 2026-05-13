@@ -274,6 +274,9 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
                       onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                     />
                   </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    Определяет порядок товара внутри категории. Меньшее число — выше. В разделе «Все товары» не применяется.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
