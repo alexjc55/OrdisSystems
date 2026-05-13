@@ -485,6 +485,7 @@
     "productPrice": "سعر المنتج",
     "productCategory": "فئة المنتج",
     "productStatus": "حالة المنتج",
+    "sortOrder": "ترتيب",
     "filterByCategory": "تصفية حسب الفئة",
     "showAll": "عرض الكل",
     "showAvailable": "المتاحة",

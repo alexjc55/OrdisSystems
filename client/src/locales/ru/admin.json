@@ -503,6 +503,7 @@
     "productPrice": "Цена товара",
     "productCategory": "Категория товара",
     "productStatus": "Статус товара",
+    "sortOrder": "Сорт.",
     "price": "Цена",
     "category": "Категория",
     "status": "Статус",

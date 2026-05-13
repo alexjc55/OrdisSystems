@@ -3358,7 +3358,7 @@ export default function AdminDashboard() {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState("all");
   const [selectedProductBranchFilter, setSelectedProductBranchFilter] = useState("all");
 
-  const [sortField, setSortField] = useState<"name" | "price" | "category">("name");
+  const [sortField, setSortField] = useState<"name" | "price" | "category" | "sortOrder">("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   
   // Simple state-based navigation with URL sync
@@ -3676,7 +3676,7 @@ export default function AdminDashboard() {
   }, [searchQuery]);
 
   // Sorting function
-  const handleSort = (field: "name" | "price" | "category") => {
+  const handleSort = (field: "name" | "price" | "category" | "sortOrder") => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
@@ -4918,6 +4918,10 @@ export default function AdminDashboard() {
           aValue = getLocalizedField(a.category, 'name', i18n.language as SupportedLanguage).toLowerCase() || "";
           bValue = getLocalizedField(b.category, 'name', i18n.language as SupportedLanguage).toLowerCase() || "";
           break;
+        case "sortOrder":
+          aValue = a.sortOrder ?? 0;
+          bValue = b.sortOrder ?? 0;
+          break;
         default:
           return 0;
       }
@@ -5556,6 +5560,19 @@ export default function AdminDashboard() {
                                     )}
                                   </button>
                                 </TableHead>
+                                <TableHead className={`w-12 px-2 sm:px-4 text-xs sm:text-sm text-right hidden sm:table-cell`}>
+                                  <button 
+                                    onClick={() => handleSort("sortOrder")}
+                                    className="flex items-center gap-1 hover:text-primary transition-colors flex-row-reverse"
+                                  >
+                                    {adminT('products.sortOrder')}
+                                    {sortField === "sortOrder" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
                                 <TableHead className={`min-w-[120px] px-2 sm:px-4 text-xs sm:text-sm text-right`}>
                                   <button 
                                     onClick={() => handleSort("name")}
@@ -5606,6 +5623,19 @@ export default function AdminDashboard() {
                                   >
                                     {adminT('products.productPrice')}
                                     {sortField === "price" && (
+                                      sortDirection === "asc" ? 
+                                        <ChevronUp className="h-3 w-3" /> : 
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                  </button>
+                                </TableHead>
+                                <TableHead className={`w-12 px-2 sm:px-4 text-xs sm:text-sm ${isRTL ? 'text-right' : 'text-left'} hidden sm:table-cell`}>
+                                  <button 
+                                    onClick={() => handleSort("sortOrder")}
+                                    className={`flex items-center gap-1 hover:text-primary transition-colors ${isRTL ? 'flex-row-reverse' : ''}`}
+                                  >
+                                    {adminT('products.sortOrder')}
+                                    {sortField === "sortOrder" && (
                                       sortDirection === "asc" ? 
                                         <ChevronUp className="h-3 w-3" /> : 
                                         <ChevronDown className="h-3 w-3" />
@@ -5740,6 +5770,9 @@ export default function AdminDashboard() {
                                       ))}
                                     </div>
                                   </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-center hidden sm:table-cell">
+                                    <span className="text-xs text-gray-500 tabular-nums">{product.sortOrder ?? 0}</span>
+                                  </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right max-w-[150px] w-[150px]">
                                     <button
                                       onClick={() => {
@@ -5801,6 +5834,9 @@ export default function AdminDashboard() {
                                       )}
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
+                                  </TableCell>
+                                  <TableCell className="px-2 sm:px-4 py-2 text-center hidden sm:table-cell">
+                                    <span className="text-xs text-gray-500 tabular-nums">{product.sortOrder ?? 0}</span>
                                   </TableCell>
                                   <TableCell className={`px-2 sm:px-4 py-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                                     <div className="flex flex-col gap-1 items-center justify-center">

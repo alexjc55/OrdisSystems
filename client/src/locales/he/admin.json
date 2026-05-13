@@ -723,6 +723,7 @@
     "productCategory": "קטגוריית המוצר",
     "productImage": "תמונת המוצר",
     "productStatus": "סטטוס המוצר",
+    "sortOrder": "סדר",
     "inStock": "במלאי",
     "outOfStock": "אזל במלאי",
     "featured": "מומלץ",
