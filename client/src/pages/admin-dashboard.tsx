@@ -4903,6 +4903,16 @@ export default function AdminDashboard() {
       return matchesSearch && matchesCategory && matchesStatus;
     })
     .sort((a: any, b: any) => {
+      // When a category is selected and no explicit sort override, sort by sortOrder (0 = end)
+      if (selectedCategoryFilter !== "all" && sortField === "name") {
+        const aOrder = (a.sortOrder ?? 0) === 0 ? 999999 : (a.sortOrder ?? 0);
+        const bOrder = (b.sortOrder ?? 0) === 0 ? 999999 : (b.sortOrder ?? 0);
+        if (aOrder !== bOrder) return aOrder - bOrder;
+        const aName = (getLocalizedField(a, 'name', i18n.language as SupportedLanguage) || a.name || '').toLowerCase();
+        const bName = (getLocalizedField(b, 'name', i18n.language as SupportedLanguage) || b.name || '').toLowerCase();
+        return aName < bName ? -1 : aName > bName ? 1 : 0;
+      }
+
       let aValue, bValue;
       
       switch (sortField) {
