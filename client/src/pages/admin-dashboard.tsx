@@ -332,6 +332,7 @@ const productSchema = z.object({
   isSpecialOffer: z.boolean().default(false),
   discountType: z.string().optional(),
   discountValue: z.string().optional(),
+  sortOrder: z.number().default(0),
 });
 
 const categorySchema = z.object({
@@ -8484,6 +8485,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       isSpecialOffer: false,
       discountType: "",
       discountValue: "",
+      sortOrder: 0,
     },
   });
 
@@ -8548,6 +8550,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           isSpecialOffer: initialData.isSpecialOffer ?? false,
           discountType: initialData.discountType || "",
           discountValue: initialData.discountValue,
+          sortOrder: initialData.sortOrder ?? 0,
         });
       } else {
         // New product - reset everything including branch availability
@@ -8568,6 +8571,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           isSpecialOffer: false,
           discountType: "",
           discountValue: "",
+          sortOrder: 0,
         });
       }
     }
@@ -9046,6 +9050,29 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 )}
               />
             )}
+
+            <FormField
+              control={form.control}
+              name="sortOrder"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm">{adminT('products.dialog.sortOrderLabel') || 'Порядок сортировки'}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      className="text-sm"
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs text-gray-500">
+                    {adminT('products.dialog.sortOrderDescription') || 'Определяет порядок товара внутри категории. Меньшее число — выше. В разделе «Все товары» не применяется.'}
+                  </FormDescription>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

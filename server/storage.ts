@@ -521,7 +521,7 @@ export class DatabaseStorage implements IStorage {
           eq(products.isActive, true),
           ne(products.stockStatus, 'out_of_stock')
         ))
-        .orderBy(products.sortOrder, products.name);
+        .orderBy(categories.sortOrder, products.name);
 
       // Group by product and collect categories
       const productMap = new Map<number, ProductWithCategories>();
