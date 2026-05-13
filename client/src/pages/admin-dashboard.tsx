@@ -9034,7 +9034,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         placeholder="0"
                         className="text-sm"
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 0;
+                          field.onChange(val);
+                          handleFieldChange('sortOrder', val, false);
+                        }}
                       />
                     </FormControl>
                     <FormMessage className="text-xs" />
