@@ -684,13 +684,19 @@ export class DatabaseStorage implements IStorage {
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Build order by
-    let orderBy;
-    if (sortField === 'name') {
-      orderBy = sortDirection === 'desc' ? desc(products.name) : asc(products.name);
+    // When a specific category is selected, always sort by product sortOrder first
+    let orderBy: any;
+    if (categoryId) {
+      const secondaryOrder = sortField === 'price'
+        ? (sortDirection === 'desc' ? desc(products.price) : asc(products.price))
+        : (sortDirection === 'desc' ? desc(products.name) : asc(products.name));
+      orderBy = [asc(products.sortOrder), secondaryOrder];
     } else if (sortField === 'price') {
       orderBy = sortDirection === 'desc' ? desc(products.price) : asc(products.price);
+    } else if (sortField === 'sortOrder') {
+      orderBy = sortDirection === 'desc' ? desc(products.sortOrder) : asc(products.sortOrder);
     } else {
-      orderBy = asc(products.name);
+      orderBy = sortDirection === 'desc' ? desc(products.name) : asc(products.name);
     }
 
     // Get total count
