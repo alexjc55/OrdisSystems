@@ -342,7 +342,8 @@ export default function Checkout() {
     }
 
     // Check if today has no available delivery time slots
-    if (storeSettings?.workingHours && date.getTime() === today.getTime()) {
+    // Skip this check when deliveryTimeMode is 'disabled' — no time selection needed, day is already open
+    if (storeSettings?.workingHours && date.getTime() === today.getTime() && storeSettings?.deliveryTimeMode !== 'disabled') {
       const todayTimeSlots = generateDeliveryTimes(
         storeSettings.workingHours,
         format(date, "yyyy-MM-dd"),
@@ -421,6 +422,21 @@ export default function Checkout() {
 
   const isTodayAvailableForDelivery = () => {
     if (!storeSettings?.workingHours) return false;
+
+    // When time selection is disabled, check only if today is a working/delivery day
+    if (storeSettings.deliveryTimeMode === 'disabled') {
+      const today = new Date();
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      const dayName = dayNames[today.getDay()];
+      const todayStr = format(today, "yyyy-MM-dd");
+      if (closedDatesSet.has(todayStr)) return false;
+      const deliveryDayValue = storeSettings.deliveryHours?.[dayName];
+      if (deliveryDayValue != null) {
+        return deliveryDayValue !== '' && !deliveryDayValue.toLowerCase().includes('closed') && !deliveryDayValue.toLowerCase().includes('закрыто') && !deliveryDayValue.toLowerCase().includes('выходной');
+      }
+      const daySchedule = storeSettings.workingHours[dayName];
+      return !!daySchedule && daySchedule.trim() !== '' && !daySchedule.toLowerCase().includes('закрыто') && !daySchedule.toLowerCase().includes('closed') && !daySchedule.toLowerCase().includes('выходной');
+    }
     
     const today = format(new Date(), "yyyy-MM-dd");
     const todayTimeSlots = generateDeliveryTimes(storeSettings.workingHours, today, storeSettings.weekStartDay, storeSettings.deliveryTimeMode || 'hours', tCommon, storeSettings.deliveryHours);
