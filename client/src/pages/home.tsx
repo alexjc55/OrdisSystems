@@ -626,9 +626,14 @@ export default function Home() {
     } else if (categoryFilter !== "all") {
       // Use category filter when it's set (overrides selectedCategoryId)
       const categoryId = parseInt(categoryFilter);
-      productsToShow = allProducts.filter(product => 
-        product.categories?.some(cat => cat.id === categoryId)
-      );
+      productsToShow = allProducts
+        .filter(product => product.categories?.some(cat => cat.id === categoryId))
+        .sort((a, b) => {
+          const aOrder = (a.sortOrder ?? 0) === 0 ? 999999 : (a.sortOrder ?? 0);
+          const bOrder = (b.sortOrder ?? 0) === 0 ? 999999 : (b.sortOrder ?? 0);
+          if (aOrder !== bOrder) return aOrder - bOrder;
+          return (a.name || '').localeCompare(b.name || '');
+        });
     } else if (selectedCategoryId === 0) {
       // Show all products
       productsToShow = allProducts;
