@@ -9041,6 +9041,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                         }}
                       />
                     </FormControl>
+                    <FormDescription className="text-xs text-gray-500">
+                      {adminT('products.dialog.sortOrderDescription')}
+                    </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
