@@ -48,6 +48,9 @@ router.post('/admin/users', isAuthenticated, async (req: any, res) => {
     }
 
     const { branchIds, ...userData } = req.body;
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
     const newUser = await storage.createUser(userData);
 
     if (BRANCHES_ENABLED && branchIds && Array.isArray(branchIds)) {
