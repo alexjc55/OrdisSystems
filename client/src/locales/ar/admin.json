@@ -736,6 +736,8 @@
     "notifications": {
       "roleUpdateError": "خطأ في تحديث الدور",
       "deleteError": "خطأ في حذف المستخدم",
+      "passwordSet": "تم تعيين كلمة المرور",
+      "passwordSetDesc": "تم تغيير كلمة مرور المستخدم بنجاح",
       "passwordSetError": "خطأ في تعيين كلمة المرور"
     },
     "deleteUser": "حذف المستخدم",

@@ -922,6 +922,8 @@
     "notifications": {
       "roleUpdateError": "Ошибка при обновлении роли",
       "deleteError": "Ошибка при удалении пользователя",
+      "passwordSet": "Пароль установлен",
+      "passwordSetDesc": "Пароль пользователя успешно изменён",
       "passwordSetError": "Ошибка при установке пароля"
     },
     "deleteUser": "Удалить пользователя",

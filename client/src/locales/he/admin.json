@@ -994,6 +994,8 @@
     "notifications": {
       "roleUpdateError": "שגיאה בעדכון התפקיד",
       "deleteError": "שגיאה במחיקת המשתמש",
+      "passwordSet": "הסיסמה הוגדרה",
+      "passwordSetDesc": "סיסמת המשתמש שונתה בהצלחה",
       "passwordSetError": "שגיאה בהגדרת הסיסמה"
     },
     "deleteUser": "מחק משתמש",
