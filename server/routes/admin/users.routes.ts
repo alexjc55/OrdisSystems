@@ -82,7 +82,10 @@ router.put('/admin/users/:id', isAuthenticated, async (req: any, res) => {
     }
 
     const { id } = req.params;
-    const { branchIds, ...updates } = req.body;
+    const { branchIds, password, ...updates } = req.body;
+    if (updates.username) {
+      updates.username = updates.username.toLowerCase();
+    }
     const updatedUser = await storage.updateUser(id, updates);
 
     if (BRANCHES_ENABLED && branchIds && Array.isArray(branchIds)) {
