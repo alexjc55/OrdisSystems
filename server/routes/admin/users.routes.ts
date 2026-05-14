@@ -48,6 +48,9 @@ router.post('/admin/users', isAuthenticated, async (req: any, res) => {
     }
 
     const { branchIds, ...userData } = req.body;
+    if (userData.username) {
+      userData.username = userData.username.toLowerCase();
+    }
     if (userData.password) {
       userData.password = await bcrypt.hash(userData.password, 10);
     }
