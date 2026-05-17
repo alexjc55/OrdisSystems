@@ -112,9 +112,9 @@ async function computeServerDiscounts({
     }
   }
 
-  // 3. Loyalty discount for 'customer' role only (not guests, not admin/worker)
+  // 3. Loyalty discount for any registered user (not guests)
   //    Non-stacking rule: if coupon was applied, skip loyalty discount
-  if (userId && userRole === 'customer' && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
+  if (userId && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
     const pct = parseFloat(settings.loyaltyDiscountPercent || '0');
     if (pct > 0) {
       serverLoyaltyDiscount = Math.round(subtotalAfterVolume * pct) / 100;

@@ -115,9 +115,8 @@ export default function CartSidebar() {
 
   const subtotalAfterVolumeDiscounts = Math.max(0, subtotal - volumeDiscountAmount);
 
-  // Loyalty discount: customer role only, only when NO coupon is applied (non-stacking rule)
-  const isCustomerRole = user?.role === 'customer';
-  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && isCustomerRole && loyaltyContext.loyaltyDiscountPercent > 0)
+  // Loyalty discount: any registered user, only when NO coupon is applied (non-stacking rule)
+  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
     ? Math.round((subtotalAfterVolumeDiscounts * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
     : 0;
 

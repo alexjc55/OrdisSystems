@@ -295,9 +295,8 @@ export default function Checkout() {
   const subtotalForDiscounts = getTotalPrice();
   const subtotalAfterVolume = Math.max(0, subtotalForDiscounts - checkoutVolumeDiscountAmount);
   // Non-stacking rule: loyalty discount is skipped when a coupon is applied
-  // Only 'customer' role receives loyalty discount (not admin/worker)
-  const isCustomerRole = user?.role === 'customer';
-  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && isCustomerRole && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
+  // All registered users receive loyalty discount (not guests)
+  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
     ? Math.round((subtotalAfterVolume * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
     : 0;
   const subtotalAfterLoyalty = subtotalAfterVolume - loyaltyDiscountAmount;

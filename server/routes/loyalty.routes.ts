@@ -29,10 +29,10 @@ router.post('/loyalty/active', async (req: any, res) => {
     const { cartTotal, cartItems } = parsed.data;
     const settings = await storage.getStoreSettings();
 
-    // --- Per-user loyalty discount applicability (customer role only) ---
+    // --- Per-user loyalty discount applicability (any registered user) ---
     const userId = req.user?.id || null;
     const userRole = (req.user as any)?.role || null;
-    const isRegistered = !!userId && userRole === 'customer';
+    const isRegistered = !!userId;
     const loyaltyDiscountEnabled = !!(settings?.loyaltyDiscountEnabled && isRegistered);
     const loyaltyDiscountPercent = loyaltyDiscountEnabled
       ? parseFloat(settings?.loyaltyDiscountPercent || '0')
