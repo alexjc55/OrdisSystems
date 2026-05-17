@@ -27,9 +27,10 @@ router.post('/loyalty/active', async (req: any, res) => {
     const { cartTotal, cartItems } = parsed.data;
     const settings = await storage.getStoreSettings();
 
-    // --- Per-user loyalty discount applicability ---
+    // --- Per-user loyalty discount applicability (customer role only) ---
     const userId = req.user?.id || null;
-    const isRegistered = !!userId;
+    const userRole = (req.user as any)?.role || null;
+    const isRegistered = !!userId && userRole === 'customer';
     const loyaltyDiscountEnabled = !!(settings?.loyaltyDiscountEnabled && isRegistered);
     const loyaltyDiscountPercent = loyaltyDiscountEnabled
       ? parseFloat(settings?.loyaltyDiscountPercent || '0')
@@ -151,7 +152,8 @@ router.post('/coupons/validate', async (req: any, res) => {
 
     const { code, orderTotal } = parsed.data;
     const userId = req.user?.id || null;
-    const result = await storage.validateCoupon(code, orderTotal, userId);
+    const userEmail = (req.user as any)?.email || null;
+    const result = await storage.validateCoupon(code, orderTotal, userId, userEmail);
     res.json(result);
   } catch (error) {
     console.error("Error validating coupon:", error);
@@ -176,7 +178,8 @@ router.post('/coupons/apply', async (req: any, res) => {
 
     const { code, orderTotal } = parsed.data;
     const userId = req.user?.id || null;
-    const result = await storage.validateCoupon(code, orderTotal, userId);
+    const userEmail = (req.user as any)?.email || null;
+    const result = await storage.validateCoupon(code, orderTotal, userId, userEmail);
 
     if (!result.valid) {
       return res.status(422).json(result);

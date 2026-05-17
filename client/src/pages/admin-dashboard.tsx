@@ -8669,6 +8669,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     minOrderAmount: '0',
     maxUses: '',
     usageType: 'multi',
+    targetCustomerEmail: '',
     isActive: true,
     expiresAt: '',
   });
@@ -8681,7 +8682,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
 
   const resetForm = () => {
-    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', isActive: true, expiresAt: '' });
+    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', targetCustomerEmail: '', isActive: true, expiresAt: '' });
     setEditingCoupon(null);
     setShowForm(false);
   };
@@ -8701,6 +8702,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       minOrderAmount: coupon.minOrderAmount || '0',
       maxUses: coupon.maxUses ? String(coupon.maxUses) : '',
       usageType: coupon.usageType || 'multi',
+      targetCustomerEmail: coupon.targetCustomerEmail || '',
       isActive: coupon.isActive,
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : '',
     });
@@ -8744,6 +8746,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       minOrderAmount: form.minOrderAmount || '0',
       maxUses: form.maxUses ? parseInt(form.maxUses) : null,
       usageType: form.usageType,
+      targetCustomerEmail: form.targetCustomerEmail || null,
       isActive: form.isActive,
       expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
     });
@@ -8923,6 +8926,16 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   <SelectItem value="per_customer">{t('Один раз на клиента', 'Once per customer', 'פעם אחת לכל לקוח', 'مرة واحدة لكل عميل')}</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Только для клиента (email)', 'Target customer (email)', 'לקוח ספציפי (אימייל)', 'عميل محدد (البريد)')}</label>
+              <Input
+                type="email"
+                value={form.targetCustomerEmail}
+                onChange={(e) => setForm(f => ({ ...f, targetCustomerEmail: e.target.value }))}
+                placeholder={t('Оставьте пустым для всех', 'Leave empty for all', 'השאר ריק לכולם', 'اتركه فارغاً للجميع')}
+              />
+              <p className="text-xs text-muted-foreground">{t('Если указан — купон доступен только этому клиенту', 'If set — coupon is available only to this customer', 'אם הוגדר — הקופון זמין רק ללקוח זה', 'إذا تم تعيينه — القسيمة متاحة فقط لهذا العميل')}</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">

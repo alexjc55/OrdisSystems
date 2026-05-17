@@ -17,12 +17,16 @@ async function computeServerDiscounts({
   couponCode,
   subtotal,
   userId,
+  userEmail,
+  userRole,
   giftAccepted,
   orderItems,
 }: {
   couponCode?: string | null;
   subtotal: number;
   userId?: string | null;
+  userEmail?: string | null;
+  userRole?: string | null;
   giftAccepted?: boolean;
   orderItems?: Array<{ productId: number; quantity: number; totalPrice: string }>;
 }): Promise<{
@@ -86,9 +90,9 @@ async function computeServerDiscounts({
   // Effective subtotal after volume discounts — used as base for loyalty/coupon
   const subtotalAfterVolume = Math.max(0, subtotal - serverVolumeDiscount);
 
-  // 2. Validate coupon from DB (pass userId for per-customer usage enforcement)
+  // 2. Validate coupon from DB (pass userId + userEmail for per-customer/targeted enforcement)
   if (couponCode) {
-    const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId);
+    const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId, userEmail);
     if (validation.valid && validation.coupon) {
       serverCouponCode = validation.coupon.code;
       serverCouponDiscount = validation.discountAmount || 0;
@@ -104,9 +108,9 @@ async function computeServerDiscounts({
     }
   }
 
-  // 3. Loyalty discount for registered users only (not guests)
+  // 3. Loyalty discount for 'customer' role only (not guests, not admin/worker)
   //    Non-stacking rule: if coupon was applied, skip loyalty discount
-  if (userId && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
+  if (userId && userRole === 'customer' && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
     const pct = parseFloat(settings.loyaltyDiscountPercent || '0');
     if (pct > 0) {
       serverLoyaltyDiscount = Math.round(subtotalAfterVolume * pct) / 100;
@@ -651,6 +655,8 @@ router.post('/orders', async (req: any, res) => {
       couponCode: authCouponCode || null,
       subtotal: authSubtotal,
       userId,
+      userEmail: req.user ? (req.user as any).email : null,
+      userRole: req.user ? (req.user as any).role : null,
       giftAccepted: !!authGiftAccepted,
       orderItems: authOrderItemsForDiscounts,
     });

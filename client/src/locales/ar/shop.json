@@ -91,6 +91,7 @@
     "couponExpired": "انتهت صلاحية رمز الخصم",
     "couponMaxUses": "تم الوصول إلى الحد الأقصى لاستخدام الرمز",
     "couponAlreadyUsed": "لقد استخدمت رمز الخصم هذا بالفعل",
+    "couponNotEligible": "رمز الخصم هذا غير متاح لحسابك",
     "couponMinOrder": "مبلغ الطلب أقل من الحد الأدنى لهذا الرمز",
     "couponError": "خطأ في التحقق من رمز الخصم",
     "loyaltyDiscount": "خصم العميل الدائم",

@@ -743,8 +743,12 @@ export const coupons = pgTable("coupons", {
   currentUses: integer("current_uses").default(0).notNull(),
   // usageType: 'single' = one-time total, 'multi' = up to maxUses, 'per_customer' = once per user
   usageType: varchar("usage_type", { enum: ["single", "multi", "per_customer"] }).default("multi").notNull(),
-  // scope: 'order' = applies to whole order total
-  scope: varchar("scope", { enum: ["order"] }).default("order").notNull(),
+  // scope: 'order' = applies to whole order total; 'product' = applies only to matching product subtotals
+  scope: varchar("scope", { enum: ["order", "product"] }).default("order").notNull(),
+  // When set, only this customer email is allowed to use the coupon
+  targetCustomerEmail: varchar("target_customer_email", { length: 255 }),
+  // When set (non-empty array), coupon applies only to these product IDs
+  applicableProductIds: jsonb("applicable_product_ids").$type<number[]>(),
   isActive: boolean("is_active").default(true).notNull(),
   expiresAt: timestamp("expires_at"), // null = no expiry
   createdAt: timestamp("created_at").defaultNow(),
@@ -983,7 +987,9 @@ export const insertCouponSchema = createInsertSchema(coupons).omit({
   isActive: z.boolean().optional(),
   expiresAt: z.string().datetime().nullable().optional(),
   usageType: z.enum(["single", "multi", "per_customer"]).optional(),
-  scope: z.enum(["order"]).optional(),
+  scope: z.enum(["order", "product"]).optional(),
+  targetCustomerEmail: z.string().email().nullable().optional(),
+  applicableProductIds: z.array(z.number().int()).nullable().optional(),
 });
 
 export const insertProductVolumeDiscountSchema = createInsertSchema(productVolumeDiscounts).omit({

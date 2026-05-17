@@ -11,12 +11,22 @@ CREATE TABLE IF NOT EXISTS "coupons" (
   "min_order_amount" numeric(10, 2) DEFAULT '0',
   "max_uses" integer,
   "current_uses" integer DEFAULT 0 NOT NULL,
+  "usage_type" varchar(20) NOT NULL DEFAULT 'multi',
+  "scope" varchar(20) NOT NULL DEFAULT 'order',
+  "target_customer_email" varchar(255),
+  "applicable_product_ids" jsonb,
   "is_active" boolean DEFAULT true NOT NULL,
   "expires_at" timestamp,
   "created_at" timestamp DEFAULT now(),
   "updated_at" timestamp DEFAULT now(),
   CONSTRAINT "coupons_code_unique" UNIQUE("code")
 );
+
+-- Add new coupon columns if table already exists (idempotent)
+ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "usage_type" varchar(20) NOT NULL DEFAULT 'multi';
+ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "scope" varchar(20) NOT NULL DEFAULT 'order';
+ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_customer_email" varchar(255);
+ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "applicable_product_ids" jsonb;
 
 -- New table: coupon_uses
 CREATE TABLE IF NOT EXISTS "coupon_uses" (

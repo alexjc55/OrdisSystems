@@ -174,7 +174,7 @@ export interface IStorage {
   createCoupon(data: InsertCoupon): Promise<Coupon>;
   updateCoupon(id: number, data: Partial<InsertCoupon>): Promise<Coupon>;
   deleteCoupon(id: number): Promise<void>;
-  validateCoupon(code: string, orderTotal: number): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }>;
+  validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }>;
   recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void>;
   getCouponUses(couponId: number): Promise<CouponUse[]>;
 
@@ -2123,7 +2123,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(coupons).where(eq(coupons.id, id));
   }
 
-  async validateCoupon(code: string, orderTotal: number, userId?: string | null): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }> {
+  async validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }> {
     const coupon = await this.getCouponByCode(code);
     if (!coupon) return { valid: false, message: "coupon_not_found" };
     if (!coupon.isActive) return { valid: false, message: "coupon_inactive" };
@@ -2137,11 +2137,20 @@ export class DatabaseStorage implements IStorage {
       return { valid: false, message: "coupon_max_uses" };
     }
 
+    // Customer targeting: if coupon is restricted to a specific customer email, enforce it
+    if (coupon.targetCustomerEmail) {
+      if (!userEmail || coupon.targetCustomerEmail.toLowerCase() !== userEmail.toLowerCase()) {
+        return { valid: false, message: "coupon_not_eligible" };
+      }
+    }
+
     // Usage type enforcement:
-    // - 'single': treated as maxUses=1 (already handled by maxUses check above if maxUses was set)
+    // - 'single': one-time global — blocked if currentUses > 0
     // - 'per_customer': once per authenticated user — check coupon_uses table
     // - 'multi': default, only maxUses global limit applies
-    if (coupon.usageType === 'per_customer' && userId) {
+    if (coupon.usageType === 'single' && coupon.currentUses > 0) {
+      return { valid: false, message: "coupon_max_uses" };
+    } else if (coupon.usageType === 'per_customer' && userId) {
       const db = await this.getDatabase();
       const existingUse = await db
         .select()
@@ -2151,8 +2160,6 @@ export class DatabaseStorage implements IStorage {
       if (existingUse.length > 0) {
         return { valid: false, message: "coupon_already_used" };
       }
-    } else if (coupon.usageType === 'single' && coupon.currentUses > 0) {
-      return { valid: false, message: "coupon_max_uses" };
     }
 
     const minAmount = parseFloat(coupon.minOrderAmount || "0");

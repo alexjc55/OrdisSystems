@@ -89,6 +89,7 @@
     "couponExpired": "Promo code has expired",
     "couponMaxUses": "Promo code usage limit reached",
     "couponAlreadyUsed": "You have already used this promo code",
+    "couponNotEligible": "This promo code is not available for your account",
     "couponMinOrder": "Order amount is below the minimum for this promo code",
     "couponError": "Error validating promo code",
     "loyaltyDiscount": "Loyalty discount",
