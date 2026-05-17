@@ -223,7 +223,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
-  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot, appliedCoupon, giftAccepted } = useCartStore();
+  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot, appliedCoupon, setAppliedCoupon, giftAccepted } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -656,12 +656,13 @@ export default function Checkout() {
       const thanksUrl = `/thanks?orderId=${order.orderId}&guestAccessToken=${order.guestAccessToken}&claimToken=${order.guestClaimToken}&guest=true&hasEmail=${hasEmail}&lang=${currentLang}`;
       navigate(thanksUrl);
     },
-    onError: (error: Error) => {
-      toast({
-        title: "Ошибка при оформлении заказа",
-        description: error.message,
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      if (error?.message === 'coupon_invalid') {
+        setAppliedCoupon(null);
+        toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
+      } else {
+        toast({ title: "Ошибка при оформлении заказа", description: error.message, variant: "destructive" });
+      }
     },
   });
 
@@ -758,12 +759,13 @@ export default function Checkout() {
       const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
       navigate(thanksUrl);
     },
-    onError: (error: Error) => {
-      toast({
-        title: "Ошибка",
-        description: error.message,
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      if (error?.message === 'coupon_invalid') {
+        setAppliedCoupon(null);
+        toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
+      } else {
+        toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+      }
     },
   });
 
@@ -855,12 +857,13 @@ export default function Checkout() {
       const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
       navigate(thanksUrl);
     },
-    onError: (error: Error) => {
-      toast({
-        title: tShop('checkout.orderError'),
-        description: error.message,
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      if (error?.message === 'coupon_invalid') {
+        setAppliedCoupon(null);
+        toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
+      } else {
+        toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
+      }
     },
   });
 

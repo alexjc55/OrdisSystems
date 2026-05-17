@@ -98,8 +98,10 @@ async function computeServerDiscounts({
         value: parseFloat(validation.coupon.discountValue),
         discountAmount: serverCouponDiscount,
       };
+    } else {
+      // Coupon was submitted but is invalid — surface reason via thrown error so callers can return 422
+      throw Object.assign(new Error(validation.message || 'coupon_invalid'), { couponError: validation.message, isCouponError: true });
     }
-    // If invalid coupon submitted — silently ignore (no discount)
   }
 
   // 3. Loyalty discount for registered users only (not guests)
@@ -589,7 +591,10 @@ router.post('/orders/guest', async (req: any, res) => {
       guestClaimToken,
       orderLanguage: orderData.orderLanguage
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.isCouponError) {
+      return res.status(422).json({ message: "coupon_invalid", couponError: error.couponError });
+    }
     console.error("Error creating guest order:", error);
     res.status(500).json({ message: "Failed to create order" });
   }
@@ -800,7 +805,10 @@ router.post('/orders', async (req: any, res) => {
     }
 
     res.json(order);
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.isCouponError) {
+      return res.status(422).json({ message: "coupon_invalid", couponError: error.couponError });
+    }
     console.error("Error creating order:", error);
     if (error instanceof z.ZodError) {
       return res.status(400).json({ message: "Invalid data", errors: error.errors });
