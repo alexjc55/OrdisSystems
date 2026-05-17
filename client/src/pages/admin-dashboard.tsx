@@ -8628,54 +8628,88 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
                   className="w-32"
                 />
               </div>
-              <div className={`flex items-start gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <label className="text-sm font-medium min-w-max mt-2">
-                  {t('Товар-подарок', 'Gift product', 'מוצר מתנה', 'منتج الهدية')}
-                </label>
-                <div className="flex-1 max-w-xs space-y-1 relative">
-                  <Input
-                    type="text"
-                    placeholder={t('Поиск товара...', 'Search product...', 'חפש מוצר...', 'ابحث عن منتج...')}
-                    value={giftProductPickerOpen ? giftProductSearch : (products.find((p: any) => String(p.id) === giftProductId)?.name || '')}
-                    onChange={(e) => { setGiftProductSearch(e.target.value); setGiftProductPickerOpen(true); if (!e.target.value) { setGiftProductId(''); } }}
-                    onFocus={() => { setGiftProductPickerOpen(true); setGiftProductSearch(''); }}
-                    onBlur={() => setTimeout(() => setGiftProductPickerOpen(false), 180)}
-                    className="w-full"
-                  />
-                  {giftProductPickerOpen && (
-                    <div className="absolute z-50 w-full bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                      {products
-                        .filter((p: any) => !giftProductSearch || p.name?.toLowerCase().includes(giftProductSearch.toLowerCase()))
-                        .slice(0, 30)
-                        .map((p: any) => (
-                          <div
-                            key={p.id}
-                            className={`px-3 py-2 cursor-pointer hover:bg-accent text-sm ${String(p.id) === giftProductId ? 'bg-accent font-medium' : ''}`}
-                            onMouseDown={() => { setGiftProductId(String(p.id)); setGiftProductSearch(''); setGiftProductPickerOpen(false); }}
-                          >
-                            {p.name}
+              {(() => {
+                const selectedGiftProduct = products.find((p: any) => String(p.id) === giftProductId) as any | undefined;
+                const unitMeta = (() => {
+                  const u = selectedGiftProduct?.unit;
+                  if (u === 'piece')   return { label: t('шт', 'pcs', 'יח׳', 'قطعة'), defaultQty: '1', min: '1', step: '1' };
+                  if (u === 'portion') return { label: t('порц.', 'portion', 'מנה', 'حصة'), defaultQty: '1', min: '1', step: '1' };
+                  if (u === 'kg')      return { label: t('кг', 'kg', 'ק"ג', 'كجم'), defaultQty: '1', min: '0.1', step: '0.1' };
+                  if (u === '100ml')   return { label: t('мл', 'ml', 'מ"ל', 'مل'), defaultQty: '100', min: '10', step: '10' };
+                  return { label: t('г', 'g', 'ג', 'جم'), defaultQty: '100', min: '10', step: '10' };
+                })();
+                return (
+                  <>
+                    <div className={`flex items-start gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <label className="text-sm font-medium min-w-max mt-2">
+                        {t('Товар-подарок', 'Gift product', 'מוצר מתנה', 'منتج الهدية')}
+                      </label>
+                      <div className="flex-1 max-w-xs space-y-1 relative">
+                        <Input
+                          type="text"
+                          placeholder={t('Поиск товара...', 'Search product...', 'חפש מוצר...', 'ابحث عن منتج...')}
+                          value={giftProductPickerOpen ? giftProductSearch : (selectedGiftProduct?.name || '')}
+                          onChange={(e) => { setGiftProductSearch(e.target.value); setGiftProductPickerOpen(true); if (!e.target.value) { setGiftProductId(''); setGiftProductQuantity(''); } }}
+                          onFocus={() => { setGiftProductPickerOpen(true); setGiftProductSearch(''); }}
+                          onBlur={() => setTimeout(() => setGiftProductPickerOpen(false), 180)}
+                          className="w-full"
+                        />
+                        {giftProductPickerOpen && (
+                          <div className="absolute z-50 w-full bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                            {products
+                              .filter((p: any) => !giftProductSearch || p.name?.toLowerCase().includes(giftProductSearch.toLowerCase()))
+                              .slice(0, 30)
+                              .map((p: any) => {
+                                const pm = (() => {
+                                  const u = p.unit;
+                                  if (u === 'piece')   return { label: t('шт', 'pcs', 'יח׳', 'قطعة'), defaultQty: '1' };
+                                  if (u === 'portion') return { label: t('порц.', 'portion', 'מנה', 'حصة'), defaultQty: '1' };
+                                  if (u === 'kg')      return { label: t('кг', 'kg', 'ק"ג', 'كجم'), defaultQty: '1' };
+                                  if (u === '100ml')   return { label: t('мл', 'ml', 'מ"ל', 'مل'), defaultQty: '100' };
+                                  return { label: t('г', 'g', 'ג', 'جم'), defaultQty: '100' };
+                                })();
+                                return (
+                                  <div
+                                    key={p.id}
+                                    className={`px-3 py-2 cursor-pointer hover:bg-accent text-sm flex justify-between items-center ${String(p.id) === giftProductId ? 'bg-accent font-medium' : ''}`}
+                                    onMouseDown={() => {
+                                      setGiftProductId(String(p.id));
+                                      setGiftProductQuantity(pm.defaultQty);
+                                      setGiftProductSearch('');
+                                      setGiftProductPickerOpen(false);
+                                    }}
+                                  >
+                                    <span>{p.name}</span>
+                                    <span className="text-xs text-muted-foreground ml-2">{pm.label}</span>
+                                  </div>
+                                );
+                              })}
+                            {products.filter((p: any) => !giftProductSearch || p.name?.toLowerCase().includes(giftProductSearch.toLowerCase())).length === 0 && (
+                              <div className="px-3 py-2 text-sm text-muted-foreground">{t('Ничего не найдено', 'No results', 'אין תוצאות', 'لا توجد نتائج')}</div>
+                            )}
                           </div>
-                        ))}
-                      {products.filter((p: any) => !giftProductSearch || p.name?.toLowerCase().includes(giftProductSearch.toLowerCase())).length === 0 && (
-                        <div className="px-3 py-2 text-sm text-muted-foreground">{t('Ничего не найдено', 'No results', 'אין תוצאות', 'لا توجد نتائج')}</div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              </div>
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <label className="text-sm font-medium min-w-max">
-                  {t('Количество (г/шт/мл)', 'Quantity (g/pcs/ml)', 'כמות (ג/יח/מ"ל)', 'الكمية (جم/قطعة/مل)')}
-                </label>
-                <Input
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={giftProductQuantity}
-                  onChange={(e) => setGiftProductQuantity(e.target.value)}
-                  className="w-28"
-                />
-              </div>
+                    {giftProductId && (
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <label className="text-sm font-medium min-w-max">
+                          {t('Количество', 'Quantity', 'כמות', 'الكمية')}
+                        </label>
+                        <Input
+                          type="number"
+                          min={unitMeta.min}
+                          step={unitMeta.step}
+                          value={giftProductQuantity || unitMeta.defaultQty}
+                          onChange={(e) => setGiftProductQuantity(e.target.value)}
+                          className="w-28"
+                        />
+                        <span className="text-sm text-muted-foreground">{unitMeta.label}</span>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>
