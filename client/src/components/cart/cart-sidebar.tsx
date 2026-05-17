@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency, formatQuantity, type ProductUnit } from "@/lib/currency";
-import { X, Plus, Minus, Trash2, ShoppingCart, Info } from "lucide-react";
+import { X, Plus, Minus, Trash2, ShoppingCart, Info, Tag, Gift, CheckCircle } from "lucide-react";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
 import { useState, useEffect, useRef } from "react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
@@ -12,10 +12,12 @@ import { useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { suppressedHistoryBack, isPopstateSuppressed } from "@/hooks/useModalBackButton";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
 
 // Calculate delivery fee based on order total and free delivery threshold
 const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliveryFrom: number | null) => {
-  // If no free delivery threshold is set, always charge delivery fee
   if (!freeDeliveryFrom || freeDeliveryFrom <= 0) {
     return deliveryFee;
   }
@@ -23,17 +25,97 @@ const calculateDeliveryFee = (orderTotal: number, deliveryFee: number, freeDeliv
 };
 
 export default function CartSidebar() {
-  const { items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice } = useCartStore();
+  const {
+    items, isOpen, setCartOpen, updateQuantity, removeItem, getTotalPrice,
+    appliedCoupon, setAppliedCoupon, giftAccepted, setGiftAccepted
+  } = useCartStore();
   const navigate = useUTMNavigate();
   const [editingQuantity, setEditingQuantity] = useState<{[key: number]: string}>({});
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
   const { currentLanguage } = useLanguage();
+  const { user } = useAuth();
 
-  // Android back button: close cart instead of navigating away.
-  // suppressHistoryBackRef prevents history.back() when cart closes due to checkout navigation.
+  const [couponInput, setCouponInput] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
+
   const backButtonRef = useRef<{ pushed: boolean; handler: ((e: PopStateEvent) => void) | null }>({ pushed: false, handler: null });
   const suppressHistoryBackRef = useRef(false);
+
+  // Loyalty context query
+  const { data: loyaltyContext } = useQuery<{
+    loyaltyDiscountEnabled: boolean;
+    loyaltyDiscountPercent: number;
+    giftEnabled: boolean;
+    giftProduct: any | null;
+    giftMinOrderAmount: number;
+  }>({
+    queryKey: ['/api/loyalty/context'],
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Coupon validation mutation
+  const validateCouponMutation = useMutation({
+    mutationFn: async ({ code, orderTotal }: { code: string; orderTotal: number }) => {
+      const res = await apiRequest('POST', '/api/coupons/validate', { code, orderTotal });
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data.valid) {
+        setAppliedCoupon({
+          code: couponInput.toUpperCase(),
+          discountType: data.coupon.discountType,
+          discountValue: parseFloat(data.coupon.discountValue),
+          discountAmount: data.discountAmount,
+        });
+        setCouponError(null);
+        setCouponInput("");
+      } else {
+        setCouponError(data.message);
+        setAppliedCoupon(null);
+      }
+    },
+    onError: () => {
+      setCouponError('coupon_error');
+      setAppliedCoupon(null);
+    }
+  });
+
+  const subtotal = getTotalPrice();
+
+  // Loyalty discount for registered users
+  const loyaltyDiscountAmount = (loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
+    ? Math.round((subtotal * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
+    : 0;
+
+  // Gift eligibility
+  const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotal >= (loyaltyContext.giftMinOrderAmount || 300);
+
+  // Effective subtotal after loyalty discount
+  const subtotalAfterLoyalty = subtotal - loyaltyDiscountAmount;
+
+  // Coupon discount (recompute against loyalty-adjusted subtotal)
+  const couponDiscountAmount = appliedCoupon
+    ? (() => {
+        if (appliedCoupon.discountType === 'percentage') {
+          return Math.round((subtotalAfterLoyalty * appliedCoupon.discountValue / 100) * 100) / 100;
+        }
+        return Math.min(appliedCoupon.discountValue, subtotalAfterLoyalty);
+      })()
+    : 0;
+
+  const subtotalAfterDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
+
+  const handleApplyCoupon = () => {
+    if (!couponInput.trim()) return;
+    validateCouponMutation.mutate({ code: couponInput, orderTotal: subtotalAfterLoyalty });
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponError(null);
+    setCouponInput("");
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -41,8 +123,6 @@ export default function CartSidebar() {
       backButtonRef.current.pushed = true;
 
       const onPopState = () => {
-        // Ignore popstate events fired programmatically by suppressedHistoryBack()
-        // (e.g. when another modal closes right after the cart opens)
         if (isPopstateSuppressed()) return;
         backButtonRef.current.pushed = false;
         backButtonRef.current.handler = null;
@@ -69,21 +149,18 @@ export default function CartSidebar() {
       suppressHistoryBackRef.current = false;
     }
   }, [isOpen]);
-  
-
 
   const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
     if (newQuantity <= 0) {
       removeItem(productId);
     } else {
-      // Adjust increment based on unit type
       let adjustedQuantity = newQuantity;
       if (unit === "piece" || unit === "portion") {
-        adjustedQuantity = Math.round(newQuantity); // Whole numbers for pieces and portions
+        adjustedQuantity = Math.round(newQuantity);
       } else if (unit === "kg") {
-        adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 kg increments
+        adjustedQuantity = Number(newQuantity.toFixed(1));
       } else {
-        adjustedQuantity = Number(newQuantity.toFixed(1)); // 0.1 increments for 100g/100ml
+        adjustedQuantity = Number(newQuantity.toFixed(1));
       }
       updateQuantity(productId, adjustedQuantity);
     }
@@ -98,9 +175,9 @@ export default function CartSidebar() {
         return 0.1;
       case "100g":
       case "100ml":
-        return 50; // 50 gram increments for 100g/100ml units
+        return 50;
       default:
-        return 50; // Default to 50 for 100g/100ml units
+        return 50;
     }
   };
 
@@ -138,8 +215,6 @@ export default function CartSidebar() {
   };
 
   const handleCheckout = () => {
-    // Remove the back button handler and suppress history.back() so navigation to
-    // /checkout is clean (back from /checkout will go to home, not trigger cart).
     if (backButtonRef.current.handler) {
       window.removeEventListener('popstate', backButtonRef.current.handler);
       backButtonRef.current.handler = null;
@@ -147,6 +222,18 @@ export default function CartSidebar() {
     suppressHistoryBackRef.current = true;
     setCartOpen(false);
     navigate("/checkout");
+  };
+
+  const getCouponErrorText = (msg: string | null) => {
+    if (!msg) return '';
+    switch (msg) {
+      case 'coupon_not_found': return t('cart.couponNotFound');
+      case 'coupon_inactive': return t('cart.couponInactive');
+      case 'coupon_expired': return t('cart.couponExpired');
+      case 'coupon_max_uses': return t('cart.couponMaxUses');
+      case 'coupon_min_order': return t('cart.couponMinOrder');
+      default: return t('cart.couponError');
+    }
   };
 
   if (!isOpen) return null;
@@ -191,12 +278,10 @@ export default function CartSidebar() {
                   {items.filter(item => item && item.product && item.product.id).map((item) => (
                     <div key={item.product.id} className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm">
                       <div className="flex items-start gap-3">
-                        {/* Product Image Placeholder */}
                         <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center flex-shrink-0">
                           <ShoppingCart className="h-6 w-6 text-primary" />
                         </div>
                         
-                        {/* Product Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-2">
                             <div className="flex-1">
@@ -234,7 +319,6 @@ export default function CartSidebar() {
                             </Button>
                           </div>
                           
-                          {/* Price and Quantity Controls */}
                           <div className="flex items-center justify-between mt-3">
                             <div className="flex flex-col items-center gap-2">
                               <div className="flex items-center gap-2">
@@ -305,47 +389,132 @@ export default function CartSidebar() {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t bg-white p-4 space-y-4">
-              <div className="bg-gradient-to-r from-primary-light to-yellow-50 rounded-xl p-4 border border-primary">
-                {(() => {
-                  const subtotal = getTotalPrice();
-                  const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
-                  const deliveryFeeAmount = calculateDeliveryFee(
-                    subtotal, 
-                    parseFloat(storeSettings?.deliveryFee || "15.00"), 
-                    freeDeliveryThreshold
-                  );
-                  const total = subtotal + deliveryFeeAmount;
+            <div className="border-t bg-white p-4 space-y-3">
 
-                  return (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>{t('cart.items')}:</span>
-                        <span>{formatCurrency(subtotal)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span>{t('cart.delivery')}:</span>
-                        <span>
-                          {deliveryFeeAmount === 0 ? (
-                            <span className="text-green-600 font-medium">{t('cart.free')}</span>
-                          ) : (
-                            formatCurrency(deliveryFeeAmount)
-                          )}
-                        </span>
-                      </div>
-                      {deliveryFeeAmount > 0 && freeDeliveryThreshold && freeDeliveryThreshold > 0 && (
-                        <div className="text-xs text-gray-500 text-center">
-                          {t('cart.freeDeliveryFrom')} {formatCurrency(freeDeliveryThreshold)}
-                        </div>
-                      )}
-                      <Separator />
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-700">{t('cart.total')}:</span>
-                        <span className="text-2xl font-bold text-primary">{formatCurrency(total)}</span>
-                      </div>
+              {/* Gift Banner */}
+              {giftEligible && loyaltyContext?.giftProduct && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3">
+                  <div className="flex items-start gap-2">
+                    <Gift className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-green-800">{t('cart.giftAvailable')}</p>
+                      <p className="text-xs text-green-700 mt-0.5 truncate">
+                        {getLocalizedField(loyaltyContext.giftProduct, 'name', currentLanguage as SupportedLanguage, 'ru') || loyaltyContext.giftProduct.name}
+                      </p>
                     </div>
-                  );
-                })()}
+                    <Button
+                      size="sm"
+                      variant={giftAccepted ? "default" : "outline"}
+                      onClick={() => setGiftAccepted(!giftAccepted)}
+                      className={`text-xs flex-shrink-0 h-7 ${giftAccepted ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-400 text-green-700 hover:bg-green-100'}`}
+                    >
+                      {giftAccepted ? <><CheckCircle className="h-3 w-3 mr-1" />{t('cart.giftAdded')}</> : t('cart.addGift')}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Coupon Input */}
+              <div className="space-y-2">
+                {appliedCoupon ? (
+                  <div className="flex items-center justify-between bg-primary-light border border-primary rounded-xl px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-semibold text-primary">{appliedCoupon.code}</span>
+                      <span className="text-xs text-primary-dark">
+                        -{formatCurrency(appliedCoupon.discountAmount)}
+                      </span>
+                    </div>
+                    <button onClick={handleRemoveCoupon} className="text-gray-400 hover:text-red-500">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder={t('cart.enterCoupon')}
+                      value={couponInput}
+                      onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(null); }}
+                      onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                      className="h-9 text-sm uppercase"
+                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleApplyCoupon}
+                      disabled={!couponInput.trim() || validateCouponMutation.isPending}
+                      className="h-9 flex-shrink-0 border-primary text-primary hover:bg-primary-light"
+                    >
+                      {validateCouponMutation.isPending ? '...' : t('cart.applyCoupon')}
+                    </Button>
+                  </div>
+                )}
+                {couponError && (
+                  <p className="text-xs text-red-500">{getCouponErrorText(couponError)}</p>
+                )}
+              </div>
+
+              {/* Totals */}
+              <div className="bg-gradient-to-r from-primary-light to-yellow-50 rounded-xl p-4 border border-primary">
+                <div className="space-y-2">
+                  {/* Subtotal */}
+                  <div className="flex justify-between text-sm">
+                    <span>{t('cart.items')}:</span>
+                    <span>{formatCurrency(subtotal)}</span>
+                  </div>
+
+                  {/* Loyalty discount line */}
+                  {loyaltyDiscountAmount > 0 && (
+                    <div className="flex justify-between text-sm text-green-700">
+                      <span>{t('cart.loyaltyDiscount')} ({loyaltyContext!.loyaltyDiscountPercent}%):</span>
+                      <span>-{formatCurrency(loyaltyDiscountAmount)}</span>
+                    </div>
+                  )}
+
+                  {/* Coupon discount line */}
+                  {appliedCoupon && couponDiscountAmount > 0 && (
+                    <div className="flex justify-between text-sm text-green-700">
+                      <span>{t('cart.couponDiscount')} ({appliedCoupon.code}):</span>
+                      <span>-{formatCurrency(couponDiscountAmount)}</span>
+                    </div>
+                  )}
+
+                  {/* Delivery */}
+                  {(() => {
+                    const freeDeliveryThreshold = storeSettings?.freeDeliveryFrom ? parseFloat(storeSettings.freeDeliveryFrom) : null;
+                    const deliveryFeeAmount = calculateDeliveryFee(
+                      subtotalAfterDiscounts,
+                      parseFloat(storeSettings?.deliveryFee || "15.00"),
+                      freeDeliveryThreshold
+                    );
+                    const total = subtotalAfterDiscounts + deliveryFeeAmount;
+
+                    return (
+                      <>
+                        <div className="flex justify-between text-sm">
+                          <span>{t('cart.delivery')}:</span>
+                          <span>
+                            {deliveryFeeAmount === 0 ? (
+                              <span className="text-green-600 font-medium">{t('cart.free')}</span>
+                            ) : (
+                              formatCurrency(deliveryFeeAmount)
+                            )}
+                          </span>
+                        </div>
+                        {deliveryFeeAmount > 0 && freeDeliveryThreshold && freeDeliveryThreshold > 0 && (
+                          <div className="text-xs text-gray-500 text-center">
+                            {t('cart.freeDeliveryFrom')} {formatCurrency(freeDeliveryThreshold)}
+                          </div>
+                        )}
+                        <Separator />
+                        <div className="flex justify-between items-center">
+                          <span className="text-lg font-semibold text-gray-700">{t('cart.total')}:</span>
+                          <span className="text-2xl font-bold text-primary">{formatCurrency(total)}</span>
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
               </div>
 
               {/* Cart Banner */}
@@ -383,7 +552,7 @@ export default function CartSidebar() {
                 className="w-full bg-primary hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/50 text-white font-semibold py-3 rounded-xl shadow-lg transition-shadow duration-200"
                 size="lg"
               >
-{t('cart.checkout')}
+                {t('cart.checkout')}
               </Button>
             </div>
           )}

@@ -10,9 +10,18 @@ export interface CartItem {
   totalPrice: number;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  discountAmount: number; // computed discount in currency units
+}
+
 interface CartStore {
   items: CartItem[];
   isOpen: boolean;
+  appliedCoupon: AppliedCoupon | null;
+  giftAccepted: boolean;
   addItem: (product: Product, quantity: number) => void;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
@@ -22,6 +31,8 @@ interface CartStore {
   setCartOpen: (open: boolean) => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
+  setGiftAccepted: (accepted: boolean) => void;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -29,6 +40,8 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       isOpen: false,
+      appliedCoupon: null,
+      giftAccepted: false,
       
       addItem: (product, quantity) => {
         const items = get().items;
@@ -98,7 +111,7 @@ export const useCartStore = create<CartStore>()(
         set({ items: updatedItems });
       },
       
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], appliedCoupon: null, giftAccepted: false }),
       
       toggleCart: () => set(state => ({ isOpen: !state.isOpen })),
       
@@ -113,7 +126,10 @@ export const useCartStore = create<CartStore>()(
         const validItems = get().items.filter(item => item.product && item.product.id);
         const total = validItems.reduce((total, item) => total + item.totalPrice, 0);
         return roundUpToNearestTenAgorot(total);
-      }
+      },
+
+      setAppliedCoupon: (coupon) => set({ appliedCoupon: coupon }),
+      setGiftAccepted: (accepted) => set({ giftAccepted: accepted }),
     }),
     {
       name: 'restaurant-cart-storage',

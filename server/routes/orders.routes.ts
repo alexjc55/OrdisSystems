@@ -213,7 +213,7 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
 
 router.post('/orders/guest', async (req: any, res) => {
   try {
-    const { items, totalAmount, guestInfo, language, branchId } = req.body;
+    const { items, totalAmount, guestInfo, language, branchId, couponCode, couponDiscount, loyaltyDiscount, giftProductId, discountDetails } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Invalid order items" });
@@ -248,6 +248,11 @@ router.post('/orders/guest', async (req: any, res) => {
       guestClaimToken,
       orderLanguage: language || 'ru',
       ...(parsedBranchId !== undefined ? { branchId: parsedBranchId } : {}),
+      ...(couponCode ? { couponCode } : {}),
+      ...(couponDiscount ? { couponDiscount: couponDiscount.toString() } : {}),
+      ...(loyaltyDiscount ? { loyaltyDiscount: loyaltyDiscount.toString() } : {}),
+      ...(giftProductId ? { giftProductId } : {}),
+      ...(discountDetails ? { discountDetails } : {}),
     };
 
     const orderItems = items.map((item: any) => ({
@@ -259,6 +264,18 @@ router.post('/orders/guest', async (req: any, res) => {
     }));
 
     const order = await storage.createOrder(orderData, orderItems);
+
+    // Record coupon usage if a coupon was applied
+    if (couponCode) {
+      try {
+        const coupon = await storage.getCouponByCode(couponCode);
+        if (coupon) {
+          await storage.recordCouponUse(coupon.id, order.id, null);
+        }
+      } catch (couponError) {
+        console.error('Error recording coupon use:', couponError);
+      }
+    }
 
     try {
       await PushNotificationService.notifyNewOrder(
@@ -428,7 +445,7 @@ router.post('/orders', async (req: any, res) => {
       user = await storage.getUser(userId);
     }
 
-    const { items, language, ...orderData } = req.body;
+    const { items, language, couponCode: authCouponCode, couponDiscount: authCouponDiscount, loyaltyDiscount: authLoyaltyDiscount, giftProductId: authGiftProductId, discountDetails: authDiscountDetails, ...orderData } = req.body;
 
     const orderSchema = insertOrderSchema.extend({
       requestedDeliveryDate: z.string().optional(),
@@ -455,12 +472,29 @@ router.post('/orders', async (req: any, res) => {
       orderLanguage: language || 'ru',
       ...deliveryOverride,
       ...(!BRANCHES_ENABLED ? { branchId: undefined } : {}),
+      ...(authCouponCode ? { couponCode: authCouponCode } : {}),
+      ...(authCouponDiscount ? { couponDiscount: authCouponDiscount.toString() } : {}),
+      ...(authLoyaltyDiscount ? { loyaltyDiscount: authLoyaltyDiscount.toString() } : {}),
+      ...(authGiftProductId ? { giftProductId: authGiftProductId } : {}),
+      ...(authDiscountDetails ? { discountDetails: authDiscountDetails } : {}),
     };
 
     const order = await storage.createOrder(
       processedOrderData,
       validatedData.items.map(item => ({ ...item, orderId: 0 }))
     );
+
+    // Record coupon usage if applied
+    if (authCouponCode) {
+      try {
+        const coupon = await storage.getCouponByCode(authCouponCode);
+        if (coupon) {
+          await storage.recordCouponUse(coupon.id, order.id, userId);
+        }
+      } catch (couponError) {
+        console.error('Error recording coupon use for authenticated order:', couponError);
+      }
+    }
 
     try {
       const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';

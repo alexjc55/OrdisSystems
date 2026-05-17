@@ -181,6 +181,12 @@ export const orders = pgTable("orders", {
   requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
   cancellationReason: text("cancellation_reason"),
+  // Loyalty / discount fields
+  couponCode: varchar("coupon_code", { length: 50 }),
+  couponDiscount: decimal("coupon_discount", { precision: 10, scale: 2 }),
+  loyaltyDiscount: decimal("loyalty_discount", { precision: 10, scale: 2 }),
+  giftProductId: integer("gift_product_id"),
+  discountDetails: jsonb("discount_details"), // JSON breakdown of all applied discounts
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -509,6 +515,13 @@ export const storeSettings = pgTable("store_settings", {
   // Mobile menu quick buttons
   mobileQuickButtons: jsonb("mobile_quick_buttons").default([]), // Array of section keys shown as quick buttons in mobile menu
 
+  // Loyalty system settings
+  loyaltyDiscountEnabled: boolean("loyalty_discount_enabled").default(false),
+  loyaltyDiscountPercent: decimal("loyalty_discount_percent", { precision: 5, scale: 2 }).default("0"),
+  giftEnabled: boolean("gift_enabled").default(false),
+  giftProductId: integer("gift_product_id"),
+  giftMinOrderAmount: decimal("gift_min_order_amount", { precision: 10, scale: 2 }).default("300"),
+
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
@@ -718,6 +731,43 @@ export const marketingNotifications = pgTable("marketing_notifications", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
+// Coupons table for discount code system
+export const coupons = pgTable("coupons", {
+  id: serial("id").primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  description: text("description"),
+  discountType: varchar("discount_type", { enum: ["percentage", "fixed"] }).notNull(),
+  discountValue: decimal("discount_value", { precision: 10, scale: 2 }).notNull(),
+  minOrderAmount: decimal("min_order_amount", { precision: 10, scale: 2 }).default("0"),
+  maxUses: integer("max_uses"), // null = unlimited
+  currentUses: integer("current_uses").default(0).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  expiresAt: timestamp("expires_at"), // null = no expiry
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Coupon uses table to track which orders used which coupons
+export const couponUses = pgTable("coupon_uses", {
+  id: serial("id").primaryKey(),
+  couponId: integer("coupon_id").references(() => coupons.id).notNull(),
+  orderId: integer("order_id").references(() => orders.id).notNull(),
+  userId: varchar("user_id").references(() => users.id),
+  usedAt: timestamp("used_at").defaultNow(),
+});
+
+// Product volume discounts table
+export const productVolumeDiscounts = pgTable("product_volume_discounts", {
+  id: serial("id").primaryKey(),
+  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }).notNull(),
+  minQuantity: decimal("min_quantity", { precision: 10, scale: 3 }).notNull(),
+  discountType: varchar("discount_type", { enum: ["percentage", "fixed"] }).notNull(),
+  discountValue: decimal("discount_value", { precision: 10, scale: 2 }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Closed dates table (holidays and special closures)
 export const closedDates = pgTable("closed_dates", {
   id: serial("id").primaryKey(),
@@ -916,6 +966,31 @@ export const updateThemeSchema = baseThemeSchema.partial().omit({
   isActive: true,
 });
 
+export const insertCouponSchema = createInsertSchema(coupons).omit({
+  id: true,
+  currentUses: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  discountType: z.enum(["percentage", "fixed"]),
+  discountValue: z.string(),
+  minOrderAmount: z.string().optional(),
+  maxUses: z.number().int().nullable().optional(),
+  isActive: z.boolean().optional(),
+  expiresAt: z.string().datetime().nullable().optional(),
+});
+
+export const insertProductVolumeDiscountSchema = createInsertSchema(productVolumeDiscounts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).extend({
+  discountType: z.enum(["percentage", "fixed"]),
+  discountValue: z.string(),
+  minQuantity: z.string(),
+  isActive: z.boolean().optional(),
+});
+
 export const insertClosedDateSchema = createInsertSchema(closedDates).omit({
   id: true,
   createdAt: true,
@@ -939,6 +1014,12 @@ export const insertProductBranchAvailabilitySchema = createInsertSchema(productB
 });
 
 // Types
+export type Coupon = typeof coupons.$inferSelect;
+export type InsertCoupon = z.infer<typeof insertCouponSchema>;
+export type CouponUse = typeof couponUses.$inferSelect;
+export type ProductVolumeDiscount = typeof productVolumeDiscounts.$inferSelect;
+export type InsertProductVolumeDiscount = z.infer<typeof insertProductVolumeDiscountSchema>;
+
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;

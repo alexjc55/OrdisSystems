@@ -314,7 +314,12 @@ import {
   Printer,
   Building2,
   Pencil,
-  AlertTriangle
+  AlertTriangle,
+  Tag,
+  Gift,
+  Percent,
+  CheckCircle,
+  XCircle
 } from "lucide-react";
 
 // Validation schemas
@@ -606,7 +611,10 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
               const hasOrderDiscount = discounts.orderDiscount && discounts.orderDiscount.value > 0;
               const hasItemDiscounts = discounts.itemDiscounts && Object.keys(discounts.itemDiscounts).length > 0;
               
-              if (hasOrderDiscount || hasItemDiscounts) {
+              const hasCouponDiscount = parseFloat(order.couponDiscount || '0') > 0;
+              const hasLoyaltyDiscount = parseFloat(order.loyaltyDiscount || '0') > 0;
+
+              if (hasOrderDiscount || hasItemDiscounts || hasCouponDiscount || hasLoyaltyDiscount) {
                 // Calculate original total before discounts
                 let originalTotal = parseFloat(order.totalAmount);
                 
@@ -618,6 +626,8 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
                     originalTotal = originalTotal + discounts.orderDiscount.value;
                   }
                 }
+                if (hasCouponDiscount) originalTotal += parseFloat(order.couponDiscount);
+                if (hasLoyaltyDiscount) originalTotal += parseFloat(order.loyaltyDiscount);
                 
                 return (
                   <div>
@@ -629,9 +639,21 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
                         {formatCurrency(order.totalAmount)}
                       </span>
                     </div>
-                    <div className="text-xs text-red-600 font-medium">
-                      {adminT('orders.discountApplied')}
-                    </div>
+                    {(hasOrderDiscount || hasItemDiscounts) && (
+                      <div className="text-xs text-red-600 font-medium">
+                        {adminT('orders.discountApplied')}
+                      </div>
+                    )}
+                    {hasCouponDiscount && (
+                      <div className="text-xs text-green-700 font-medium">
+                        🏷️ {order.couponCode} -{formatCurrency(parseFloat(order.couponDiscount))}
+                      </div>
+                    )}
+                    {hasLoyaltyDiscount && (
+                      <div className="text-xs text-blue-700 font-medium">
+                        ⭐ -{formatCurrency(parseFloat(order.loyaltyDiscount))}
+                      </div>
+                    )}
                   </div>
                 );
               }
@@ -5325,6 +5347,12 @@ export default function AdminDashboard() {
                     </TabsTrigger>
                   )}
                   {isAdmin && (
+                    <TabsTrigger value="coupons" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={currentLanguage === 'ru' ? 'Купоны и лояльность' : currentLanguage === 'he' ? 'קופונים ונאמנות' : currentLanguage === 'ar' ? 'كوبونات والولاء' : 'Coupons & Loyalty'}>
+                      <Tag className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{currentLanguage === 'ru' ? 'Купоны' : currentLanguage === 'he' ? 'קופונים' : currentLanguage === 'ar' ? 'كوبونات' : 'Coupons'}</span>
+                    </TabsTrigger>
+                  )}
+                  {isAdmin && (
                     <TabsTrigger value="notifications" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title="Push Уведомления">
                       <Bell className="w-4 h-4 ml-1" />
                       <span className="admin-tab-text">Push</span>
@@ -5428,6 +5456,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="branches" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.branches')}>
                       <Building2 className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{adminT('tabs.branches')}</span>
+                    </TabsTrigger>
+                  )}
+                  {isAdmin && (
+                    <TabsTrigger value="coupons" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={currentLanguage === 'ru' ? 'Купоны и лояльность' : currentLanguage === 'he' ? 'קופונים ונאמנות' : currentLanguage === 'ar' ? 'كوبونات والولاء' : 'Coupons & Loyalty'}>
+                      <Tag className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{currentLanguage === 'ru' ? 'Купоны' : currentLanguage === 'he' ? 'קופונים' : currentLanguage === 'ar' ? 'كوبونات' : 'Coupons'}</span>
                     </TabsTrigger>
                   )}
 
@@ -7334,6 +7368,9 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
               
+              {/* Loyalty Settings Section */}
+              <LoyaltySettingsCard isRTL={isRTL} currentLanguage={currentLanguage} />
+
               {/* System Management Section */}
               <Card>
                 <CardHeader>
@@ -8164,6 +8201,12 @@ export default function AdminDashboard() {
             </TabsContent>
           )}
 
+          {/* Coupons & Loyalty Management */}
+          {isAdmin && (
+            <TabsContent value="coupons" className="space-y-4 sm:space-y-6">
+              <CouponsTab isRTL={isRTL} currentLanguage={currentLanguage} />
+            </TabsContent>
+          )}
 
         </Tabs>
       </div>
@@ -8445,6 +8488,469 @@ export default function AdminDashboard() {
           }}
         />
       )}
+    </div>
+  );
+}
+
+// ==================== LOYALTY SETTINGS CARD ====================
+function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguage: string }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: settings } = useQuery<any>({ queryKey: ['/api/settings'] });
+  const { data: productsData } = useQuery<any[]>({ queryKey: ['/api/products'] });
+  const products = productsData || [];
+
+  const [loyaltyEnabled, setLoyaltyEnabled] = useState(false);
+  const [loyaltyPercent, setLoyaltyPercent] = useState('');
+  const [giftEnabled, setGiftEnabled] = useState(false);
+  const [giftProductId, setGiftProductId] = useState('');
+  const [giftMinOrder, setGiftMinOrder] = useState('');
+
+  useEffect(() => {
+    if (settings) {
+      setLoyaltyEnabled(settings.loyaltyDiscountEnabled || false);
+      setLoyaltyPercent(settings.loyaltyDiscountPercent || '0');
+      setGiftEnabled(settings.giftEnabled || false);
+      setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
+      setGiftMinOrder(settings.giftMinOrderAmount || '300');
+    }
+  }, [settings]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const current = await fetch('/api/settings').then(r => r.json());
+      return apiRequest('PUT', '/api/settings', { ...current, ...data });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/loyalty/context'] });
+      toast({ title: currentLanguage === 'ru' ? 'Сохранено' : currentLanguage === 'he' ? 'נשמר' : currentLanguage === 'ar' ? 'تم الحفظ' : 'Saved' });
+    },
+    onError: () => {
+      toast({ title: currentLanguage === 'ru' ? 'Ошибка сохранения' : 'Save error', variant: 'destructive' });
+    }
+  });
+
+  const handleSave = () => {
+    saveMutation.mutate({
+      loyaltyDiscountEnabled: loyaltyEnabled,
+      loyaltyDiscountPercent: loyaltyPercent,
+      giftEnabled,
+      giftProductId: giftProductId ? parseInt(giftProductId) : null,
+      giftMinOrderAmount: giftMinOrder,
+    });
+  };
+
+  const t = (ru: string, en: string, he: string, ar: string) =>
+    currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
+          <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+            <Gift className="h-5 w-5" />
+            {t('Программа лояльности', 'Loyalty Program', 'תוכנית נאמנות', 'برنامج الولاء')}
+          </CardTitle>
+          <CardDescription className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+            {t('Скидка для зарегистрированных покупателей и подарок при заказе', 'Discount for registered customers and gift on order', 'הנחה ללקוחות רשומים ומתנה בהזמנה', 'خصم للعملاء المسجلين وهدية عند الطلب')}
+          </CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Registered customer discount */}
+        <div className={`space-y-3 p-4 border rounded-lg ${isRTL ? 'text-right' : ''}`}>
+          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div>
+              <h4 className="font-medium flex items-center gap-2">
+                <Percent className="h-4 w-4" />
+                {t('Скидка зарегистрированным', 'Registered customer discount', 'הנחה ללקוחות רשומים', 'خصم للعملاء المسجلين')}
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                {t('Постоянная скидка для авторизованных покупателей', 'Permanent discount for logged-in customers', 'הנחה קבועה ללקוחות מחוברים', 'خصم دائم للعملاء الذين قاموا بتسجيل الدخول')}
+              </p>
+            </div>
+            <Switch checked={loyaltyEnabled} onCheckedChange={setLoyaltyEnabled} />
+          </div>
+          {loyaltyEnabled && (
+            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <label className="text-sm font-medium min-w-max">
+                {t('Размер скидки (%)', 'Discount (%)', 'הנחה (%)', 'الخصم (%)')}
+              </label>
+              <Input
+                type="number"
+                min="0"
+                max="100"
+                value={loyaltyPercent}
+                onChange={(e) => setLoyaltyPercent(e.target.value)}
+                className="w-24"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Gift on order */}
+        <div className={`space-y-3 p-4 border rounded-lg ${isRTL ? 'text-right' : ''}`}>
+          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div>
+              <h4 className="font-medium flex items-center gap-2">
+                <Gift className="h-4 w-4" />
+                {t('Подарок при заказе', 'Gift on order', 'מתנה בהזמנה', 'هدية عند الطلب')}
+              </h4>
+              <p className="text-sm text-muted-foreground">
+                {t('Бесплатный товар при достижении суммы заказа', 'Free item when order reaches threshold', 'פריט חינם כשההזמנה מגיעה לסף', 'عنصر مجاني عند بلوغ الطلب الحد')}
+              </p>
+            </div>
+            <Switch checked={giftEnabled} onCheckedChange={setGiftEnabled} />
+          </div>
+          {giftEnabled && (
+            <div className="space-y-3">
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <label className="text-sm font-medium min-w-max">
+                  {t('Минимальная сумма заказа', 'Minimum order amount', 'סכום הזמנה מינימלי', 'الحد الأدنى لمبلغ الطلب')}
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={giftMinOrder}
+                  onChange={(e) => setGiftMinOrder(e.target.value)}
+                  className="w-32"
+                />
+              </div>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <label className="text-sm font-medium min-w-max">
+                  {t('Товар-подарок', 'Gift product', 'מוצר מתנה', 'منتج الهدية')}
+                </label>
+                <Select value={giftProductId} onValueChange={setGiftProductId}>
+                  <SelectTrigger className="w-64">
+                    <SelectValue placeholder={t('Выберите товар', 'Select product', 'בחר מוצר', 'اختر منتج')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {products.map((p: any) => (
+                      <SelectItem key={p.id} value={String(p.id)}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={`flex ${isRTL ? 'justify-start' : 'justify-end'}`}>
+          <Button onClick={handleSave} disabled={saveMutation.isPending}>
+            {saveMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {t('Сохранить', 'Save', 'שמור', 'حفظ')}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ==================== COUPONS TAB ====================
+function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguage: string }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const [showForm, setShowForm] = useState(false);
+  const [editingCoupon, setEditingCoupon] = useState<any>(null);
+  const [form, setForm] = useState({
+    code: '',
+    description: '',
+    discountType: 'percentage',
+    discountValue: '',
+    minOrderAmount: '0',
+    maxUses: '',
+    isActive: true,
+    expiresAt: '',
+  });
+
+  const { data: coupons = [], isLoading } = useQuery<any[]>({
+    queryKey: ['/api/admin/coupons'],
+  });
+
+  const t = (ru: string, en: string, he: string, ar: string) =>
+    currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
+
+  const resetForm = () => {
+    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', isActive: true, expiresAt: '' });
+    setEditingCoupon(null);
+    setShowForm(false);
+  };
+
+  const openCreate = () => {
+    resetForm();
+    setShowForm(true);
+  };
+
+  const openEdit = (coupon: any) => {
+    setEditingCoupon(coupon);
+    setForm({
+      code: coupon.code,
+      description: coupon.description || '',
+      discountType: coupon.discountType,
+      discountValue: coupon.discountValue,
+      minOrderAmount: coupon.minOrderAmount || '0',
+      maxUses: coupon.maxUses ? String(coupon.maxUses) : '',
+      isActive: coupon.isActive,
+      expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : '',
+    });
+    setShowForm(true);
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: (data: any) => editingCoupon
+      ? apiRequest('PATCH', `/api/admin/coupons/${editingCoupon.id}`, data)
+      : apiRequest('POST', '/api/admin/coupons', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/coupons'] });
+      toast({ title: editingCoupon ? t('Купон обновлён', 'Coupon updated', 'קופון עודכן', 'تم تحديث القسيمة') : t('Купон создан', 'Coupon created', 'קופון נוצר', 'تم إنشاء القسيمة') });
+      resetForm();
+    },
+    onError: () => toast({ title: t('Ошибка', 'Error', 'שגיאה', 'خطأ'), variant: 'destructive' }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest('DELETE', `/api/admin/coupons/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/coupons'] });
+      toast({ title: t('Купон удалён', 'Coupon deleted', 'קופון נמחק', 'تم حذف القسيمة') });
+    },
+    onError: () => toast({ title: t('Ошибка', 'Error', 'שגיאה', 'خطأ'), variant: 'destructive' }),
+  });
+
+  const toggleMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: number; isActive: boolean }) =>
+      apiRequest('PATCH', `/api/admin/coupons/${id}`, { isActive }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['/api/admin/coupons'] }),
+  });
+
+  const handleSave = () => {
+    if (!form.code.trim() || !form.discountValue) return;
+    saveMutation.mutate({
+      code: form.code.trim().toUpperCase(),
+      description: form.description || null,
+      discountType: form.discountType,
+      discountValue: form.discountValue,
+      minOrderAmount: form.minOrderAmount || '0',
+      maxUses: form.maxUses ? parseInt(form.maxUses) : null,
+      isActive: form.isActive,
+      expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
+    });
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={isRTL ? 'text-right' : 'text-left'}>
+              <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <Tag className="h-5 w-5" />
+                {t('Купоны', 'Coupons', 'קופונים', 'كوبونات')}
+              </CardTitle>
+              <CardDescription>
+                {t('Управление промо-кодами и скидочными купонами', 'Manage promo codes and discount coupons', 'ניהול קודי פרומו וקופוני הנחה', 'إدارة رموز الترويج وقسائم الخصم')}
+              </CardDescription>
+            </div>
+            <Button onClick={openCreate} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              {t('Создать купон', 'Create coupon', 'צור קופון', 'إنشاء قسيمة')}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : coupons.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Tag className="h-12 w-12 mx-auto mb-2 opacity-30" />
+              <p>{t('Купонов пока нет', 'No coupons yet', 'אין קופונים עדיין', 'لا توجد قسائم بعد')}</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Код', 'Code', 'קוד', 'الرمز')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Описание', 'Description', 'תיאור', 'الوصف')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Скидка', 'Discount', 'הנחה', 'الخصم')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Мин. заказ', 'Min order', 'הזמנה מינ.', 'الحد الأدنى')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Использований', 'Uses', 'שימושים', 'الاستخدامات')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Истекает', 'Expires', 'פג תוקף', 'تنتهي')}</TableHead>
+                    <TableHead className={isRTL ? 'text-right' : ''}>{t('Активен', 'Active', 'פעיל', 'نشط')}</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {coupons.map((coupon: any) => (
+                    <TableRow key={coupon.id}>
+                      <TableCell className="font-mono font-bold">{coupon.code}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{coupon.description || '—'}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">
+                          {coupon.discountType === 'percentage'
+                            ? `${coupon.discountValue}%`
+                            : `${coupon.discountValue} ₪`}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{coupon.minOrderAmount > 0 ? `${coupon.minOrderAmount} ₪` : '—'}</TableCell>
+                      <TableCell>
+                        {coupon.currentUses}{coupon.maxUses ? ` / ${coupon.maxUses}` : ''}
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString() : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <Switch
+                          checked={coupon.isActive}
+                          onCheckedChange={(v) => toggleMutation.mutate({ id: coupon.id, isActive: v })}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Button size="sm" variant="ghost" onClick={() => openEdit(coupon)}>
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{t('Удалить купон?', 'Delete coupon?', 'למחוק קופון?', 'حذف القسيمة؟')}</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  {t(`Купон "${coupon.code}" будет удалён безвозвратно.`, `Coupon "${coupon.code}" will be permanently deleted.`, `הקופון "${coupon.code}" יימחק לצמיתות.`, `سيتم حذف القسيمة "${coupon.code}" بشكل دائم.`)}
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>{t('Отмена', 'Cancel', 'ביטול', 'إلغاء')}</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteMutation.mutate(coupon.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                  {t('Удалить', 'Delete', 'מחק', 'حذف')}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Create / Edit Dialog */}
+      <Dialog open={showForm} onOpenChange={(v) => { if (!v) resetForm(); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {editingCoupon
+                ? t('Редактировать купон', 'Edit coupon', 'ערוך קופון', 'تعديل القسيمة')
+                : t('Создать купон', 'Create coupon', 'צור קופון', 'إنشاء قسيمة')}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Код купона', 'Coupon code', 'קוד קופון', 'رمز القسيمة')} *</label>
+              <Input
+                value={form.code}
+                onChange={(e) => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))}
+                placeholder="SUMMER20"
+                className="font-mono"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Описание', 'Description', 'תיאור', 'الوصف')}</label>
+              <Input
+                value={form.description}
+                onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
+                placeholder={t('Летняя скидка', 'Summer discount', 'הנחת קיץ', 'خصم صيفي')}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">{t('Тип скидки', 'Discount type', 'סוג הנחה', 'نوع الخصم')}</label>
+                <Select value={form.discountType} onValueChange={(v) => setForm(f => ({ ...f, discountType: v }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="percentage">{t('Процент (%)', 'Percentage (%)', 'אחוז (%)', 'نسبة مئوية (%)')}</SelectItem>
+                    <SelectItem value="fixed">{t('Фиксированная сумма', 'Fixed amount', 'סכום קבוע', 'مبلغ ثابت')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">
+                  {form.discountType === 'percentage' ? t('Скидка (%)', 'Discount (%)', 'הנחה (%)', 'الخصم (%)') : t('Сумма (₪)', 'Amount (₪)', 'סכום (₪)', 'المبلغ (₪)')}
+                </label>
+                <Input
+                  type="number"
+                  min="0"
+                  max={form.discountType === 'percentage' ? '100' : undefined}
+                  value={form.discountValue}
+                  onChange={(e) => setForm(f => ({ ...f, discountValue: e.target.value }))}
+                  placeholder="10"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">{t('Мин. сумма заказа', 'Min order amount', 'סכום הזמנה מינ.', 'الحد الأدنى للطلب')}</label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={form.minOrderAmount}
+                  onChange={(e) => setForm(f => ({ ...f, minOrderAmount: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">{t('Лимит использований', 'Usage limit', 'מגבלת שימוש', 'حد الاستخدام')}</label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={form.maxUses}
+                  onChange={(e) => setForm(f => ({ ...f, maxUses: e.target.value }))}
+                  placeholder={t('Без лимита', 'Unlimited', 'ללא הגבלה', 'غير محدود')}
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Дата истечения', 'Expiry date', 'תאריך תפוגה', 'تاريخ الانتهاء')}</label>
+              <Input
+                type="date"
+                value={form.expiresAt}
+                onChange={(e) => setForm(f => ({ ...f, expiresAt: e.target.value }))}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch checked={form.isActive} onCheckedChange={(v) => setForm(f => ({ ...f, isActive: v }))} />
+              <label className="text-sm">{t('Активен', 'Active', 'פעיל', 'نشط')}</label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={resetForm}>{t('Отмена', 'Cancel', 'ביטול', 'إلغاء')}</Button>
+            <Button onClick={handleSave} disabled={saveMutation.isPending || !form.code || !form.discountValue}>
+              {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              {editingCoupon ? t('Сохранить', 'Save', 'שמור', 'حفظ') : t('Создать', 'Create', 'צור', 'إنشاء')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

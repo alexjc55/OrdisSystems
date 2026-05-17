@@ -223,7 +223,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
-  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot } = useCartStore();
+  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot, appliedCoupon, giftAccepted } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -248,6 +248,35 @@ export default function Checkout() {
   const { data: closedDates = [] } = useQuery<any[]>({
     queryKey: ['/api/closed-dates'],
   });
+
+  // Loyalty context (discount % for registered users + gift product)
+  const { data: loyaltyContext } = useQuery<{
+    loyaltyDiscountEnabled: boolean;
+    loyaltyDiscountPercent: number;
+    giftEnabled: boolean;
+    giftProduct: any | null;
+    giftMinOrderAmount: number;
+  }>({
+    queryKey: ['/api/loyalty/context'],
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Computed discount helpers used throughout the page
+  const subtotalForDiscounts = getTotalPrice();
+  const loyaltyDiscountAmount = (loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
+    ? Math.round((subtotalForDiscounts * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
+    : 0;
+  const subtotalAfterLoyalty = subtotalForDiscounts - loyaltyDiscountAmount;
+  const couponDiscountAmount = appliedCoupon
+    ? (() => {
+        if (appliedCoupon.discountType === 'percentage') {
+          return Math.round((subtotalAfterLoyalty * appliedCoupon.discountValue / 100) * 100) / 100;
+        }
+        return Math.min(appliedCoupon.discountValue, subtotalAfterLoyalty);
+      })()
+    : 0;
+  const subtotalAfterAllDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
+  const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);
 
   // On checkout load, validate cart against selected branch and auto-remove unavailable items
   useEffect(() => {
@@ -538,11 +567,11 @@ export default function Checkout() {
 
       const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
-        subtotal, 
+        subtotalAfterAllDiscounts, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
         (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
-      const total = subtotal + deliveryFeeAmount;
+      const total = subtotalAfterAllDiscounts + deliveryFeeAmount;
 
       const orderPayloadItems: OrderPayloadItem[] = items.map(item => ({
         productId: item.product.id,
@@ -550,9 +579,24 @@ export default function Checkout() {
         pricePerKg: item.product.pricePerKg || item.product.price,
         totalPrice: item.totalPrice.toString()
       }));
+      const discountDetailsPayload = (loyaltyDiscountAmount > 0 || couponDiscountAmount > 0 || (giftAccepted && giftEligible))
+        ? {
+            subtotal,
+            loyaltyDiscount: loyaltyDiscountAmount,
+            couponDiscount: couponDiscountAmount,
+            couponCode: appliedCoupon?.code || null,
+            giftIncluded: giftAccepted && !!giftEligible,
+            giftProductId: (giftAccepted && loyaltyContext?.giftProduct) ? loyaltyContext.giftProduct.id : null,
+          }
+        : null;
       const orderData: BaseOrderPayload & {
         guestInfo: typeof data & { deliveryDate: string; deliveryTime: string; paymentMethod: string };
         language: string;
+        couponCode?: string;
+        couponDiscount?: number;
+        loyaltyDiscount?: number;
+        giftProductId?: number;
+        discountDetails?: any;
       } = {
         items: orderPayloadItems,
         totalAmount: total.toString(),
@@ -565,6 +609,10 @@ export default function Checkout() {
         language: currentLanguage,
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code, couponDiscount: couponDiscountAmount } : {}),
+        ...(loyaltyDiscountAmount > 0 ? { loyaltyDiscount: loyaltyDiscountAmount } : {}),
+        ...(giftAccepted && giftEligible && loyaltyContext?.giftProduct ? { giftProductId: loyaltyContext.giftProduct.id } : {}),
+        ...(discountDetailsPayload ? { discountDetails: discountDetailsPayload } : {}),
       };
       
       return await apiRequest("POST", "/api/orders/guest", orderData);
@@ -634,11 +682,11 @@ export default function Checkout() {
       // Then create the order with user ID
       const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
-        subtotal, 
+        subtotalAfterAllDiscounts, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
         (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
-      const total = subtotal + deliveryFeeAmount;
+      const total = subtotalAfterAllDiscounts + deliveryFeeAmount;
 
       const regOrderPayload: BaseOrderPayload & {
         userId: string;
@@ -647,6 +695,11 @@ export default function Checkout() {
         deliveryTime: string;
         paymentMethod: string;
         customerPhone: string;
+        couponCode?: string;
+        couponDiscount?: number;
+        loyaltyDiscount?: number;
+        giftProductId?: number;
+        discountDetails?: any;
       } = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -663,6 +716,9 @@ export default function Checkout() {
         customerPhone: data.phone,
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code, couponDiscount: couponDiscountAmount } : {}),
+        ...(loyaltyDiscountAmount > 0 ? { loyaltyDiscount: loyaltyDiscountAmount } : {}),
+        ...(giftAccepted && giftEligible && loyaltyContext?.giftProduct ? { giftProductId: loyaltyContext.giftProduct.id } : {}),
       };
       
       return await apiRequest("POST", "/api/orders", regOrderPayload);
@@ -728,11 +784,11 @@ export default function Checkout() {
 
       const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
-        subtotal, 
+        subtotalAfterAllDiscounts, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
         (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
       );
-      const total = subtotal + deliveryFeeAmount;
+      const total = subtotalAfterAllDiscounts + deliveryFeeAmount;
 
       const authOrderPayload: BaseOrderPayload & {
         deliveryAddress: string;
@@ -740,6 +796,11 @@ export default function Checkout() {
         deliveryDate: string;
         deliveryTime: string;
         paymentMethod: string;
+        couponCode?: string;
+        couponDiscount?: number;
+        loyaltyDiscount?: number;
+        giftProductId?: number;
+        discountDetails?: any;
       } = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -755,6 +816,19 @@ export default function Checkout() {
         paymentMethod: formData.paymentMethod,
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code, couponDiscount: couponDiscountAmount } : {}),
+        ...(loyaltyDiscountAmount > 0 ? { loyaltyDiscount: loyaltyDiscountAmount } : {}),
+        ...(giftAccepted && giftEligible && loyaltyContext?.giftProduct ? { giftProductId: loyaltyContext.giftProduct.id } : {}),
+        ...(loyaltyDiscountAmount > 0 || couponDiscountAmount > 0 ? {
+          discountDetails: {
+            subtotal,
+            loyaltyDiscount: loyaltyDiscountAmount,
+            couponDiscount: couponDiscountAmount,
+            couponCode: appliedCoupon?.code || null,
+            giftIncluded: !!(giftAccepted && giftEligible),
+            giftProductId: (giftAccepted && loyaltyContext?.giftProduct) ? loyaltyContext.giftProduct.id : null,
+          }
+        } : {}),
       };
       
       return await apiRequest("POST", "/api/orders", authOrderPayload);
@@ -1135,14 +1209,14 @@ export default function Checkout() {
               ))}
               <Separator />
               {(() => {
-                const subtotal = getTotalPrice();
+                const subtotal = subtotalForDiscounts;
                 const freeDeliveryThreshold = (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null;
                 const deliveryFeeAmount = calculateDeliveryFee(
-                  subtotal, 
+                  subtotalAfterAllDiscounts, 
                   parseFloat(storeSettings?.deliveryFee || "15.00"), 
                   freeDeliveryThreshold
                 );
-                const total = subtotal + deliveryFeeAmount;
+                const total = subtotalAfterAllDiscounts + deliveryFeeAmount;
 
                 return (
                   <div className="space-y-2">
@@ -1150,6 +1224,24 @@ export default function Checkout() {
                       <span>{tShop('cart.items')}:</span>
                       <span>{formatCurrency(subtotal)}</span>
                     </div>
+                    {loyaltyDiscountAmount > 0 && (
+                      <div className="flex justify-between text-green-700">
+                        <span>{tShop('cart.loyaltyDiscount')} ({loyaltyContext?.loyaltyDiscountPercent}%):</span>
+                        <span>-{formatCurrency(loyaltyDiscountAmount)}</span>
+                      </div>
+                    )}
+                    {appliedCoupon && couponDiscountAmount > 0 && (
+                      <div className="flex justify-between text-green-700">
+                        <span>{tShop('cart.couponDiscount')} ({appliedCoupon.code}):</span>
+                        <span>-{formatCurrency(couponDiscountAmount)}</span>
+                      </div>
+                    )}
+                    {giftAccepted && giftEligible && loyaltyContext?.giftProduct && (
+                      <div className="flex justify-between text-green-700">
+                        <span>{tShop('cart.giftAdded')}:</span>
+                        <span className="text-green-600 font-medium">{tShop('checkout.free')}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span>{tShop('cart.delivery')}:</span>
                       <span>

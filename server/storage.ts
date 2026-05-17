@@ -11,6 +11,9 @@ import {
   branches,
   userBranches,
   productBranchAvailability,
+  coupons,
+  couponUses,
+  productVolumeDiscounts,
   type User,
   type UpsertUser,
   type UserAddress,
@@ -37,6 +40,10 @@ import {
   type Branch,
   type InsertBranch,
   type ProductBranchAvailability,
+  type Coupon,
+  type InsertCoupon,
+  type CouponUse,
+  type ProductVolumeDiscount,
 } from "@shared/schema";
 import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
@@ -159,6 +166,21 @@ export interface IStorage {
   getProductBranchAvailabilityByBranch(branchId: number): Promise<ProductBranchAvailability[]>;
   getProductsForBranch(branchId: number, categoryId?: number, includeAll?: boolean): Promise<ProductWithCategories[]>;
   getCategoriesForBranch(branchId: number, includeInactive?: boolean): Promise<CategoryWithCount[]>;
+
+  // Coupon operations
+  getCoupons(): Promise<Coupon[]>;
+  getCouponById(id: number): Promise<Coupon | undefined>;
+  getCouponByCode(code: string): Promise<Coupon | undefined>;
+  createCoupon(data: InsertCoupon): Promise<Coupon>;
+  updateCoupon(id: number, data: Partial<InsertCoupon>): Promise<Coupon>;
+  deleteCoupon(id: number): Promise<void>;
+  validateCoupon(code: string, orderTotal: number): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }>;
+  recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void>;
+  getCouponUses(couponId: number): Promise<CouponUse[]>;
+
+  // Product volume discounts
+  getProductVolumeDiscounts(productId: number): Promise<ProductVolumeDiscount[]>;
+  setProductVolumeDiscounts(productId: number, discounts: any[]): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2057,6 +2079,119 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(productBranchAvailability)
       .where(eq(productBranchAvailability.branchId, branchId));
+  }
+
+  // ─── Coupon operations ────────────────────────────────────────────────────
+
+  async getCoupons(): Promise<Coupon[]> {
+    const db = await this.getDatabase();
+    return db.select().from(coupons).orderBy(desc(coupons.createdAt));
+  }
+
+  async getCouponById(id: number): Promise<Coupon | undefined> {
+    const db = await this.getDatabase();
+    const [coupon] = await db.select().from(coupons).where(eq(coupons.id, id));
+    return coupon;
+  }
+
+  async getCouponByCode(code: string): Promise<Coupon | undefined> {
+    const db = await this.getDatabase();
+    const [coupon] = await db.select().from(coupons).where(eq(coupons.code, code.toUpperCase()));
+    return coupon;
+  }
+
+  async createCoupon(data: InsertCoupon): Promise<Coupon> {
+    const db = await this.getDatabase();
+    const [coupon] = await db
+      .insert(coupons)
+      .values({ ...data, code: data.code.toUpperCase() })
+      .returning();
+    return coupon;
+  }
+
+  async updateCoupon(id: number, data: Partial<InsertCoupon>): Promise<Coupon> {
+    const db = await this.getDatabase();
+    const updateData: any = { ...data, updatedAt: new Date() };
+    if (data.code) updateData.code = data.code.toUpperCase();
+    const [coupon] = await db.update(coupons).set(updateData).where(eq(coupons.id, id)).returning();
+    return coupon;
+  }
+
+  async deleteCoupon(id: number): Promise<void> {
+    const db = await this.getDatabase();
+    await db.delete(couponUses).where(eq(couponUses.couponId, id));
+    await db.delete(coupons).where(eq(coupons.id, id));
+  }
+
+  async validateCoupon(code: string, orderTotal: number): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }> {
+    const coupon = await this.getCouponByCode(code);
+    if (!coupon) return { valid: false, message: "coupon_not_found" };
+    if (!coupon.isActive) return { valid: false, message: "coupon_inactive" };
+
+    const now = new Date();
+    if (coupon.expiresAt && new Date(coupon.expiresAt) < now) {
+      return { valid: false, message: "coupon_expired" };
+    }
+
+    if (coupon.maxUses !== null && coupon.maxUses !== undefined && coupon.currentUses >= coupon.maxUses) {
+      return { valid: false, message: "coupon_max_uses" };
+    }
+
+    const minAmount = parseFloat(coupon.minOrderAmount || "0");
+    if (orderTotal < minAmount) {
+      return { valid: false, message: "coupon_min_order", minOrderAmount: minAmount } as any;
+    }
+
+    let discountAmount = 0;
+    const discountValue = parseFloat(coupon.discountValue);
+    if (coupon.discountType === "percentage") {
+      discountAmount = Math.min((orderTotal * discountValue) / 100, orderTotal);
+    } else {
+      discountAmount = Math.min(discountValue, orderTotal);
+    }
+    discountAmount = Math.round(discountAmount * 100) / 100;
+
+    return { valid: true, discountAmount, coupon };
+  }
+
+  async recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void> {
+    const db = await this.getDatabase();
+    await db.insert(couponUses).values({ couponId, orderId, userId: userId || null });
+    await db.update(coupons)
+      .set({ currentUses: sql`current_uses + 1`, updatedAt: new Date() })
+      .where(eq(coupons.id, couponId));
+  }
+
+  async getCouponUses(couponId: number): Promise<CouponUse[]> {
+    const db = await this.getDatabase();
+    return db.select().from(couponUses).where(eq(couponUses.couponId, couponId)).orderBy(desc(couponUses.usedAt));
+  }
+
+  // ─── Product volume discounts ─────────────────────────────────────────────
+
+  async getProductVolumeDiscounts(productId: number): Promise<ProductVolumeDiscount[]> {
+    const db = await this.getDatabase();
+    return db
+      .select()
+      .from(productVolumeDiscounts)
+      .where(and(eq(productVolumeDiscounts.productId, productId), eq(productVolumeDiscounts.isActive, true)))
+      .orderBy(productVolumeDiscounts.minQuantity);
+  }
+
+  async setProductVolumeDiscounts(productId: number, discounts: any[]): Promise<void> {
+    const db = await this.getDatabase();
+    await db.delete(productVolumeDiscounts).where(eq(productVolumeDiscounts.productId, productId));
+    if (discounts && discounts.length > 0) {
+      await db.insert(productVolumeDiscounts).values(
+        discounts.map(d => ({
+          productId,
+          minQuantity: d.minQuantity.toString(),
+          discountType: d.discountType,
+          discountValue: d.discountValue.toString(),
+          isActive: d.isActive !== false,
+        }))
+      );
+    }
   }
 }
 

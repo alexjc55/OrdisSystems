@@ -1222,6 +1222,20 @@ export default function Profile() {
                               <span>-{orderDiscount.type === 'percentage' ? `${orderDiscount.value}%` : formatCurrency(orderDiscount.value)}</span>
                             </div>
                           )}
+                          {selectedOrder.couponCode && parseFloat(selectedOrder.couponDiscount || '0') > 0 && (
+                            <div className="flex justify-between text-sm text-green-700">
+                              <span className="flex items-center gap-1">
+                                🏷️ {t('profile.couponDiscount') || 'Купон'} <span className="font-mono text-xs bg-green-100 px-1 rounded">{selectedOrder.couponCode}</span>
+                              </span>
+                              <span>-{formatCurrency(parseFloat(selectedOrder.couponDiscount))}</span>
+                            </div>
+                          )}
+                          {parseFloat(selectedOrder.loyaltyDiscount || '0') > 0 && (
+                            <div className="flex justify-between text-sm text-blue-700">
+                              <span>⭐ {t('profile.loyaltyDiscount') || 'Скидка постоянного покупателя'}</span>
+                              <span>-{formatCurrency(parseFloat(selectedOrder.loyaltyDiscount))}</span>
+                            </div>
+                          )}
                           <div className="flex justify-between text-sm text-gray-600">
                             <span>{t('profile.delivery')}</span>
                             <span>{formatCurrency(deliveryFee)}</span>
