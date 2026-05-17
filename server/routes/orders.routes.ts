@@ -94,6 +94,10 @@ async function computeServerDiscounts({
   if (couponCode) {
     const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId, userEmail, orderItems);
     if (validation.valid && validation.coupon) {
+      // Reject product-scoped coupons that match no items in this order's cart
+      if (validation.coupon.scope === 'product' && (validation.discountAmount ?? 0) <= 0) {
+        throw Object.assign(new Error('coupon_not_eligible_for_cart'), { couponError: 'coupon_not_eligible_for_cart', isCouponError: true });
+      }
       serverCouponCode = validation.coupon.code;
       serverCouponDiscount = validation.discountAmount || 0;
       serverDiscountDetails.coupon = {

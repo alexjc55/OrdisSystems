@@ -2157,6 +2157,9 @@ export class DatabaseStorage implements IStorage {
     // - 'multi': default, only maxUses global limit applies
     if (coupon.usageType === 'single' && coupon.currentUses > 0) {
       return { valid: false, message: "coupon_max_uses" };
+    } else if (coupon.usageType === 'per_customer' && !userId) {
+      // per_customer coupons require an authenticated user — reject guests
+      return { valid: false, message: "coupon_not_eligible" };
     } else if (coupon.usageType === 'per_customer' && userId) {
       const db = await this.getDatabase();
       const existingUse = await db
