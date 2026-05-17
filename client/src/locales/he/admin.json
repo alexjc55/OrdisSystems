@@ -792,16 +792,6 @@
       "fixedDiscount": "הנחה קבועה",
       "deleteTitle": "מחק מוצר",
       "deleteConfirm": "האם אתה בטוח שברצונך למחוק את המוצר הזה? פעולה זו אינה ניתנת לביטול.",
-      "volumeDiscount": {
-        "title": "הנחות נפח",
-        "description": "הנחה מוחלת בהזמנה מהכמות המינימלית",
-        "addRow": "הוסף כלל",
-        "minQty": "כמות מינימלית",
-        "discountPct": "ערך",
-        "fixedLabel": "קבוע",
-        "empty": "אין הנחות נפח מוגדרות",
-        "saveError": "שגיאה בשמירת הנחות הנפח"
-      },
       "createButton": "צור",
       "saveButton": "שמור",
       "cancelButton": "ביטול",
@@ -832,6 +822,16 @@
       "statusAvailable": "זמין",
       "statusOutOfStockToday": "זמין מחר",
       "statusUnavailable": "לא זמין"
+    },
+    "volumeDiscount": {
+      "title": "הנחות נפח",
+      "description": "הנחה מוחלת בהזמנה מהכמות המינימלית",
+      "addRow": "הוסף כלל",
+      "minQty": "כמות מינימלית",
+      "discountPct": "ערך",
+      "fixedLabel": "קבוע",
+      "empty": "אין הנחות נפח מוגדרות",
+      "saveError": "שגיאה בשמירת הנחות הנפח"
     },
     "notifications": {
       "productCreated": "מוצר נוצר",

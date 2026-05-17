@@ -301,15 +301,10 @@ export default function Checkout() {
     ? Math.round((subtotalAfterVolume * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
     : 0;
   const subtotalAfterLoyalty = subtotalAfterVolume - loyaltyDiscountAmount;
-  // Coupon applies against volume-discounted subtotal (loyalty and coupon don't stack)
-  const couponDiscountAmount = appliedCoupon
-    ? (() => {
-        if (appliedCoupon.discountType === 'percentage') {
-          return Math.round((subtotalAfterVolume * appliedCoupon.discountValue / 100) * 100) / 100;
-        }
-        return Math.min(appliedCoupon.discountValue, subtotalAfterVolume);
-      })()
-    : 0;
+  // Coupon discount: use the server-returned discountAmount as authoritative value.
+  // For product-scoped coupons the server computes eligibleSubtotal; recalculating on the
+  // client against the full subtotal would apply the coupon to ineligible items.
+  const couponDiscountAmount = appliedCoupon?.discountAmount ?? 0;
   const subtotalAfterAllDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
   // Gift eligibility uses raw subtotal (before discounts)
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);

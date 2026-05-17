@@ -127,16 +127,10 @@ export default function CartSidebar() {
   // Effective subtotal after loyalty discount (based on volume-discounted amount)
   const subtotalAfterLoyalty = subtotalAfterVolumeDiscounts - loyaltyDiscountAmount;
 
-  // Coupon discount: applies against volume-discounted subtotal (loyalty and coupon don't stack)
-  // When a coupon is active, loyalty is removed — so coupon base = subtotalAfterVolumeDiscounts
-  const couponDiscountAmount = appliedCoupon
-    ? (() => {
-        if (appliedCoupon.discountType === 'percentage') {
-          return Math.round((subtotalAfterVolumeDiscounts * appliedCoupon.discountValue / 100) * 100) / 100;
-        }
-        return Math.min(appliedCoupon.discountValue, subtotalAfterVolumeDiscounts);
-      })()
-    : 0;
+  // Coupon discount: use the server-returned discountAmount as the authoritative value.
+  // Server already computed it correctly for both order-scoped and product-scoped coupons,
+  // so we never recalculate on the client — this prevents product-scoped coupon over-discount.
+  const couponDiscountAmount = appliedCoupon?.discountAmount ?? 0;
 
   const subtotalAfterDiscounts = Math.max(0, appliedCoupon
     ? subtotalAfterVolumeDiscounts - couponDiscountAmount
