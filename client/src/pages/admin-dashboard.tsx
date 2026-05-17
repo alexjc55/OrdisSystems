@@ -1224,11 +1224,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     } else {
       subtotal = calculateSubtotal();
       const discount = calculateOrderDiscount(subtotal);
-      subtotal = subtotal - discount;
+      const couponDiscount = parseFloat(order.couponDiscount || '0');
+      const loyaltyDiscount = parseFloat(order.loyaltyDiscount || '0');
+      subtotal = subtotal - discount - couponDiscount - loyaltyDiscount;
     }
     
     const deliveryFee = calculateCorrectDeliveryFee();
-    return subtotal + deliveryFee;
+    return Math.max(0, subtotal + deliveryFee);
   };
 
   const removeItem = (index: number) => {
