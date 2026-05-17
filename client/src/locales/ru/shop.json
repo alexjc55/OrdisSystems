@@ -58,7 +58,7 @@
     "sat": "Суббота",
     "sun": "Воскресенье",
     "monday": "Понедельник",
-    "tuesday": "Вторник", 
+    "tuesday": "Вторник",
     "wednesday": "Среда",
     "thursday": "Четверг",
     "friday": "Пятница",
@@ -124,7 +124,8 @@
       "description": "Просмотрите товары и оформите заказ",
       "buttonText": "Оформить заказ",
       "buttonLink": "/checkout"
-    }
+    },
+    "giftAdded": "Подарок"
   },
   "product": {
     "price": "Цена",
@@ -311,7 +312,6 @@
   "viewCart": "Посмотреть корзину",
   "discount": "Скидка",
   "outOfStockToday": "Нет в наличии сегодня",
-  "composition": "Состав",
   "orderForTomorrow": "Заказать на завтра",
   "buttons": {
     "back": "Назад"

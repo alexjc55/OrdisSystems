@@ -71,7 +71,7 @@
     "items": "Items",
     "total": "Total",
     "subtotal": "Subtotal",
-    "couponDiscount": "Coupon discount",
+    "couponDiscount": "Promo code discount",
     "loyaltyDiscount": "Loyalty discount",
     "deliveryFee": "Delivery Fee",
     "freeDeliveryFrom": "Free delivery from",
@@ -93,12 +93,10 @@
     "couponNotEligibleForCart": "This promo code does not apply to items in your cart",
     "couponMinOrder": "Order amount is below the minimum for this promo code",
     "couponError": "Error validating promo code",
-    "loyaltyDiscount": "Loyalty discount",
-    "couponDiscount": "Promo code discount",
     "volumeDiscount": "Volume discount",
     "giftAvailable": "Free gift with your order!",
     "addGift": "Add gift",
-    "giftAdded": "Gift added",
+    "giftAdded": "Gift",
     "free": "Free"
   },
   "checkout": {
@@ -150,7 +148,6 @@
     "weight": "Weight"
   },
   "outOfStockToday": "Out of stock today",
-  "composition": "Composition",
   "orderForTomorrow": "Order for tomorrow",
   "profile": {
     "title": "Profile",

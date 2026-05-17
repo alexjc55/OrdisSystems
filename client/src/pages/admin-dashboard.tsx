@@ -8510,7 +8510,10 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [loyaltyPercent, setLoyaltyPercent] = useState('');
   const [giftEnabled, setGiftEnabled] = useState(false);
   const [giftProductId, setGiftProductId] = useState('');
+  const [giftProductQuantity, setGiftProductQuantity] = useState('1');
   const [giftMinOrder, setGiftMinOrder] = useState('');
+  const [giftProductSearch, setGiftProductSearch] = useState('');
+  const [giftProductPickerOpen, setGiftProductPickerOpen] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -8518,6 +8521,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setLoyaltyPercent(settings.loyaltyDiscountPercent || '0');
       setGiftEnabled(settings.giftEnabled || false);
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
+      setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
     }
   }, [settings]);
@@ -8543,6 +8547,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       loyaltyDiscountPercent: loyaltyPercent,
       giftEnabled,
       giftProductId: giftProductId ? parseInt(giftProductId) : null,
+      giftProductQuantity: giftProductQuantity || '1',
       giftMinOrderAmount: giftMinOrder,
     });
   };
@@ -8623,22 +8628,53 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
                   className="w-32"
                 />
               </div>
-              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <label className="text-sm font-medium min-w-max">
+              <div className={`flex items-start gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <label className="text-sm font-medium min-w-max mt-2">
                   {t('Товар-подарок', 'Gift product', 'מוצר מתנה', 'منتج الهدية')}
                 </label>
-                <Select value={giftProductId} onValueChange={setGiftProductId}>
-                  <SelectTrigger className="w-64">
-                    <SelectValue placeholder={t('Выберите товар', 'Select product', 'בחר מוצר', 'اختر منتج')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {products.map((p: any) => (
-                      <SelectItem key={p.id} value={String(p.id)}>
-                        {p.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex-1 max-w-xs space-y-1 relative">
+                  <Input
+                    type="text"
+                    placeholder={t('Поиск товара...', 'Search product...', 'חפש מוצר...', 'ابحث عن منتج...')}
+                    value={giftProductPickerOpen ? giftProductSearch : (products.find((p: any) => String(p.id) === giftProductId)?.name || '')}
+                    onChange={(e) => { setGiftProductSearch(e.target.value); setGiftProductPickerOpen(true); if (!e.target.value) { setGiftProductId(''); } }}
+                    onFocus={() => { setGiftProductPickerOpen(true); setGiftProductSearch(''); }}
+                    onBlur={() => setTimeout(() => setGiftProductPickerOpen(false), 180)}
+                    className="w-full"
+                  />
+                  {giftProductPickerOpen && (
+                    <div className="absolute z-50 w-full bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
+                      {products
+                        .filter((p: any) => !giftProductSearch || p.name?.toLowerCase().includes(giftProductSearch.toLowerCase()))
+                        .slice(0, 30)
+                        .map((p: any) => (
+                          <div
+                            key={p.id}
+                            className={`px-3 py-2 cursor-pointer hover:bg-accent text-sm ${String(p.id) === giftProductId ? 'bg-accent font-medium' : ''}`}
+                            onMouseDown={() => { setGiftProductId(String(p.id)); setGiftProductSearch(''); setGiftProductPickerOpen(false); }}
+                          >
+                            {p.name}
+                          </div>
+                        ))}
+                      {products.filter((p: any) => !giftProductSearch || p.name?.toLowerCase().includes(giftProductSearch.toLowerCase())).length === 0 && (
+                        <div className="px-3 py-2 text-sm text-muted-foreground">{t('Ничего не найдено', 'No results', 'אין תוצאות', 'لا توجد نتائج')}</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <label className="text-sm font-medium min-w-max">
+                  {t('Количество (г/шт/мл)', 'Quantity (g/pcs/ml)', 'כמות (ג/יח/מ"ל)', 'الكمية (جم/قطعة/مل)')}
+                </label>
+                <Input
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value={giftProductQuantity}
+                  onChange={(e) => setGiftProductQuantity(e.target.value)}
+                  className="w-28"
+                />
               </div>
             </div>
           )}

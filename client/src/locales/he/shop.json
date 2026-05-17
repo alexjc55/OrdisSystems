@@ -120,7 +120,8 @@
       "description": "בדק פריטים ובצע הזמנה",
       "buttonText": "בצע הזמנה",
       "buttonLink": "/checkout"
-    }
+    },
+    "giftAdded": "מתנה"
   },
   "product": {
     "price": "מחיר",
@@ -317,7 +318,6 @@
   "viewCart": "צפה בעגלה",
   "discount": "הנחה",
   "outOfStockToday": "אזל המלאי היום",
-  "composition": "רכיבים",
   "orderForTomorrow": "הזמן למחר",
   "buttons": {
     "back": "חזרה"

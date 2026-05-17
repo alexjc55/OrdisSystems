@@ -131,10 +131,11 @@ async function computeServerDiscounts({
       if (giftProduct) {
         serverGiftProductId = giftProduct.id;
         serverDiscountDetails.gift = { productId: giftProduct.id, productName: giftProduct.name };
-        // Add gift as zero-price order item
+        // Add gift as zero-price order item with configured quantity
+        const giftQty = parseFloat(settings.giftProductQuantity || '1');
         giftOrderItem = {
           productId: giftProduct.id,
-          quantity: '1',
+          quantity: String(giftQty),
           pricePerKg: '0',
           totalPrice: '0',
           orderId: 0,

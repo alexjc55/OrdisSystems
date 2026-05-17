@@ -520,6 +520,7 @@ export const storeSettings = pgTable("store_settings", {
   loyaltyDiscountPercent: decimal("loyalty_discount_percent", { precision: 5, scale: 2 }).default("0"),
   giftEnabled: boolean("gift_enabled").default(false),
   giftProductId: integer("gift_product_id"),
+  giftProductQuantity: decimal("gift_product_quantity", { precision: 10, scale: 2 }).default("1"),
   giftMinOrderAmount: decimal("gift_min_order_amount", { precision: 10, scale: 2 }).default("300"),
 
   updatedAt: timestamp("updated_at").defaultNow(),

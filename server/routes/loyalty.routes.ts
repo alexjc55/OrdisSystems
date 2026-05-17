@@ -130,6 +130,7 @@ router.get('/loyalty/context', async (req, res) => {
       loyaltyDiscountPercent: parseFloat(settings.loyaltyDiscountPercent || "0"),
       giftEnabled: settings.giftEnabled || false,
       giftProduct: giftProduct || null,
+      giftProductQuantity: parseFloat(settings.giftProductQuantity || "1"),
       giftMinOrderAmount: parseFloat(settings.giftMinOrderAmount || "300"),
     });
   } catch (error) {

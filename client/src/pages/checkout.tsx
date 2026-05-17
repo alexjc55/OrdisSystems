@@ -223,7 +223,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
-  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot, appliedCoupon, setAppliedCoupon, giftAccepted } = useCartStore();
+  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot, appliedCoupon, setAppliedCoupon, giftAccepted, setGiftAccepted } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -255,6 +255,7 @@ export default function Checkout() {
     loyaltyDiscountPercent: number;
     giftEnabled: boolean;
     giftProduct: any | null;
+    giftProductQuantity: number;
     giftMinOrderAmount: number;
   }>({
     queryKey: ['/api/loyalty/context'],
@@ -307,6 +308,13 @@ export default function Checkout() {
   const subtotalAfterAllDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
   // Gift eligibility uses raw subtotal (before discounts)
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);
+
+  // Auto-reset giftAccepted when the cart no longer qualifies for the gift
+  useEffect(() => {
+    if (giftAccepted && !giftEligible) {
+      setGiftAccepted(false);
+    }
+  }, [giftEligible, giftAccepted, setGiftAccepted]);
 
   // On checkout load, validate cart against selected branch and auto-remove unavailable items
   useEffect(() => {
@@ -1216,6 +1224,34 @@ export default function Checkout() {
                   </div>
                 </div>
               ))}
+              {/* Gift item shown as a separate 100%-discounted line when accepted */}
+              {giftAccepted && giftEligible && loyaltyContext?.giftProduct && (
+                <div className="flex justify-between items-center border border-green-200 bg-green-50 rounded-lg px-3 py-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-600 text-sm">🎁</span>
+                      <h4 className="font-medium text-green-800">
+                        {getLocalizedField(loyaltyContext.giftProduct, 'name', currentLanguage as SupportedLanguage, 'ru')}
+                      </h4>
+                      <span className="text-xs bg-green-600 text-white px-1.5 py-0.5 rounded font-medium">
+                        {tShop('cart.giftAdded')}
+                      </span>
+                    </div>
+                    <p className="text-sm text-green-600 mt-0.5">
+                      {(() => {
+                        const qty = loyaltyContext.giftProductQuantity || 1;
+                        const unit = loyaltyContext.giftProduct.unit;
+                        if (unit === 'piece') return `${qty} ${tShop('units.piece')}`;
+                        if (unit === 'kg') return `${qty} ${tShop('units.kg')}`;
+                        if (unit === '100g' || unit === '100gram') return `${qty} ${tShop('units.g')}`;
+                        if (unit === '100ml') return `${qty} ${tShop('units.ml')}`;
+                        return `${qty}`;
+                      })()}
+                    </p>
+                  </div>
+                  <div className="font-semibold text-green-600">{tShop('checkout.free')}</div>
+                </div>
+              )}
               <Separator />
               {(() => {
                 const subtotal = subtotalForDiscounts;
