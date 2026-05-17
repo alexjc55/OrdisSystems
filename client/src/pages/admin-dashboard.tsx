@@ -1057,26 +1057,43 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     }
   };
 
+  // Returns the effective total base price for an order item at a given quantity,
+  // applying the product's own special-offer discount (discountType/discountValue) when present.
+  // This ensures admin subtotals and quantity edits operate on the price the customer actually pays.
+  const getEffectiveProductBasePrice = (item: any, quantity: number): number => {
+    const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
+    const unit = item.product?.unit;
+
+    // Apply product's own special-offer discount to unit price first
+    let effectiveUnitPrice = unitPrice;
+    const product = item.product;
+    if (product?.isSpecialOffer && product.discountType && product.discountValue) {
+      const dv = parseFloat(String(product.discountValue));
+      if (!isNaN(dv)) {
+        if (product.discountType === 'percentage') {
+          effectiveUnitPrice = Math.max(0, unitPrice * (1 - dv / 100));
+        } else if (product.discountType === 'fixed') {
+          effectiveUnitPrice = Math.max(0, unitPrice - dv);
+        }
+      }
+    }
+
+    // Compute total using the same unit-conversion logic as before
+    if (product?.pricePerKg && (unit === 'gram' || unit === '100gram')) {
+      return (quantity / 1000) * effectiveUnitPrice;
+    } else if (unit === '100g' || unit === '100ml' || unit === '100gram') {
+      return effectiveUnitPrice * (quantity / 100);
+    } else {
+      return quantity * effectiveUnitPrice;
+    }
+  };
+
   const updateItemQuantity = (index: number, newQuantity: number) => {
     const updatedItems = [...editedOrderItems];
     const item = updatedItems[index];
-    const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
-    
-    // Calculate base price based on product unit
-    let basePrice;
-    const unit = item.product?.unit;
-    
-    if (item.product.pricePerKg && (unit === 'gram' || unit === '100gram')) {
-      // If price is per kg but quantity is in grams, convert to kg for calculation
-      basePrice = (newQuantity / 1000) * unitPrice;
-    } else if (unit === '100g' || unit === '100ml' || unit === '100gram') {
-      // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
-      basePrice = unitPrice * (newQuantity / 100);
-    } else {
-      // For piece and kg products, direct multiplication
-      basePrice = newQuantity * unitPrice;
-    }
-    
+
+    const basePrice = getEffectiveProductBasePrice(item, newQuantity);
+
     const discount = itemDiscounts[index];
     let finalPrice = basePrice;
     
@@ -1107,38 +1124,13 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     }
     setItemDiscounts(updatedDiscounts);
     
-    // Recalculate item price
+    // Recalculate item price using effective product price (with product's own discount applied)
     const updatedItems = [...editedOrderItems];
     const item = updatedItems[index];
     const quantity = parseFloat(item.quantity) || 0;
-    const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
-    
-    // Calculate base price based on product unit (same logic as updateItemQuantity)
-    let basePrice;
-    const unit = item.product?.unit;
-    
-    if (item.product.pricePerKg && (unit === 'gram' || unit === '100gram')) {
-      // If price is per kg but quantity is in grams, convert to kg for calculation
-      basePrice = (quantity / 1000) * unitPrice;
-    } else if (unit === '100g' || unit === '100ml' || unit === '100gram') {
-      // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
-      basePrice = unitPrice * (quantity / 100);
-    } else {
-      // For piece and kg products, direct multiplication
-      basePrice = quantity * unitPrice;
-    }
+    const basePrice = getEffectiveProductBasePrice(item, quantity);
     
     let finalPrice = basePrice;
-    
-    console.log('Discount calculation:', {
-      index,
-      quantity,
-      unitPrice,
-      basePrice,
-      discountType,
-      discountValue
-    });
-    
     if (discountValue > 0) {
       if (discountType === 'percentage') {
         finalPrice = basePrice * (1 - discountValue / 100);
@@ -1147,45 +1139,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       }
     }
     
-    console.log('Final price after discount:', finalPrice);
-    
     updatedItems[index] = { ...item, totalPrice: finalPrice };
     setEditedOrderItems(updatedItems);
   };
 
   const calculateSubtotal = () => {
-    return editedOrderItems.reduce((sum: number, item: any, index: number) => {
-      const quantity = parseFloat(item.quantity) || 0;
-      const unitPrice = parseFloat(item.pricePerUnit || item.pricePerKg || 0);
-      
-      // Calculate base price based on product unit (same logic as updateItemQuantity)
-      let basePrice;
-      const unit = item.product?.unit;
-      
-      if (item.product?.pricePerKg && (unit === 'gram' || unit === '100gram')) {
-        // If price is per kg but quantity is in grams, convert to kg for calculation
-        basePrice = (quantity / 1000) * unitPrice;
-      } else if (unit === '100g' || unit === '100ml' || unit === '100gram') {
-        // For 100g/100ml products, price is per 100 units, quantity is in actual units (grams/ml)
-        basePrice = unitPrice * (quantity / 100);
-      } else {
-        // For piece and kg products, direct multiplication
-        basePrice = quantity * unitPrice;
-      }
-      
-      // Apply item-level discount if exists
-      const discount = itemDiscounts[index];
-      let finalPrice = basePrice;
-      
-      if (discount) {
-        if (discount.type === 'percentage') {
-          finalPrice = basePrice * (1 - discount.value / 100);
-        } else {
-          finalPrice = Math.max(0, basePrice - discount.value);
-        }
-      }
-      
-      return sum + finalPrice;
+    // Use item.totalPrice directly — it already reflects the product's own discount
+    // and any admin item-level discount applied via applyItemDiscount.
+    return editedOrderItems.reduce((sum: number, item: any) => {
+      return sum + (parseFloat(item.totalPrice) || 0);
     }, 0);
   };
 
