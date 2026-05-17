@@ -805,6 +805,47 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     gcTime: 10 * 60 * 1000,
   });
 
+  const { data: loyaltyCtx } = useQuery<any>({
+    queryKey: ['/api/loyalty/context'],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+
+  // Auto-remove / re-add gift item when subtotal crosses the gift threshold
+  useEffect(() => {
+    if (!order.giftProductId || !loyaltyCtx?.giftEnabled) return;
+    const threshold = parseFloat(loyaltyCtx?.giftMinOrderAmount || '0');
+    if (!threshold || isNaN(threshold)) return;
+
+    // Compute subtotal excluding the gift item itself (gift is always 0 price)
+    const subtotal = editedOrderItems
+      .filter((item: any) => item.productId !== order.giftProductId)
+      .reduce((sum: number, item: any) => sum + (parseFloat(String(item.totalPrice)) || 0), 0);
+
+    const hasGiftItem = editedOrderItems.some((item: any) => item.productId === order.giftProductId);
+
+    if (subtotal < threshold && hasGiftItem) {
+      // Drop below threshold — remove gift
+      setEditedOrderItems((prev: any[]) =>
+        prev.filter((item: any) => item.productId !== order.giftProductId)
+      );
+    } else if (subtotal >= threshold && !hasGiftItem) {
+      // Back above threshold — restore gift
+      const giftQty = loyaltyCtx?.giftProductQuantity ?? 1;
+      const giftProduct = loyaltyCtx?.giftProduct;
+      setEditedOrderItems((prev: any[]) => [
+        ...prev,
+        {
+          productId: order.giftProductId,
+          quantity: giftQty,
+          pricePerKg: '0',
+          totalPrice: '0',
+          product: giftProduct ? { name: giftProduct.name, unit: giftProduct.unit } : null,
+        },
+      ]);
+    }
+  }, [editedOrderItems, order.giftProductId, loyaltyCtx]);
+
   // Generate time slots based on store working hours for this component
   const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday', deliveryHours?: any) => {
     if (!selectedDate) return [];

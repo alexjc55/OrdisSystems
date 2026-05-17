@@ -737,11 +737,11 @@ router.post('/orders', async (req: any, res) => {
           sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
         });
 
-        const productIds = validatedData.items.map((item: any) => item.productId);
+        const productIds = authOrderItems.map((item: any) => item.productId);
         const productsMap = await storage.getProductsByIds(productIds)
           .then(products => new Map(products.map(p => [p.id, p])));
 
-        const itemsWithProducts = validatedData.items.map((item: any) => {
+        const itemsWithProducts = authOrderItems.map((item: any) => {
           const product = productsMap.get(item.productId);
           return {
             productId: item.productId,
