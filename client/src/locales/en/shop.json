@@ -123,7 +123,7 @@
     "registerTab": "Create Account",
     "guest": "Continue as Guest",
     "guestWarning": "Order will be saved with phone number",
-    "guestFirstPromo": "By placing an order without registering, you miss out on exclusive discounts for our customers, as well as access to your order history with the ability to reorder.",
+    "guestFirstPromo": "By placing an order without registering, you miss out on exclusive discounts for our customers, as well as access to your order history with the ability to reorder. You will also be unable to track the status of your order.",
     "orderAccepted": "Order Accepted",
     "orderAcceptedForProcessing": "Your order is being processed",
     "orderCancelled": "Order Cancelled",

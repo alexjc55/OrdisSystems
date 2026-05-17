@@ -1793,20 +1793,21 @@ export default function Checkout() {
                 </TabsContent>
 
                 <TabsContent value="guest" className="space-y-4">
-                  {storeSettings?.checkoutGuestFirst && (
+                  {storeSettings?.checkoutGuestFirst ? (
                     <Alert className="border-amber-400 bg-amber-50 dark:bg-amber-950/30">
                       <Star className="h-4 w-4 text-amber-500" />
                       <AlertDescription className="text-amber-800 dark:text-amber-300 font-medium">
                         {tShop('checkout.guestFirstPromo')}
                       </AlertDescription>
                     </Alert>
+                  ) : (
+                    <Alert>
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        {tShop('checkout.guestWarning')}
+                      </AlertDescription>
+                    </Alert>
                   )}
-                  <Alert>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      {tShop('checkout.guestWarning')}
-                    </AlertDescription>
-                  </Alert>
 
                   <form onSubmit={guestForm.handleSubmit((data) => createGuestOrderMutation.mutate(data))}>
                     <div className="space-y-4">
