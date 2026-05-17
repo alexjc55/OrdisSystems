@@ -3166,6 +3166,17 @@ function ClosedDatesManager() {
     },
   });
 
+  const [closedDatePickerOpen, setClosedDatePickerOpen] = useState(false);
+
+  const getClosedDateCalendarLocale = () => {
+    switch (i18n.language) {
+      case 'en': return enUS;
+      case 'he': return he;
+      case 'ar': return ar;
+      default: return ru;
+    }
+  };
+
   const closedDateSchema = z.object({
     date: z.string().min(1, adminT('closedDates.dateRequired')),
     reason: z.string().min(1, adminT('closedDates.descriptionRequired')),
@@ -3302,7 +3313,32 @@ function ClosedDatesManager() {
                   <FormItem>
                     <FormLabel>{adminT('closedDates.date')}</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} data-testid="input-closed-date" />
+                      <Popover open={closedDatePickerOpen} onOpenChange={setClosedDatePickerOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={`w-full justify-start font-normal ${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}
+                            data-testid="input-closed-date"
+                          >
+                            <CalendarIcon className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                            {field.value
+                              ? format(new Date(field.value), 'dd.MM.yyyy')
+                              : <span className="text-muted-foreground">{adminT('closedDates.selectDate') || (isRTL && i18n.language === 'he' ? 'בחר תאריך' : isRTL ? 'اختر تاريخاً' : 'Выберите дату')}</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align={isRTL ? 'end' : 'start'}>
+                          <CalendarComponent
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              field.onChange(date ? format(date, 'yyyy-MM-dd') : '');
+                              setClosedDatePickerOpen(false);
+                            }}
+                            locale={getClosedDateCalendarLocale()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -8814,6 +8850,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     isActive: true,
     expiresAt: '',
   });
+  const [expiresAtPickerOpen, setExpiresAtPickerOpen] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [productSearchOpen, setProductSearchOpen] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
@@ -9285,11 +9322,39 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">{t('Дата истечения', 'Expiry date', 'תאריך תפוגה', 'تاريخ الانتهاء')}</label>
-              <Input
-                type="date"
-                value={form.expiresAt}
-                onChange={(e) => setForm(f => ({ ...f, expiresAt: e.target.value }))}
-              />
+              <Popover open={expiresAtPickerOpen} onOpenChange={setExpiresAtPickerOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full justify-start font-normal ${isRTL ? 'text-right flex-row-reverse' : 'text-left'}`}
+                  >
+                    <CalendarIcon className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+                    {form.expiresAt
+                      ? format(new Date(form.expiresAt), 'dd.MM.yyyy')
+                      : <span className="text-muted-foreground">{t('Выберите дату', 'Select date', 'בחר תאריך', 'اختر تاريخاً')}</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align={isRTL ? 'end' : 'start'}>
+                  <CalendarComponent
+                    mode="single"
+                    selected={form.expiresAt ? new Date(form.expiresAt) : undefined}
+                    onSelect={(date) => {
+                      setForm(f => ({ ...f, expiresAt: date ? format(date, 'yyyy-MM-dd') : '' }));
+                      setExpiresAtPickerOpen(false);
+                    }}
+                    locale={currentLanguage === 'en' ? enUS : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : ru}
+                    initialFocus
+                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
+                  />
+                  {form.expiresAt && (
+                    <div className={`p-2 border-t flex ${isRTL ? 'justify-start' : 'justify-end'}`}>
+                      <Button variant="ghost" size="sm" onClick={() => { setForm(f => ({ ...f, expiresAt: '' })); setExpiresAtPickerOpen(false); }}>
+                        {t('Убрать дату', 'Clear date', 'נקה תאריך', 'مسح التاريخ')}
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={form.isActive} onCheckedChange={(v) => setForm(f => ({ ...f, isActive: v }))} />

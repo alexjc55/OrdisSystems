@@ -1440,6 +1440,7 @@
     "description": "תיאור",
     "managementDescription": "הוספת תאריכים שבהם המשלוח לא זמין (סופ\"ש, חגים, הפסקות תחזוקה)",
     "addDate": "הוספת תאריך",
+    "selectDate": "בחר תאריך",
     "date": "תאריך",
     "reason": "סיבה (אופציונלי)",
     "descriptionPlaceholder": "לדוגמה: יום חופש",

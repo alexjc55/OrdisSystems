@@ -1303,6 +1303,7 @@
     "description": "Description",
     "managementDescription": "Add dates when delivery is not available (weekends, holidays, maintenance breaks)",
     "addDate": "Add Date",
+    "selectDate": "Select date",
     "date": "Date",
     "reason": "Reason (optional)",
     "descriptionPlaceholder": "For example: Day off",
