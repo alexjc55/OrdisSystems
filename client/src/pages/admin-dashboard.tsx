@@ -8861,7 +8861,12 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       toast({ title: editingCoupon ? t('Купон обновлён', 'Coupon updated', 'קופון עודכן', 'تم تحديث القسيمة') : t('Купон создан', 'Coupon created', 'קופון נוצר', 'تم إنشاء القسيمة') });
       resetForm();
     },
-    onError: () => toast({ title: t('Ошибка', 'Error', 'שגיאה', 'خطأ'), variant: 'destructive' }),
+    onError: (err: any) => {
+      const details = err?.errors
+        ? ': ' + (err.errors as any[]).map((e: any) => `${e.path?.join('.')} — ${e.message}`).join('; ')
+        : err?.message ? ': ' + err.message : '';
+      toast({ title: t('Ошибка сохранения', 'Save error', 'שגיאת שמירה', 'خطأ في الحفظ') + details, variant: 'destructive' });
+    },
   });
 
   const deleteMutation = useMutation({
@@ -8880,21 +8885,27 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
   });
 
   const handleSave = () => {
-    if (!form.code.trim() || !form.discountValue) return;
+    const discountVal = String(form.discountValue || '').trim();
+    if (!form.code.trim() || !discountVal) return;
+    let expiresAtValue: string | null = null;
+    if (form.expiresAt) {
+      try { expiresAtValue = new Date(form.expiresAt).toISOString(); } catch { expiresAtValue = null; }
+    }
+    const maxUsesInt = form.maxUses ? parseInt(form.maxUses, 10) : null;
     saveMutation.mutate({
       code: form.code.trim().toUpperCase(),
       description: form.description || null,
       discountType: form.discountType,
-      discountValue: form.discountValue,
+      discountValue: discountVal,
       minOrderAmount: form.minOrderAmount || '0',
-      maxUses: form.maxUses ? parseInt(form.maxUses) : null,
+      maxUses: (maxUsesInt !== null && !isNaN(maxUsesInt)) ? maxUsesInt : null,
       usageType: form.usageType,
       scope: form.scope,
       applicableProductIds: form.scope === 'product' && form.applicableProductIds.length > 0 ? form.applicableProductIds : null,
       targetCustomerEmail: form.targetCustomerEmail || null,
       targetUserId: form.targetUserId || null,
       isActive: form.isActive,
-      expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
+      expiresAt: expiresAtValue,
     });
   };
 
@@ -9007,15 +9018,15 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
 
       {/* Create / Edit Dialog */}
       <Dialog open={showForm} onOpenChange={(v) => { if (!v) resetForm(); }}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
+        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle>
               {editingCoupon
                 ? t('Редактировать купон', 'Edit coupon', 'ערוך קופון', 'تعديل القسيمة')
                 : t('Создать купон', 'Create coupon', 'צור קופון', 'إنشاء قسيمة')}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-2">
+          <div className="space-y-4 py-2 overflow-y-auto flex-1 pr-1">
             <div className="space-y-1">
               <label className="text-sm font-medium">{t('Код купона', 'Coupon code', 'קוד קופון', 'رمز القسيمة')} *</label>
               <Input
@@ -9171,9 +9182,9 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
               <label className="text-sm">{t('Активен', 'Active', 'פעיל', 'نشط')}</label>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-shrink-0 pt-2 border-t">
             <Button variant="outline" onClick={resetForm}>{t('Отмена', 'Cancel', 'ביטול', 'إلغاء')}</Button>
-            <Button onClick={handleSave} disabled={saveMutation.isPending || !form.code || !form.discountValue}>
+            <Button onClick={handleSave} disabled={saveMutation.isPending || !form.code.trim() || !String(form.discountValue || '').trim()}>
               {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               {editingCoupon ? t('Сохранить', 'Save', 'שמור', 'حفظ') : t('Создать', 'Create', 'צור', 'إنشاء')}
             </Button>
