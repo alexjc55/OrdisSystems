@@ -917,7 +917,7 @@ export default function Checkout() {
           asChild
         >
           <UTMLink href="/">
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
             {tCommon('navigation.backToShopping')}
           </UTMLink>
         </Button>
