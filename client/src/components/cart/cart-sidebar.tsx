@@ -406,9 +406,31 @@ export default function CartSidebar() {
                                   }
                                 })()}
                               </div>
-                              <div className="font-bold text-lg text-gray-900">
-                                {formatCurrency(item.totalPrice)}
-                              </div>
+                              {(() => {
+                                if (!volumeDiscountsMap || !item.product?.id) return null;
+                                const tiers = (volumeDiscountsMap[item.product.id] || []).filter(tier =>
+                                  tier.minQuantity !== null && parseFloat(tier.minQuantity) <= item.quantity
+                                );
+                                if (tiers.length === 0) return null;
+                                const best = tiers.reduce((a, b) => parseFloat(a.minQuantity) >= parseFloat(b.minQuantity) ? a : b);
+                                const pct = parseFloat(best.discountValue);
+                                const itemSaving = best.discountType === 'percentage'
+                                  ? Math.round(item.totalPrice * pct / 100 * 100) / 100
+                                  : Math.min(pct, item.totalPrice);
+                                if (itemSaving <= 0) return null;
+                                const discountedTotal = Math.max(0, item.totalPrice - itemSaving);
+                                return (
+                                  <div className="flex flex-col items-end gap-0.5">
+                                    <div className="text-sm line-through text-gray-400">{formatCurrency(item.totalPrice)}</div>
+                                    <div className="font-bold text-lg text-green-600">{formatCurrency(discountedTotal)}</div>
+                                    <div className="text-xs text-green-600 font-medium">-{best.discountType === 'percentage' ? `${pct}%` : formatCurrency(pct)}</div>
+                                  </div>
+                                );
+                              })() || (
+                                <div className="font-bold text-lg text-gray-900">
+                                  {formatCurrency(item.totalPrice)}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

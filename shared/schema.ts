@@ -741,6 +741,10 @@ export const coupons = pgTable("coupons", {
   minOrderAmount: decimal("min_order_amount", { precision: 10, scale: 2 }).default("0"),
   maxUses: integer("max_uses"), // null = unlimited
   currentUses: integer("current_uses").default(0).notNull(),
+  // usageType: 'single' = one-time total, 'multi' = up to maxUses, 'per_customer' = once per user
+  usageType: varchar("usage_type", { enum: ["single", "multi", "per_customer"] }).default("multi").notNull(),
+  // scope: 'order' = applies to whole order total
+  scope: varchar("scope", { enum: ["order"] }).default("order").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   expiresAt: timestamp("expires_at"), // null = no expiry
   createdAt: timestamp("created_at").defaultNow(),
@@ -978,6 +982,8 @@ export const insertCouponSchema = createInsertSchema(coupons).omit({
   maxUses: z.number().int().nullable().optional(),
   isActive: z.boolean().optional(),
   expiresAt: z.string().datetime().nullable().optional(),
+  usageType: z.enum(["single", "multi", "per_customer"]).optional(),
+  scope: z.enum(["order"]).optional(),
 });
 
 export const insertProductVolumeDiscountSchema = createInsertSchema(productVolumeDiscounts).omit({

@@ -2137,8 +2137,11 @@ export class DatabaseStorage implements IStorage {
       return { valid: false, message: "coupon_max_uses" };
     }
 
-    // Per-customer usage enforcement: if userId is provided, check coupon_uses table
-    if (userId) {
+    // Usage type enforcement:
+    // - 'single': treated as maxUses=1 (already handled by maxUses check above if maxUses was set)
+    // - 'per_customer': once per authenticated user — check coupon_uses table
+    // - 'multi': default, only maxUses global limit applies
+    if (coupon.usageType === 'per_customer' && userId) {
       const db = await this.getDatabase();
       const existingUse = await db
         .select()
@@ -2148,6 +2151,8 @@ export class DatabaseStorage implements IStorage {
       if (existingUse.length > 0) {
         return { valid: false, message: "coupon_already_used" };
       }
+    } else if (coupon.usageType === 'single' && coupon.currentUses > 0) {
+      return { valid: false, message: "coupon_max_uses" };
     }
 
     const minAmount = parseFloat(coupon.minOrderAmount || "0");

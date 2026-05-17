@@ -719,6 +719,7 @@ export default function Checkout() {
         deliveryTime: string;
         paymentMethod: string;
         customerPhone: string;
+        deliveryFee: string;
         couponCode?: string;
         giftAccepted?: boolean;
       } = {
@@ -735,6 +736,7 @@ export default function Checkout() {
         deliveryTime: selectedRegisterTime,
         paymentMethod: selectedRegisterPaymentMethod,
         customerPhone: data.phone,
+        deliveryFee: deliveryFeeAmount.toString(),
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
         ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),

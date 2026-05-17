@@ -8668,6 +8668,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     discountValue: '',
     minOrderAmount: '0',
     maxUses: '',
+    usageType: 'multi',
     isActive: true,
     expiresAt: '',
   });
@@ -8680,7 +8681,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
 
   const resetForm = () => {
-    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', isActive: true, expiresAt: '' });
+    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', isActive: true, expiresAt: '' });
     setEditingCoupon(null);
     setShowForm(false);
   };
@@ -8699,6 +8700,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       discountValue: coupon.discountValue,
       minOrderAmount: coupon.minOrderAmount || '0',
       maxUses: coupon.maxUses ? String(coupon.maxUses) : '',
+      usageType: coupon.usageType || 'multi',
       isActive: coupon.isActive,
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : '',
     });
@@ -8741,6 +8743,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       discountValue: form.discountValue,
       minOrderAmount: form.minOrderAmount || '0',
       maxUses: form.maxUses ? parseInt(form.maxUses) : null,
+      usageType: form.usageType,
       isActive: form.isActive,
       expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
     });
@@ -8908,6 +8911,19 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                 />
               </div>
             </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Тип использования', 'Usage type', 'סוג שימוש', 'نوع الاستخدام')}</label>
+              <Select value={form.usageType} onValueChange={(v) => setForm(f => ({ ...f, usageType: v }))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="multi">{t('Многократный (до лимита)', 'Multi-use (up to limit)', 'שימוש מרובה (עד מגבלה)', 'متعدد الاستخدام (حتى الحد)')}</SelectItem>
+                  <SelectItem value="single">{t('Одноразовый (глобально)', 'Single-use (global)', 'חד פעמי (גלובלי)', 'استخدام واحد (عالمي)')}</SelectItem>
+                  <SelectItem value="per_customer">{t('Один раз на клиента', 'Once per customer', 'פעם אחת לכל לקוח', 'مرة واحدة لكل عميل')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-sm font-medium">{t('Мин. сумма заказа', 'Min order amount', 'סכום הזמנה מינ.', 'الحد الأدنى للطلب')}</label>
@@ -8926,6 +8942,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   value={form.maxUses}
                   onChange={(e) => setForm(f => ({ ...f, maxUses: e.target.value }))}
                   placeholder={t('Без лимита', 'Unlimited', 'ללא הגבלה', 'غير محدود')}
+                  disabled={form.usageType === 'single'}
                 />
               </div>
             </div>
