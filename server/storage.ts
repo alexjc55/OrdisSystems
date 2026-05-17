@@ -2137,15 +2137,25 @@ export class DatabaseStorage implements IStorage {
       return { valid: false, message: "coupon_max_uses" };
     }
 
-    // Customer targeting: if coupon is restricted to a specific user ID, enforce it
-    if (coupon.targetUserId) {
+    // Customer targeting by user ID (array takes priority over legacy single field)
+    const targetUserIdsArr = Array.isArray((coupon as any).targetUserIds) ? (coupon as any).targetUserIds as string[] : null;
+    if (targetUserIdsArr && targetUserIdsArr.length > 0) {
+      if (!userId || !targetUserIdsArr.includes(userId)) {
+        return { valid: false, message: "coupon_not_eligible" };
+      }
+    } else if (coupon.targetUserId) {
       if (!userId || coupon.targetUserId !== userId) {
         return { valid: false, message: "coupon_not_eligible" };
       }
     }
 
-    // Customer targeting: if coupon is restricted to a specific customer email, enforce it
-    if (coupon.targetCustomerEmail) {
+    // Customer targeting by email (array takes priority over legacy single field)
+    const targetEmailsArr = Array.isArray((coupon as any).targetCustomerEmails) ? (coupon as any).targetCustomerEmails as string[] : null;
+    if (targetEmailsArr && targetEmailsArr.length > 0) {
+      if (!userEmail || !targetEmailsArr.some(e => e.toLowerCase() === userEmail.toLowerCase())) {
+        return { valid: false, message: "coupon_not_eligible" };
+      }
+    } else if (coupon.targetCustomerEmail) {
       if (!userEmail || coupon.targetCustomerEmail.toLowerCase() !== userEmail.toLowerCase()) {
         return { valid: false, message: "coupon_not_eligible" };
       }

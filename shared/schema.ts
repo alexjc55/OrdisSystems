@@ -746,12 +746,17 @@ export const coupons = pgTable("coupons", {
   usageType: varchar("usage_type", { enum: ["single", "multi", "per_customer"] }).default("multi").notNull(),
   // scope: 'order' = applies to whole order total; 'product' = applies only to matching product subtotals
   scope: varchar("scope", { enum: ["order", "product"] }).default("order").notNull(),
-  // When set, only this customer email is allowed to use the coupon
+  // When set, only this customer email is allowed to use the coupon (legacy single-value)
   targetCustomerEmail: varchar("target_customer_email", { length: 255 }),
-  // When set, only this user ID is allowed to use the coupon (overrides / complements targetCustomerEmail)
+  // When set, only this user ID is allowed to use the coupon (legacy single-value)
   targetUserId: varchar("target_user_id", { length: 255 }).references(() => users.id),
+  // Multi-customer targeting (array of emails / user IDs)
+  targetCustomerEmails: jsonb("target_customer_emails").$type<string[]>(),
+  targetUserIds: jsonb("target_user_ids").$type<string[]>(),
   // When set (non-empty array), coupon applies only to these product IDs
   applicableProductIds: jsonb("applicable_product_ids").$type<number[]>(),
+  // If true, coupon discount stacks on top of loyalty discount; if false (default) coupon replaces loyalty
+  stacksWithLoyalty: boolean("stacks_with_loyalty").default(false).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   expiresAt: timestamp("expires_at"), // null = no expiry
   createdAt: timestamp("created_at").defaultNow(),
@@ -993,7 +998,10 @@ export const insertCouponSchema = createInsertSchema(coupons).omit({
   scope: z.enum(["order", "product"]).optional(),
   targetCustomerEmail: z.string().email().nullable().optional(),
   targetUserId: z.string().nullable().optional(),
+  targetCustomerEmails: z.array(z.string().email()).nullable().optional(),
+  targetUserIds: z.array(z.string()).nullable().optional(),
   applicableProductIds: z.array(z.number().int()).nullable().optional(),
+  stacksWithLoyalty: z.boolean().optional(),
 });
 
 export const insertProductVolumeDiscountSchema = createInsertSchema(productVolumeDiscounts).omit({

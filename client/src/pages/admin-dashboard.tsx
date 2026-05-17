@@ -8808,11 +8808,16 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     usageType: 'multi',
     scope: 'order',
     applicableProductIds: [] as number[],
-    targetCustomerEmail: '',
-    targetUserId: '',
+    targetCustomerEmails: [] as string[],
+    targetUserIds: [] as string[],
+    stacksWithLoyalty: false,
     isActive: true,
     expiresAt: '',
   });
+  const [productSearch, setProductSearch] = useState('');
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerResults, setCustomerResults] = useState<any[]>([]);
+  const [customerSearchLoading, setCustomerSearchLoading] = useState(false);
 
   const { data: coupons = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/admin/coupons'],
@@ -8822,9 +8827,12 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
 
   const resetForm = () => {
-    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', scope: 'order', applicableProductIds: [], targetCustomerEmail: '', targetUserId: '', isActive: true, expiresAt: '' });
+    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', scope: 'order', applicableProductIds: [], targetCustomerEmails: [], targetUserIds: [], stacksWithLoyalty: false, isActive: true, expiresAt: '' });
     setEditingCoupon(null);
     setShowForm(false);
+    setProductSearch('');
+    setCustomerSearch('');
+    setCustomerResults([]);
   };
 
   const openCreate = () => {
@@ -8844,11 +8852,15 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       usageType: coupon.usageType || 'multi',
       scope: coupon.scope || 'order',
       applicableProductIds: Array.isArray(coupon.applicableProductIds) ? coupon.applicableProductIds : [],
-      targetCustomerEmail: coupon.targetCustomerEmail || '',
-      targetUserId: coupon.targetUserId || '',
+      targetCustomerEmails: Array.isArray(coupon.targetCustomerEmails) ? coupon.targetCustomerEmails : (coupon.targetCustomerEmail ? [coupon.targetCustomerEmail] : []),
+      targetUserIds: Array.isArray(coupon.targetUserIds) ? coupon.targetUserIds : (coupon.targetUserId ? [coupon.targetUserId] : []),
+      stacksWithLoyalty: !!coupon.stacksWithLoyalty,
       isActive: coupon.isActive,
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : '',
     });
+    setProductSearch('');
+    setCustomerSearch('');
+    setCustomerResults([]);
     setShowForm(true);
   };
 
@@ -8902,8 +8914,9 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       usageType: form.usageType,
       scope: form.scope,
       applicableProductIds: form.scope === 'product' && form.applicableProductIds.length > 0 ? form.applicableProductIds : null,
-      targetCustomerEmail: form.targetCustomerEmail || null,
-      targetUserId: form.targetUserId || null,
+      targetCustomerEmails: form.targetCustomerEmails.length > 0 ? form.targetCustomerEmails : null,
+      targetUserIds: form.targetUserIds.length > 0 ? form.targetUserIds : null,
+      stacksWithLoyalty: form.stacksWithLoyalty,
       isActive: form.isActive,
       expiresAt: expiresAtValue,
     });
@@ -9097,55 +9110,128 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
               </Select>
             </div>
             {form.scope === 'product' && (
-              <div className="space-y-1">
-                <label className="text-sm font-medium">{t('Товары (для которых действует скидка)', 'Applicable products', 'מוצרים רלוונטיים', 'المنتجات المطبقة')}</label>
-                <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-1">
-                  {allProducts.map((p: any) => (
-                    <label key={p.id} className="flex items-center gap-2 cursor-pointer text-sm hover:bg-gray-50 p-1 rounded">
-                      <input
-                        type="checkbox"
-                        checked={form.applicableProductIds.includes(p.id)}
-                        onChange={(e) => {
-                          setForm(f => ({
-                            ...f,
-                            applicableProductIds: e.target.checked
-                              ? [...f.applicableProductIds, p.id]
-                              : f.applicableProductIds.filter(id => id !== p.id)
-                          }));
-                        }}
-                        className="h-4 w-4"
-                      />
-                      <span>{p.name}</span>
-                    </label>
-                  ))}
-                  {allProducts.length === 0 && (
-                    <p className="text-xs text-muted-foreground p-1">{t('Нет товаров', 'No products', 'אין מוצרים', 'لا توجد منتجات')}</p>
-                  )}
-                </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t('Товары со скидкой', 'Applicable products', 'מוצרים רלוונטיים', 'المنتجات المطبقة')}</label>
                 {form.applicableProductIds.length > 0 && (
-                  <p className="text-xs text-muted-foreground">{t('Выбрано:', 'Selected:', 'נבחרו:', 'المحدد:')} {form.applicableProductIds.length}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {form.applicableProductIds.map(pid => {
+                      const prod = allProducts.find((p: any) => p.id === pid);
+                      return (
+                        <span key={pid} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
+                          {prod?.name || `#${pid}`}
+                          <button type="button" onClick={() => setForm(f => ({ ...f, applicableProductIds: f.applicableProductIds.filter(id => id !== pid) }))} className="hover:text-destructive font-bold ml-0.5">×</button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+                <Input
+                  value={productSearch}
+                  onChange={(e) => setProductSearch(e.target.value)}
+                  placeholder={t('Поиск товара...', 'Search product...', 'חפש מוצר...', 'ابحث عن منتج...')}
+                  className="text-sm"
+                />
+                {productSearch.trim() && (
+                  <div className="border rounded-md max-h-40 overflow-y-auto">
+                    {allProducts
+                      .filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase()) && !form.applicableProductIds.includes(p.id))
+                      .slice(0, 20)
+                      .map((p: any) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                          onClick={() => { setForm(f => ({ ...f, applicableProductIds: [...f.applicableProductIds, p.id] })); setProductSearch(''); }}
+                        >
+                          {p.name}
+                        </button>
+                      ))}
+                    {allProducts.filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase()) && !form.applicableProductIds.includes(p.id)).length === 0 && (
+                      <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>
+                    )}
+                  </div>
                 )}
               </div>
             )}
-            <div className="space-y-1">
-              <label className="text-sm font-medium">{t('Только для клиента (email)', 'Target customer (email)', 'לקוח ספציפי (אימייל)', 'عميل محدد (البريد)')}</label>
-              <Input
-                type="email"
-                value={form.targetCustomerEmail}
-                onChange={(e) => setForm(f => ({ ...f, targetCustomerEmail: e.target.value }))}
-                placeholder={t('Оставьте пустым для всех', 'Leave empty for all', 'השאר ריק לכולם', 'اتركه فارغاً للجميع')}
-              />
-              <p className="text-xs text-muted-foreground">{t('Если указан — купон доступен только этому клиенту', 'If set — coupon is available only to this customer', 'אם הוגדר — הקופון זמין רק ללקוח זה', 'إذا تم تعيينه — القسيمة متاحة فقط لهذا العميل')}</p>
+            {/* Stacks with loyalty toggle */}
+            <div className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
+              <Switch checked={form.stacksWithLoyalty} onCheckedChange={(v) => setForm(f => ({ ...f, stacksWithLoyalty: v }))} className="mt-0.5" />
+              <div>
+                <p className="text-sm font-medium">{t('Суммировать со скидкой лояльности', 'Stack with loyalty discount', 'לצבור עם הנחת נאמנות', 'تراكم مع خصم الولاء')}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {form.stacksWithLoyalty
+                    ? t('Купон + скидка лояльности применяются одновременно', 'Coupon + loyalty discount both apply', 'קופון + הנחת נאמנות חלים יחד', 'الكوبون + خصم الولاء يُطبَّقان معاً')
+                    : t('Купон заменяет скидку лояльности (по умолчанию)', 'Coupon replaces loyalty discount (default)', 'קופון מחליף הנחת נאמנות (ברירת מחדל)', 'الكوبون يحل محل خصم الولاء (افتراضي)')}
+                </p>
+              </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-sm font-medium">{t('Только для клиента (ID пользователя)', 'Target customer (user ID)', 'לקוח ספציפי (מזהה משתמש)', 'عميل محدد (معرف المستخدم)')}</label>
+            {/* Customer targeting — search + tags */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">{t('Только для клиентов', 'Target customers', 'לקוחות ספציפיים', 'عملاء محددون')}</label>
+              <p className="text-xs text-muted-foreground">{t('Оставьте пустым — доступен всем. Найдите и добавьте нужных клиентов.', 'Leave empty — available to all. Find and add target customers.', 'השאר ריק — זמין לכולם. חפש והוסף לקוחות.', 'اتركه فارغاً للجميع. ابحث وأضف عملاء.')}</p>
+              {(form.targetCustomerEmails.length > 0 || form.targetUserIds.length > 0) && (
+                <div className="flex flex-wrap gap-1">
+                  {form.targetUserIds.map(uid => {
+                    const found = customerResults.find((u: any) => String(u.id) === String(uid));
+                    const name = found ? (`${found.firstName || ''} ${found.lastName || ''}`.trim() || found.username) : uid;
+                    const email = found?.email || '';
+                    return (
+                      <span key={uid} className="inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full dark:bg-green-900 dark:text-green-200">
+                        {name}{email ? ` (${email})` : ''}
+                        <button type="button" onClick={() => setForm(f => ({ ...f, targetUserIds: f.targetUserIds.filter(id => id !== uid) }))} className="hover:text-destructive font-bold ml-0.5">×</button>
+                      </span>
+                    );
+                  })}
+                  {form.targetCustomerEmails.map(email => (
+                    <span key={email} className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full dark:bg-blue-900 dark:text-blue-200">
+                      {email}
+                      <button type="button" onClick={() => setForm(f => ({ ...f, targetCustomerEmails: f.targetCustomerEmails.filter(e => e !== email) }))} className="hover:text-destructive font-bold ml-0.5">×</button>
+                    </span>
+                  ))}
+                </div>
+              )}
               <Input
-                type="text"
-                value={form.targetUserId}
-                onChange={(e) => setForm(f => ({ ...f, targetUserId: e.target.value }))}
-                placeholder={t('Оставьте пустым для всех', 'Leave empty for all', 'השאר ריק לכולם', 'اتركه فارغاً للجميع')}
+                value={customerSearch}
+                onChange={async (e) => {
+                  const val = e.target.value;
+                  setCustomerSearch(val);
+                  if (!val.trim()) { setCustomerResults([]); return; }
+                  setCustomerSearchLoading(true);
+                  try {
+                    const res = await fetch(`/api/admin/users?search=${encodeURIComponent(val)}&limit=10`, { credentials: 'include' });
+                    const data = await res.json();
+                    setCustomerResults(Array.isArray(data?.users) ? data.users : Array.isArray(data) ? data : []);
+                  } catch { setCustomerResults([]); }
+                  finally { setCustomerSearchLoading(false); }
+                }}
+                placeholder={t('Поиск по имени / email...', 'Search by name / email...', 'חפש לפי שם / אימייל...', 'ابحث بالاسم / البريد...')}
+                className="text-sm"
               />
-              <p className="text-xs text-muted-foreground">{t('Если указан — купон доступен только этому пользователю по ID', 'If set — coupon is available only to this user by ID', 'אם הוגדר — הקופון זמין רק למשתמש זה לפי מזהה', 'إذا تم تعيينه — القسيمة متاحة فقط لهذا المستخدم بالمعرف')}</p>
+              {customerSearch.trim() && (
+                <div className="border rounded-md max-h-40 overflow-y-auto">
+                  {customerSearchLoading && <p className="text-xs text-muted-foreground px-3 py-2">{t('Загрузка...', 'Loading...', 'טוען...', 'جار التحميل...')}</p>}
+                  {!customerSearchLoading && customerResults.filter((u: any) => !form.targetUserIds.includes(String(u.id))).map((u: any) => {
+                    const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.username;
+                    return (
+                      <button
+                        key={u.id}
+                        type="button"
+                        className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                        onClick={() => {
+                          setForm(f => ({ ...f, targetUserIds: [...f.targetUserIds, String(u.id)] }));
+                          setCustomerSearch('');
+                        }}
+                      >
+                        <span className="font-medium">{displayName}</span>
+                        {u.email && <span className="text-muted-foreground ml-2 text-xs">{u.email}</span>}
+                      </button>
+                    );
+                  })}
+                  {!customerSearchLoading && customerResults.filter((u: any) => !form.targetUserIds.includes(String(u.id))).length === 0 && (
+                    <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>
+                  )}
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">

@@ -105,6 +105,7 @@ async function computeServerDiscounts({
         type: validation.coupon.discountType,
         value: parseFloat(validation.coupon.discountValue),
         discountAmount: serverCouponDiscount,
+        stacksWithLoyalty: !!(validation.coupon as any).stacksWithLoyalty,
       };
     } else {
       // Coupon was submitted but is invalid — surface reason via thrown error so callers can return 422
@@ -113,8 +114,9 @@ async function computeServerDiscounts({
   }
 
   // 3. Loyalty discount for any registered user (not guests)
-  //    Non-stacking rule: if coupon was applied, skip loyalty discount
-  if (userId && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
+  //    Stacking rule: apply loyalty only if no coupon was used OR coupon explicitly stacks with loyalty
+  const couponStacksWithLoyalty = !!(serverDiscountDetails.coupon as any)?.stacksWithLoyalty;
+  if (userId && (!serverCouponCode || couponStacksWithLoyalty) && settings?.loyaltyDiscountEnabled) {
     const pct = parseFloat(settings.loyaltyDiscountPercent || '0');
     if (pct > 0) {
       serverLoyaltyDiscount = Math.round(subtotalAfterVolume * pct) / 100;
