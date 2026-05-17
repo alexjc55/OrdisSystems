@@ -10902,6 +10902,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
       deliveryTimeMode: storeSettings?.deliveryTimeMode || "hours",
       discountBadgeText: getLocalizedFieldForAdmin(storeSettings, 'discountBadgeText', currentLanguage, storeSettings) || "",
+      preorderButtonStyle: storeSettings?.preorderButtonStyle || "tomorrow",
+      checkoutGuestFirst: storeSettings?.checkoutGuestFirst || false,
       showBannerImage: storeSettings?.showBannerImage !== false,
       showTitleDescription: storeSettings?.showTitleDescription !== false,
       showInfoBlocks: storeSettings?.showInfoBlocks !== false,
@@ -11150,6 +11152,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           discountBadgeTextEn: storeSettings?.discountBadgeTextEn || '',
           discountBadgeTextHe: storeSettings?.discountBadgeTextHe || '',
           discountBadgeTextAr: storeSettings?.discountBadgeTextAr || '',
+          preorderButtonStyle: storeSettings?.preorderButtonStyle || 'tomorrow',
+          checkoutGuestFirst: storeSettings?.checkoutGuestFirst || false,
           whatsappDefaultMessage: storeSettings?.whatsappDefaultMessage || '',
           whatsappDefaultMessageEn: storeSettings?.whatsappDefaultMessageEn || '',
           whatsappDefaultMessageHe: storeSettings?.whatsappDefaultMessageHe || '',
@@ -11397,7 +11401,57 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
               </FormItem>
             )}
           />
-            
+
+          <FormField
+            control={form.control}
+            name="preorderButtonStyle"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">{adminT('storeSettings.preorderButtonStyleLabel')}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="tomorrow">{adminT('storeSettings.preorderButtonStyleTomorrow')}</SelectItem>
+                    <SelectItem value="preorder">{adminT('storeSettings.preorderButtonStylePreorder')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription className="text-xs">
+                  {adminT('storeSettings.preorderButtonStyleDescription')}
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="checkoutGuestFirst"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm">{adminT('storeSettings.checkoutGuestFirstLabel')}</FormLabel>
+                <Select onValueChange={(v) => field.onChange(v === 'true')} value={field.value ? 'true' : 'false'}>
+                  <FormControl>
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="false">{adminT('storeSettings.checkoutGuestFirstRegister')}</SelectItem>
+                    <SelectItem value="true">{adminT('storeSettings.checkoutGuestFirstGuest')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription className="text-xs">
+                  {adminT('storeSettings.checkoutGuestFirstDescription')}
+                </FormDescription>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
             {/* PWA Settings */}
             <div className="col-span-1 md:col-span-2">
               <div className="border-t pt-6 mt-6">

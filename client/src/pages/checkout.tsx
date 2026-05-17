@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
 import { useLocation } from "wouter";
 import { UTMLink } from "@/components/UTMLink";
-import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info, MapPin } from "lucide-react";
+import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, ArrowLeft, Clock, Calendar as CalendarIcon, Info, MapPin, Star } from "lucide-react";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useBranch } from "@/hooks/useBranch";
@@ -228,6 +228,7 @@ export default function Checkout() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
+  const [orderTypeInitialized, setOrderTypeInitialized] = useState(false);
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
@@ -313,6 +314,14 @@ export default function Checkout() {
   );
   // Gift eligibility uses raw subtotal (before discounts)
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);
+
+  // Initialize orderType from store settings once loaded
+  useEffect(() => {
+    if (storeSettings && !orderTypeInitialized) {
+      setOrderType(storeSettings.checkoutGuestFirst ? 'guest' : 'register');
+      setOrderTypeInitialized(true);
+    }
+  }, [storeSettings, orderTypeInitialized]);
 
   // Auto-reset giftAccepted when the cart no longer qualifies for the gift
   useEffect(() => {
@@ -1505,18 +1514,37 @@ export default function Checkout() {
               /* Guest/Registration/Login Options */
               <Tabs value={orderType} onValueChange={(value) => setOrderType(value as any)}>
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="register" className="flex items-center gap-1">
-                    <UserPlus className="h-4 w-4" />
-                    {tShop('checkout.registration')}
-                  </TabsTrigger>
-                  <TabsTrigger value="login" className="flex items-center gap-1">
-                    <UserCheck className="h-4 w-4" />
-                    {tShop('checkout.loginTab')}
-                  </TabsTrigger>
-                  <TabsTrigger value="guest" className="flex items-center gap-1">
-                    <User className="h-4 w-4" />
-                    {tShop('checkout.guest')}
-                  </TabsTrigger>
+                  {storeSettings?.checkoutGuestFirst ? (
+                    <>
+                      <TabsTrigger value="guest" className="flex items-center gap-1">
+                        <User className="h-4 w-4" />
+                        {tShop('checkout.guest')}
+                      </TabsTrigger>
+                      <TabsTrigger value="register" className="flex items-center gap-1">
+                        <UserPlus className="h-4 w-4" />
+                        {tShop('checkout.registration')}
+                      </TabsTrigger>
+                      <TabsTrigger value="login" className="flex items-center gap-1">
+                        <UserCheck className="h-4 w-4" />
+                        {tShop('checkout.loginTab')}
+                      </TabsTrigger>
+                    </>
+                  ) : (
+                    <>
+                      <TabsTrigger value="register" className="flex items-center gap-1">
+                        <UserPlus className="h-4 w-4" />
+                        {tShop('checkout.registration')}
+                      </TabsTrigger>
+                      <TabsTrigger value="login" className="flex items-center gap-1">
+                        <UserCheck className="h-4 w-4" />
+                        {tShop('checkout.loginTab')}
+                      </TabsTrigger>
+                      <TabsTrigger value="guest" className="flex items-center gap-1">
+                        <User className="h-4 w-4" />
+                        {tShop('checkout.guest')}
+                      </TabsTrigger>
+                    </>
+                  )}
                 </TabsList>
 
                 <TabsContent value="register" className="space-y-4">
@@ -1765,6 +1793,14 @@ export default function Checkout() {
                 </TabsContent>
 
                 <TabsContent value="guest" className="space-y-4">
+                  {storeSettings?.checkoutGuestFirst && (
+                    <Alert className="border-amber-400 bg-amber-50 dark:bg-amber-950/30">
+                      <Star className="h-4 w-4 text-amber-500" />
+                      <AlertDescription className="text-amber-800 dark:text-amber-300 font-medium">
+                        {tShop('checkout.guestFirstPromo')}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                   <Alert>
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>

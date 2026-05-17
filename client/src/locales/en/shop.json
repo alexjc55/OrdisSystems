@@ -123,6 +123,7 @@
     "registerTab": "Create Account",
     "guest": "Continue as Guest",
     "guestWarning": "Order will be saved with phone number",
+    "guestFirstPromo": "Registered users get more discounts, cashback and access to order history. Join now — it's free!",
     "orderAccepted": "Order Accepted",
     "orderAcceptedForProcessing": "Your order is being processed",
     "orderCancelled": "Order Cancelled",
@@ -149,6 +150,7 @@
   },
   "outOfStockToday": "Out of stock today",
   "orderForTomorrow": "Order for tomorrow",
+  "preOrder": "Pre-order",
   "profile": {
     "title": "Profile",
     "myOrders": "My Orders",

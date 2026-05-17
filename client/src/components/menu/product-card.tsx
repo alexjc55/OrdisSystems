@@ -391,7 +391,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 className="w-full btn-tomorrow h-10 text-sm font-medium"
               >
                 <ShoppingCart className="mr-1 rtl:mr-0 rtl:ml-1 h-3 w-3" />
-                {t('orderForTomorrow')}
+                {storeSettings?.preorderButtonStyle === 'preorder' ? t('preOrder') : t('orderForTomorrow')}
               </Button>
             ) : (
               <Button

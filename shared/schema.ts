@@ -227,6 +227,8 @@ export const storeSettings = pgTable("store_settings", {
   isDeliveryEnabled: boolean("is_delivery_enabled").default(true),
   isPickupEnabled: boolean("is_pickup_enabled").default(true),
   discountBadgeText: varchar("discount_badge_text", { length: 50 }).default("Скидка"),
+  preorderButtonStyle: varchar("preorder_button_style", { length: 20 }).default("tomorrow"),
+  checkoutGuestFirst: boolean("checkout_guest_first").default(false),
   showBannerImage: boolean("show_banner_image").default(true),
   showTitleDescription: boolean("show_title_description").default(true),
   showInfoBlocks: boolean("show_info_blocks").default(true),
