@@ -1236,6 +1236,32 @@ export default function Profile() {
                               <span>-{formatCurrency(parseFloat(selectedOrder.loyaltyDiscount))}</span>
                             </div>
                           )}
+                          {(() => {
+                            try {
+                              const dd = typeof (selectedOrder as any).discountDetails === 'string'
+                                ? JSON.parse((selectedOrder as any).discountDetails)
+                                : (selectedOrder as any).discountDetails;
+                              if (!dd) return null;
+                              const volumeAmt = dd.volume?.discountAmount;
+                              const giftName = dd.gift?.productName;
+                              return (
+                                <>
+                                  {volumeAmt > 0 && (
+                                    <div className="flex justify-between text-sm text-orange-600">
+                                      <span>📦 {t('profile.volumeDiscount') || 'Скидка за объём'}</span>
+                                      <span>-{formatCurrency(volumeAmt)}</span>
+                                    </div>
+                                  )}
+                                  {giftName && (
+                                    <div className="flex justify-between text-sm text-purple-600">
+                                      <span>🎁 {giftName}</span>
+                                      <span>{t('profile.freeGift') || 'Бесплатно'}</span>
+                                    </div>
+                                  )}
+                                </>
+                              );
+                            } catch { return null; }
+                          })()}
                           <div className="flex justify-between text-sm text-gray-600">
                             <span>{t('profile.delivery')}</span>
                             <span>{formatCurrency(deliveryFee)}</span>

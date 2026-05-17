@@ -6,7 +6,9 @@ import { z } from "zod";
 const router = Router();
 
 // POST /api/loyalty/active — session and cart-aware loyalty context.
-// Accepts current cart state, returns applicable discounts for this specific user+cart combination.
+// Intentionally accessible to both guests and authenticated users:
+// req.user is populated by Passport when a session exists, but the endpoint
+// gracefully degrades for guests (loyalty discount = 0, gift eligibility still checked).
 // This is the authoritative "what discounts apply right now" endpoint.
 router.post('/loyalty/active', async (req: any, res) => {
   try {

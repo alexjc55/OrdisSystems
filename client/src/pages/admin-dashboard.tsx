@@ -654,6 +654,30 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
                         ⭐ -{formatCurrency(parseFloat(order.loyaltyDiscount))}
                       </div>
                     )}
+                    {(() => {
+                      try {
+                        const dd = typeof order.discountDetails === 'string'
+                          ? JSON.parse(order.discountDetails)
+                          : order.discountDetails;
+                        if (!dd) return null;
+                        const volumeAmt = dd.volume?.discountAmount;
+                        const giftName = dd.gift?.productName;
+                        return (
+                          <>
+                            {volumeAmt > 0 && (
+                              <div className="text-xs text-orange-600 font-medium">
+                                📦 -{formatCurrency(volumeAmt)}
+                              </div>
+                            )}
+                            {giftName && (
+                              <div className="text-xs text-purple-600 font-medium">
+                                🎁 {giftName}
+                              </div>
+                            )}
+                          </>
+                        );
+                      } catch { return null; }
+                    })()}
                   </div>
                 );
               }
