@@ -82,16 +82,49 @@ export default function CartSidebar() {
 
   const subtotal = getTotalPrice();
 
+  // Fetch volume discounts for all products in cart
+  const cartProductIds = items.map(item => item.product?.id).filter(Boolean) as number[];
+  const { data: volumeDiscountsMap } = useQuery<Record<number, Array<{ minQuantity: string; discountType: string; discountValue: string }>>>({
+    queryKey: ['/api/products/volume-discounts', cartProductIds.join(',')],
+    queryFn: () => apiRequest('GET', `/api/products/volume-discounts?productIds=${cartProductIds.join(',')}`),
+    enabled: cartProductIds.length > 0,
+    staleTime: 60 * 1000,
+  });
+
+  // Compute per-item volume discounts — apply the highest applicable tier per item
+  const volumeDiscountAmount = (() => {
+    if (!volumeDiscountsMap) return 0;
+    let total = 0;
+    for (const item of items) {
+      if (!item.product?.id) continue;
+      const tiers = (volumeDiscountsMap[item.product.id] || []).filter(t =>
+        t.minQuantity !== null && parseFloat(t.minQuantity) <= item.quantity
+      );
+      if (tiers.length === 0) continue;
+      // Pick the highest applicable tier
+      const best = tiers.reduce((a, b) => parseFloat(a.minQuantity) >= parseFloat(b.minQuantity) ? a : b);
+      const pct = parseFloat(best.discountValue);
+      if (best.discountType === 'percentage') {
+        total += Math.round(item.totalPrice * pct / 100 * 100) / 100;
+      } else {
+        total += Math.min(pct, item.totalPrice);
+      }
+    }
+    return Math.round(total * 100) / 100;
+  })();
+
+  const subtotalAfterVolumeDiscounts = Math.max(0, subtotal - volumeDiscountAmount);
+
   // Loyalty discount for registered users — only when NO coupon is applied (non-stacking rule)
   const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
-    ? Math.round((subtotal * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
+    ? Math.round((subtotalAfterVolumeDiscounts * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
     : 0;
 
-  // Gift eligibility
+  // Gift eligibility — based on raw subtotal before discounts
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotal >= (loyaltyContext.giftMinOrderAmount || 300);
 
-  // Effective subtotal after loyalty discount
-  const subtotalAfterLoyalty = subtotal - loyaltyDiscountAmount;
+  // Effective subtotal after loyalty discount (based on volume-discounted amount)
+  const subtotalAfterLoyalty = subtotalAfterVolumeDiscounts - loyaltyDiscountAmount;
 
   // Coupon discount (recompute against loyalty-adjusted subtotal)
   const couponDiscountAmount = appliedCoupon
@@ -461,6 +494,14 @@ export default function CartSidebar() {
                     <span>{t('cart.items')}:</span>
                     <span>{formatCurrency(subtotal)}</span>
                   </div>
+
+                  {/* Volume discount line */}
+                  {volumeDiscountAmount > 0 && (
+                    <div className="flex justify-between text-sm text-green-700">
+                      <span>{t('cart.volumeDiscount')}:</span>
+                      <span>-{formatCurrency(volumeDiscountAmount)}</span>
+                    </div>
+                  )}
 
                   {/* Loyalty discount line */}
                   {loyaltyDiscountAmount > 0 && (

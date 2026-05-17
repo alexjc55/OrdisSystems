@@ -302,6 +302,26 @@ router.get('/admin/products', isAuthenticated, async (req: any, res) => {
   }
 });
 
+// Public endpoint: get active volume discounts for multiple products
+// Usage: GET /api/products/volume-discounts?productIds=1,2,3
+router.get('/products/volume-discounts', async (req, res) => {
+  try {
+    const productIdsParam = req.query.productIds as string;
+    if (!productIdsParam) return res.json({});
+    const productIds = productIdsParam.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+    if (productIds.length === 0) return res.json({});
+    const result: Record<number, any[]> = {};
+    await Promise.all(productIds.map(async (id) => {
+      const discounts = await storage.getProductVolumeDiscounts(id);
+      result[id] = discounts.filter(d => d.isActive);
+    }));
+    res.json(result);
+  } catch (error) {
+    console.error("Error fetching volume discounts:", error);
+    res.status(500).json({ message: "Failed to fetch volume discounts" });
+  }
+});
+
 router.get('/products/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id);

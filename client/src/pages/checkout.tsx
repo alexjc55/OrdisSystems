@@ -261,13 +261,44 @@ export default function Checkout() {
     staleTime: 5 * 60 * 1000,
   });
 
+  // Fetch volume discounts for all products in cart (checkout view)
+  const checkoutProductIds = items.map((item: any) => item.product?.id).filter(Boolean) as number[];
+  const { data: checkoutVolumeDiscountsMap } = useQuery<Record<number, Array<{ minQuantity: string; discountType: string; discountValue: string }>>>({
+    queryKey: ['/api/products/volume-discounts', checkoutProductIds.join(',')],
+    queryFn: () => apiRequest('GET', `/api/products/volume-discounts?productIds=${checkoutProductIds.join(',')}`),
+    enabled: checkoutProductIds.length > 0,
+    staleTime: 60 * 1000,
+  });
+
+  // Compute per-item volume discounts for checkout totals
+  const checkoutVolumeDiscountAmount = (() => {
+    if (!checkoutVolumeDiscountsMap) return 0;
+    let total = 0;
+    for (const item of items as any[]) {
+      if (!item.product?.id) continue;
+      const tiers = (checkoutVolumeDiscountsMap[item.product.id] || []).filter((t: any) =>
+        t.minQuantity !== null && parseFloat(t.minQuantity) <= item.quantity
+      );
+      if (tiers.length === 0) continue;
+      const best = tiers.reduce((a: any, b: any) => parseFloat(a.minQuantity) >= parseFloat(b.minQuantity) ? a : b);
+      const pct = parseFloat(best.discountValue);
+      if (best.discountType === 'percentage') {
+        total += Math.round(item.totalPrice * pct / 100 * 100) / 100;
+      } else {
+        total += Math.min(pct, item.totalPrice);
+      }
+    }
+    return Math.round(total * 100) / 100;
+  })();
+
   // Computed discount helpers used throughout the page
   const subtotalForDiscounts = getTotalPrice();
+  const subtotalAfterVolume = Math.max(0, subtotalForDiscounts - checkoutVolumeDiscountAmount);
   // Non-stacking rule: loyalty discount is skipped when a coupon is applied
   const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
-    ? Math.round((subtotalForDiscounts * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
+    ? Math.round((subtotalAfterVolume * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
     : 0;
-  const subtotalAfterLoyalty = subtotalForDiscounts - loyaltyDiscountAmount;
+  const subtotalAfterLoyalty = subtotalAfterVolume - loyaltyDiscountAmount;
   const couponDiscountAmount = appliedCoupon
     ? (() => {
         if (appliedCoupon.discountType === 'percentage') {
@@ -277,6 +308,7 @@ export default function Checkout() {
       })()
     : 0;
   const subtotalAfterAllDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
+  // Gift eligibility uses raw subtotal (before discounts)
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);
 
   // On checkout load, validate cart against selected branch and auto-remove unavailable items
@@ -580,16 +612,6 @@ export default function Checkout() {
         pricePerKg: item.product.pricePerKg || item.product.price,
         totalPrice: item.totalPrice.toString()
       }));
-      const discountDetailsPayload = (loyaltyDiscountAmount > 0 || couponDiscountAmount > 0 || (giftAccepted && giftEligible))
-        ? {
-            subtotal,
-            loyaltyDiscount: loyaltyDiscountAmount,
-            couponDiscount: couponDiscountAmount,
-            couponCode: appliedCoupon?.code || null,
-            giftIncluded: giftAccepted && !!giftEligible,
-            giftProductId: (giftAccepted && loyaltyContext?.giftProduct) ? loyaltyContext.giftProduct.id : null,
-          }
-        : null;
       const orderData: BaseOrderPayload & {
         guestInfo: typeof data & { deliveryDate: string; deliveryTime: string; paymentMethod: string; deliveryFee: string };
         language: string;
@@ -1209,6 +1231,12 @@ export default function Checkout() {
                       <span>{tShop('cart.items')}:</span>
                       <span>{formatCurrency(subtotal)}</span>
                     </div>
+                    {checkoutVolumeDiscountAmount > 0 && (
+                      <div className="flex justify-between text-green-700">
+                        <span>{tShop('cart.volumeDiscount')}:</span>
+                        <span>-{formatCurrency(checkoutVolumeDiscountAmount)}</span>
+                      </div>
+                    )}
                     {loyaltyDiscountAmount > 0 && (
                       <div className="flex justify-between text-green-700">
                         <span>{tShop('cart.loyaltyDiscount')} ({loyaltyContext?.loyaltyDiscountPercent}%):</span>

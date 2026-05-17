@@ -463,6 +463,7 @@
   "cart.couponError": "Ошибка проверки промокода",
   "cart.loyaltyDiscount": "Скидка постоянного клиента",
   "cart.couponDiscount": "Скидка по промокоду",
+  "cart.volumeDiscount": "Скидка за объём",
   "cart.giftAvailable": "Подарок к заказу!",
   "cart.addGift": "Добавить подарок",
   "cart.giftAdded": "Подарок добавлен",

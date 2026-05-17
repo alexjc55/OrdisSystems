@@ -2139,7 +2139,7 @@ export class DatabaseStorage implements IStorage {
 
     const minAmount = parseFloat(coupon.minOrderAmount || "0");
     if (orderTotal < minAmount) {
-      return { valid: false, message: "coupon_min_order", minOrderAmount: minAmount } as any;
+      return { valid: false, message: "coupon_min_order" };
     }
 
     let discountAmount = 0;

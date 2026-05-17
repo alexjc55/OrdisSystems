@@ -92,6 +92,7 @@
     "couponError": "Error validating promo code",
     "loyaltyDiscount": "Loyalty discount",
     "couponDiscount": "Promo code discount",
+    "volumeDiscount": "Volume discount",
     "giftAvailable": "Free gift with your order!",
     "addGift": "Add gift",
     "giftAdded": "Gift added",
