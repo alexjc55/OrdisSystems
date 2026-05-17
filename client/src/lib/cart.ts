@@ -35,6 +35,22 @@ interface CartStore {
   setGiftAccepted: (accepted: boolean) => void;
 }
 
+// Returns the effective unit price for a product, applying its own special-offer
+// discount (isSpecialOffer + discountType/discountValue) when present.
+// This ensures that cart totals and downstream discount calculations (loyalty, coupon)
+// operate on the price the customer actually pays, not the full base price.
+function getEffectivePrice(product: Product): number {
+  const base = parseFloat(product.price);
+  if (product.isSpecialOffer && product.discountType && product.discountValue) {
+    const dv = parseFloat(String(product.discountValue));
+    if (!isNaN(dv)) {
+      if (product.discountType === 'percentage') return Math.max(0, base * (1 - dv / 100));
+      if (product.discountType === 'fixed') return Math.max(0, base - dv);
+    }
+  }
+  return base;
+}
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -48,6 +64,7 @@ export const useCartStore = create<CartStore>()(
         // Filter out invalid items and find existing item
         const validItems = items.filter(item => item.product && item.product.id);
         const existingItemIndex = validItems.findIndex(item => item.product.id === product.id);
+        const effectivePrice = getEffectivePrice(product);
         
         if (existingItemIndex >= 0) {
           // Update existing item
@@ -56,7 +73,7 @@ export const useCartStore = create<CartStore>()(
           updatedItems[existingItemIndex] = {
             ...updatedItems[existingItemIndex],
             quantity: newQuantity,
-            totalPrice: calculateTotal(parseFloat(product.price), newQuantity, product.unit as ProductUnit)
+            totalPrice: calculateTotal(effectivePrice, newQuantity, product.unit as ProductUnit)
           };
           set({ items: updatedItems });
         } else {
@@ -64,7 +81,7 @@ export const useCartStore = create<CartStore>()(
           const newItem: CartItem = {
             product,
             quantity,
-            totalPrice: calculateTotal(parseFloat(product.price), quantity, product.unit as ProductUnit)
+            totalPrice: calculateTotal(effectivePrice, quantity, product.unit as ProductUnit)
           };
           set({ items: [...validItems, newItem] });
         }
@@ -92,7 +109,7 @@ export const useCartStore = create<CartStore>()(
             ? {
                 ...item,
                 quantity,
-                totalPrice: calculateTotal(parseFloat(item.product.price), quantity, item.product.unit as ProductUnit)
+                totalPrice: calculateTotal(getEffectivePrice(item.product), quantity, item.product.unit as ProductUnit)
               }
             : item
         );
