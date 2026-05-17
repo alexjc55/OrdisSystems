@@ -48,6 +48,7 @@ export default function CartSidebar() {
     loyaltyDiscountPercent: number;
     giftEnabled: boolean;
     giftProduct: any | null;
+    giftProductQuantity: number;
     giftMinOrderAmount: number;
   }>({
     queryKey: ['/api/loyalty/context'],
@@ -460,6 +461,17 @@ export default function CartSidebar() {
                       <p className="text-sm font-semibold text-green-800">{t('cart.giftAvailable')}</p>
                       <p className="text-xs text-green-700 mt-0.5 truncate">
                         {getLocalizedField(loyaltyContext.giftProduct, 'name', currentLanguage as SupportedLanguage, 'ru') || loyaltyContext.giftProduct.name}
+                        {loyaltyContext.giftProductQuantity && loyaltyContext.giftProductQuantity > 0 && (() => {
+                          const qty = loyaltyContext.giftProductQuantity;
+                          const unit = loyaltyContext.giftProduct.unit;
+                          const unitLabel =
+                            unit === 'piece'   ? t('units.piece') :
+                            unit === 'portion' ? t('units.portion') :
+                            unit === 'kg'      ? t('units.kg') :
+                            unit === '100ml'   ? t('units.ml') :
+                            t('units.g');
+                          return <span className="ml-1 font-medium">— {qty} {unitLabel}</span>;
+                        })()}
                       </p>
                     </div>
                     <Button
