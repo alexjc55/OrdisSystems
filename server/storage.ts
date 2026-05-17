@@ -174,7 +174,7 @@ export interface IStorage {
   createCoupon(data: InsertCoupon): Promise<Coupon>;
   updateCoupon(id: number, data: Partial<InsertCoupon>): Promise<Coupon>;
   deleteCoupon(id: number): Promise<void>;
-  validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }>;
+  validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null, orderItems?: Array<{ productId: number; totalPrice: string }>): Promise<{ valid: boolean; message?: string; discountAmount?: number; eligibleSubtotal?: number; coupon?: Coupon }>;
   recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void>;
   getCouponUses(couponId: number): Promise<CouponUse[]>;
 
@@ -2123,7 +2123,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(coupons).where(eq(coupons.id, id));
   }
 
-  async validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }> {
+  async validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null, orderItems?: Array<{ productId: number; totalPrice: string }>): Promise<{ valid: boolean; message?: string; discountAmount?: number; eligibleSubtotal?: number; coupon?: Coupon }> {
     const coupon = await this.getCouponByCode(code);
     if (!coupon) return { valid: false, message: "coupon_not_found" };
     if (!coupon.isActive) return { valid: false, message: "coupon_inactive" };
@@ -2167,16 +2167,27 @@ export class DatabaseStorage implements IStorage {
       return { valid: false, message: "coupon_min_order" };
     }
 
+    // Product-scoped discount: compute eligible subtotal from matching order items only
+    let eligibleSubtotal = orderTotal;
+    const applicableIds = Array.isArray(coupon.applicableProductIds) ? coupon.applicableProductIds as number[] : null;
+    if (coupon.scope === 'product' && applicableIds && applicableIds.length > 0 && orderItems && orderItems.length > 0) {
+      const idSet = new Set(applicableIds);
+      eligibleSubtotal = orderItems
+        .filter(item => idSet.has(item.productId))
+        .reduce((sum, item) => sum + parseFloat(item.totalPrice || '0'), 0);
+      eligibleSubtotal = Math.round(eligibleSubtotal * 100) / 100;
+    }
+
     let discountAmount = 0;
     const discountValue = parseFloat(coupon.discountValue);
     if (coupon.discountType === "percentage") {
-      discountAmount = Math.min((orderTotal * discountValue) / 100, orderTotal);
+      discountAmount = Math.min((eligibleSubtotal * discountValue) / 100, eligibleSubtotal);
     } else {
-      discountAmount = Math.min(discountValue, orderTotal);
+      discountAmount = Math.min(discountValue, eligibleSubtotal);
     }
     discountAmount = Math.round(discountAmount * 100) / 100;
 
-    return { valid: true, discountAmount, coupon };
+    return { valid: true, discountAmount, eligibleSubtotal, coupon };
   }
 
   async recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void> {

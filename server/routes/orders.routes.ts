@@ -90,9 +90,9 @@ async function computeServerDiscounts({
   // Effective subtotal after volume discounts — used as base for loyalty/coupon
   const subtotalAfterVolume = Math.max(0, subtotal - serverVolumeDiscount);
 
-  // 2. Validate coupon from DB (pass userId + userEmail for per-customer/targeted enforcement)
+  // 2. Validate coupon from DB (pass userId + userEmail + orderItems for full enforcement)
   if (couponCode) {
-    const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId, userEmail);
+    const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId, userEmail, orderItems);
     if (validation.valid && validation.coupon) {
       serverCouponCode = validation.coupon.code;
       serverCouponDiscount = validation.discountAmount || 0;

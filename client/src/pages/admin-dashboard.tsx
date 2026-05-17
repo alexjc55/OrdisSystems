@@ -8659,6 +8659,9 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const { data: allProductsData } = useQuery<any[]>({ queryKey: ['/api/products'] });
+  const allProducts = allProductsData || [];
+
   const [showForm, setShowForm] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<any>(null);
   const [form, setForm] = useState({
@@ -8669,6 +8672,8 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     minOrderAmount: '0',
     maxUses: '',
     usageType: 'multi',
+    scope: 'order',
+    applicableProductIds: [] as number[],
     targetCustomerEmail: '',
     isActive: true,
     expiresAt: '',
@@ -8682,7 +8687,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
 
   const resetForm = () => {
-    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', targetCustomerEmail: '', isActive: true, expiresAt: '' });
+    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', scope: 'order', applicableProductIds: [], targetCustomerEmail: '', isActive: true, expiresAt: '' });
     setEditingCoupon(null);
     setShowForm(false);
   };
@@ -8702,6 +8707,8 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       minOrderAmount: coupon.minOrderAmount || '0',
       maxUses: coupon.maxUses ? String(coupon.maxUses) : '',
       usageType: coupon.usageType || 'multi',
+      scope: coupon.scope || 'order',
+      applicableProductIds: Array.isArray(coupon.applicableProductIds) ? coupon.applicableProductIds : [],
       targetCustomerEmail: coupon.targetCustomerEmail || '',
       isActive: coupon.isActive,
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : '',
@@ -8746,6 +8753,8 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       minOrderAmount: form.minOrderAmount || '0',
       maxUses: form.maxUses ? parseInt(form.maxUses) : null,
       usageType: form.usageType,
+      scope: form.scope,
+      applicableProductIds: form.scope === 'product' && form.applicableProductIds.length > 0 ? form.applicableProductIds : null,
       targetCustomerEmail: form.targetCustomerEmail || null,
       isActive: form.isActive,
       expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
@@ -8927,6 +8936,49 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Область применения', 'Coupon scope', 'תחום הקופון', 'نطاق القسيمة')}</label>
+              <Select value={form.scope} onValueChange={(v) => setForm(f => ({ ...f, scope: v, applicableProductIds: [] }))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="order">{t('Весь заказ', 'Whole order', 'כל ההזמנה', 'الطلب بالكامل')}</SelectItem>
+                  <SelectItem value="product">{t('Определённые товары', 'Specific products', 'מוצרים ספציפיים', 'منتجات محددة')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {form.scope === 'product' && (
+              <div className="space-y-1">
+                <label className="text-sm font-medium">{t('Товары (для которых действует скидка)', 'Applicable products', 'מוצרים רלוונטיים', 'المنتجات المطبقة')}</label>
+                <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-1">
+                  {allProducts.map((p: any) => (
+                    <label key={p.id} className="flex items-center gap-2 cursor-pointer text-sm hover:bg-gray-50 p-1 rounded">
+                      <input
+                        type="checkbox"
+                        checked={form.applicableProductIds.includes(p.id)}
+                        onChange={(e) => {
+                          setForm(f => ({
+                            ...f,
+                            applicableProductIds: e.target.checked
+                              ? [...f.applicableProductIds, p.id]
+                              : f.applicableProductIds.filter(id => id !== p.id)
+                          }));
+                        }}
+                        className="h-4 w-4"
+                      />
+                      <span>{p.name}</span>
+                    </label>
+                  ))}
+                  {allProducts.length === 0 && (
+                    <p className="text-xs text-muted-foreground p-1">{t('Нет товаров', 'No products', 'אין מוצרים', 'لا توجد منتجات')}</p>
+                  )}
+                </div>
+                {form.applicableProductIds.length > 0 && (
+                  <p className="text-xs text-muted-foreground">{t('Выбрано:', 'Selected:', 'נבחרו:', 'المحدد:')} {form.applicableProductIds.length}</p>
+                )}
+              </div>
+            )}
             <div className="space-y-1">
               <label className="text-sm font-medium">{t('Только для клиента (email)', 'Target customer (email)', 'לקוח ספציפי (אימייל)', 'عميل محدد (البريد)')}</label>
               <Input
