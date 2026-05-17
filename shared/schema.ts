@@ -747,6 +747,8 @@ export const coupons = pgTable("coupons", {
   scope: varchar("scope", { enum: ["order", "product"] }).default("order").notNull(),
   // When set, only this customer email is allowed to use the coupon
   targetCustomerEmail: varchar("target_customer_email", { length: 255 }),
+  // When set, only this user ID is allowed to use the coupon (overrides / complements targetCustomerEmail)
+  targetUserId: varchar("target_user_id", { length: 255 }).references(() => users.id),
   // When set (non-empty array), coupon applies only to these product IDs
   applicableProductIds: jsonb("applicable_product_ids").$type<number[]>(),
   isActive: boolean("is_active").default(true).notNull(),
@@ -989,6 +991,7 @@ export const insertCouponSchema = createInsertSchema(coupons).omit({
   usageType: z.enum(["single", "multi", "per_customer"]).optional(),
   scope: z.enum(["order", "product"]).optional(),
   targetCustomerEmail: z.string().email().nullable().optional(),
+  targetUserId: z.string().nullable().optional(),
   applicableProductIds: z.array(z.number().int()).nullable().optional(),
 });
 

@@ -8675,6 +8675,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     scope: 'order',
     applicableProductIds: [] as number[],
     targetCustomerEmail: '',
+    targetUserId: '',
     isActive: true,
     expiresAt: '',
   });
@@ -8687,7 +8688,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     currentLanguage === 'ru' ? ru : currentLanguage === 'he' ? he : currentLanguage === 'ar' ? ar : en;
 
   const resetForm = () => {
-    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', scope: 'order', applicableProductIds: [], targetCustomerEmail: '', isActive: true, expiresAt: '' });
+    setForm({ code: '', description: '', discountType: 'percentage', discountValue: '', minOrderAmount: '0', maxUses: '', usageType: 'multi', scope: 'order', applicableProductIds: [], targetCustomerEmail: '', targetUserId: '', isActive: true, expiresAt: '' });
     setEditingCoupon(null);
     setShowForm(false);
   };
@@ -8710,6 +8711,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       scope: coupon.scope || 'order',
       applicableProductIds: Array.isArray(coupon.applicableProductIds) ? coupon.applicableProductIds : [],
       targetCustomerEmail: coupon.targetCustomerEmail || '',
+      targetUserId: coupon.targetUserId || '',
       isActive: coupon.isActive,
       expiresAt: coupon.expiresAt ? coupon.expiresAt.slice(0, 10) : '',
     });
@@ -8756,6 +8758,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
       scope: form.scope,
       applicableProductIds: form.scope === 'product' && form.applicableProductIds.length > 0 ? form.applicableProductIds : null,
       targetCustomerEmail: form.targetCustomerEmail || null,
+      targetUserId: form.targetUserId || null,
       isActive: form.isActive,
       expiresAt: form.expiresAt ? new Date(form.expiresAt).toISOString() : null,
     });
@@ -8988,6 +8991,16 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                 placeholder={t('Оставьте пустым для всех', 'Leave empty for all', 'השאר ריק לכולם', 'اتركه فارغاً للجميع')}
               />
               <p className="text-xs text-muted-foreground">{t('Если указан — купон доступен только этому клиенту', 'If set — coupon is available only to this customer', 'אם הוגדר — הקופון זמין רק ללקוח זה', 'إذا تم تعيينه — القسيمة متاحة فقط لهذا العميل')}</p>
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">{t('Только для клиента (ID пользователя)', 'Target customer (user ID)', 'לקוח ספציפי (מזהה משתמש)', 'عميل محدد (معرف المستخدم)')}</label>
+              <Input
+                type="text"
+                value={form.targetUserId}
+                onChange={(e) => setForm(f => ({ ...f, targetUserId: e.target.value }))}
+                placeholder={t('Оставьте пустым для всех', 'Leave empty for all', 'השאר ריק לכולם', 'اتركه فارغاً للجميع')}
+              />
+              <p className="text-xs text-muted-foreground">{t('Если указан — купон доступен только этому пользователю по ID', 'If set — coupon is available only to this user by ID', 'אם הוגדר — הקופון זמין רק למשתמש זה לפי מזהה', 'إذا تم تعيينه — القسيمة متاحة فقط لهذا المستخدم بالمعرف')}</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">

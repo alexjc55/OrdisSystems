@@ -116,7 +116,7 @@ export default function CartSidebar() {
   const subtotalAfterVolumeDiscounts = Math.max(0, subtotal - volumeDiscountAmount);
 
   // Loyalty discount: customer role only, only when NO coupon is applied (non-stacking rule)
-  const isCustomerRole = (user as any)?.role === 'customer';
+  const isCustomerRole = user?.role === 'customer';
   const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && isCustomerRole && loyaltyContext.loyaltyDiscountPercent > 0)
     ? Math.round((subtotalAfterVolumeDiscounts * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
     : 0;
@@ -274,6 +274,8 @@ export default function CartSidebar() {
       case 'coupon_expired': return t('cart.couponExpired');
       case 'coupon_max_uses': return t('cart.couponMaxUses');
       case 'coupon_already_used': return t('cart.couponAlreadyUsed');
+      case 'coupon_not_eligible': return t('cart.couponNotEligible');
+      case 'coupon_not_eligible_for_cart': return t('cart.couponNotEligibleForCart');
       case 'coupon_min_order': return t('cart.couponMinOrder');
       default: return t('cart.couponError');
     }

@@ -2137,6 +2137,13 @@ export class DatabaseStorage implements IStorage {
       return { valid: false, message: "coupon_max_uses" };
     }
 
+    // Customer targeting: if coupon is restricted to a specific user ID, enforce it
+    if (coupon.targetUserId) {
+      if (!userId || coupon.targetUserId !== userId) {
+        return { valid: false, message: "coupon_not_eligible" };
+      }
+    }
+
     // Customer targeting: if coupon is restricted to a specific customer email, enforce it
     if (coupon.targetCustomerEmail) {
       if (!userEmail || coupon.targetCustomerEmail.toLowerCase() !== userEmail.toLowerCase()) {

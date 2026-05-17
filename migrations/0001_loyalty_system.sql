@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS "coupons" (
   "usage_type" varchar(20) NOT NULL DEFAULT 'multi',
   "scope" varchar(20) NOT NULL DEFAULT 'order',
   "target_customer_email" varchar(255),
+  "target_user_id" varchar(255) REFERENCES "users"("id"),
   "applicable_product_ids" jsonb,
   "is_active" boolean DEFAULT true NOT NULL,
   "expires_at" timestamp,
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS "coupons" (
 ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "usage_type" varchar(20) NOT NULL DEFAULT 'multi';
 ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "scope" varchar(20) NOT NULL DEFAULT 'order';
 ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_customer_email" varchar(255);
+ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_user_id" varchar(255) REFERENCES "users"("id");
 ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "applicable_product_ids" jsonb;
 
 -- New table: coupon_uses
