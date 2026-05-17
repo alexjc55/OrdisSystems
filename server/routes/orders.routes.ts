@@ -508,7 +508,10 @@ router.post('/orders/guest', async (req: any, res) => {
             customerNotes: guestInfo.customerNotes,
             status: 'pending',
             items: itemsWithProducts,
-            branchName: branchNameForEmail
+            branchName: branchNameForEmail,
+            couponCode: serverCouponCode || null,
+            couponDiscount: serverCouponDiscount > 0 ? serverCouponDiscount : null,
+            loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
@@ -539,7 +542,10 @@ router.post('/orders/guest', async (req: any, res) => {
               customerNotes: guestInfo.customerNotes,
               status: 'pending',
               items: itemsWithProducts,
-              branchName: branchNameForEmail
+              branchName: branchNameForEmail,
+              couponCode: serverCouponCode || null,
+              couponDiscount: serverCouponDiscount > 0 ? serverCouponDiscount : null,
+              loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null
             },
             guestAccessToken,
             guestClaimToken,
@@ -762,7 +768,10 @@ router.post('/orders', async (req: any, res) => {
             customerNotes: orderData.customerNotes,
             status: 'pending',
             items: itemsWithProducts,
-            branchName: authBranchName
+            branchName: authBranchName,
+            couponCode: couponCode || null,
+            couponDiscount: authSvrCouponDiscount > 0 ? authSvrCouponDiscount : null,
+            loyaltyDiscount: authSvrLoyaltyDiscount > 0 ? authSvrLoyaltyDiscount : null
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',

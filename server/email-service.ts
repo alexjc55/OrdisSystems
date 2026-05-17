@@ -269,6 +269,8 @@ export async function sendNewOrderEmail(
       deliveryDateLabel: 'Дата доставки:',
       deliveryTimeLabel: 'Время доставки:',
       branchLabel: 'Филиал:',
+      couponDiscountLabel: 'Скидка по купону:',
+      loyaltyDiscountLabel: 'Скидка постоянного клиента:',
       footer: 'Обработайте заказ в админ-панели',
       viewOrderButton: 'Посмотреть заказ',
       quantityLabel: 'Кол-во',
@@ -298,6 +300,8 @@ export async function sendNewOrderEmail(
       deliveryDateLabel: 'Delivery date:',
       deliveryTimeLabel: 'Delivery time:',
       branchLabel: 'Branch:',
+      couponDiscountLabel: 'Coupon discount:',
+      loyaltyDiscountLabel: 'Loyalty discount:',
       footer: 'Process the order in admin panel',
       viewOrderButton: 'View order',
       quantityLabel: 'Quantity',
@@ -327,6 +331,8 @@ export async function sendNewOrderEmail(
       deliveryDateLabel: 'תאריך משלוח:',
       deliveryTimeLabel: 'שעת משלוח:',
       branchLabel: 'סניף:',
+      couponDiscountLabel: 'הנחת קופון:',
+      loyaltyDiscountLabel: 'הנחת לקוח קבוע:',
       footer: 'עבד על ההזמנה בפאנל הניהול',
       viewOrderButton: 'צפה בהזמנה',
       quantityLabel: 'כמות',
@@ -356,6 +362,8 @@ export async function sendNewOrderEmail(
       deliveryDateLabel: 'تاريخ التسليم:',
       deliveryTimeLabel: 'وقت التسليم:',
       branchLabel: 'الفرع:',
+      couponDiscountLabel: 'خصم القسيمة:',
+      loyaltyDiscountLabel: 'خصم العميل الدائم:',
       footer: 'قم بمعالجة الطلب في لوحة الإدارة',
       viewOrderButton: 'عرض الطلب',
       quantityLabel: 'الكمية',
@@ -484,6 +492,14 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.deliveryTimeLabel}</td>
               <td style="padding: 10px 0; color: #666;">${deliveryTimeFormatted}</td>
             </tr>` : ''}
+            ${orderDetails.couponDiscount ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</td>
+              <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${orderDetails.couponDiscount}₪</td>
+            </tr>` : ''}
+            ${orderDetails.loyaltyDiscount ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).loyaltyDiscountLabel}</td>
+              <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${orderDetails.loyaltyDiscount}₪</td>
+            </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
               <td style="padding: 10px 0; color: ${themeColor}; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
@@ -602,6 +618,8 @@ export async function sendGuestOrderEmail(
       greeting: `Здравствуйте, ${guestName}!`,
       confirmationText: `Ваш заказ #${orderId} успешно принят и обрабатывается.`,
       totalLabel: 'Сумма заказа:',
+      couponDiscountLabel: 'Скидка по купону:',
+      loyaltyDiscountLabel: 'Скидка постоянного клиента:',
       statusLabel: 'Статус:',
       addressLabel: 'Адрес доставки:',
       phoneLabel: 'Телефон:',
@@ -633,6 +651,8 @@ export async function sendGuestOrderEmail(
       greeting: `Hello, ${guestName}!`,
       confirmationText: `Your order #${orderId} has been successfully received and is being processed.`,
       totalLabel: 'Order total:',
+      couponDiscountLabel: 'Coupon discount:',
+      loyaltyDiscountLabel: 'Loyalty discount:',
       statusLabel: 'Status:',
       addressLabel: 'Delivery address:',
       phoneLabel: 'Phone:',
@@ -664,6 +684,8 @@ export async function sendGuestOrderEmail(
       greeting: `שלום, ${guestName}!`,
       confirmationText: `ההזמנה שלך #${orderId} התקבלה בהצלחה ונמצאת בטיפול.`,
       totalLabel: 'סכום הזמנה:',
+      couponDiscountLabel: 'הנחת קופון:',
+      loyaltyDiscountLabel: 'הנחת לקוח קבוע:',
       statusLabel: 'סטטוס:',
       addressLabel: 'כתובת משלוח:',
       phoneLabel: 'טלפון:',
@@ -695,6 +717,8 @@ export async function sendGuestOrderEmail(
       greeting: `مرحباً، ${guestName}!`,
       confirmationText: `تم استلام طلبك #${orderId} بنجاح وجاري معالجته.`,
       totalLabel: 'إجمالي الطلب:',
+      couponDiscountLabel: 'خصم القسيمة:',
+      loyaltyDiscountLabel: 'خصم العميل الدائم:',
       statusLabel: 'الحالة:',
       addressLabel: 'عنوان التسليم:',
       phoneLabel: 'الهاتف:',
@@ -808,6 +832,8 @@ export async function sendGuestOrderEmail(
         
         <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
           <h3 style="color: #495057; margin-top: 0;">📋 ${template.title} #${orderId}</h3>
+          ${orderDetails.couponDiscount ? `<p><strong>${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</strong> <span style="color:#e53e3e;">-₪${orderDetails.couponDiscount}</span></p>` : ''}
+          ${orderDetails.loyaltyDiscount ? `<p><strong>${(template as any).loyaltyDiscountLabel}</strong> <span style="color:#e53e3e;">-₪${orderDetails.loyaltyDiscount}</span></p>` : ''}
           <p><strong>${template.totalLabel}</strong> ₪${totalAmount}</p>
           <p><strong>${template.statusLabel}</strong> ${template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status}</p>
           ${orderDetails.customerPhone ? `<p><strong>${template.phoneLabel}</strong> ${orderDetails.customerPhone}</p>` : ''}

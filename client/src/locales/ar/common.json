@@ -108,6 +108,10 @@
     "reorderSuccess": "تمت إضافة العناصر إلى السلة",
     "reorderPartial": "بعض العناصر غير متاحة ولم تُضف",
     "reorderNone": "جميع عناصر هذا الطلب غير متاحة حالياً",
+    "couponDiscount": "خصم القسيمة",
+    "loyaltyDiscount": "خصم العميل الدائم",
+    "volumeDiscount": "خصم الكمية",
+    "freeGift": "مجاناً",
     "email": "البريد الإلكتروني"
   },
   "order": {

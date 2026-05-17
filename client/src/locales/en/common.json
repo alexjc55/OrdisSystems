@@ -122,6 +122,10 @@
     "reorderSuccess": "Items added to cart",
     "reorderPartial": "Some items were unavailable and not added",
     "reorderNone": "All items from this order are currently unavailable",
+    "couponDiscount": "Coupon discount",
+    "loyaltyDiscount": "Loyalty discount",
+    "volumeDiscount": "Volume discount",
+    "freeGift": "Free",
     "email": "Email"
   },
   "order": {

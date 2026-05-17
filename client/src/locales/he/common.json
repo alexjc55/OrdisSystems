@@ -122,6 +122,10 @@
     "reorderSuccess": "הפריטים נוספו לעגלה",
     "reorderPartial": "חלק מהפריטים אינם זמינים ולא נוספו",
     "reorderNone": "כל הפריטים מהזמנה זו אינם זמינים כרגע",
+    "couponDiscount": "הנחת קופון",
+    "loyaltyDiscount": "הנחת לקוח קבוע",
+    "volumeDiscount": "הנחת כמות",
+    "freeGift": "חינם",
     "email": "אימייל"
   },
   "order": {

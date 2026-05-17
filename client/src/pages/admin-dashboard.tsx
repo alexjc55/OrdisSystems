@@ -1325,6 +1325,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       subtotal: { ru: 'Подитог', en: 'Subtotal', he: 'סיכום ביניים', ar: 'المجموع الفرعي' },
       delivery: { ru: 'Доставка', en: 'Delivery', he: 'משלוח', ar: 'توصيل' },
       discount: { ru: 'Скидка', en: 'Discount', he: 'הנחה', ar: 'خصم' },
+      couponDiscount: { ru: 'Купон', en: 'Coupon', he: 'קופון', ar: 'قسيمة' },
+      loyaltyDiscount: { ru: 'Пост. клиент', en: 'Loyalty', he: 'לקוח קבוע', ar: 'ولاء' },
       total: { ru: 'Итого', en: 'Total', he: 'סה"כ', ar: 'المجموع' },
       orderNotes: { ru: 'Комментарии к заказу', en: 'Order Notes', he: 'הערות להזמנה', ar: 'ملاحظات الطلب' },
       generalComments: { ru: 'Общие комментарии', en: 'General Comments', he: 'הערות כלליות', ar: 'تعليقات عامة' },
@@ -1477,6 +1479,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     <div style="${S.totWrap}">
       <div style="${S.totRow}"><span>${l('subtotal')}:</span><span>${subtotal.toFixed(2)}${currency}</span></div>
       ${discountAmount > 0 ? `<div style="${S.totRow}color:#e53e3e;"><span>${l('discount')}:</span><span>-${discountAmount.toFixed(2)}${currency}</span></div>` : ''}
+      ${parseFloat(order.couponDiscount || '0') > 0 ? `<div style="${S.totRow}color:#e53e3e;"><span>${l('couponDiscount')}${order.couponCode ? ' (' + order.couponCode + ')' : ''}:</span><span>-${parseFloat(order.couponDiscount).toFixed(2)}${currency}</span></div>` : ''}
+      ${parseFloat(order.loyaltyDiscount || '0') > 0 ? `<div style="${S.totRow}color:#e53e3e;"><span>${l('loyaltyDiscount')}:</span><span>-${parseFloat(order.loyaltyDiscount).toFixed(2)}${currency}</span></div>` : ''}
       ${deliveryFee > 0 ? `<div style="${S.totRow}"><span>${l('delivery')}:</span><span>${deliveryFee.toFixed(2)}${currency}</span></div>` : ''}
       <div style="${S.totFin}"><span>${l('total')}:</span><span>${finalTotal.toFixed(2)}${currency}</span></div>
     </div>
@@ -2487,6 +2491,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
               <span>{adminT('orders.subtotal')}:</span>
               <span>{formatCurrency(calculateSubtotal())}</span>
             </div>
+
+            {parseFloat(order.couponDiscount || '0') > 0 && (
+              <div className="flex justify-between text-red-600">
+                <span>{tCommon('profile.couponDiscount')}{order.couponCode ? ` (${order.couponCode})` : ''}:</span>
+                <span>-{formatCurrency(parseFloat(order.couponDiscount))}</span>
+              </div>
+            )}
+            {parseFloat(order.loyaltyDiscount || '0') > 0 && (
+              <div className="flex justify-between text-red-600">
+                <span>{tCommon('profile.loyaltyDiscount')}:</span>
+                <span>-{formatCurrency(parseFloat(order.loyaltyDiscount))}</span>
+              </div>
+            )}
             
             <div className="flex justify-between">
               <span>{adminT('orders.deliveryFee')}:</span>
