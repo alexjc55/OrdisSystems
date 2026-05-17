@@ -263,7 +263,8 @@ export default function Checkout() {
 
   // Computed discount helpers used throughout the page
   const subtotalForDiscounts = getTotalPrice();
-  const loyaltyDiscountAmount = (loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
+  // Non-stacking rule: loyalty discount is skipped when a coupon is applied
+  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
     ? Math.round((subtotalForDiscounts * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
     : 0;
   const subtotalAfterLoyalty = subtotalForDiscounts - loyaltyDiscountAmount;

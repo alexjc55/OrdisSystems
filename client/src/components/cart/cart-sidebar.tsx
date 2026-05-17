@@ -57,8 +57,7 @@ export default function CartSidebar() {
   // Coupon validation mutation
   const validateCouponMutation = useMutation({
     mutationFn: async ({ code, orderTotal }: { code: string; orderTotal: number }) => {
-      const res = await apiRequest('POST', '/api/coupons/validate', { code, orderTotal });
-      return res.json();
+      return await apiRequest('POST', '/api/coupons/validate', { code, orderTotal });
     },
     onSuccess: (data) => {
       if (data.valid) {
@@ -83,8 +82,8 @@ export default function CartSidebar() {
 
   const subtotal = getTotalPrice();
 
-  // Loyalty discount for registered users
-  const loyaltyDiscountAmount = (loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
+  // Loyalty discount for registered users — only when NO coupon is applied (non-stacking rule)
+  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
     ? Math.round((subtotal * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
     : 0;
 

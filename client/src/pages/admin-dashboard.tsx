@@ -9020,7 +9020,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   
   const [formData, setFormData] = useState<any>({});
   const [branchAvailability, setBranchAvailability] = useState<Record<number, string>>({});
-  const [volumeDiscounts, setVolumeDiscounts] = useState<Array<{ minQuantity: string; discountPercent: string }>>([]);
+  const [volumeDiscounts, setVolumeDiscounts] = useState<Array<{ minQuantity: string; discountType: 'percentage' | 'fixed'; discountValue: string }>>([]);
 
   // Fetch existing volume discounts when editing a product
   const { data: existingVolumeDiscounts } = useQuery({
@@ -9033,7 +9033,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     if (existingVolumeDiscounts && Array.isArray(existingVolumeDiscounts)) {
       setVolumeDiscounts(existingVolumeDiscounts.map((d: any) => ({
         minQuantity: String(d.minQuantity ?? d.min_quantity ?? ''),
-        discountPercent: String(d.discountPercent ?? d.discount_percent ?? ''),
+        discountType: (d.discountType ?? d.discount_type ?? 'percentage') as 'percentage' | 'fixed',
+        discountValue: String(d.discountValue ?? d.discount_value ?? ''),
       })));
     } else if (!product?.id) {
       setVolumeDiscounts([]);
@@ -9044,8 +9045,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     mutationFn: (productId: number) =>
       apiRequest('POST', `/api/admin/products/${productId}/volume-discounts`,
         volumeDiscounts
-          .filter(d => d.minQuantity && d.discountPercent)
-          .map(d => ({ minQuantity: parseFloat(d.minQuantity), discountPercent: parseFloat(d.discountPercent) }))
+          .filter(d => d.minQuantity && d.discountValue)
+          .map(d => ({
+            minQuantity: d.minQuantity,
+            discountType: d.discountType,
+            discountValue: d.discountValue,
+            isActive: true,
+          }))
       ),
     onError: () => toast({ title: adminT('products.volumeDiscount.saveError'), variant: 'destructive' }),
   });
@@ -9814,7 +9820,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     variant="outline"
                     size="sm"
                     className="h-7 text-xs"
-                    onClick={() => setVolumeDiscounts(prev => [...prev, { minQuantity: '', discountPercent: '' }])}
+                    onClick={() => setVolumeDiscounts(prev => [...prev, { minQuantity: '', discountType: 'percentage', discountValue: '' }])}
                   >
                     + {adminT('products.volumeDiscount.addRow')}
                   </Button>
@@ -9824,7 +9830,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   <p className="text-xs text-gray-400 italic">{adminT('products.volumeDiscount.empty')}</p>
                 )}
                 {volumeDiscounts.map((row, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
+                  <div key={idx} className="flex items-center gap-2 flex-wrap">
                     <Input
                       type="number"
                       min="0"
@@ -9832,19 +9838,26 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                       placeholder={adminT('products.volumeDiscount.minQty')}
                       value={row.minQuantity}
                       onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, minQuantity: e.target.value } : d))}
-                      className="text-xs h-8 w-28"
+                      className="text-xs h-8 w-24"
                     />
+                    <select
+                      value={row.discountType}
+                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountType: e.target.value as 'percentage' | 'fixed' } : d))}
+                      className="text-xs h-8 border border-input rounded-md px-2 bg-background"
+                    >
+                      <option value="percentage">%</option>
+                      <option value="fixed">{adminT('products.volumeDiscount.fixedLabel')}</option>
+                    </select>
                     <Input
                       type="number"
                       min="0"
-                      max="100"
+                      max={row.discountType === 'percentage' ? "100" : undefined}
                       step="0.1"
                       placeholder={adminT('products.volumeDiscount.discountPct')}
-                      value={row.discountPercent}
-                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountPercent: e.target.value } : d))}
-                      className="text-xs h-8 w-28"
+                      value={row.discountValue}
+                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountValue: e.target.value } : d))}
+                      className="text-xs h-8 w-24"
                     />
-                    <span className="text-xs text-gray-500">%</span>
                     <Button
                       type="button"
                       variant="ghost"

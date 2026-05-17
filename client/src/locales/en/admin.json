@@ -257,7 +257,8 @@
       "description": "Discount applied when ordering from the specified quantity",
       "addRow": "Add Rule",
       "minQty": "Min Qty",
-      "discountPct": "Discount",
+      "discountPct": "Value",
+      "fixedLabel": "Fixed",
       "empty": "No volume discounts configured",
       "saveError": "Failed to save volume discounts"
     },

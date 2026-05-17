@@ -66,11 +66,11 @@ async function computeServerDiscounts({
     }
   }
 
-  // 3. Gift: only if enabled, amount eligible, and client explicitly accepted
+  // 3. Gift: only if enabled, amount eligible, and client explicitly accepted.
+  //    Threshold is compared against raw subtotal (before discounts) — matches UI behavior.
   if (giftAccepted && settings?.giftEnabled && settings.giftProductId) {
     const minAmount = parseFloat(settings.giftMinOrderAmount || '0');
-    const totalAfterDiscounts = subtotal - serverCouponDiscount - serverLoyaltyDiscount;
-    if (totalAfterDiscounts >= minAmount) {
+    if (subtotal >= minAmount) {
       const giftProduct = await storage.getProductById(settings.giftProductId);
       if (giftProduct) {
         serverGiftProductId = giftProduct.id;
