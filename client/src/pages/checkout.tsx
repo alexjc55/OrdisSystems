@@ -590,13 +590,10 @@ export default function Checkout() {
           }
         : null;
       const orderData: BaseOrderPayload & {
-        guestInfo: typeof data & { deliveryDate: string; deliveryTime: string; paymentMethod: string };
+        guestInfo: typeof data & { deliveryDate: string; deliveryTime: string; paymentMethod: string; deliveryFee: string };
         language: string;
         couponCode?: string;
-        couponDiscount?: number;
-        loyaltyDiscount?: number;
-        giftProductId?: number;
-        discountDetails?: any;
+        giftAccepted?: boolean;
       } = {
         items: orderPayloadItems,
         totalAmount: total.toString(),
@@ -605,14 +602,17 @@ export default function Checkout() {
           deliveryDate,
           deliveryTime: selectedGuestTime,
           paymentMethod: selectedGuestPaymentMethod,
+          deliveryFee: calculateDeliveryFee(
+            subtotalAfterAllDiscounts,
+            parseFloat(storeSettings?.deliveryFee || "15.00"),
+            (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
+          ).toString(),
         },
         language: currentLanguage,
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
-        ...(appliedCoupon ? { couponCode: appliedCoupon.code, couponDiscount: couponDiscountAmount } : {}),
-        ...(loyaltyDiscountAmount > 0 ? { loyaltyDiscount: loyaltyDiscountAmount } : {}),
-        ...(giftAccepted && giftEligible && loyaltyContext?.giftProduct ? { giftProductId: loyaltyContext.giftProduct.id } : {}),
-        ...(discountDetailsPayload ? { discountDetails: discountDetailsPayload } : {}),
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+        ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
       };
       
       return await apiRequest("POST", "/api/orders/guest", orderData);
@@ -696,10 +696,7 @@ export default function Checkout() {
         paymentMethod: string;
         customerPhone: string;
         couponCode?: string;
-        couponDiscount?: number;
-        loyaltyDiscount?: number;
-        giftProductId?: number;
-        discountDetails?: any;
+        giftAccepted?: boolean;
       } = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -716,9 +713,8 @@ export default function Checkout() {
         customerPhone: data.phone,
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
-        ...(appliedCoupon ? { couponCode: appliedCoupon.code, couponDiscount: couponDiscountAmount } : {}),
-        ...(loyaltyDiscountAmount > 0 ? { loyaltyDiscount: loyaltyDiscountAmount } : {}),
-        ...(giftAccepted && giftEligible && loyaltyContext?.giftProduct ? { giftProductId: loyaltyContext.giftProduct.id } : {}),
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+        ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
       };
       
       return await apiRequest("POST", "/api/orders", regOrderPayload);
@@ -796,11 +792,9 @@ export default function Checkout() {
         deliveryDate: string;
         deliveryTime: string;
         paymentMethod: string;
+        deliveryFee: string;
         couponCode?: string;
-        couponDiscount?: number;
-        loyaltyDiscount?: number;
-        giftProductId?: number;
-        discountDetails?: any;
+        giftAccepted?: boolean;
       } = {
         items: items.map(item => ({
           productId: item.product.id,
@@ -814,21 +808,11 @@ export default function Checkout() {
         deliveryDate,
         deliveryTime: selectedTime,
         paymentMethod: formData.paymentMethod,
+        deliveryFee: deliveryFeeAmount.toString(),
         status: "pending",
         ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
-        ...(appliedCoupon ? { couponCode: appliedCoupon.code, couponDiscount: couponDiscountAmount } : {}),
-        ...(loyaltyDiscountAmount > 0 ? { loyaltyDiscount: loyaltyDiscountAmount } : {}),
-        ...(giftAccepted && giftEligible && loyaltyContext?.giftProduct ? { giftProductId: loyaltyContext.giftProduct.id } : {}),
-        ...(loyaltyDiscountAmount > 0 || couponDiscountAmount > 0 ? {
-          discountDetails: {
-            subtotal,
-            loyaltyDiscount: loyaltyDiscountAmount,
-            couponDiscount: couponDiscountAmount,
-            couponCode: appliedCoupon?.code || null,
-            giftIncluded: !!(giftAccepted && giftEligible),
-            giftProductId: (giftAccepted && loyaltyContext?.giftProduct) ? loyaltyContext.giftProduct.id : null,
-          }
-        } : {}),
+        ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+        ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
       };
       
       return await apiRequest("POST", "/api/orders", authOrderPayload);

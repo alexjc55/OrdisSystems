@@ -5,11 +5,97 @@ import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "../email-s
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../facebook-conversions-api";
 import { PushNotificationService } from "../push-notifications";
 import { BRANCHES_ENABLED } from "../config";
-import { insertOrderSchema, type InsertOrder } from "@shared/schema";
+import { insertOrderSchema, type InsertOrder, type InsertOrderItem } from "@shared/schema";
 import { z } from "zod";
 import { randomBytes } from "crypto";
 
 const router = Router();
+
+// ─── Server-side discount computation ────────────────────────────────────────
+// This ensures discount amounts are authoritative from DB, not from client input.
+async function computeServerDiscounts({
+  couponCode,
+  subtotal,
+  userId,
+  giftAccepted,
+}: {
+  couponCode?: string | null;
+  subtotal: number;
+  userId?: string | null;
+  giftAccepted?: boolean;
+}): Promise<{
+  serverCouponCode: string | null;
+  serverCouponDiscount: number;
+  serverLoyaltyDiscount: number;
+  serverGiftProductId: number | null;
+  serverDiscountDetails: Record<string, any>;
+  giftOrderItem: InsertOrderItem | null;
+}> {
+  const settings = await storage.getStoreSettings();
+
+  let serverCouponCode: string | null = null;
+  let serverCouponDiscount = 0;
+  let serverLoyaltyDiscount = 0;
+  let serverGiftProductId: number | null = null;
+  const serverDiscountDetails: Record<string, any> = {};
+  let giftOrderItem: InsertOrderItem | null = null;
+
+  // 1. Validate coupon from DB
+  if (couponCode) {
+    const validation = await storage.validateCoupon(couponCode, subtotal);
+    if (validation.valid && validation.coupon) {
+      serverCouponCode = validation.coupon.code;
+      serverCouponDiscount = validation.discountAmount || 0;
+      serverDiscountDetails.coupon = {
+        code: validation.coupon.code,
+        type: validation.coupon.discountType,
+        value: parseFloat(validation.coupon.discountValue),
+        discountAmount: serverCouponDiscount,
+      };
+    }
+    // If invalid coupon submitted — silently ignore (no discount)
+  }
+
+  // 2. Loyalty discount for registered users only (not guests)
+  //    Non-stacking rule: if coupon was applied, skip loyalty discount
+  if (userId && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
+    const pct = parseFloat(settings.loyaltyDiscountPercent || '0');
+    if (pct > 0) {
+      serverLoyaltyDiscount = Math.round(subtotal * pct) / 100;
+      serverDiscountDetails.loyalty = { percent: pct, discountAmount: serverLoyaltyDiscount };
+    }
+  }
+
+  // 3. Gift: only if enabled, amount eligible, and client explicitly accepted
+  if (giftAccepted && settings?.giftEnabled && settings.giftProductId) {
+    const minAmount = parseFloat(settings.giftMinOrderAmount || '0');
+    const totalAfterDiscounts = subtotal - serverCouponDiscount - serverLoyaltyDiscount;
+    if (totalAfterDiscounts >= minAmount) {
+      const giftProduct = await storage.getProductById(settings.giftProductId);
+      if (giftProduct) {
+        serverGiftProductId = giftProduct.id;
+        serverDiscountDetails.gift = { productId: giftProduct.id, productName: giftProduct.name };
+        // Add gift as zero-price order item
+        giftOrderItem = {
+          productId: giftProduct.id,
+          quantity: '1',
+          pricePerKg: '0',
+          totalPrice: '0',
+          orderId: 0,
+        };
+      }
+    }
+  }
+
+  return {
+    serverCouponCode,
+    serverCouponDiscount,
+    serverLoyaltyDiscount,
+    serverGiftProductId,
+    serverDiscountDetails,
+    giftOrderItem,
+  };
+}
 
 router.get('/orders', isAuthenticated, async (req: any, res) => {
   try {
@@ -213,7 +299,7 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
 
 router.post('/orders/guest', async (req: any, res) => {
   try {
-    const { items, totalAmount, guestInfo, language, branchId, couponCode, couponDiscount, loyaltyDiscount, giftProductId, discountDetails } = req.body;
+    const { items, totalAmount, guestInfo, language, branchId, couponCode, giftAccepted } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Invalid order items" });
@@ -222,6 +308,28 @@ router.post('/orders/guest', async (req: any, res) => {
     if (!guestInfo || !guestInfo.firstName || !guestInfo.lastName || !guestInfo.phone || !guestInfo.address) {
       return res.status(400).json({ message: "Guest information is required" });
     }
+
+    // Compute subtotal from client items (prices are unit-based; authoritative prices reside in DB
+    // but changing unit-based pricing logic server-side is out of scope here)
+    const subtotal = items.reduce((sum: number, item: any) => sum + parseFloat(item.totalPrice || '0'), 0);
+
+    // Server-side authoritative discount computation
+    const {
+      serverCouponCode,
+      serverCouponDiscount,
+      serverLoyaltyDiscount,
+      serverGiftProductId,
+      serverDiscountDetails,
+      giftOrderItem,
+    } = await computeServerDiscounts({
+      couponCode: couponCode || null,
+      subtotal,
+      userId: null, // Guest — no loyalty discount
+      giftAccepted: !!giftAccepted,
+    });
+
+    const deliveryFee = parseFloat(guestInfo.deliveryFee || '0');
+    const serverTotalAmount = Math.max(0, subtotal - serverCouponDiscount - serverLoyaltyDiscount + deliveryFee);
 
     const guestAccessToken = randomBytes(32).toString('hex');
     const guestClaimToken = randomBytes(32).toString('hex');
@@ -234,7 +342,7 @@ router.post('/orders/guest', async (req: any, res) => {
 
     const orderData: InsertOrder = {
       userId: null,
-      totalAmount,
+      totalAmount: serverTotalAmount.toString(),
       status: "pending",
       deliveryAddress: guestInfo.address,
       guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
@@ -248,27 +356,28 @@ router.post('/orders/guest', async (req: any, res) => {
       guestClaimToken,
       orderLanguage: language || 'ru',
       ...(parsedBranchId !== undefined ? { branchId: parsedBranchId } : {}),
-      ...(couponCode ? { couponCode } : {}),
-      ...(couponDiscount ? { couponDiscount: couponDiscount.toString() } : {}),
-      ...(loyaltyDiscount ? { loyaltyDiscount: loyaltyDiscount.toString() } : {}),
-      ...(giftProductId ? { giftProductId } : {}),
-      ...(discountDetails ? { discountDetails } : {}),
+      ...(serverCouponCode ? { couponCode: serverCouponCode } : {}),
+      ...(serverCouponDiscount > 0 ? { couponDiscount: serverCouponDiscount.toString() } : {}),
+      ...(serverLoyaltyDiscount > 0 ? { loyaltyDiscount: serverLoyaltyDiscount.toString() } : {}),
+      ...(serverGiftProductId ? { giftProductId: serverGiftProductId } : {}),
+      ...(Object.keys(serverDiscountDetails).length > 0 ? { discountDetails: serverDiscountDetails } : {}),
     };
 
-    const orderItems = items.map((item: any) => ({
+    const orderItems: InsertOrderItem[] = items.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity.toString(),
       pricePerKg: item.pricePerKg.toString(),
       totalPrice: item.totalPrice.toString(),
       orderId: 0
     }));
+    if (giftOrderItem) orderItems.push(giftOrderItem);
 
     const order = await storage.createOrder(orderData, orderItems);
 
-    // Record coupon usage if a coupon was applied
-    if (couponCode) {
+    // Record coupon usage with server-authoritative coupon code
+    if (serverCouponCode) {
       try {
-        const coupon = await storage.getCouponByCode(couponCode);
+        const coupon = await storage.getCouponByCode(serverCouponCode);
         if (coupon) {
           await storage.recordCouponUse(coupon.id, order.id, null);
         }
@@ -445,7 +554,7 @@ router.post('/orders', async (req: any, res) => {
       user = await storage.getUser(userId);
     }
 
-    const { items, language, couponCode: authCouponCode, couponDiscount: authCouponDiscount, loyaltyDiscount: authLoyaltyDiscount, giftProductId: authGiftProductId, discountDetails: authDiscountDetails, ...orderData } = req.body;
+    const { items, language, couponCode: authCouponCode, giftAccepted: authGiftAccepted, ...orderData } = req.body;
 
     const orderSchema = insertOrderSchema.extend({
       requestedDeliveryDate: z.string().optional(),
@@ -462,32 +571,54 @@ router.post('/orders', async (req: any, res) => {
 
     const { requestedDeliveryDate, requestedDeliveryTime, items: _, ...orderDataWithoutTemp } = validatedData;
 
+    // Compute subtotal from validated items
+    const authSubtotal = validatedData.items.reduce((sum, item) => sum + parseFloat(item.totalPrice || '0'), 0);
+
+    // Server-side authoritative discount computation
+    const {
+      serverCouponCode: authSvrCouponCode,
+      serverCouponDiscount: authSvrCouponDiscount,
+      serverLoyaltyDiscount: authSvrLoyaltyDiscount,
+      serverGiftProductId: authSvrGiftProductId,
+      serverDiscountDetails: authSvrDiscountDetails,
+      giftOrderItem: authGiftOrderItem,
+    } = await computeServerDiscounts({
+      couponCode: authCouponCode || null,
+      subtotal: authSubtotal,
+      userId,
+      giftAccepted: !!authGiftAccepted,
+    });
+
+    const authDeliveryFee = parseFloat(String(orderData.deliveryFee || '0'));
+    const authServerTotal = Math.max(0, authSubtotal - authSvrCouponDiscount - authSvrLoyaltyDiscount + authDeliveryFee);
+
     const deliveryOverride = (requestedDeliveryTime && requestedDeliveryDate)
       ? { deliveryDate: requestedDeliveryDate, deliveryTime: requestedDeliveryTime }
       : {};
 
     const processedOrderData: InsertOrder = {
       ...orderDataWithoutTemp,
+      totalAmount: authServerTotal.toString(),
       ...(userId ? { userId } : {}),
       orderLanguage: language || 'ru',
       ...deliveryOverride,
       ...(!BRANCHES_ENABLED ? { branchId: undefined } : {}),
-      ...(authCouponCode ? { couponCode: authCouponCode } : {}),
-      ...(authCouponDiscount ? { couponDiscount: authCouponDiscount.toString() } : {}),
-      ...(authLoyaltyDiscount ? { loyaltyDiscount: authLoyaltyDiscount.toString() } : {}),
-      ...(authGiftProductId ? { giftProductId: authGiftProductId } : {}),
-      ...(authDiscountDetails ? { discountDetails: authDiscountDetails } : {}),
+      ...(authSvrCouponCode ? { couponCode: authSvrCouponCode } : {}),
+      ...(authSvrCouponDiscount > 0 ? { couponDiscount: authSvrCouponDiscount.toString() } : {}),
+      ...(authSvrLoyaltyDiscount > 0 ? { loyaltyDiscount: authSvrLoyaltyDiscount.toString() } : {}),
+      ...(authSvrGiftProductId ? { giftProductId: authSvrGiftProductId } : {}),
+      ...(Object.keys(authSvrDiscountDetails).length > 0 ? { discountDetails: authSvrDiscountDetails } : {}),
     };
 
-    const order = await storage.createOrder(
-      processedOrderData,
-      validatedData.items.map(item => ({ ...item, orderId: 0 }))
-    );
+    const authOrderItems: InsertOrderItem[] = validatedData.items.map(item => ({ ...item, orderId: 0 }));
+    if (authGiftOrderItem) authOrderItems.push(authGiftOrderItem);
 
-    // Record coupon usage if applied
-    if (authCouponCode) {
+    const order = await storage.createOrder(processedOrderData, authOrderItems);
+
+    // Record coupon usage with server-authoritative code
+    if (authSvrCouponCode) {
       try {
-        const coupon = await storage.getCouponByCode(authCouponCode);
+        const coupon = await storage.getCouponByCode(authSvrCouponCode);
         if (coupon) {
           await storage.recordCouponUse(coupon.id, order.id, userId);
         }

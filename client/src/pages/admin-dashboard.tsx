@@ -9020,6 +9020,35 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   
   const [formData, setFormData] = useState<any>({});
   const [branchAvailability, setBranchAvailability] = useState<Record<number, string>>({});
+  const [volumeDiscounts, setVolumeDiscounts] = useState<Array<{ minQuantity: string; discountPercent: string }>>([]);
+
+  // Fetch existing volume discounts when editing a product
+  const { data: existingVolumeDiscounts } = useQuery({
+    queryKey: ['/api/admin/products', product?.id, 'volume-discounts'],
+    queryFn: () => apiRequest('GET', `/api/admin/products/${product.id}/volume-discounts`),
+    enabled: open && !!product?.id,
+  });
+
+  useEffect(() => {
+    if (existingVolumeDiscounts && Array.isArray(existingVolumeDiscounts)) {
+      setVolumeDiscounts(existingVolumeDiscounts.map((d: any) => ({
+        minQuantity: String(d.minQuantity ?? d.min_quantity ?? ''),
+        discountPercent: String(d.discountPercent ?? d.discount_percent ?? ''),
+      })));
+    } else if (!product?.id) {
+      setVolumeDiscounts([]);
+    }
+  }, [existingVolumeDiscounts, product?.id]);
+
+  const saveVolumeDiscountsMutation = useMutation({
+    mutationFn: (productId: number) =>
+      apiRequest('POST', `/api/admin/products/${productId}/volume-discounts`,
+        volumeDiscounts
+          .filter(d => d.minQuantity && d.discountPercent)
+          .map(d => ({ minQuantity: parseFloat(d.minQuantity), discountPercent: parseFloat(d.discountPercent) }))
+      ),
+    onError: () => toast({ title: adminT('products.volumeDiscount.saveError'), variant: 'destructive' }),
+  });
   
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -9310,8 +9339,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     
     console.log('Submitting product data:', finalData);
     
-    // Send to parent component
+    // Send to parent component, then save volume discounts for existing products
     onSubmit(finalData);
+    if (product?.id && volumeDiscounts.length > 0) {
+      saveVolumeDiscountsMutation.mutate(product.id);
+    }
   };
 
   if (!open) return null;
@@ -9766,6 +9798,64 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* Volume Discounts Section - only for existing products */}
+            {product?.id && (
+              <div className="space-y-2 border border-gray-200 rounded-lg p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Percent className="h-4 w-4 text-gray-500" />
+                    <p className="text-sm font-medium">{adminT('products.volumeDiscount.title')}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={() => setVolumeDiscounts(prev => [...prev, { minQuantity: '', discountPercent: '' }])}
+                  >
+                    + {adminT('products.volumeDiscount.addRow')}
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500">{adminT('products.volumeDiscount.description')}</p>
+                {volumeDiscounts.length === 0 && (
+                  <p className="text-xs text-gray-400 italic">{adminT('products.volumeDiscount.empty')}</p>
+                )}
+                {volumeDiscounts.map((row, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      placeholder={adminT('products.volumeDiscount.minQty')}
+                      value={row.minQuantity}
+                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, minQuantity: e.target.value } : d))}
+                      className="text-xs h-8 w-28"
+                    />
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      placeholder={adminT('products.volumeDiscount.discountPct')}
+                      value={row.discountPercent}
+                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountPercent: e.target.value } : d))}
+                      className="text-xs h-8 w-28"
+                    />
+                    <span className="text-xs text-gray-500">%</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
+                      onClick={() => setVolumeDiscounts(prev => prev.filter((_, i) => i !== idx))}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             )}
 

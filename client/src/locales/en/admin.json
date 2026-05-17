@@ -252,6 +252,15 @@
       "deleteTitle": "Delete Product",
       "deleteConfirm": "Are you sure you want to delete this product?"
     },
+    "volumeDiscount": {
+      "title": "Volume Discounts",
+      "description": "Discount applied when ordering from the specified quantity",
+      "addRow": "Add Rule",
+      "minQty": "Min Qty",
+      "discountPct": "Discount",
+      "empty": "No volume discounts configured",
+      "saveError": "Failed to save volume discounts"
+    },
     "statusDialog": {
       "title": "Change Product Availability",
       "description": "Select status for the product",

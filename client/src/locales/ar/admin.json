@@ -574,6 +574,15 @@
       "cancelButton": "إلغاء",
       "deleteTitle": "حذف المنتج",
       "deleteConfirm": "هل أنت متأكد من حذف هذا المنتج؟"
+    },
+    "volumeDiscount": {
+      "title": "خصومات الكمية",
+      "description": "يُطبق الخصم عند الطلب من الكمية المحددة",
+      "addRow": "إضافة قاعدة",
+      "minQty": "الحد الأدنى",
+      "discountPct": "الخصم",
+      "empty": "لا توجد خصومات كمية محددة",
+      "saveError": "فشل في حفظ خصومات الكمية"
     }
   },
   "categories": {
