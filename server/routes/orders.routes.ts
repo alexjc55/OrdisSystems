@@ -769,7 +769,7 @@ router.post('/orders', async (req: any, res) => {
             status: 'pending',
             items: itemsWithProducts,
             branchName: authBranchName,
-            couponCode: couponCode || null,
+            couponCode: authCouponCode || null,
             couponDiscount: authSvrCouponDiscount > 0 ? authSvrCouponDiscount : null,
             loyaltyDiscount: authSvrLoyaltyDiscount > 0 ? authSvrLoyaltyDiscount : null
           },
