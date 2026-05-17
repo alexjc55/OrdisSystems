@@ -512,7 +512,8 @@ router.post('/orders/guest', async (req: any, res) => {
             branchName: branchNameForEmail,
             couponCode: serverCouponCode || null,
             couponDiscount: serverCouponDiscount > 0 ? serverCouponDiscount : null,
-            loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null
+            loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null,
+            giftProductId: serverGiftProductId || null
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
@@ -546,7 +547,8 @@ router.post('/orders/guest', async (req: any, res) => {
               branchName: branchNameForEmail,
               couponCode: serverCouponCode || null,
               couponDiscount: serverCouponDiscount > 0 ? serverCouponDiscount : null,
-              loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null
+              loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null,
+              giftProductId: serverGiftProductId || null
             },
             guestAccessToken,
             guestClaimToken,
@@ -772,7 +774,8 @@ router.post('/orders', async (req: any, res) => {
             branchName: authBranchName,
             couponCode: authCouponCode || null,
             couponDiscount: authSvrCouponDiscount > 0 ? authSvrCouponDiscount : null,
-            loyaltyDiscount: authSvrLoyaltyDiscount > 0 ? authSvrLoyaltyDiscount : null
+            loyaltyDiscount: authSvrLoyaltyDiscount > 0 ? authSvrLoyaltyDiscount : null,
+            giftProductId: authSvrGiftProductId || null
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',

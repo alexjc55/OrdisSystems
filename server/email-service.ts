@@ -443,12 +443,18 @@ export async function sendNewOrderEmail(
   const itemsHtml = orderDetails.items?.map((item: any) => {
     const originalUnit = item.product?.unit || template.defaultUnit;
     const formattedQuantity = formatQuantityWithUnit(item.quantity, originalUnit, language);
+    const isGift = orderDetails.giftProductId && item.productId === orderDetails.giftProductId;
+    const giftWord = language === 'ru' ? 'Подарок' : language === 'he' ? 'מתנה' : language === 'ar' ? 'هدية' : 'Gift';
+    const productName = (item.product?.name || template.productLabel) + (isGift ? ' 🎁' : '');
+    const priceCell = isGift
+      ? `<span style="color:#16a34a;font-weight:bold;">${giftWord}</span>`
+      : `${item.totalPrice}₪`;
     
     return `
-    <tr>
-      <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.product?.name || template.productLabel}</td>
+    <tr${isGift ? ' style="background-color:#f0fdf4;"' : ''}>
+      <td style="padding: 8px; border-bottom: 1px solid #eee;">${productName}</td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${formattedQuantity}</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${priceCell}</td>
     </tr>`;
   }).join('') || '';
 
@@ -785,12 +791,18 @@ export async function sendGuestOrderEmail(
     const itemRows = orderDetails.items.map((item: any) => {
       const originalUnit = item.product?.unit || template.defaultUnit;
       const formattedQuantity = formatQuantityWithUnit(item.quantity, originalUnit, language);
+      const isGift = orderDetails.giftProductId && item.productId === orderDetails.giftProductId;
+      const giftWord = language === 'ru' ? 'Подарок' : language === 'he' ? 'מתנה' : language === 'ar' ? 'هدية' : 'Gift';
+      const productName = (item.product?.name || template.productLabel) + (isGift ? ' 🎁' : '');
+      const priceCell = isGift
+        ? `<span style="color:#16a34a;font-weight:bold;">${giftWord}</span>`
+        : `${item.totalPrice}₪`;
       
       return `
-      <tr>
-        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: ${isRTL ? 'right' : 'left'};">${item.product?.name || template.productLabel}</td>
+      <tr${isGift ? ' style="background-color:#f0fdf4;"' : ''}>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: ${isRTL ? 'right' : 'left'};">${productName}</td>
         <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">${formattedQuantity}</td>
-        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${item.totalPrice}₪</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${priceCell}</td>
       </tr>`;
     }).join('');
     

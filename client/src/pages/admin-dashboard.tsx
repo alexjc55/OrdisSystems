@@ -2215,6 +2215,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                     <div className="font-medium">{getLocalizedField(item.product, 'name', i18n.language as SupportedLanguage)}</div>
                   </TableCell>
                   <TableCell className="text-sm">
+                    {item.productId === order.giftProductId ? (
+                      <div className="flex flex-col gap-1 items-start">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-green-50 border border-green-200 rounded text-xs text-green-700 font-medium">
+                          🎁 {getUnitDisplay(item.product?.unit, item.quantity)}
+                        </div>
+                        <span className="text-xs text-green-600">{i18n.language === 'ru' ? 'Кол-во фиксировано' : i18n.language === 'he' ? 'כמות קבועה' : i18n.language === 'ar' ? 'الكمية ثابتة' : 'Fixed qty'}</span>
+                      </div>
+                    ) : (
                     <div className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
                       <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <Button
@@ -2259,6 +2267,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                         {getUnitDisplay(item.product?.unit, item.quantity)}
                       </span>
                     </div>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm">{getUnitPrice(item.product)}</TableCell>
                   <TableCell className="text-sm font-medium">{formatCurrency(item.totalPrice)}</TableCell>
@@ -2366,6 +2375,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
               {/* Quantity Controls Row */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex flex-col gap-1 flex-1">
+                  {item.productId === order.giftProductId ? (
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 px-2 py-1 bg-green-50 border border-green-200 rounded text-sm text-green-700 font-medium">
+                        🎁 {getUnitDisplay(item.product?.unit, item.quantity)}
+                      </div>
+                      <span className="text-xs text-green-600">{i18n.language === 'ru' ? 'Кол-во фиксировано' : i18n.language === 'he' ? 'כמות קבועה' : i18n.language === 'ar' ? 'الكمية ثابتة' : 'Fixed qty'}</span>
+                    </div>
+                  ) : (
                   <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Button
                       size="sm"
@@ -2405,8 +2422,9 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
+                  )}
                   <span className="text-xs text-gray-500 text-center w-full" dir="ltr">
-                    {getUnitDisplay(item.product?.unit, item.quantity)}
+                    {item.productId !== order.giftProductId && getUnitDisplay(item.product?.unit, item.quantity)}
                   </span>
                 </div>
                 <div className="text-right flex-shrink-0">
