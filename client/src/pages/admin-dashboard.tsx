@@ -811,46 +811,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     gcTime: 10 * 60 * 1000,
   });
 
-  // Derived subtotal excluding the gift item (it always has totalPrice=0, but explicit exclusion is safer)
-  const nonGiftSubtotal = useMemo(() => {
-    if (!order.giftProductId) return 0;
-    return editedOrderItems
-      .filter((item: any) => item.productId !== order.giftProductId)
-      .reduce((sum: number, item: any) => sum + (parseFloat(String(item.totalPrice)) || 0), 0);
-  }, [editedOrderItems, order.giftProductId]);
-
-  // Auto-remove / re-add gift item when subtotal crosses the gift threshold.
-  // Depends on nonGiftSubtotal (not editedOrderItems directly) so the effect only fires
-  // when the total actually changes, not on every array mutation.
-  // Uses setEditedOrderItems(prev=>) and returns prev unchanged when no action is needed,
-  // so React bails out and does NOT re-render — no infinite loop.
-  useEffect(() => {
-    if (!order.giftProductId || !loyaltyCtx?.giftEnabled) return;
-    const threshold = parseFloat(loyaltyCtx?.giftMinOrderAmount || '0');
-    if (!threshold || isNaN(threshold)) return;
-
-    setEditedOrderItems((prev: any[]) => {
-      const hasGiftItem = prev.some((item: any) => item.productId === order.giftProductId);
-      if (nonGiftSubtotal < threshold && hasGiftItem) {
-        return prev.filter((item: any) => item.productId !== order.giftProductId);
-      } else if (nonGiftSubtotal >= threshold && !hasGiftItem) {
-        const giftQty = loyaltyCtx?.giftProductQuantity ?? 1;
-        const giftProduct = loyaltyCtx?.giftProduct;
-        return [
-          ...prev,
-          {
-            productId: order.giftProductId,
-            quantity: giftQty,
-            pricePerKg: '0',
-            totalPrice: '0',
-            product: giftProduct ? { name: giftProduct.name, unit: giftProduct.unit } : null,
-          },
-        ];
-      }
-      return prev;
-    });
-  }, [nonGiftSubtotal, order.giftProductId, loyaltyCtx?.giftEnabled, loyaltyCtx?.giftMinOrderAmount]);
-
   // Generate time slots based on store working hours for this component
   const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday', deliveryHours?: any) => {
     if (!selectedDate) return [];
@@ -908,6 +868,41 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   const [showAddItem, setShowAddItem] = useState(false);
   const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
+
+  // Derived subtotal excluding the gift item (gift always has totalPrice=0, but explicit exclusion is safer)
+  const nonGiftSubtotal = useMemo(() => {
+    if (!order.giftProductId) return 0;
+    return editedOrderItems
+      .filter((item: any) => item.productId !== order.giftProductId)
+      .reduce((sum: number, item: any) => sum + (parseFloat(String(item.totalPrice)) || 0), 0);
+  }, [editedOrderItems, order.giftProductId]);
+
+  // Auto-remove / re-add gift item when subtotal crosses the gift threshold.
+  // Depends on nonGiftSubtotal scalar, not the array — fires only on real total changes.
+  // Returns prev unchanged when no action needed so React bails out (no re-render, no loop).
+  useEffect(() => {
+    if (!order.giftProductId || !loyaltyCtx?.giftEnabled) return;
+    const threshold = parseFloat(loyaltyCtx?.giftMinOrderAmount || '0');
+    if (!threshold || isNaN(threshold)) return;
+    setEditedOrderItems((prev: any[]) => {
+      const hasGiftItem = prev.some((item: any) => item.productId === order.giftProductId);
+      if (nonGiftSubtotal < threshold && hasGiftItem) {
+        return prev.filter((item: any) => item.productId !== order.giftProductId);
+      } else if (nonGiftSubtotal >= threshold && !hasGiftItem) {
+        const giftQty = loyaltyCtx?.giftProductQuantity ?? 1;
+        const giftProduct = loyaltyCtx?.giftProduct;
+        return [...prev, {
+          productId: order.giftProductId,
+          quantity: giftQty,
+          pricePerKg: '0',
+          totalPrice: '0',
+          product: giftProduct ? { name: giftProduct.name, unit: giftProduct.unit } : null,
+        }];
+      }
+      return prev;
+    });
+  }, [nonGiftSubtotal, order.giftProductId, loyaltyCtx?.giftEnabled, loyaltyCtx?.giftMinOrderAmount]);
+
   const [showDiscountDialog, setShowDiscountDialog] = useState<number | null>(null);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [mobileDatePickerOpen, setMobileDatePickerOpen] = useState(false);
