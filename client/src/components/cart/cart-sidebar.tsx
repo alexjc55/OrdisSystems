@@ -67,6 +67,7 @@ export default function CartSidebar() {
           discountType: data.coupon.discountType,
           discountValue: parseFloat(data.coupon.discountValue),
           discountAmount: data.discountAmount,
+          stacksWithLoyalty: !!data.coupon.stacksWithLoyalty,
         });
         setCouponError(null);
         setCouponInput("");
@@ -116,8 +117,8 @@ export default function CartSidebar() {
 
   const subtotalAfterVolumeDiscounts = Math.max(0, subtotal - volumeDiscountAmount);
 
-  // Loyalty discount: any registered user, only when NO coupon is applied (non-stacking rule)
-  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
+  // Loyalty discount: any registered user, unless a coupon is applied that does NOT stack with loyalty
+  const loyaltyDiscountAmount = ((!appliedCoupon || appliedCoupon?.stacksWithLoyalty) && loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
     ? Math.round((subtotalAfterVolumeDiscounts * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
     : 0;
 
@@ -132,8 +133,9 @@ export default function CartSidebar() {
   // so we never recalculate on the client — this prevents product-scoped coupon over-discount.
   const couponDiscountAmount = appliedCoupon?.discountAmount ?? 0;
 
+  // When coupon stacks with loyalty: subtract both from base. Otherwise coupon replaces loyalty.
   const subtotalAfterDiscounts = Math.max(0, appliedCoupon
-    ? subtotalAfterVolumeDiscounts - couponDiscountAmount
+    ? (appliedCoupon.stacksWithLoyalty ? subtotalAfterLoyalty : subtotalAfterVolumeDiscounts) - couponDiscountAmount
     : subtotalAfterLoyalty);
 
   const handleApplyCoupon = () => {

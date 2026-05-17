@@ -15,6 +15,7 @@ export interface AppliedCoupon {
   discountType: 'percentage' | 'fixed';
   discountValue: number;
   discountAmount: number; // computed discount in currency units
+  stacksWithLoyalty?: boolean; // if true, both coupon and loyalty discounts apply simultaneously
 }
 
 interface CartStore {

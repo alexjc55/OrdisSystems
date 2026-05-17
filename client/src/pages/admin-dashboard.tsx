@@ -9131,9 +9131,10 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   <div className="flex flex-wrap gap-1">
                     {form.applicableProductIds.map(pid => {
                       const prod = allProducts.find((p: any) => p.id === pid);
+                      const prodName = prod ? (getLocalizedField(prod, 'name', currentLanguage as SupportedLanguage, 'ru') || prod.name) : `#${pid}`;
                       return (
                         <span key={pid} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full">
-                          {prod?.name || `#${pid}`}
+                          {prodName}
                           <button type="button" onClick={() => setForm(f => ({ ...f, applicableProductIds: f.applicableProductIds.filter(id => id !== pid) }))} className="hover:text-destructive font-bold ml-0.5">×</button>
                         </span>
                       );
@@ -9152,19 +9153,27 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   {productSearchOpen && (
                     <div className="absolute z-50 w-full border rounded-md bg-background shadow-md max-h-48 overflow-y-auto mt-1">
                       {(() => {
+                        const searchLower = productSearch.toLowerCase();
                         const filtered = allProducts
-                          .filter((p: any) => (!productSearch.trim() || p.name.toLowerCase().includes(productSearch.toLowerCase())) && !form.applicableProductIds.includes(p.id))
+                          .filter((p: any) => {
+                            if (form.applicableProductIds.includes(p.id)) return false;
+                            if (!productSearch.trim()) return true;
+                            return (p.name?.toLowerCase().includes(searchLower)) ||
+                              (p.name_en?.toLowerCase().includes(searchLower)) ||
+                              (p.name_he?.toLowerCase().includes(searchLower)) ||
+                              (p.name_ar?.toLowerCase().includes(searchLower));
+                          })
                           .slice(0, 30);
                         if (filtered.length === 0) return <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>;
                         return filtered.map((p: any) => (
                           <button
                             key={p.id}
                             type="button"
-                            className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                            className={`w-full ${isRTL ? 'text-right' : 'text-left'} px-3 py-1.5 text-sm hover:bg-accent`}
                             onMouseDown={(e) => e.preventDefault()}
                             onClick={() => { setForm(f => ({ ...f, applicableProductIds: [...f.applicableProductIds, p.id] })); setProductSearch(''); }}
                           >
-                            {p.name}
+                            {getLocalizedField(p, 'name', currentLanguage as SupportedLanguage, 'ru') || p.name}
                           </button>
                         ));
                       })()}
@@ -9232,7 +9241,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                         <button
                           key={u.id}
                           type="button"
-                          className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                          className={`w-full ${isRTL ? 'text-right' : 'text-left'} px-3 py-1.5 text-sm hover:bg-accent`}
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
                             setForm(f => ({ ...f, targetUserIds: [...f.targetUserIds, String(u.id)] }));
@@ -9241,7 +9250,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                           }}
                         >
                           <span className="font-medium">{displayName}</span>
-                          {u.email && <span className="text-muted-foreground ml-2 text-xs">{u.email}</span>}
+                          {u.email && <span className={`text-muted-foreground ${isRTL ? 'mr-2' : 'ml-2'} text-xs`}>{u.email}</span>}
                         </button>
                       );
                     })}

@@ -295,9 +295,9 @@ export default function Checkout() {
   // Computed discount helpers used throughout the page
   const subtotalForDiscounts = getTotalPrice();
   const subtotalAfterVolume = Math.max(0, subtotalForDiscounts - checkoutVolumeDiscountAmount);
-  // Non-stacking rule: loyalty discount is skipped when a coupon is applied
+  // Loyalty discount: skipped only when a coupon is applied that does NOT stack with loyalty
   // All registered users receive loyalty discount (not guests)
-  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
+  const loyaltyDiscountAmount = ((!appliedCoupon || appliedCoupon?.stacksWithLoyalty) && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
     ? Math.round((subtotalAfterVolume * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
     : 0;
   const subtotalAfterLoyalty = subtotalAfterVolume - loyaltyDiscountAmount;
@@ -305,7 +305,12 @@ export default function Checkout() {
   // For product-scoped coupons the server computes eligibleSubtotal; recalculating on the
   // client against the full subtotal would apply the coupon to ineligible items.
   const couponDiscountAmount = appliedCoupon?.discountAmount ?? 0;
-  const subtotalAfterAllDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
+  // When coupon stacks with loyalty: subtract both. Otherwise coupon replaces loyalty.
+  const subtotalAfterAllDiscounts = Math.max(0,
+    (appliedCoupon && !appliedCoupon.stacksWithLoyalty)
+      ? subtotalAfterVolume - couponDiscountAmount
+      : subtotalAfterLoyalty - couponDiscountAmount
+  );
   // Gift eligibility uses raw subtotal (before discounts)
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);
 
