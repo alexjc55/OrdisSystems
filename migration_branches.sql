@@ -88,3 +88,8 @@ ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "loyalty_discount_percent"
 ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "gift_enabled"             boolean DEFAULT false;
 ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "gift_product_id"          integer;
 ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "gift_min_order_amount"    numeric(10, 2) DEFAULT '300';
+
+
+ALTER TABLE store_settings
+ADD COLUMN IF NOT EXISTS preorder_button_style VARCHAR(20) DEFAULT 'tomorrow',
+ADD COLUMN IF NOT EXISTS checkout_guest_first BOOLEAN DEFAULT false;
