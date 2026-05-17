@@ -9148,6 +9148,26 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   <SelectItem value="per_customer">{t('Один раз на клиента', 'Once per customer', 'פעם אחת לכל לקוח', 'مرة واحدة لكل عميل')}</SelectItem>
                 </SelectContent>
               </Select>
+              <p className={`text-xs text-muted-foreground pt-0.5 ${isRTL ? 'text-right' : 'text-left'}`}>
+                {form.usageType === 'multi' && t(
+                  'Купон можно использовать любое количество раз (разными покупателями) — вплоть до общего лимита.',
+                  'The coupon can be used any number of times by any customers — up to the total usage limit.',
+                  'הקופון ניתן לשימוש כמה פעמים שרוצים (על ידי לקוחות שונים) — עד למגבלת השימוש הכוללת.',
+                  'يمكن استخدام القسيمة أي عدد من المرات من قِبَل أي عميل — حتى الحد الإجمالي للاستخدام.'
+                )}
+                {form.usageType === 'single' && t(
+                  'Купон действителен ровно 1 раз на всех: как только кто-то применит его, он перестанет работать для всех остальных.',
+                  'The coupon is valid exactly once in total: once anyone uses it, it becomes invalid for everyone else.',
+                  'הקופון תקף בדיוק פעם אחת בסך הכל: ברגע שמישהו משתמש בו, הוא הופך לא תקף עבור כולם.',
+                  'القسيمة صالحة مرة واحدة فقط لجميع العملاء: بمجرد استخدامها من أي شخص، تصبح غير صالحة للجميع.'
+                )}
+                {form.usageType === 'per_customer' && t(
+                  'Каждый зарегистрированный покупатель может использовать купон только 1 раз. Разные покупатели — каждый по одному разу.',
+                  'Each registered customer can use the coupon only once. Different customers can each use it once.',
+                  'כל לקוח רשום יכול להשתמש בקופון פעם אחת בלבד. לקוחות שונים יכולים להשתמש בו — כל אחד פעם.',
+                  'يمكن لكل عميل مسجَّل استخدام القسيمة مرة واحدة فقط. يمكن لعملاء مختلفين استخدامها — كل واحد مرة.'
+                )}
+              </p>
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">{t('Область применения', 'Coupon scope', 'תחום הקופון', 'نطاق القسيمة')}</label>
@@ -9315,9 +9335,14 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   min="1"
                   value={form.maxUses}
                   onChange={(e) => setForm(f => ({ ...f, maxUses: e.target.value }))}
-                  placeholder={t('Без лимита', 'Unlimited', 'ללא הגבלה', 'غير محدود')}
+                  placeholder={form.usageType === 'single' ? '1' : t('Без лимита', 'Unlimited', 'ללא הגבלה', 'غير محدود')}
                   disabled={form.usageType === 'single'}
                 />
+                <p className={`text-xs text-muted-foreground pt-0.5 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {form.usageType === 'single'
+                    ? t('Автоматически 1 — купон глобально одноразовый.', 'Automatically 1 — coupon is globally single-use.', 'אוטומטית 1 — קופון חד-פעמי גלובלי.', 'تلقائياً 1 — القسيمة للاستخدام مرة واحدة عالمياً.')
+                    : t('Общий лимит на всех покупателей вместе. Пусто — без ограничений.', 'Total limit across all customers combined. Empty — unlimited.', 'מגבלה כוללת על כל הלקוחות יחד. ריק — ללא הגבלה.', 'الحد الإجمالي لجميع العملاء مجتمعين. فارغ — غير محدود.')}
+                </p>
               </div>
             </div>
             <div className="space-y-1">
