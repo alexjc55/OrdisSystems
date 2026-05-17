@@ -430,6 +430,7 @@
   "cart.couponMaxUses": "הגיע למגבלת שימושים",
   "cart.couponAlreadyUsed": "כבר השתמשת בקופון זה",
   "cart.couponNotEligible": "קוד הקופון הזה אינו זמין עבור חשבונך",
+  "cart.couponNotEligibleForCart": "קוד הקופון הזה אינו חל על הפריטים בעגלה שלך",
   "cart.couponMinOrder": "סכום ההזמנה נמוך מהמינימום לקופון זה",
   "cart.couponError": "שגיאה באימות הקופון",
   "cart.loyaltyDiscount": "הנחת לקוח קבוע",

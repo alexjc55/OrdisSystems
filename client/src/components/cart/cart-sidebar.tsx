@@ -56,8 +56,8 @@ export default function CartSidebar() {
 
   // Coupon validation mutation
   const validateCouponMutation = useMutation({
-    mutationFn: async ({ code, orderTotal }: { code: string; orderTotal: number }) => {
-      return await apiRequest('POST', '/api/coupons/validate', { code, orderTotal });
+    mutationFn: async ({ code, orderTotal, cartItems }: { code: string; orderTotal: number; cartItems?: Array<{ productId: number; quantity: number; totalPrice: string }> }) => {
+      return await apiRequest('POST', '/api/coupons/validate', { code, orderTotal, cartItems });
     },
     onSuccess: (data) => {
       if (data.valid) {
@@ -115,8 +115,9 @@ export default function CartSidebar() {
 
   const subtotalAfterVolumeDiscounts = Math.max(0, subtotal - volumeDiscountAmount);
 
-  // Loyalty discount for registered users — only when NO coupon is applied (non-stacking rule)
-  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && loyaltyContext.loyaltyDiscountPercent > 0)
+  // Loyalty discount: customer role only, only when NO coupon is applied (non-stacking rule)
+  const isCustomerRole = (user as any)?.role === 'customer';
+  const loyaltyDiscountAmount = (!appliedCoupon && loyaltyContext?.loyaltyDiscountEnabled && user && isCustomerRole && loyaltyContext.loyaltyDiscountPercent > 0)
     ? Math.round((subtotalAfterVolumeDiscounts * loyaltyContext.loyaltyDiscountPercent / 100) * 100) / 100
     : 0;
 
@@ -126,21 +127,30 @@ export default function CartSidebar() {
   // Effective subtotal after loyalty discount (based on volume-discounted amount)
   const subtotalAfterLoyalty = subtotalAfterVolumeDiscounts - loyaltyDiscountAmount;
 
-  // Coupon discount (recompute against loyalty-adjusted subtotal)
+  // Coupon discount: applies against volume-discounted subtotal (loyalty and coupon don't stack)
+  // When a coupon is active, loyalty is removed — so coupon base = subtotalAfterVolumeDiscounts
   const couponDiscountAmount = appliedCoupon
     ? (() => {
         if (appliedCoupon.discountType === 'percentage') {
-          return Math.round((subtotalAfterLoyalty * appliedCoupon.discountValue / 100) * 100) / 100;
+          return Math.round((subtotalAfterVolumeDiscounts * appliedCoupon.discountValue / 100) * 100) / 100;
         }
-        return Math.min(appliedCoupon.discountValue, subtotalAfterLoyalty);
+        return Math.min(appliedCoupon.discountValue, subtotalAfterVolumeDiscounts);
       })()
     : 0;
 
-  const subtotalAfterDiscounts = Math.max(0, subtotalAfterLoyalty - couponDiscountAmount);
+  const subtotalAfterDiscounts = Math.max(0, appliedCoupon
+    ? subtotalAfterVolumeDiscounts - couponDiscountAmount
+    : subtotalAfterLoyalty);
 
   const handleApplyCoupon = () => {
     if (!couponInput.trim()) return;
-    validateCouponMutation.mutate({ code: couponInput, orderTotal: subtotalAfterLoyalty });
+    // Validate against the volume-discounted subtotal (pre-loyalty, pre-coupon base)
+    const cartItemsForValidation = items.map(item => ({
+      productId: item.product.id,
+      quantity: item.quantity,
+      totalPrice: item.totalPrice.toString(),
+    }));
+    validateCouponMutation.mutate({ code: couponInput, orderTotal: subtotalAfterVolumeDiscounts, cartItems: cartItemsForValidation });
   };
 
   const handleRemoveCoupon = () => {

@@ -90,6 +90,7 @@
     "couponMaxUses": "Promo code usage limit reached",
     "couponAlreadyUsed": "You have already used this promo code",
     "couponNotEligible": "This promo code is not available for your account",
+    "couponNotEligibleForCart": "This promo code does not apply to items in your cart",
     "couponMinOrder": "Order amount is below the minimum for this promo code",
     "couponError": "Error validating promo code",
     "loyaltyDiscount": "Loyalty discount",

@@ -143,6 +143,11 @@ router.post('/coupons/validate', async (req: any, res) => {
     const schema = z.object({
       code: z.string().min(1),
       orderTotal: z.number().positive(),
+      cartItems: z.array(z.object({
+        productId: z.number().int(),
+        quantity: z.number(),
+        totalPrice: z.string(),
+      })).optional(),
     });
 
     const parsed = schema.safeParse(req.body);
@@ -150,10 +155,14 @@ router.post('/coupons/validate', async (req: any, res) => {
       return res.status(400).json({ valid: false, message: "Invalid request" });
     }
 
-    const { code, orderTotal } = parsed.data;
+    const { code, orderTotal, cartItems } = parsed.data;
     const userId = req.user?.id || null;
     const userEmail = (req.user as any)?.email || null;
-    const result = await storage.validateCoupon(code, orderTotal, userId, userEmail);
+    const result = await storage.validateCoupon(code, orderTotal, userId, userEmail, cartItems);
+    // Reject product-scoped coupons that match no items in the cart
+    if (result.valid && result.discountAmount === 0 && result.coupon?.scope === 'product') {
+      return res.json({ valid: false, message: "coupon_not_eligible_for_cart" });
+    }
     res.json(result);
   } catch (error) {
     console.error("Error validating coupon:", error);
@@ -169,6 +178,11 @@ router.post('/coupons/apply', async (req: any, res) => {
     const schema = z.object({
       code: z.string().min(1),
       orderTotal: z.number().positive(),
+      cartItems: z.array(z.object({
+        productId: z.number().int(),
+        quantity: z.number(),
+        totalPrice: z.string(),
+      })).optional(),
     });
 
     const parsed = schema.safeParse(req.body);
@@ -176,13 +190,17 @@ router.post('/coupons/apply', async (req: any, res) => {
       return res.status(400).json({ valid: false, message: "Invalid request" });
     }
 
-    const { code, orderTotal } = parsed.data;
+    const { code, orderTotal, cartItems } = parsed.data;
     const userId = req.user?.id || null;
     const userEmail = (req.user as any)?.email || null;
-    const result = await storage.validateCoupon(code, orderTotal, userId, userEmail);
+    const result = await storage.validateCoupon(code, orderTotal, userId, userEmail, cartItems);
 
     if (!result.valid) {
       return res.status(422).json(result);
+    }
+    // Reject product-scoped coupons that match no items in the cart
+    if (result.discountAmount === 0 && result.coupon?.scope === 'product') {
+      return res.status(422).json({ valid: false, message: "coupon_not_eligible_for_cart" });
     }
     res.json(result);
   } catch (error) {
