@@ -9346,8 +9346,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     console.log('Submitting product data:', finalData);
     
     // Send to parent component, then save volume discounts for existing products
+    // Always save (even empty array) so deleting all tiers is persisted
     onSubmit(finalData);
-    if (product?.id && volumeDiscounts.length > 0) {
+    if (product?.id) {
       saveVolumeDiscountsMutation.mutate(product.id);
     }
   };

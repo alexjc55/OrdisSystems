@@ -2123,7 +2123,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(coupons).where(eq(coupons.id, id));
   }
 
-  async validateCoupon(code: string, orderTotal: number): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }> {
+  async validateCoupon(code: string, orderTotal: number, userId?: string | null): Promise<{ valid: boolean; message?: string; discountAmount?: number; coupon?: Coupon }> {
     const coupon = await this.getCouponByCode(code);
     if (!coupon) return { valid: false, message: "coupon_not_found" };
     if (!coupon.isActive) return { valid: false, message: "coupon_inactive" };
@@ -2135,6 +2135,19 @@ export class DatabaseStorage implements IStorage {
 
     if (coupon.maxUses !== null && coupon.maxUses !== undefined && coupon.currentUses >= coupon.maxUses) {
       return { valid: false, message: "coupon_max_uses" };
+    }
+
+    // Per-customer usage enforcement: if userId is provided, check coupon_uses table
+    if (userId) {
+      const db = await this.getDatabase();
+      const existingUse = await db
+        .select()
+        .from(couponUses)
+        .where(and(eq(couponUses.couponId, coupon.id), eq(couponUses.userId, userId)))
+        .limit(1);
+      if (existingUse.length > 0) {
+        return { valid: false, message: "coupon_already_used" };
+      }
     }
 
     const minAmount = parseFloat(coupon.minOrderAmount || "0");

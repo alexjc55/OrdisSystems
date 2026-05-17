@@ -459,6 +459,7 @@
   "cart.couponInactive": "Промокод неактивен",
   "cart.couponExpired": "Срок промокода истёк",
   "cart.couponMaxUses": "Лимит использований исчерпан",
+  "cart.couponAlreadyUsed": "Вы уже использовали этот промокод",
   "cart.couponMinOrder": "Сумма заказа ниже минимальной для этого промокода",
   "cart.couponError": "Ошибка проверки промокода",
   "cart.loyaltyDiscount": "Скидка постоянного клиента",

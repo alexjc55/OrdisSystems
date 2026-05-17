@@ -428,6 +428,7 @@
   "cart.couponInactive": "קוד קופון לא פעיל",
   "cart.couponExpired": "תוקף הקופון פג",
   "cart.couponMaxUses": "הגיע למגבלת שימושים",
+  "cart.couponAlreadyUsed": "כבר השתמשת בקופון זה",
   "cart.couponMinOrder": "סכום ההזמנה נמוך מהמינימום לקופון זה",
   "cart.couponError": "שגיאה באימות הקופון",
   "cart.loyaltyDiscount": "הנחת לקוח קבוע",

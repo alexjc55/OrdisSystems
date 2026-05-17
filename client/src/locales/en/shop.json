@@ -88,6 +88,7 @@
     "couponInactive": "Promo code is inactive",
     "couponExpired": "Promo code has expired",
     "couponMaxUses": "Promo code usage limit reached",
+    "couponAlreadyUsed": "You have already used this promo code",
     "couponMinOrder": "Order amount is below the minimum for this promo code",
     "couponError": "Error validating promo code",
     "loyaltyDiscount": "Loyalty discount",

@@ -18,15 +18,18 @@ async function computeServerDiscounts({
   subtotal,
   userId,
   giftAccepted,
+  orderItems,
 }: {
   couponCode?: string | null;
   subtotal: number;
   userId?: string | null;
   giftAccepted?: boolean;
+  orderItems?: Array<{ productId: number; quantity: number; totalPrice: string }>;
 }): Promise<{
   serverCouponCode: string | null;
   serverCouponDiscount: number;
   serverLoyaltyDiscount: number;
+  serverVolumeDiscount: number;
   serverGiftProductId: number | null;
   serverDiscountDetails: Record<string, any>;
   giftOrderItem: InsertOrderItem | null;
@@ -36,13 +39,56 @@ async function computeServerDiscounts({
   let serverCouponCode: string | null = null;
   let serverCouponDiscount = 0;
   let serverLoyaltyDiscount = 0;
+  let serverVolumeDiscount = 0;
   let serverGiftProductId: number | null = null;
   const serverDiscountDetails: Record<string, any> = {};
   let giftOrderItem: InsertOrderItem | null = null;
 
-  // 1. Validate coupon from DB
+  // 1. Volume discounts — computed per item, best (highest minQuantity) applicable tier wins.
+  //    Applied first so that subsequent discounts operate on the post-volume subtotal.
+  if (orderItems && orderItems.length > 0) {
+    const uniqueProductIds = [...new Set(orderItems.map(i => i.productId))];
+    const tiersPerProduct = await Promise.all(
+      uniqueProductIds.map(async (pid) => ({
+        productId: pid,
+        tiers: (await storage.getProductVolumeDiscounts(pid)).filter(t => t.isActive),
+      }))
+    );
+    const tiersMap = new Map(tiersPerProduct.map(({ productId, tiers }) => [productId, tiers]));
+    const volumeItemBreakdown: Record<number, number> = {};
+
+    for (const item of orderItems) {
+      const tiers = tiersMap.get(item.productId) || [];
+      const eligible = tiers.filter(t => parseFloat(t.minQuantity) <= item.quantity);
+      if (eligible.length === 0) continue;
+      const best = eligible.reduce((a, b) => parseFloat(a.minQuantity) >= parseFloat(b.minQuantity) ? a : b);
+      const itemTotal = parseFloat(item.totalPrice || '0');
+      let itemDiscount = 0;
+      if (best.discountType === 'percentage') {
+        itemDiscount = Math.round(itemTotal * parseFloat(best.discountValue) / 100 * 100) / 100;
+      } else {
+        itemDiscount = Math.min(parseFloat(best.discountValue), itemTotal);
+      }
+      if (itemDiscount > 0) {
+        serverVolumeDiscount += itemDiscount;
+        volumeItemBreakdown[item.productId] = (volumeItemBreakdown[item.productId] || 0) + itemDiscount;
+      }
+    }
+    serverVolumeDiscount = Math.round(serverVolumeDiscount * 100) / 100;
+    if (serverVolumeDiscount > 0) {
+      serverDiscountDetails.volumeDiscount = {
+        totalAmount: serverVolumeDiscount,
+        itemBreakdown: volumeItemBreakdown,
+      };
+    }
+  }
+
+  // Effective subtotal after volume discounts — used as base for loyalty/coupon
+  const subtotalAfterVolume = Math.max(0, subtotal - serverVolumeDiscount);
+
+  // 2. Validate coupon from DB (pass userId for per-customer usage enforcement)
   if (couponCode) {
-    const validation = await storage.validateCoupon(couponCode, subtotal);
+    const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId);
     if (validation.valid && validation.coupon) {
       serverCouponCode = validation.coupon.code;
       serverCouponDiscount = validation.discountAmount || 0;
@@ -56,17 +102,17 @@ async function computeServerDiscounts({
     // If invalid coupon submitted — silently ignore (no discount)
   }
 
-  // 2. Loyalty discount for registered users only (not guests)
+  // 3. Loyalty discount for registered users only (not guests)
   //    Non-stacking rule: if coupon was applied, skip loyalty discount
   if (userId && !serverCouponCode && settings?.loyaltyDiscountEnabled) {
     const pct = parseFloat(settings.loyaltyDiscountPercent || '0');
     if (pct > 0) {
-      serverLoyaltyDiscount = Math.round(subtotal * pct) / 100;
+      serverLoyaltyDiscount = Math.round(subtotalAfterVolume * pct) / 100;
       serverDiscountDetails.loyalty = { percent: pct, discountAmount: serverLoyaltyDiscount };
     }
   }
 
-  // 3. Gift: only if enabled, amount eligible, and client explicitly accepted.
+  // 4. Gift: only if enabled, amount eligible, and client explicitly accepted.
   //    Threshold is compared against raw subtotal (before discounts) — matches UI behavior.
   if (giftAccepted && settings?.giftEnabled && settings.giftProductId) {
     const minAmount = parseFloat(settings.giftMinOrderAmount || '0');
@@ -91,6 +137,7 @@ async function computeServerDiscounts({
     serverCouponCode,
     serverCouponDiscount,
     serverLoyaltyDiscount,
+    serverVolumeDiscount,
     serverGiftProductId,
     serverDiscountDetails,
     giftOrderItem,
@@ -314,10 +361,16 @@ router.post('/orders/guest', async (req: any, res) => {
     const subtotal = items.reduce((sum: number, item: any) => sum + parseFloat(item.totalPrice || '0'), 0);
 
     // Server-side authoritative discount computation
+    const guestOrderItems = items.map((item: any) => ({
+      productId: parseInt(item.productId),
+      quantity: parseFloat(item.quantity),
+      totalPrice: item.totalPrice?.toString() || '0',
+    }));
     const {
       serverCouponCode,
       serverCouponDiscount,
       serverLoyaltyDiscount,
+      serverVolumeDiscount,
       serverGiftProductId,
       serverDiscountDetails,
       giftOrderItem,
@@ -326,10 +379,11 @@ router.post('/orders/guest', async (req: any, res) => {
       subtotal,
       userId: null, // Guest — no loyalty discount
       giftAccepted: !!giftAccepted,
+      orderItems: guestOrderItems,
     });
 
     const deliveryFee = parseFloat(guestInfo.deliveryFee || '0');
-    const serverTotalAmount = Math.max(0, subtotal - serverCouponDiscount - serverLoyaltyDiscount + deliveryFee);
+    const serverTotalAmount = Math.max(0, subtotal - serverVolumeDiscount - serverCouponDiscount - serverLoyaltyDiscount + deliveryFee);
 
     const guestAccessToken = randomBytes(32).toString('hex');
     const guestClaimToken = randomBytes(32).toString('hex');
@@ -575,10 +629,16 @@ router.post('/orders', async (req: any, res) => {
     const authSubtotal = validatedData.items.reduce((sum, item) => sum + parseFloat(item.totalPrice || '0'), 0);
 
     // Server-side authoritative discount computation
+    const authOrderItemsForDiscounts = validatedData.items.map(item => ({
+      productId: item.productId,
+      quantity: parseFloat(item.quantity?.toString() || '0'),
+      totalPrice: item.totalPrice?.toString() || '0',
+    }));
     const {
       serverCouponCode: authSvrCouponCode,
       serverCouponDiscount: authSvrCouponDiscount,
       serverLoyaltyDiscount: authSvrLoyaltyDiscount,
+      serverVolumeDiscount: authSvrVolumeDiscount,
       serverGiftProductId: authSvrGiftProductId,
       serverDiscountDetails: authSvrDiscountDetails,
       giftOrderItem: authGiftOrderItem,
@@ -587,10 +647,11 @@ router.post('/orders', async (req: any, res) => {
       subtotal: authSubtotal,
       userId,
       giftAccepted: !!authGiftAccepted,
+      orderItems: authOrderItemsForDiscounts,
     });
 
     const authDeliveryFee = parseFloat(String(orderData.deliveryFee || '0'));
-    const authServerTotal = Math.max(0, authSubtotal - authSvrCouponDiscount - authSvrLoyaltyDiscount + authDeliveryFee);
+    const authServerTotal = Math.max(0, authSubtotal - authSvrVolumeDiscount - authSvrCouponDiscount - authSvrLoyaltyDiscount + authDeliveryFee);
 
     const deliveryOverride = (requestedDeliveryTime && requestedDeliveryDate)
       ? { deliveryDate: requestedDeliveryDate, deliveryTime: requestedDeliveryTime }

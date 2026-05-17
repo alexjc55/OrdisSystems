@@ -263,6 +263,7 @@ export default function CartSidebar() {
       case 'coupon_inactive': return t('cart.couponInactive');
       case 'coupon_expired': return t('cart.couponExpired');
       case 'coupon_max_uses': return t('cart.couponMaxUses');
+      case 'coupon_already_used': return t('cart.couponAlreadyUsed');
       case 'coupon_min_order': return t('cart.couponMinOrder');
       default: return t('cart.couponError');
     }
