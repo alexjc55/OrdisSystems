@@ -8815,9 +8815,22 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     expiresAt: '',
   });
   const [productSearch, setProductSearch] = useState('');
+  const [productSearchOpen, setProductSearchOpen] = useState(false);
   const [customerSearch, setCustomerSearch] = useState('');
+  const [customerSearchOpen, setCustomerSearchOpen] = useState(false);
   const [customerResults, setCustomerResults] = useState<any[]>([]);
   const [customerSearchLoading, setCustomerSearchLoading] = useState(false);
+
+  const loadCustomers = async (val: string) => {
+    setCustomerSearchLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users?search=${encodeURIComponent(val)}&limit=20`, { credentials: 'include' });
+      const data = await res.json();
+      const list = Array.isArray(data?.data) ? data.data : Array.isArray(data?.users) ? data.users : Array.isArray(data) ? data : [];
+      setCustomerResults(list);
+    } catch { setCustomerResults([]); }
+    finally { setCustomerSearchLoading(false); }
+  };
 
   const { data: coupons = [], isLoading } = useQuery<any[]>({
     queryKey: ['/api/admin/coupons'],
@@ -8831,7 +8844,9 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     setEditingCoupon(null);
     setShowForm(false);
     setProductSearch('');
+    setProductSearchOpen(false);
     setCustomerSearch('');
+    setCustomerSearchOpen(false);
     setCustomerResults([]);
   };
 
@@ -9125,32 +9140,37 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                     })}
                   </div>
                 )}
-                <Input
-                  value={productSearch}
-                  onChange={(e) => setProductSearch(e.target.value)}
-                  placeholder={t('Поиск товара...', 'Search product...', 'חפש מוצר...', 'ابحث عن منتج...')}
-                  className="text-sm"
-                />
-                {productSearch.trim() && (
-                  <div className="border rounded-md max-h-40 overflow-y-auto">
-                    {allProducts
-                      .filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase()) && !form.applicableProductIds.includes(p.id))
-                      .slice(0, 20)
-                      .map((p: any) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
-                          onClick={() => { setForm(f => ({ ...f, applicableProductIds: [...f.applicableProductIds, p.id] })); setProductSearch(''); }}
-                        >
-                          {p.name}
-                        </button>
-                      ))}
-                    {allProducts.filter((p: any) => p.name.toLowerCase().includes(productSearch.toLowerCase()) && !form.applicableProductIds.includes(p.id)).length === 0 && (
-                      <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>
-                    )}
-                  </div>
-                )}
+                <div className="relative">
+                  <Input
+                    value={productSearch}
+                    onChange={(e) => setProductSearch(e.target.value)}
+                    onFocus={() => setProductSearchOpen(true)}
+                    onBlur={() => setTimeout(() => setProductSearchOpen(false), 150)}
+                    placeholder={t('Поиск товара...', 'Search product...', 'חפש מוצר...', 'ابحث عن منتج...')}
+                    className="text-sm"
+                  />
+                  {productSearchOpen && (
+                    <div className="absolute z-50 w-full border rounded-md bg-background shadow-md max-h-48 overflow-y-auto mt-1">
+                      {(() => {
+                        const filtered = allProducts
+                          .filter((p: any) => (!productSearch.trim() || p.name.toLowerCase().includes(productSearch.toLowerCase())) && !form.applicableProductIds.includes(p.id))
+                          .slice(0, 30);
+                        if (filtered.length === 0) return <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>;
+                        return filtered.map((p: any) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => { setForm(f => ({ ...f, applicableProductIds: [...f.applicableProductIds, p.id] })); setProductSearch(''); }}
+                          >
+                            {p.name}
+                          </button>
+                        ));
+                      })()}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
             {/* Stacks with loyalty toggle */}
@@ -9190,48 +9210,47 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                   ))}
                 </div>
               )}
-              <Input
-                value={customerSearch}
-                onChange={async (e) => {
-                  const val = e.target.value;
-                  setCustomerSearch(val);
-                  if (!val.trim()) { setCustomerResults([]); return; }
-                  setCustomerSearchLoading(true);
-                  try {
-                    const res = await fetch(`/api/admin/users?search=${encodeURIComponent(val)}&limit=10`, { credentials: 'include' });
-                    const data = await res.json();
-                    setCustomerResults(Array.isArray(data?.users) ? data.users : Array.isArray(data) ? data : []);
-                  } catch { setCustomerResults([]); }
-                  finally { setCustomerSearchLoading(false); }
-                }}
-                placeholder={t('Поиск по имени / email...', 'Search by name / email...', 'חפש לפי שם / אימייל...', 'ابحث بالاسم / البريد...')}
-                className="text-sm"
-              />
-              {customerSearch.trim() && (
-                <div className="border rounded-md max-h-40 overflow-y-auto">
-                  {customerSearchLoading && <p className="text-xs text-muted-foreground px-3 py-2">{t('Загрузка...', 'Loading...', 'טוען...', 'جار التحميل...')}</p>}
-                  {!customerSearchLoading && customerResults.filter((u: any) => !form.targetUserIds.includes(String(u.id))).map((u: any) => {
-                    const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.username;
-                    return (
-                      <button
-                        key={u.id}
-                        type="button"
-                        className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
-                        onClick={() => {
-                          setForm(f => ({ ...f, targetUserIds: [...f.targetUserIds, String(u.id)] }));
-                          setCustomerSearch('');
-                        }}
-                      >
-                        <span className="font-medium">{displayName}</span>
-                        {u.email && <span className="text-muted-foreground ml-2 text-xs">{u.email}</span>}
-                      </button>
-                    );
-                  })}
-                  {!customerSearchLoading && customerResults.filter((u: any) => !form.targetUserIds.includes(String(u.id))).length === 0 && (
-                    <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>
-                  )}
-                </div>
-              )}
+              <div className="relative">
+                <Input
+                  value={customerSearch}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCustomerSearch(val);
+                    loadCustomers(val);
+                  }}
+                  onFocus={() => { setCustomerSearchOpen(true); if (customerResults.length === 0) loadCustomers(customerSearch); }}
+                  onBlur={() => setTimeout(() => setCustomerSearchOpen(false), 150)}
+                  placeholder={t('Поиск по имени / email...', 'Search by name / email...', 'חפש לפי שם / אימייל...', 'ابحث بالاسم / البريد...')}
+                  className="text-sm"
+                />
+                {customerSearchOpen && (
+                  <div className="absolute z-50 w-full border rounded-md bg-background shadow-md max-h-48 overflow-y-auto mt-1">
+                    {customerSearchLoading && <p className="text-xs text-muted-foreground px-3 py-2">{t('Загрузка...', 'Loading...', 'טוען...', 'جار التحميل...')}</p>}
+                    {!customerSearchLoading && customerResults.filter((u: any) => !form.targetUserIds.includes(String(u.id))).map((u: any) => {
+                      const displayName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.username;
+                      return (
+                        <button
+                          key={u.id}
+                          type="button"
+                          className="w-full text-left px-3 py-1.5 text-sm hover:bg-accent"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            setForm(f => ({ ...f, targetUserIds: [...f.targetUserIds, String(u.id)] }));
+                            setCustomerSearch('');
+                            setCustomerSearchOpen(false);
+                          }}
+                        >
+                          <span className="font-medium">{displayName}</span>
+                          {u.email && <span className="text-muted-foreground ml-2 text-xs">{u.email}</span>}
+                        </button>
+                      );
+                    })}
+                    {!customerSearchLoading && customerResults.filter((u: any) => !form.targetUserIds.includes(String(u.id))).length === 0 && (
+                      <p className="text-xs text-muted-foreground px-3 py-2">{t('Не найдено', 'Not found', 'לא נמצא', 'غير موجود')}</p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
