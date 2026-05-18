@@ -1,0 +1,34 @@
+3|demo  | 1:50:34 PM [express] GET /api/version 200 in 3ms :: {"version":"1.0.0","appHash":"8a6ed3f0","buildTi…
+0|edahouse  | 1:50:35 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"c8c6d223","buildTi…
+3|demo      | [SEO] Error in meta injection middleware: error: column "gift_product_quantity" does not exist
+3|demo      |     at /var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/node_modules/pg-pool/index.js:45:11
+3|demo      |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+3|demo      |     at async file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/node_modules/drizzle-orm/node-postgres/session.js:83:22
+3|demo      |     at async DatabaseStorage.getStoreSettings (file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/dist/index.js:2685:24)
+3|demo      |     at async getSettings (file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/dist/index.js:9115:21)
+3|demo      |     at async file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/dist/index.js:9133:24 {
+3|demo      |   length: 123,
+3|demo      |   severity: 'ERROR',
+3|demo      |   code: '42703',
+3|demo      |   detail: undefined,
+3|demo      |   hint: undefined,
+3|demo      |   position: '5440',
+3|demo      |   internalPosition: undefined,
+3|demo      |   internalQuery: undefined,
+3|demo      |   where: undefined,
+3|demo      |   schema: undefined,
+3|demo      |   table: undefined,
+3|demo      |   column: undefined,
+3|demo      |   dataType: undefined,
+3|demo      |   constraint: undefined,
+3|demo      |   file: 'parse_relation.c',
+3|demo      |   line: '3665',
+3|demo      |   routine: 'errorMissingColumn'
+3|demo      | }
+3|demo      | error: column "gift_product_quantity" does not exist
+3|demo      |     at /var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/node_modules/pg-pool/index.js:45:11
+3|demo      |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+3|demo      |     at async file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/node_modules/drizzle-orm/node-postgres/session.js:83:22
+3|demo      |     at async DatabaseStorage.getStoreSettings (file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/dist/index.js:2685:24)
+3|demo      |     at async getSettings (file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/dist/index.js:9115:21)
+3|demo      |     at async file:///var/www/ordis_co_il_usr/data/www/demo.ordis.co.il/dist/index.js:9133:24
