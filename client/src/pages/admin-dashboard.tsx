@@ -5365,6 +5365,23 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     )}
+                    {isAdmin && (
+                      <div 
+                        onClick={() => {
+                          setActiveTab("coupons");
+                          document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
+                        }} 
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'coupons' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        style={{minWidth: '0', overflow: 'hidden'}}
+                      >
+                        <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
+                          <Tag className="w-5 h-5 flex-shrink-0" />
+                          <span className="text-xs font-medium leading-tight text-center truncate w-full">
+                            {currentLanguage === 'ru' ? 'Купоны' : currentLanguage === 'he' ? 'קופונים' : currentLanguage === 'ar' ? 'كوبونات' : 'Coupons'}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     {user?.role === 'admin' && (
                       <div 
                         onClick={() => {
