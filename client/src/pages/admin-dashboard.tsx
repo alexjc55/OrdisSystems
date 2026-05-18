@@ -10990,6 +10990,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
     } as any,
   });
 
+  const watchedPaymentProvider = useWatch({ control: form.control, name: 'paymentProvider' });
+
   // Helper function to get payment method name for current language
   const getPaymentMethodName = (method: any, language: string) => {
     switch (language) {
@@ -12573,9 +12575,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           )}
         />
 
-          </CollapsibleContent>
-        </Collapsible>
-
         {/* Online Payment Provider (HYP) */}
         <div className="space-y-4 pt-2">
           <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
@@ -12618,7 +12617,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             )}
           />
 
-          {form.watch('paymentProvider') === 'hyp' && (
+          {watchedPaymentProvider === 'hyp' && (
             <div className="space-y-3 p-4 border rounded-lg bg-blue-50/50">
               <FormField
                 control={form.control}
@@ -12686,6 +12685,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             </div>
           )}
         </div>
+
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* {adminT('storeSettings.trackingCode')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">
