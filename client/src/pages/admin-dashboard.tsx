@@ -11109,6 +11109,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         facebookPixelId: storeSettings?.facebookPixelId || "",
         facebookAccessToken: storeSettings?.facebookAccessToken || "",
         mobileQuickButtons: (storeSettings as any)?.mobileQuickButtons || [],
+        paymentProvider: storeSettings?.paymentProvider || 'none',
+        hypMasof: storeSettings?.hypMasof || '',
+        hypSignature: storeSettings?.hypSignature || '',
+        hypPassP: storeSettings?.hypPassP || '',
+        hypTestMode: storeSettings?.hypTestMode !== false,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
