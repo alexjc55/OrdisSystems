@@ -12623,7 +12623,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           />
 
           {watchedPaymentProvider === 'hyp' && (
-            <div className="space-y-3 p-4 border rounded-lg bg-blue-50/50">
+            <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
+              <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                {currentLanguage === 'ru'
+                  ? 'Реквизиты доступны в личном кабинете HYP (pay.hyp.co.il) после регистрации как продавец.'
+                  : currentLanguage === 'he'
+                  ? 'הפרטים זמינים בחשבון הסוחר של HYP (pay.hyp.co.il) לאחר הרשמה כסוחר.'
+                  : currentLanguage === 'ar'
+                  ? 'البيانات متاحة في حساب التاجر على HYP (pay.hyp.co.il) بعد التسجيل كتاجر.'
+                  : 'Credentials are available in your HYP merchant account (pay.hyp.co.il) after registering as a merchant.'}
+              </p>
+
               <FormField
                 control={form.control}
                 name="hypMasof"
@@ -12635,6 +12645,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <FormControl>
                       <Input placeholder="1234567" className="text-sm" {...field} value={field.value || ''} />
                     </FormControl>
+                    <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru'
+                        ? 'Номер вашего терминала в системе HYP. Находится в разделе «Настройки терминала» личного кабинета.'
+                        : currentLanguage === 'he'
+                        ? 'מספר המסוף שלך במערכת HYP. נמצא בקטע "הגדרות מסוף" בחשבון הסוחר.'
+                        : currentLanguage === 'ar'
+                        ? 'رقم طرفيتك في نظام HYP. موجود في قسم "إعدادات الطرفية" في حساب التاجر.'
+                        : 'Your terminal number in the HYP system. Found in the "Terminal Settings" section of your merchant account.'}
+                    </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
@@ -12651,6 +12670,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <FormControl>
                       <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
                     </FormControl>
+                    <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru'
+                        ? 'Удалённый пароль для API-запросов. Задаётся в разделе «Безопасность» → «Remote Password» панели управления HYP.'
+                        : currentLanguage === 'he'
+                        ? 'סיסמת Remote לבקשות API. מוגדרת בקטע "אבטחה" ← "Remote Password" בלוח הבקרה של HYP.'
+                        : currentLanguage === 'ar'
+                        ? 'كلمة مرور Remote لطلبات API. تُعيَّن في قسم "الأمان" ← "Remote Password" في لوحة تحكم HYP.'
+                        : 'Remote password for API requests. Set in the "Security" → "Remote Password" section of the HYP control panel.'}
+                    </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
@@ -12667,6 +12695,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <FormControl>
                       <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
                     </FormControl>
+                    <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru'
+                        ? 'Секретный ключ для подписи запросов (HMAC-SHA256). Находится в разделе «Безопасность» → «Signature Key» панели управления HYP.'
+                        : currentLanguage === 'he'
+                        ? 'מפתח סודי לחתימת בקשות (HMAC-SHA256). נמצא בקטע "אבטחה" ← "Signature Key" בלוח הבקרה של HYP.'
+                        : currentLanguage === 'ar'
+                        ? 'المفتاح السري لتوقيع الطلبات (HMAC-SHA256). موجود في قسم "الأمان" ← "Signature Key" في لوحة تحكم HYP.'
+                        : 'Secret key for signing requests (HMAC-SHA256). Found in the "Security" → "Signature Key" section of the HYP control panel.'}
+                    </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
@@ -12681,7 +12718,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <FormLabel className="text-sm font-normal cursor-pointer">
-                      {currentLanguage === 'ru' ? 'Тестовый режим (sandbox)' : currentLanguage === 'he' ? 'מצב בדיקה (sandbox)' : currentLanguage === 'ar' ? 'وضع الاختبار' : 'Test mode (sandbox)'}
+                      {currentLanguage === 'ru' ? 'Тестовый режим (sandbox)' : currentLanguage === 'he' ? 'מצב בדיקה (sandbox)' : currentLanguage === 'ar' ? 'وضع الاختبار (sandbox)' : 'Test mode (sandbox)'}
                     </FormLabel>
                     <FormMessage className="text-xs" />
                   </FormItem>
