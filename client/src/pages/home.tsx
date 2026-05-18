@@ -812,14 +812,15 @@ export default function Home() {
                         className="flex flex-nowrap gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-x-visible md:pb-0"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                       >
-                        <button
+                        <UTMLink
+                          href="/"
                           onClick={() => handleCategorySelect(null)}
                           className={`${pillBase} ${pillSize} ${selectedCategoryId === null ? pillActive : pillInactive}`}
-                          style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px' }}
+                          style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' }}
                         >
                           <LayoutGrid className="w-7 h-7 flex-shrink-0 mt-0.5" />
                           <span className="text-xs font-medium leading-tight text-center w-full">{t('allCategories')}</span>
-                        </button>
+                        </UTMLink>
                         {categories.map((category) => {
                           const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
                           const isActive = selectedCategoryId === category.id;

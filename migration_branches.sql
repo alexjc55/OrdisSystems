@@ -1,98 +1,24 @@
--- =============================================================
--- eDAHouse — Loyalty & Coupon System
--- Полная миграция: купоны, скидки лояльности, объёмные скидки, подарок
--- Все операции идемпотентны (IF NOT EXISTS)
--- =============================================================
-
-
--- -------------------------------------------------------------
--- 1. ТАБЛИЦА КУПОНОВ
--- -------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "coupons" (
-  "id"                      serial PRIMARY KEY NOT NULL,
-  "code"                    varchar(50) NOT NULL,
-  "description"             text,
-  "discount_type"           varchar NOT NULL,
-  "discount_value"          numeric(10, 2) NOT NULL,
-  "min_order_amount"        numeric(10, 2) DEFAULT '0',
-  "max_uses"                integer,
-  "current_uses"            integer DEFAULT 0 NOT NULL,
-  "usage_type"              varchar(20) NOT NULL DEFAULT 'multi',
-  "scope"                   varchar(20) NOT NULL DEFAULT 'order',
-  "target_customer_email"   varchar(255),
-  "target_user_id"          varchar(255) REFERENCES "users"("id"),
-  "applicable_product_ids"  jsonb,
-  "stacks_with_loyalty"     boolean NOT NULL DEFAULT false,
-  "target_customer_emails"  jsonb,
-  "target_user_ids"         jsonb,
-  "is_active"               boolean DEFAULT true NOT NULL,
-  "expires_at"              timestamp,
-  "created_at"              timestamp DEFAULT now(),
-  "updated_at"              timestamp DEFAULT now(),
-  CONSTRAINT "coupons_code_unique" UNIQUE("code")
-);
-
--- Если таблица уже существует — добавить недостающие колонки
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "usage_type"             varchar(20) NOT NULL DEFAULT 'multi';
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "scope"                  varchar(20) NOT NULL DEFAULT 'order';
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_customer_email"  varchar(255);
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_user_id"         varchar(255) REFERENCES "users"("id");
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "applicable_product_ids" jsonb;
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "stacks_with_loyalty"    boolean NOT NULL DEFAULT false;
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_customer_emails" jsonb;
-ALTER TABLE "coupons" ADD COLUMN IF NOT EXISTS "target_user_ids"        jsonb;
-
-
--- -------------------------------------------------------------
--- 2. ИСТОРИЯ ИСПОЛЬЗОВАНИЯ КУПОНОВ
--- -------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "coupon_uses" (
-  "id"        serial PRIMARY KEY NOT NULL,
-  "coupon_id" integer NOT NULL REFERENCES "coupons"("id"),
-  "order_id"  integer NOT NULL REFERENCES "orders"("id"),
-  "user_id"   varchar REFERENCES "users"("id"),
-  "used_at"   timestamp DEFAULT now()
-);
-
-
--- -------------------------------------------------------------
--- 3. ОБЪЁМНЫЕ СКИДКИ НА ТОВАРЫ
--- -------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "product_volume_discounts" (
-  "id"             serial PRIMARY KEY NOT NULL,
-  "product_id"     integer NOT NULL REFERENCES "products"("id") ON DELETE CASCADE,
-  "min_quantity"   numeric(10, 3) NOT NULL,
-  "discount_type"  varchar NOT NULL,
-  "discount_value" numeric(10, 2) NOT NULL,
-  "is_active"      boolean DEFAULT true NOT NULL,
-  "created_at"     timestamp DEFAULT now(),
-  "updated_at"     timestamp DEFAULT now()
-);
-
-
--- -------------------------------------------------------------
--- 4. НОВЫЕ КОЛОНКИ В ЗАКАЗАХ
--- -------------------------------------------------------------
-ALTER TABLE "orders" ADD COLUMN IF NOT EXISTS "coupon_code"      varchar(50);
-ALTER TABLE "orders" ADD COLUMN IF NOT EXISTS "coupon_discount"  numeric(10, 2);
-ALTER TABLE "orders" ADD COLUMN IF NOT EXISTS "loyalty_discount" numeric(10, 2);
-ALTER TABLE "orders" ADD COLUMN IF NOT EXISTS "gift_product_id"  integer;
-ALTER TABLE "orders" ADD COLUMN IF NOT EXISTS "discount_details" jsonb;
-
-
--- -------------------------------------------------------------
--- 5. НОВЫЕ КОЛОНКИ В НАСТРОЙКАХ МАГАЗИНА
--- -------------------------------------------------------------
-ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "loyalty_discount_enabled" boolean DEFAULT false;
-ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "loyalty_discount_percent" numeric(5, 2) DEFAULT '0';
-ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "gift_enabled"             boolean DEFAULT false;
-ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "gift_product_id"          integer;
-ALTER TABLE "store_settings" ADD COLUMN IF NOT EXISTS "gift_min_order_amount"    numeric(10, 2) DEFAULT '300';
-
-
 ALTER TABLE store_settings
-ADD COLUMN IF NOT EXISTS preorder_button_style VARCHAR(20) DEFAULT 'tomorrow',
-ADD COLUMN IF NOT EXISTS checkout_guest_first BOOLEAN DEFAULT false;
+ADD COLUMN IF NOT EXISTS payment_provider VARCHAR(20) DEFAULT 'none',
+ADD COLUMN IF NOT EXISTS hyp_masof      VARCHAR(50),
+ADD COLUMN IF NOT EXISTS hyp_signature  VARCHAR(255),
+ADD COLUMN IF NOT EXISTS hyp_pass_p     VARCHAR(255),
+ADD COLUMN IF NOT EXISTS hyp_test_mode  BOOLEAN DEFAULT true;
 
-ALTER TABLE store_settings
-ADD COLUMN IF NOT EXISTS gift_product_quantity NUMERIC(10, 2) DEFAULT '1';
+CREATE TABLE IF NOT EXISTS pending_payments (
+  id                 SERIAL PRIMARY KEY,
+  token              VARCHAR(128) NOT NULL UNIQUE,
+  order_data         JSONB        NOT NULL,
+  order_items        JSONB        NOT NULL,
+  user_id            VARCHAR      REFERENCES users(id),
+  status             VARCHAR(20)  NOT NULL DEFAULT 'pending',
+  hyp_transaction_id VARCHAR(255),
+  created_at         TIMESTAMP    DEFAULT NOW(),
+  expires_at         TIMESTAMP    NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_pending_payments_token
+  ON pending_payments(token);
+
+CREATE INDEX IF NOT EXISTS idx_pending_payments_expires_at
+  ON pending_payments(expires_at);
