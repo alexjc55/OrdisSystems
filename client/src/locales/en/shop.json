@@ -121,6 +121,7 @@
     "processingPayment": "Redirecting to payment...",
     "paymentOption": "Pay Online (Card)",
     "paymentFailed": "Payment failed. Please try again.",
+    "checkingPaymentStatus": "Checking payment status...",
     "orderSuccess": "Order placed successfully",
     "orderError": "Order error",
     "loginTab": "Sign In",

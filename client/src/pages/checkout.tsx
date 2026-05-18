@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useCartStore, type CartItem } from "@/lib/cart";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -535,6 +535,9 @@ export default function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [selectedGuestPaymentMethod, setSelectedGuestPaymentMethod] = useState("");
   const [selectedRegisterPaymentMethod, setSelectedRegisterPaymentMethod] = useState("");
+  const [isCheckingHypPayment, setIsCheckingHypPayment] = useState(false);
+  const hypPollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const HYP_PENDING_KEY = 'hyp_pending_payment';
 
   // Auto-select payment method when there is exactly one enabled option
   // Show toast if redirected back from HYP with payment failure
@@ -542,11 +545,60 @@ export default function Checkout() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("payment") === "failed") {
       toast({ title: tShop('checkout.paymentFailed'), variant: "destructive" });
-      // Remove param from URL without reloading
       const url = new URL(window.location.href);
       url.searchParams.delete("payment");
       window.history.replaceState({}, "", url.toString());
     }
+  }, []);
+
+  // iOS PWA recovery: poll pending HYP payment status when app regains focus
+  useEffect(() => {
+    const stopPolling = () => {
+      if (hypPollIntervalRef.current) {
+        clearInterval(hypPollIntervalRef.current);
+        hypPollIntervalRef.current = null;
+      }
+      setIsCheckingHypPayment(false);
+    };
+
+    const startPolling = () => {
+      stopPolling();
+      const raw = localStorage.getItem(HYP_PENDING_KEY);
+      if (!raw) return;
+      let parsed: { token: string; timestamp: number };
+      try { parsed = JSON.parse(raw); } catch { localStorage.removeItem(HYP_PENDING_KEY); return; }
+      if (Date.now() - parsed.timestamp > 3 * 60 * 60 * 1000) {
+        localStorage.removeItem(HYP_PENDING_KEY);
+        return;
+      }
+      setIsCheckingHypPayment(true);
+      const poll = async () => {
+        try {
+          const result = await apiRequest('GET', `/api/payment/pending/${parsed.token}`);
+          if (result.status === 'completed') {
+            stopPolling();
+            localStorage.removeItem(HYP_PENDING_KEY);
+            window.location.href = '/thanks?payment=success';
+          } else if (result.status === 'failed') {
+            stopPolling();
+            localStorage.removeItem(HYP_PENDING_KEY);
+            toast({ title: tShop('checkout.paymentFailed'), variant: 'destructive' });
+          }
+        } catch { /* network error — keep trying */ }
+      };
+      poll();
+      hypPollIntervalRef.current = setInterval(poll, 3000);
+    };
+
+    startPolling();
+
+    const handleVisibility = () => { if (!document.hidden) startPolling(); };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   useEffect(() => {
@@ -794,6 +846,7 @@ export default function Checkout() {
           language: currentLanguage,
           branchId: branchesEnabled && selectedBranchId ? selectedBranchId : null,
         });
+        localStorage.setItem(HYP_PENDING_KEY, JSON.stringify({ token: hypResult.token, timestamp: Date.now() }));
         window.location.href = hypResult.redirectUrl;
         throw new Error("HYP_REDIRECT");
       }
@@ -939,7 +992,7 @@ export default function Checkout() {
       return await apiRequest("POST", "/api/payment/hyp/initiate", payload);
     },
     onSuccess: (data: { redirectUrl: string; token: string }) => {
-      // Redirect browser to HYP payment gateway — cart is preserved
+      localStorage.setItem(HYP_PENDING_KEY, JSON.stringify({ token: data.token, timestamp: Date.now() }));
       window.location.href = data.redirectUrl;
     },
     onError: (error: any) => {
@@ -970,6 +1023,15 @@ export default function Checkout() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* iOS PWA: HYP payment status check overlay */}
+      {isCheckingHypPayment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center gap-4 mx-4">
+            <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-800 font-medium text-center">{tShop('checkout.checkingPaymentStatus')}</p>
+          </div>
+        </div>
+      )}
       {/* Back Navigation */}
       <div className="mb-6">
         <Button

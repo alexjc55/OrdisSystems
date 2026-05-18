@@ -39,6 +39,11 @@ export default function ThanksPage() {
   const [emailSent, setEmailSent] = useState(false);
   const { toast } = useToast();
 
+  // Clean up any pending HYP payment token from localStorage (iOS PWA recovery)
+  useEffect(() => {
+    localStorage.removeItem('hyp_pending_payment');
+  }, []);
+
   // Extract order data from URL parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

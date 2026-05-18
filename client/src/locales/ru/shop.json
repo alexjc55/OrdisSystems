@@ -444,6 +444,7 @@
   "checkout.processingPayment": "Перенаправление на оплату...",
   "checkout.paymentOption": "Оплата онлайн (карта)",
   "checkout.paymentFailed": "Ошибка оплаты. Попробуйте снова.",
+  "checkout.checkingPaymentStatus": "Проверяем статус оплаты...",
   "checkout.guest": "Гость",
   "checkout.signInToUseData": "Войдите, чтобы использовать сохраненные данные и отслеживать заказы.",
   "checkout.guestWarning": "Как гость, вы не сможете отслеживать статус заказа. Рекомендуем зарегистрироваться для полного функционала.",
