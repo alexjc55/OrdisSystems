@@ -125,7 +125,21 @@
       "buttonText": "Оформить заказ",
       "buttonLink": "/checkout"
     },
-    "giftAdded": "Подарок"
+    "giftAdded": "Подарок",
+    "enterCoupon": "Введите промокод",
+    "applyCoupon": "Применить",
+    "couponNotFound": "Промокод не найден",
+    "couponInactive": "Промокод неактивен",
+    "couponExpired": "Срок действия промокода истёк",
+    "couponMaxUses": "Лимит использований промокода исчерпан",
+    "couponAlreadyUsed": "Вы уже использовали этот промокод",
+    "couponNotEligible": "Этот промокод недоступен для вашего аккаунта",
+    "couponNotEligibleForCart": "Промокод не применяется к товарам в корзине",
+    "couponMinOrder": "Сумма заказа ниже минимальной для этого промокода",
+    "couponError": "Ошибка при проверке промокода",
+    "volumeDiscount": "Скидка за объём",
+    "giftAvailable": "Подарок к заказу!",
+    "addGift": "Добавить подарок"
   },
   "product": {
     "price": "Цена",
@@ -426,6 +440,10 @@
   "checkout.placeOrder": "Оформить заказ",
   "checkout.placeOrderAsGuest": "Заказать как гость",
   "checkout.processing": "Обработка...",
+  "checkout.payOnline": "Перейти к оплате",
+  "checkout.processingPayment": "Перенаправление на оплату...",
+  "checkout.paymentOption": "Оплата онлайн (карта)",
+  "checkout.paymentFailed": "Ошибка оплаты. Попробуйте снова.",
   "checkout.guest": "Гость",
   "checkout.signInToUseData": "Войдите, чтобы использовать сохраненные данные и отслеживать заказы.",
   "checkout.guestWarning": "Как гость, вы не сможете отслеживать статус заказа. Рекомендуем зарегистрироваться для полного функционала.",

@@ -121,7 +121,21 @@
       "buttonText": "בצע הזמנה",
       "buttonLink": "/checkout"
     },
-    "giftAdded": "מתנה"
+    "giftAdded": "מתנה",
+    "enterCoupon": "הזן קוד קופון",
+    "applyCoupon": "החל",
+    "couponNotFound": "קוד קופון לא נמצא",
+    "couponInactive": "קוד קופון אינו פעיל",
+    "couponExpired": "קוד קופון פג תוקף",
+    "couponMaxUses": "הגבלת השימוש בקופון הגיעה",
+    "couponAlreadyUsed": "כבר השתמשת בקוד קופון זה",
+    "couponNotEligible": "קוד קופון זה אינו זמין לחשבונך",
+    "couponNotEligibleForCart": "קוד קופון זה לא חל על פריטים בעגלה",
+    "couponMinOrder": "סכום ההזמנה נמוך מהמינימום לקוד קופון זה",
+    "couponError": "שגיאה באימות קוד קופון",
+    "volumeDiscount": "הנחת כמות",
+    "giftAvailable": "מתנה חינם עם הזמנתך!",
+    "addGift": "הוסף מתנה"
   },
   "product": {
     "price": "מחיר",
@@ -454,6 +468,10 @@
   "checkout.placeOrder": "בצע הזמנה",
   "checkout.placeOrderAsGuest": "הזמן כאורח",
   "checkout.processing": "מעבד...",
+  "checkout.payOnline": "עבור לתשלום",
+  "checkout.processingPayment": "מעביר לתשלום...",
+  "checkout.paymentOption": "תשלום מקוון (כרטיס אשראי)",
+  "checkout.paymentFailed": "שגיאה בתשלום. נסה שנית.",
   "checkout.guest": "אורח",
   "checkout.signInToUseData": "התחבר כדי להשתמש בנתונים שמורים ולעקוב אחר הזמנות.",
   "checkout.guestWarning": "כאורח, לא תוכל לעקוב אחר סטטוס ההזמנה. אנו ממליצים להירשם לפונקציונליות מלאה.",

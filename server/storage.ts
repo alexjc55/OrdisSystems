@@ -44,6 +44,9 @@ import {
   type InsertCoupon,
   type CouponUse,
   type ProductVolumeDiscount,
+  pendingPayments,
+  type PendingPayment,
+  type InsertPendingPayment,
 } from "@shared/schema";
 import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
@@ -181,6 +184,12 @@ export interface IStorage {
   // Product volume discounts
   getProductVolumeDiscounts(productId: number): Promise<ProductVolumeDiscount[]>;
   setProductVolumeDiscounts(productId: number, discounts: any[]): Promise<void>;
+
+  // Pending payments (online payment temp orders)
+  createPendingPayment(data: InsertPendingPayment): Promise<PendingPayment>;
+  getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined>;
+  updatePendingPaymentStatus(token: string, status: "pending" | "completed" | "failed" | "expired", hypTransactionId?: string): Promise<PendingPayment>;
+  deleteExpiredPendingPayments(): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -2248,6 +2257,50 @@ export class DatabaseStorage implements IStorage {
         }))
       );
     }
+  }
+
+  // ─── Pending payments ─────────────────────────────────────────────────────
+
+  async createPendingPayment(data: InsertPendingPayment): Promise<PendingPayment> {
+    const db = await this.getDatabase();
+    const [record] = await db.insert(pendingPayments).values(data).returning();
+    return record;
+  }
+
+  async getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined> {
+    const db = await this.getDatabase();
+    const [record] = await db
+      .select()
+      .from(pendingPayments)
+      .where(eq(pendingPayments.token, token))
+      .limit(1);
+    return record;
+  }
+
+  async updatePendingPaymentStatus(
+    token: string,
+    status: "pending" | "completed" | "failed" | "expired",
+    hypTransactionId?: string
+  ): Promise<PendingPayment> {
+    const db = await this.getDatabase();
+    const [record] = await db
+      .update(pendingPayments)
+      .set({ status, ...(hypTransactionId ? { hypTransactionId } : {}) })
+      .where(eq(pendingPayments.token, token))
+      .returning();
+    return record;
+  }
+
+  async deleteExpiredPendingPayments(): Promise<void> {
+    const db = await this.getDatabase();
+    await db
+      .delete(pendingPayments)
+      .where(
+        and(
+          eq(pendingPayments.status, "pending"),
+          sql`${pendingPayments.expiresAt} < NOW()`
+        )
+      );
   }
 }
 

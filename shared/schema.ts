@@ -525,6 +525,13 @@ export const storeSettings = pgTable("store_settings", {
   giftProductQuantity: decimal("gift_product_quantity", { precision: 10, scale: 2 }).default("1"),
   giftMinOrderAmount: decimal("gift_min_order_amount", { precision: 10, scale: 2 }).default("300"),
 
+  // Online payment provider settings
+  paymentProvider: varchar("payment_provider", { length: 20 }).default("none"), // "none" | "hyp"
+  hypMasof: varchar("hyp_masof", { length: 50 }), // HYP terminal number
+  hypSignature: varchar("hyp_signature", { length: 255 }), // HYP HMAC secret key
+  hypPassP: varchar("hyp_pass_p", { length: 255 }), // HYP remote password
+  hypTestMode: boolean("hyp_test_mode").default(true), // true = test, false = production
+
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
@@ -786,6 +793,19 @@ export const productVolumeDiscounts = pgTable("product_volume_discounts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Pending payments table — temporary orders awaiting online payment confirmation
+export const pendingPayments = pgTable("pending_payments", {
+  id: serial("id").primaryKey(),
+  token: varchar("token", { length: 128 }).notNull().unique(), // UUID used in HYP callback
+  orderData: jsonb("order_data").notNull(), // Full order snapshot (InsertOrder)
+  orderItems: jsonb("order_items").notNull(), // Cart items snapshot
+  userId: varchar("user_id").references(() => users.id), // null for guests
+  status: varchar("status", { enum: ["pending", "completed", "failed", "expired"] }).default("pending").notNull(),
+  hypTransactionId: varchar("hyp_transaction_id", { length: 255 }), // Transaction ID returned by HYP
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(), // Auto-expire after 3 hours
+});
+
 // Closed dates table (holidays and special closures)
 export const closedDates = pgTable("closed_dates", {
   id: serial("id").primaryKey(),
@@ -1039,12 +1059,19 @@ export const insertProductBranchAvailabilitySchema = createInsertSchema(productB
   updatedAt: true,
 });
 
+export const insertPendingPaymentSchema = createInsertSchema(pendingPayments).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type Coupon = typeof coupons.$inferSelect;
 export type InsertCoupon = z.infer<typeof insertCouponSchema>;
 export type CouponUse = typeof couponUses.$inferSelect;
 export type ProductVolumeDiscount = typeof productVolumeDiscounts.$inferSelect;
 export type InsertProductVolumeDiscount = z.infer<typeof insertProductVolumeDiscountSchema>;
+export type PendingPayment = typeof pendingPayments.$inferSelect;
+export type InsertPendingPayment = z.infer<typeof insertPendingPaymentSchema>;
 
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;

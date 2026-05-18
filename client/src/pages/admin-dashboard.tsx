@@ -8627,6 +8627,13 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [giftProductSearch, setGiftProductSearch] = useState('');
   const [giftProductPickerOpen, setGiftProductPickerOpen] = useState(false);
 
+  // HYP online payment settings
+  const [paymentProvider, setPaymentProvider] = useState('none');
+  const [hypMasof, setHypMasof] = useState('');
+  const [hypSignature, setHypSignature] = useState('');
+  const [hypPassP, setHypPassP] = useState('');
+  const [hypTestMode, setHypTestMode] = useState(true);
+
   useEffect(() => {
     if (settings) {
       setLoyaltyEnabled(settings.loyaltyDiscountEnabled || false);
@@ -8635,6 +8642,11 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
+      setPaymentProvider(settings.paymentProvider || 'none');
+      setHypMasof(settings.hypMasof || '');
+      setHypSignature(settings.hypSignature || '');
+      setHypPassP(settings.hypPassP || '');
+      setHypTestMode(settings.hypTestMode !== false);
     }
   }, [settings]);
 
@@ -10914,6 +10926,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         { name: "Банковской картой", id: 2 },
         { name: "Банковский перевод", id: 3 }
       ],
+      paymentProvider: storeSettings?.paymentProvider || 'none',
+      hypMasof: storeSettings?.hypMasof || '',
+      hypSignature: storeSettings?.hypSignature || '',
+      hypPassP: storeSettings?.hypPassP || '',
+      hypTestMode: storeSettings?.hypTestMode !== false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11221,6 +11238,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           ...preservedData, 
           ...multilingualUpdates,
           paymentMethods: processedPaymentMethods,
+          paymentProvider: data.paymentProvider,
+          hypMasof: data.hypMasof || null,
+          hypSignature: data.hypSignature || null,
+          hypPassP: data.hypPassP || null,
+          hypTestMode: data.hypTestMode,
           // Include email notification settings directly (they're not multilingual)
           emailNotificationsEnabled: data.emailNotificationsEnabled,
           orderNotificationEmail: data.orderNotificationEmail,
@@ -12554,6 +12576,116 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           </CollapsibleContent>
         </Collapsible>
 
+        {/* Online Payment Provider (HYP) */}
+        <div className="space-y-4 pt-2">
+          <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
+            {isRTL ? (
+              <>
+                <h3 className="text-lg font-semibold flex-1 text-right">
+                  {currentLanguage === 'ru' ? 'Онлайн-оплата' : currentLanguage === 'he' ? 'תשלום מקוון' : currentLanguage === 'ar' ? 'الدفع الإلكتروني' : 'Online Payment'}
+                </h3>
+                <CreditCard className="h-5 w-5 text-primary" />
+              </>
+            ) : (
+              <>
+                <CreditCard className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-semibold flex-1 text-left">
+                  {currentLanguage === 'ru' ? 'Онлайн-оплата' : currentLanguage === 'he' ? 'תשלום מקוון' : currentLanguage === 'ar' ? 'الدفع الإلكتروني' : 'Online Payment'}
+                </h3>
+              </>
+            )}
+          </div>
+
+          <FormField
+            control={form.control}
+            name="paymentProvider"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {currentLanguage === 'ru' ? 'Провайдер' : currentLanguage === 'he' ? 'ספק תשלום' : currentLanguage === 'ar' ? 'مزود الدفع' : 'Provider'}
+                </FormLabel>
+                <Select value={field.value || 'none'} onValueChange={field.onChange}>
+                  <SelectTrigger className="text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{currentLanguage === 'ru' ? 'Отключено' : currentLanguage === 'he' ? 'מושבת' : currentLanguage === 'ar' ? 'معطل' : 'None'}</SelectItem>
+                    <SelectItem value="hyp">HYP</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+
+          {form.watch('paymentProvider') === 'hyp' && (
+            <div className="space-y-3 p-4 border rounded-lg bg-blue-50/50">
+              <FormField
+                control={form.control}
+                name="hypMasof"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      Masof ({currentLanguage === 'ru' ? 'номер терминала' : currentLanguage === 'he' ? 'מספר מסוף' : currentLanguage === 'ar' ? 'رقم الطرف' : 'terminal number'})
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="1234567" className="text-sm" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="hypPassP"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      PassP ({currentLanguage === 'ru' ? 'удалённый пароль' : currentLanguage === 'he' ? 'סיסמת Remote' : currentLanguage === 'ar' ? 'كلمة مرور Remote' : 'remote password'})
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="hypSignature"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      Signature ({currentLanguage === 'ru' ? 'секретный ключ HMAC' : currentLanguage === 'he' ? 'מפתח חתימה HMAC' : currentLanguage === 'ar' ? 'مفتاح HMAC' : 'HMAC secret key'})
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="hypTestMode"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-3">
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                    <FormLabel className="text-sm font-normal cursor-pointer">
+                      {currentLanguage === 'ru' ? 'Тестовый режим (sandbox)' : currentLanguage === 'he' ? 'מצב בדיקה (sandbox)' : currentLanguage === 'ar' ? 'وضع الاختبار' : 'Test mode (sandbox)'}
+                    </FormLabel>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
+        </div>
 
         {/* {adminT('storeSettings.trackingCode')} */}
         <Collapsible open={isTrackingCodeOpen} onOpenChange={setIsTrackingCodeOpen} className="space-y-6">

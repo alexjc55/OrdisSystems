@@ -452,7 +452,8 @@
     "emailInvalidTitle": "מייל לא תקין",
     "emailInvalidDescription": "אנא הזן כתובת מייל תקינה.",
     "emailSentSuccessTitle": "מייל נשלח בהצלחה!",
-    "emailSentSuccessDescription": "שלחנו את פרטי ההזמנה שלך לכתובת המייל שצוינה. בדוק את התיבה (כולל תיקיית 'ספאם')."
+    "emailSentSuccessDescription": "שלחנו את פרטי ההזמנה שלך לכתובת המייל שצוינה. בדוק את התיבה (כולל תיקיית 'ספאם').",
+    "paymentSuccess": "התשלום התקבל — ההזמנה נוצרה בהצלחה"
   },
   "validation": {
     "firstNameMinLength": "שם פרטי חייב להכיל לפחות 2 תווים",

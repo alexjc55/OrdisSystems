@@ -537,6 +537,18 @@ export default function Checkout() {
   const [selectedRegisterPaymentMethod, setSelectedRegisterPaymentMethod] = useState("");
 
   // Auto-select payment method when there is exactly one enabled option
+  // Show toast if redirected back from HYP with payment failure
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "failed") {
+      toast({ title: tShop('checkout.paymentFailed'), variant: "destructive" });
+      // Remove param from URL without reloading
+      const url = new URL(window.location.href);
+      url.searchParams.delete("payment");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, []);
+
   useEffect(() => {
     if (!storeSettings?.paymentMethods || !Array.isArray(storeSettings.paymentMethods)) return;
     const enabled = storeSettings.paymentMethods.filter((m: any) => m.enabled !== false);
@@ -762,6 +774,30 @@ export default function Checkout() {
         ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
       };
       
+      if ((data as any)._useHyp) {
+        const hypResult = await apiRequest("POST", "/api/payment/hyp/initiate", {
+          items: regOrderPayload.items,
+          totalAmount: regOrderPayload.totalAmount,
+          orderData: {
+            userId: newUser.id,
+            deliveryAddress: regOrderPayload.deliveryAddress,
+            deliveryDate: regOrderPayload.deliveryDate,
+            deliveryTime: regOrderPayload.deliveryTime,
+            deliveryFee: regOrderPayload.deliveryFee,
+            status: "pending",
+            customerPhone: regOrderPayload.customerPhone,
+            ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
+            ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+            ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
+          },
+          userId: newUser.id,
+          language: currentLanguage,
+          branchId: branchesEnabled && selectedBranchId ? selectedBranchId : null,
+        });
+        window.location.href = hypResult.redirectUrl;
+        throw new Error("HYP_REDIRECT");
+      }
+
       return await apiRequest("POST", "/api/orders", regOrderPayload);
     },
     onSuccess: (order) => {
@@ -784,6 +820,8 @@ export default function Checkout() {
       if (error?.message === 'coupon_invalid') {
         setAppliedCoupon(null);
         toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
+      } else if (error?.message === 'HYP_REDIRECT') {
+        // ignore — browser is redirecting to HYP payment page
       } else {
         toast({ title: "Ошибка", description: error.message, variant: "destructive" });
       }
@@ -887,6 +925,29 @@ export default function Checkout() {
       }
     },
   });
+
+  // HYP online payment initiation mutation (shared across all checkout flows)
+  const hypPaymentMutation = useMutation({
+    mutationFn: async (payload: {
+      items: any[];
+      totalAmount: string;
+      orderData: Record<string, any>;
+      userId?: string | null;
+      language: string;
+      branchId?: number | null;
+    }) => {
+      return await apiRequest("POST", "/api/payment/hyp/initiate", payload);
+    },
+    onSuccess: (data: { redirectUrl: string; token: string }) => {
+      // Redirect browser to HYP payment gateway — cart is preserved
+      window.location.href = data.redirectUrl;
+    },
+    onError: (error: any) => {
+      toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
+    },
+  });
+
+  const isOnlinePayment = (method: string) => method === "__online__";
 
   if (items.length === 0) {
     return (
@@ -1370,6 +1431,39 @@ export default function Checkout() {
                     toast({ title: tCommon('validation.deliveryTimeRequired'), variant: "destructive" });
                     return;
                   }
+                  if (isOnlinePayment(paymentMethod)) {
+                    const deliveryFeeAmt = calculateDeliveryFee(
+                      subtotalAfterAllDiscounts,
+                      parseFloat(storeSettings?.deliveryFee || "15.00"),
+                      (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
+                    );
+                    const total = subtotalAfterAllDiscounts + deliveryFeeAmt;
+                    hypPaymentMutation.mutate({
+                      items: items.map(item => ({
+                        productId: item.product.id,
+                        quantity: item.quantity.toString(),
+                        pricePerKg: item.product.pricePerKg || item.product.price,
+                        totalPrice: item.totalPrice.toString()
+                      })),
+                      totalAmount: total.toString(),
+                      orderData: {
+                        userId: user?.id,
+                        deliveryAddress: address,
+                        customerPhone: phone,
+                        deliveryDate,
+                        deliveryTime: selectedTime,
+                        deliveryFee: deliveryFeeAmt.toString(),
+                        status: "pending",
+                        ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
+                        ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+                        ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
+                      },
+                      userId: user?.id || null,
+                      language: currentLanguage,
+                      branchId: branchesEnabled && selectedBranchId ? selectedBranchId : null,
+                    });
+                    return;
+                  }
                   createAuthenticatedOrderMutation.mutate({ address, phone, deliveryDate, deliveryTime: selectedTime, paymentMethod });
                 }}>
                   <div className="space-y-4">
@@ -1496,6 +1590,9 @@ export default function Checkout() {
                               </>
                             )
                           }
+                          {storeSettings?.paymentProvider === 'hyp' && (
+                            <SelectItem value="__online__">{tShop('checkout.paymentOption')}</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     </div>
@@ -1503,9 +1600,12 @@ export default function Checkout() {
                     <Button 
                       type="submit" 
                       className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
-                      disabled={createAuthenticatedOrderMutation.isPending}
+                      disabled={createAuthenticatedOrderMutation.isPending || hypPaymentMutation.isPending}
                     >
-                      {createAuthenticatedOrderMutation.isPending ? tShop('checkout.processing') : tShop('checkout.placeOrder')}
+                      {(createAuthenticatedOrderMutation.isPending || hypPaymentMutation.isPending)
+                        ? (isOnlinePayment(selectedPaymentMethod) ? tShop('checkout.processingPayment') : tShop('checkout.processing'))
+                        : (isOnlinePayment(selectedPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.placeOrder'))
+                      }
                     </Button>
                   </div>
                 </form>
@@ -1555,7 +1655,7 @@ export default function Checkout() {
                     </AlertDescription>
                   </Alert>
 
-                  <form onSubmit={registerForm.handleSubmit((data) => registerAndOrderMutation.mutate(data))}>
+                  <form onSubmit={registerForm.handleSubmit((data) => registerAndOrderMutation.mutate({ ...data, _useHyp: isOnlinePayment(selectedRegisterPaymentMethod) } as any))}>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -1730,6 +1830,9 @@ export default function Checkout() {
                                 </>
                               )
                             }
+                            {storeSettings?.paymentProvider === 'hyp' && (
+                              <SelectItem value="__online__">{tShop('checkout.paymentOption')}</SelectItem>
+                            )}
                           </SelectContent>
                         </Select>
                       </div>
@@ -1737,9 +1840,12 @@ export default function Checkout() {
                       <Button 
                         type="submit" 
                         className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
-                        disabled={registerAndOrderMutation.isPending}
+                        disabled={registerAndOrderMutation.isPending || hypPaymentMutation.isPending}
                       >
-                        {registerAndOrderMutation.isPending ? tShop('checkout.registeringAndProcessing') : tShop('checkout.registerAndPlaceOrder')}
+                        {(registerAndOrderMutation.isPending || hypPaymentMutation.isPending)
+                          ? (isOnlinePayment(selectedRegisterPaymentMethod) ? tShop('checkout.processingPayment') : tShop('checkout.registeringAndProcessing'))
+                          : (isOnlinePayment(selectedRegisterPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.registerAndPlaceOrder'))
+                        }
                       </Button>
                     </div>
                   </form>
@@ -1800,7 +1906,45 @@ export default function Checkout() {
                     </AlertDescription>
                   </Alert>
 
-                  <form onSubmit={guestForm.handleSubmit((data) => createGuestOrderMutation.mutate(data))}>
+                  <form onSubmit={guestForm.handleSubmit(async (data) => {
+                    if (isOnlinePayment(selectedGuestPaymentMethod)) {
+                      const deliveryDate = selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "";
+                      if (!deliveryDate) { toast({ title: tCommon('validation.deliveryDateRequired'), variant: "destructive" }); return; }
+                      if (storeSettings?.deliveryTimeMode !== 'disabled' && !selectedGuestTime) { toast({ title: tCommon('validation.deliveryTimeRequired'), variant: "destructive" }); return; }
+                      const deliveryFeeAmt = calculateDeliveryFee(
+                        subtotalAfterAllDiscounts,
+                        parseFloat(storeSettings?.deliveryFee || "15.00"),
+                        (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
+                      );
+                      const total = subtotalAfterAllDiscounts + deliveryFeeAmt;
+                      hypPaymentMutation.mutate({
+                        items: items.map(item => ({
+                          productId: item.product.id,
+                          quantity: item.quantity.toString(),
+                          pricePerKg: item.product.pricePerKg || item.product.price,
+                          totalPrice: item.totalPrice.toString()
+                        })),
+                        totalAmount: total.toString(),
+                        orderData: {
+                          guestName: `${data.firstName} ${data.lastName}`,
+                          guestEmail: data.email,
+                          guestPhone: data.phone,
+                          deliveryAddress: data.address,
+                          deliveryDate,
+                          deliveryTime: selectedGuestTime,
+                          deliveryFee: deliveryFeeAmt.toString(),
+                          status: "pending",
+                          ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
+                          ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+                        },
+                        userId: null,
+                        language: currentLanguage,
+                        branchId: branchesEnabled && selectedBranchId ? selectedBranchId : null,
+                      });
+                      return;
+                    }
+                    createGuestOrderMutation.mutate(data);
+                  })}>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -1948,6 +2092,9 @@ export default function Checkout() {
                                 </>
                               )
                             }
+                            {storeSettings?.paymentProvider === 'hyp' && (
+                              <SelectItem value="__online__">{tShop('checkout.paymentOption')}</SelectItem>
+                            )}
                           </SelectContent>
                         </Select>
                       </div>
@@ -1955,9 +2102,12 @@ export default function Checkout() {
                       <Button 
                         type="submit" 
                         className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
-                        disabled={createGuestOrderMutation.isPending}
+                        disabled={createGuestOrderMutation.isPending || hypPaymentMutation.isPending}
                       >
-                        {createGuestOrderMutation.isPending ? tShop('checkout.processing') : tShop('checkout.placeOrderAsGuest')}
+                        {(createGuestOrderMutation.isPending || hypPaymentMutation.isPending)
+                          ? (isOnlinePayment(selectedGuestPaymentMethod) ? tShop('checkout.processingPayment') : tShop('checkout.processing'))
+                          : (isOnlinePayment(selectedGuestPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.placeOrderAsGuest'))
+                        }
                       </Button>
                     </div>
                   </form>

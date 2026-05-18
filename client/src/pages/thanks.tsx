@@ -32,6 +32,7 @@ export default function ThanksPage() {
     orderLanguage?: string;
     isGuest?: boolean;
     hasEmail?: boolean;
+    paymentStatus?: string; // "success" | "failed" | undefined
   }>({});
   
   const [email, setEmail] = useState("");
@@ -47,7 +48,8 @@ export default function ThanksPage() {
       claimToken: urlParams.get("claimToken") || undefined,
       orderLanguage: urlParams.get("lang") || currentLanguage,
       isGuest: urlParams.get("guest") === "true",
-      hasEmail: urlParams.get("hasEmail") !== "false" // Default to true, false only if explicitly set
+      hasEmail: urlParams.get("hasEmail") !== "false", // Default to true, false only if explicitly set
+      paymentStatus: urlParams.get("payment") || undefined,
     });
   }, [location, currentLanguage]);
 
@@ -327,6 +329,14 @@ export default function ThanksPage() {
             <Badge variant="secondary" className="text-base px-4 py-2">
               {t('thanks.orderNumber')}: #{orderData.orderId}
             </Badge>
+          )}
+
+          {/* Online payment success banner */}
+          {orderData.paymentStatus === 'success' && (
+            <div className="mt-4 flex items-center justify-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-blue-800 font-medium">
+              <CheckCircle className="w-5 h-5 text-blue-600 shrink-0" />
+              <span>{t('thanks.paymentSuccess')}</span>
+            </div>
           )}
         </div>
 

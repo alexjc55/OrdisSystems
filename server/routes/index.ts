@@ -22,6 +22,7 @@ import translationsRoutes from "./integrations/translations.routes";
 import barcodeRoutes from "./integrations/barcode.routes";
 import loyaltyRoutes from "./loyalty.routes";
 import adminCouponsRoutes from "./admin/coupons.routes";
+import paymentRoutes, { cleanupExpiredPendingPayments } from "./payment.routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use((req, res, next) => {
@@ -108,6 +109,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", barcodeRoutes);
   app.use("/api", loyaltyRoutes);
   app.use("/api", adminCouponsRoutes);
+  app.use("/api", paymentRoutes);
+
+  // Clean up expired pending payments on startup (non-blocking)
+  cleanupExpiredPendingPayments().catch(console.error);
 
   const httpServer = createServer(app);
   return httpServer;

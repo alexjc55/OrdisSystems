@@ -472,7 +472,8 @@
     "emailInvalidTitle": "Неверный email",
     "emailInvalidDescription": "Пожалуйста, введите корректный email адрес.",
     "emailSentSuccessTitle": "Email успешно отправлен!",
-    "emailSentSuccessDescription": "Мы отправили детали вашего заказа на указанный email адрес. Проверьте почту (включая папку \"Спам\")."
+    "emailSentSuccessDescription": "Мы отправили детали вашего заказа на указанный email адрес. Проверьте почту (включая папку \"Спам\").",
+    "paymentSuccess": "Оплата прошла успешно — заказ сформирован"
   },
   "validation": {
     "firstNameMinLength": "Имя должно содержать минимум 2 символа",
