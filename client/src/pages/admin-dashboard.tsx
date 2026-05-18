@@ -8995,7 +8995,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
             <div className={isRTL ? 'text-right' : 'text-left'}>
               <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Tag className="h-5 w-5" />
@@ -9005,7 +9005,7 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
                 {t('Управление промо-кодами и скидочными купонами', 'Manage promo codes and discount coupons', 'ניהול קודי פרומו וקופוני הנחה', 'إدارة رموز الترويج وقسائم الخصم')}
               </CardDescription>
             </div>
-            <Button onClick={openCreate} className="flex items-center gap-2">
+            <Button onClick={openCreate} className={`flex items-center gap-2 w-full sm:w-auto ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Plus className="h-4 w-4" />
               {t('Создать купон', 'Create coupon', 'צור קופון', 'إنشاء قسيمة')}
             </Button>
