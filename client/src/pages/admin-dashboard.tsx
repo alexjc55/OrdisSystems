@@ -9403,9 +9403,9 @@ function CouponsTab({ isRTL, currentLanguage }: { isRTL: boolean; currentLanguag
               <label className="text-sm">{t('Активен', 'Active', 'פעיל', 'نشط')}</label>
             </div>
           </div>
-          <DialogFooter className="flex-shrink-0 pt-2 border-t">
-            <Button variant="outline" onClick={resetForm}>{t('Отмена', 'Cancel', 'ביטול', 'إلغاء')}</Button>
-            <Button onClick={handleSave} disabled={saveMutation.isPending || !form.code.trim() || !String(form.discountValue || '').trim()}>
+          <DialogFooter className="flex-shrink-0 pt-4 border-t flex flex-col-reverse sm:flex-row gap-3 sm:gap-2">
+            <Button variant="outline" className="w-full sm:w-auto" onClick={resetForm}>{t('Отмена', 'Cancel', 'ביטול', 'إلغاء')}</Button>
+            <Button className="w-full sm:w-auto" onClick={handleSave} disabled={saveMutation.isPending || !form.code.trim() || !String(form.discountValue || '').trim()}>
               {saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
               {editingCoupon ? t('Сохранить', 'Save', 'שמור', 'حفظ') : t('Создать', 'Create', 'צור', 'إنشاء')}
             </Button>
