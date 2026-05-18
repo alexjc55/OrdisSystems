@@ -12623,16 +12623,36 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           />
 
           {watchedPaymentProvider === 'hyp' && (
-            <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
-              <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
-                {currentLanguage === 'ru'
-                  ? 'Реквизиты доступны в личном кабинете HYP (pay.hyp.co.il) после регистрации как продавец.'
-                  : currentLanguage === 'he'
-                  ? 'הפרטים זמינים בחשבון הסוחר של HYP (pay.hyp.co.il) לאחר הרשמה כסוחר.'
-                  : currentLanguage === 'ar'
-                  ? 'البيانات متاحة في حساب التاجر على HYP (pay.hyp.co.il) بعد التسجيل كتاجر.'
-                  : 'Credentials are available in your HYP merchant account (pay.hyp.co.il) after registering as a merchant.'}
-              </p>
+            <div className="border rounded-xl overflow-hidden shadow-sm">
+              {/* HYP branded header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-violet-600 to-purple-500">
+                <img
+                  src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
+                  alt="HYP"
+                  className="h-7 brightness-0 invert"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+                <a
+                  href="https://pay.hyp.co.il/p/?action=login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-white/80 hover:text-white underline underline-offset-2 transition-colors"
+                >
+                  {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
+                </a>
+              </div>
+
+              {/* Fields */}
+              <div className="space-y-4 p-4 bg-white">
+                <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {currentLanguage === 'ru'
+                    ? 'Реквизиты доступны в личном кабинете HYP после регистрации как продавец.'
+                    : currentLanguage === 'he'
+                    ? 'הפרטים זמינים בחשבון הסוחר של HYP לאחר הרשמה כסוחר.'
+                    : currentLanguage === 'ar'
+                    ? 'البيانات متاحة في حساب التاجر على HYP بعد التسجيل كتاجر.'
+                    : 'Credentials are available in your HYP merchant account after registering as a merchant.'}
+                </p>
 
               <FormField
                 control={form.control}
@@ -12724,6 +12744,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   </FormItem>
                 )}
               />
+              </div>
             </div>
           )}
         </div>
