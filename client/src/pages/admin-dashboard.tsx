@@ -12636,7 +12636,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   href="https://pay.hyp.co.il/p/?action=login"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-white/80 hover:text-white underline underline-offset-2 transition-colors"
+                  className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
+                  style={{ color: '#ffffff' }}
                 >
                   {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
                 </a>
