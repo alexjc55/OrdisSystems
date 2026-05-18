@@ -813,9 +813,9 @@ export default function Home() {
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                       >
                         <UTMLink
-                          href="/"
-                          onClick={() => handleCategorySelect(null)}
-                          className={`${pillBase} ${pillSize} ${selectedCategoryId === null ? pillActive : pillInactive}`}
+                          href="/all-products"
+                          onClick={() => handleCategorySelect(0)}
+                          className={`${pillBase} ${pillSize} ${selectedCategoryId === null || selectedCategoryId === 0 ? pillActive : pillInactive}`}
                           style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' }}
                         >
                           <LayoutGrid className="w-7 h-7 flex-shrink-0 mt-0.5" />
