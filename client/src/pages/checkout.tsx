@@ -1590,7 +1590,7 @@ export default function Checkout() {
                               </>
                             )
                           }
-                          {storeSettings?.paymentProvider === 'hyp' && (
+                          {storeSettings?.paymentProvider === 'hyp' && storeSettings?.hypMasof && (
                             <SelectItem value="__online__">{tShop('checkout.paymentOption')}</SelectItem>
                           )}
                         </SelectContent>
@@ -1830,7 +1830,7 @@ export default function Checkout() {
                                 </>
                               )
                             }
-                            {storeSettings?.paymentProvider === 'hyp' && (
+                            {storeSettings?.paymentProvider === 'hyp' && storeSettings?.hypMasof && (
                               <SelectItem value="__online__">{tShop('checkout.paymentOption')}</SelectItem>
                             )}
                           </SelectContent>
@@ -2092,7 +2092,7 @@ export default function Checkout() {
                                 </>
                               )
                             }
-                            {storeSettings?.paymentProvider === 'hyp' && (
+                            {storeSettings?.paymentProvider === 'hyp' && storeSettings?.hypMasof && (
                               <SelectItem value="__online__">{tShop('checkout.paymentOption')}</SelectItem>
                             )}
                           </SelectContent>
