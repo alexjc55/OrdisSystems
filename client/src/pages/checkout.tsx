@@ -77,10 +77,7 @@ function HypPaymentBadges() {
       <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
 
       {/* VISA */}
-      <svg width="42" height="18" viewBox="0 0 42 18" aria-label="Visa">
-        <text x="1" y="15" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic"
-          fontSize="17" fill="#9ca3af">VISA</text>
-      </svg>
+      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 17, color: '#9ca3af', letterSpacing: 1, lineHeight: 1, userSelect: 'none' }}>VISA</span>
 
       {/* Mastercard */}
       <svg width="32" height="20" viewBox="0 0 38 24" aria-label="Mastercard">
@@ -90,18 +87,12 @@ function HypPaymentBadges() {
       </svg>
 
       {/* Amex */}
-      <svg width="40" height="18" viewBox="0 0 46 18" aria-label="American Express">
-        <text x="0" y="14" fontFamily="Arial, sans-serif" fontWeight="800"
-          fontSize="13" fill="#9ca3af" letterSpacing="0.5">AMEX</text>
-      </svg>
+      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 13, color: '#9ca3af', letterSpacing: '0.5px', lineHeight: 1, userSelect: 'none' }}>AMEX</span>
 
       {/* PayPal */}
-      <svg width="46" height="18" viewBox="0 0 46 18" aria-label="PayPal">
-        <text x="0" y="13" fontFamily="Arial, sans-serif" fontWeight="900"
-          fontSize="11" fill="#6b7280">Pay</text>
-        <text x="22" y="13" fontFamily="Arial, sans-serif" fontWeight="900"
-          fontSize="11" fill="#9ca3af">Pal</text>
-      </svg>
+      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 13, lineHeight: 1, userSelect: 'none' }}>
+        <span style={{ color: '#6b7280' }}>Pay</span><span style={{ color: '#9ca3af' }}>Pal</span>
+      </span>
     </div>
   );
 }
