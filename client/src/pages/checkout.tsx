@@ -95,10 +95,12 @@ function HypPaymentBadges() {
           fontSize="13" fill="#9ca3af" letterSpacing="0.5">AMEX</text>
       </svg>
 
-      {/* Isracard */}
-      <svg width="52" height="18" viewBox="0 0 58 18" aria-label="ישראכרט">
-        <text x="0" y="14" fontFamily="Arial, sans-serif" fontWeight="700"
-          fontSize="12" fill="#9ca3af">ישראכרט</text>
+      {/* PayPal */}
+      <svg width="46" height="18" viewBox="0 0 46 18" aria-label="PayPal">
+        <text x="0" y="13" fontFamily="Arial, sans-serif" fontWeight="900"
+          fontSize="11" fill="#6b7280">Pay</text>
+        <text x="22" y="13" fontFamily="Arial, sans-serif" fontWeight="900"
+          fontSize="11" fill="#9ca3af">Pal</text>
       </svg>
     </div>
   );
