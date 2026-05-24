@@ -12884,6 +12884,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
               />
               </div>
             </div>
+            </>
           )}
         </div>
 
