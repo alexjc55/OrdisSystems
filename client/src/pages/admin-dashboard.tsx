@@ -12759,38 +12759,38 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   className="h-7 brightness-0 invert"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
-                <div className="flex items-center gap-3">
-                  <a
-                    href="https://pay.hyp.co.il/p/?action=login"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
-                    style={{ color: '#ffffff' }}
-                  >
-                    {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setShowHypHelp(true)}
-                    className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 transition-colors flex items-center justify-center text-white text-xs font-bold leading-none"
-                    title={currentLanguage === 'ru' ? 'Инструкция по подключению' : currentLanguage === 'he' ? 'הוראות חיבור' : currentLanguage === 'ar' ? 'تعليمات الربط' : 'Setup guide'}
-                  >
-                    ?
-                  </button>
-                </div>
+                <a
+                  href="https://pay.hyp.co.il/p/?action=login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
+                  style={{ color: '#ffffff' }}
+                >
+                  {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
+                </a>
               </div>
 
               {/* Fields */}
               <div className="space-y-4 p-4 bg-white">
-                <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
-                  {currentLanguage === 'ru'
-                    ? 'Реквизиты доступны в личном кабинете HYP после регистрации как продавец.'
-                    : currentLanguage === 'he'
-                    ? 'הפרטים זמינים בחשבון הסוחר של HYP לאחר הרשמה כסוחר.'
-                    : currentLanguage === 'ar'
-                    ? 'البيانات متاحة في حساب التاجر على HYP بعد التسجيل كتاجر.'
-                    : 'Credentials are available in your HYP merchant account after registering as a merchant.'}
-                </p>
+                <div className={`flex flex-col gap-2 ${isRTL ? 'items-end' : 'items-start'}`}>
+                  <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {currentLanguage === 'ru'
+                      ? 'Реквизиты доступны в личном кабинете HYP после регистрации как продавец.'
+                      : currentLanguage === 'he'
+                      ? 'הפרטים זמינים בחשבון הסוחר של HYP לאחר הרשמה כסוחר.'
+                      : currentLanguage === 'ar'
+                      ? 'البيانات متاحة في حساب التاجر على HYP بعد التسجيل كتاجر.'
+                      : 'Credentials are available in your HYP merchant account after registering as a merchant.'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowHypHelp(true)}
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-md px-3 py-1.5 transition-colors"
+                  >
+                    <span>📋</span>
+                    {currentLanguage === 'ru' ? 'Инструкция: как получить ключи HYP' : currentLanguage === 'he' ? 'הוראות: כיצד לקבל מפתחות HYP' : currentLanguage === 'ar' ? 'تعليمات: كيفية الحصول على مفاتيح HYP' : 'Guide: how to get HYP keys'}
+                  </button>
+                </div>
 
               <FormField
                 control={form.control}
