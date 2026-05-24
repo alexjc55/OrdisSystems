@@ -77,8 +77,8 @@ function HypPaymentBadges() {
       <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
 
       {/* VISA */}
-      <svg width="34" height="18" viewBox="0 0 34 18" aria-label="Visa">
-        <text x="0" y="15" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic"
+      <svg width="42" height="18" viewBox="0 0 42 18" aria-label="Visa">
+        <text x="1" y="15" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic"
           fontSize="17" fill="#9ca3af">VISA</text>
       </svg>
 
