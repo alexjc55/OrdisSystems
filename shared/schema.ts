@@ -528,7 +528,8 @@ export const storeSettings = pgTable("store_settings", {
   // Online payment provider settings
   paymentProvider: varchar("payment_provider", { length: 20 }).default("none"), // "none" | "hyp"
   hypMasof: varchar("hyp_masof", { length: 50 }), // HYP terminal number
-  hypSignature: varchar("hyp_signature", { length: 255 }), // HYP HMAC secret key
+  hypSignature: varchar("hyp_signature", { length: 255 }), // HYP HMAC secret key (legacy, kept for compat)
+  hypKey: varchar("hyp_key", { length: 255 }), // HYP API Key (KEY param, required for new /pay API)
   hypPassP: varchar("hyp_pass_p", { length: 255 }), // HYP remote password
   hypTestMode: boolean("hyp_test_mode").default(true), // true = test, false = production
 

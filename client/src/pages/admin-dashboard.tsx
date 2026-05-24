@@ -8630,7 +8630,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   // HYP online payment settings
   const [paymentProvider, setPaymentProvider] = useState('none');
   const [hypMasof, setHypMasof] = useState('');
-  const [hypSignature, setHypSignature] = useState('');
+  const [hypKey, setHypKey] = useState('');
   const [hypPassP, setHypPassP] = useState('');
   const [hypTestMode, setHypTestMode] = useState(true);
 
@@ -8644,7 +8644,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
       setPaymentProvider(settings.paymentProvider || 'none');
       setHypMasof(settings.hypMasof || '');
-      setHypSignature(settings.hypSignature || '');
+      setHypKey((settings as any).hypKey || '');
       setHypPassP(settings.hypPassP || '');
       setHypTestMode(settings.hypTestMode !== false);
     }
@@ -10928,7 +10928,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       ],
       paymentProvider: storeSettings?.paymentProvider || 'none',
       hypMasof: storeSettings?.hypMasof || '',
-      hypSignature: storeSettings?.hypSignature || '',
+      hypKey: (storeSettings as any)?.hypKey || '',
       hypPassP: storeSettings?.hypPassP || '',
       hypTestMode: storeSettings?.hypTestMode !== false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
@@ -11111,7 +11111,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         mobileQuickButtons: (storeSettings as any)?.mobileQuickButtons || [],
         paymentProvider: storeSettings?.paymentProvider || 'none',
         hypMasof: storeSettings?.hypMasof || '',
-        hypSignature: storeSettings?.hypSignature || '',
+        hypKey: (storeSettings as any)?.hypKey || '',
         hypPassP: storeSettings?.hypPassP || '',
         hypTestMode: storeSettings?.hypTestMode !== false,
       } as any);
@@ -11247,7 +11247,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           paymentMethods: processedPaymentMethods,
           paymentProvider: data.paymentProvider,
           hypMasof: data.hypMasof || null,
-          hypSignature: data.hypSignature || null,
+          hypKey: data.hypKey || null,
           hypPassP: data.hypPassP || null,
           hypTestMode: data.hypTestMode,
           // Include email notification settings directly (they're not multilingual)
@@ -12707,23 +12707,23 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
 
               <FormField
                 control={form.control}
-                name="hypSignature"
+                name="hypKey"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
-                      Signature ({currentLanguage === 'ru' ? 'секретный ключ HMAC' : currentLanguage === 'he' ? 'מפתח חתימה HMAC' : currentLanguage === 'ar' ? 'مفتاح HMAC' : 'HMAC secret key'})
+                      KEY ({currentLanguage === 'ru' ? 'API-ключ' : currentLanguage === 'he' ? 'מפתח API' : currentLanguage === 'ar' ? 'مفتاح API' : 'API key'})
                     </FormLabel>
                     <FormControl>
                       <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
                     </FormControl>
                     <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
                       {currentLanguage === 'ru'
-                        ? 'Секретный ключ для подписи запросов (HMAC-SHA256). Находится в разделе «Безопасность» → «Signature Key» панели управления HYP.'
+                        ? 'API-ключ для подписи платёжных запросов. Находится в разделе «Безопасность» → «API Key» панели управления HYP.'
                         : currentLanguage === 'he'
-                        ? 'מפתח סודי לחתימת בקשות (HMAC-SHA256). נמצא בקטע "אבטחה" ← "Signature Key" בלוח הבקרה של HYP.'
+                        ? 'מפתח API לחתימת בקשות תשלום. נמצא בקטע "אבטחה" ← "API Key" בלוח הבקרה של HYP.'
                         : currentLanguage === 'ar'
-                        ? 'المفتاح السري لتوقيع الطلبات (HMAC-SHA256). موجود في قسم "الأمان" ← "Signature Key" في لوحة تحكم HYP.'
-                        : 'Secret key for signing requests (HMAC-SHA256). Found in the "Security" → "Signature Key" section of the HYP control panel.'}
+                        ? 'مفتاح API لتوقيع طلبات الدفع. موجود في قسم "الأمان" ← "API Key" في لوحة تحكم HYP.'
+                        : 'API key for signing payment requests. Found in the "Security" → "API Key" section of the HYP control panel.'}
                     </FormDescription>
                     <FormMessage className="text-xs" />
                   </FormItem>

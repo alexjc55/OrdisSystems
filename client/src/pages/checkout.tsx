@@ -35,6 +35,37 @@ import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { triggerPushRequestAfterAction } from "@/lib/prompt-utils";
 
+function HypPaymentBadges() {
+  return (
+    <div className="flex items-center justify-center gap-1.5 mt-3 flex-wrap">
+      <div className="h-7 px-2.5 bg-[#1A1F71] rounded-md flex items-center justify-center">
+        <span className="text-white font-bold italic text-sm tracking-wider select-none">VISA</span>
+      </div>
+      <div className="h-7 w-12 bg-white border border-gray-200 rounded-md flex items-center justify-center">
+        <svg viewBox="0 0 38 24" className="w-9 h-6" aria-label="Mastercard">
+          <circle cx="15" cy="12" r="7" fill="#EB001B" />
+          <circle cx="23" cy="12" r="7" fill="#F79E1B" />
+          <path d="M19 6.54a7 7 0 0 1 0 10.92A7 7 0 0 1 19 6.54z" fill="#FF5F00" />
+        </svg>
+      </div>
+      <div className="h-7 px-2.5 bg-[#006FCF] rounded-md flex items-center justify-center">
+        <span className="text-white font-bold text-xs tracking-widest select-none">AMEX</span>
+      </div>
+      <div className="h-7 px-2.5 bg-orange-500 rounded-md flex items-center justify-center">
+        <span className="text-white font-bold text-xs select-none">ישראכרט</span>
+      </div>
+      <div className="h-7 px-2.5 bg-violet-600 rounded-md flex items-center justify-center">
+        <img
+          src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
+          alt="HYP"
+          className="h-4 brightness-0 invert"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+        />
+      </div>
+    </div>
+  );
+}
+
 const getDateLocale = (language: string) => {
   switch (language) {
     case 'en': return enUS;
@@ -1669,6 +1700,7 @@ export default function Checkout() {
                         : (isOnlinePayment(selectedPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.placeOrder'))
                       }
                     </Button>
+                    {isOnlinePayment(selectedPaymentMethod) && <HypPaymentBadges />}
                   </div>
                 </form>
               </div>
@@ -1909,6 +1941,7 @@ export default function Checkout() {
                           : (isOnlinePayment(selectedRegisterPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.registerAndPlaceOrder'))
                         }
                       </Button>
+                      {isOnlinePayment(selectedRegisterPaymentMethod) && <HypPaymentBadges />}
                     </div>
                   </form>
                 </TabsContent>
@@ -2171,6 +2204,7 @@ export default function Checkout() {
                           : (isOnlinePayment(selectedGuestPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.placeOrderAsGuest'))
                         }
                       </Button>
+                      {isOnlinePayment(selectedGuestPaymentMethod) && <HypPaymentBadges />}
                     </div>
                   </form>
                 </TabsContent>

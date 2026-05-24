@@ -1,91 +1,87 @@
 import { Router } from "express";
 import { storage } from "../storage";
-import { randomBytes, createHmac } from "crypto";
-import { type InsertOrder, type InsertOrderItem } from "@shared/schema";
 import { randomBytes as rb } from "crypto";
+import { type InsertOrder, type InsertOrderItem } from "@shared/schema";
 import { sendNewOrderEmail, sendGuestOrderEmail } from "../email-service";
 import { BRANCHES_ENABLED } from "../config";
 
 const router = Router();
 
-// ─── HYP URL builder ─────────────────────────────────────────────────────────
+// ─── HYP new /pay API: APISign flow ──────────────────────────────────────────
+// Step 1: server calls HYP APISign endpoint → HYP returns signed params
+// Step 2: redirect user to https://pay.hyp.co.il/p/?{signed-params}
 
-const HYP_GATEWAY = "https://pay.hyp.co.il/p3/";
+const HYP_BASE = "https://pay.hyp.co.il/p/";
 
-interface HypParams {
-  Masof: string;
+interface HypInitParams {
+  KEY: string;
   PassP: string;
-  signature: string; // HMAC secret, used only for signing — not sent as-is
-  Amount: number; // in agorot (ILS cents)
-  Order: string;
-  Info: string;
+  Masof: string;
+  Amount: number; // in agorot (ILS × 100)
+  Order: string;  // our unique token — returned unchanged in callback
   Fild1?: string; // customer name
   Fild2?: string; // customer email
   Fild3?: string; // customer phone
   SuccessUrl: string;
   ErrorUrl: string;
-  NotifyUrl: string;
-  testMode?: boolean;
+  NotifyUrl?: string;
+  PageLang?: string;
 }
 
-function buildHypUrl(params: HypParams): string {
-  const { signature, testMode, ...rest } = params;
-
-  const payload: Record<string, string> = {
-    action: "pay",
-    Masof: rest.Masof,
-    PassP: rest.PassP,
-    Amount: String(rest.Amount),
-    Coin: "376", // ILS
-    Order: rest.Order,
-    Info: rest.Info,
-    Fild1: rest.Fild1 || "",
-    Fild2: rest.Fild2 || "",
-    Fild3: rest.Fild3 || "",
-    SuccessUrl: rest.SuccessUrl,
-    ErrorUrl: rest.ErrorUrl,
-    NotifyUrl: rest.NotifyUrl,
-    PageLang: "HEB",
+async function buildHypPaymentUrl(params: HypInitParams): Promise<string> {
+  const apiSignParams = new URLSearchParams({
+    action: "APISign",
+    What: "SIGN",
+    Sign: "True",
+    KEY: params.KEY,
+    PassP: params.PassP,
+    Masof: params.Masof,
+    Amount: String(params.Amount),
+    Coin: "1",        // ILS (1 in new /pay API)
+    Order: params.Order,
+    Fild1: params.Fild1 || "",
+    Fild2: params.Fild2 || "",
+    Fild3: params.Fild3 || "",
+    SuccessUrl: params.SuccessUrl,
+    ErrorUrl: params.ErrorUrl,
+    PageLang: params.PageLang || "HEB",
     J5: "False",
     sendemail: "False",
-  };
+  });
 
-  if (testMode) {
-    payload.What = "Sale";
-    payload.MoreData = "True";
+  if (params.NotifyUrl) {
+    apiSignParams.set("NotifyUrl", params.NotifyUrl);
   }
 
-  // HMAC-SHA256 signature: sorted key=value pairs joined by &, signed with the HYP signature key
-  const sortedKeys = Object.keys(payload).sort();
-  const signatureBase = sortedKeys.map(k => `${k}=${payload[k]}`).join("&");
-  const hmac = createHmac("sha256", signature).update(signatureBase).digest("hex");
-  payload.signature = hmac;
+  const apiSignUrl = `${HYP_BASE}?${apiSignParams.toString()}`;
 
-  const qs = new URLSearchParams(payload).toString();
-  return `${HYP_GATEWAY}?${qs}`;
+  const response = await fetch(apiSignUrl, { method: "GET" });
+  if (!response.ok) {
+    throw new Error(`HYP APISign request failed: HTTP ${response.status}`);
+  }
+
+  const signedParams = await response.text();
+  if (!signedParams || signedParams.includes("Error") || signedParams.includes("error")) {
+    throw new Error(`HYP APISign returned error: ${signedParams}`);
+  }
+
+  // The entire response is the query string for the payment page redirect
+  return `${HYP_BASE}?${signedParams}`;
 }
 
 // ─── POST /api/payment/hyp/initiate ─────────────────────────────────────────
-// Creates a pending payment record and returns the HYP redirect URL.
-// Cart is NOT cleared — it stays intact until confirmed via webhook.
+// Creates a pending payment record, calls HYP APISign, returns redirect URL.
 router.post("/payment/hyp/initiate", async (req: any, res) => {
   try {
     const settings = await storage.getStoreSettings();
     if (!settings || settings.paymentProvider !== "hyp") {
       return res.status(400).json({ message: "HYP payment provider not configured" });
     }
-    if (!settings.hypMasof || !settings.hypSignature || !settings.hypPassP) {
-      return res.status(400).json({ message: "HYP credentials incomplete" });
+    if (!settings.hypMasof || !settings.hypPassP || !settings.hypKey) {
+      return res.status(400).json({ message: "HYP credentials incomplete (Masof, PassP and API Key required)" });
     }
 
-    const {
-      items,
-      totalAmount,
-      orderData: clientOrderData,
-      userId,
-      language,
-      branchId,
-    } = req.body;
+    const { items, totalAmount, orderData: clientOrderData, userId, language, branchId } = req.body;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Invalid order items" });
@@ -95,7 +91,6 @@ router.post("/payment/hyp/initiate", async (req: any, res) => {
     }
 
     const token = rb(32).toString("hex");
-
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 3);
 
@@ -111,7 +106,7 @@ router.post("/payment/hyp/initiate", async (req: any, res) => {
       ...(parsedBranchId !== undefined ? { branchId: parsedBranchId } : {}),
     };
 
-    const pending = await storage.createPendingPayment({
+    await storage.createPendingPayment({
       token,
       orderData: orderSnapshot as any,
       orderItems: items as any,
@@ -121,7 +116,6 @@ router.post("/payment/hyp/initiate", async (req: any, res) => {
     });
 
     const baseUrl = `${req.protocol}://${req.get("host")}`;
-
     const amountInAgorot = Math.round(parseFloat(String(totalAmount)) * 100);
 
     const customerName =
@@ -133,25 +127,23 @@ router.post("/payment/hyp/initiate", async (req: any, res) => {
     const customerPhone =
       clientOrderData.guestPhone || clientOrderData.customerPhone || clientOrderData.phone || "";
 
-    const storeName = settings.storeName || "eDAHouse";
-
-    const hypUrl = buildHypUrl({
-      Masof: settings.hypMasof,
+    // Token is passed as Order — returned unchanged in callback as req.query.Order
+    const redirectUrl = await buildHypPaymentUrl({
+      KEY: settings.hypKey,
       PassP: settings.hypPassP,
-      signature: settings.hypSignature,
+      Masof: settings.hypMasof,
       Amount: amountInAgorot,
       Order: token,
-      Info: storeName,
       Fild1: customerName,
       Fild2: customerEmail,
       Fild3: customerPhone,
-      SuccessUrl: `${baseUrl}/api/payment/hyp/callback?status=success&token=${token}`,
-      ErrorUrl: `${baseUrl}/api/payment/hyp/callback?status=error&token=${token}`,
+      SuccessUrl: `${baseUrl}/api/payment/hyp/callback`,
+      ErrorUrl: `${baseUrl}/api/payment/hyp/callback?status=error`,
       NotifyUrl: `${baseUrl}/api/payment/hyp/webhook`,
-      testMode: settings.hypTestMode ?? true,
+      PageLang: language === "he" || language === "ar" ? "HEB" : "ENG",
     });
 
-    return res.json({ redirectUrl: hypUrl, token });
+    return res.json({ redirectUrl, token });
   } catch (error) {
     console.error("HYP initiate error:", error);
     return res.status(500).json({ message: "Failed to initiate payment" });
@@ -159,11 +151,21 @@ router.post("/payment/hyp/initiate", async (req: any, res) => {
 });
 
 // ─── GET /api/payment/hyp/callback ───────────────────────────────────────────
-// HYP redirects the browser here after the payment form.
-// For success: finalise the order and redirect to /thanks.
-// For error: redirect to /checkout?payment=failed.
+// HYP redirects browser here after payment.
+// New /pay API callback params: Order (our token), CCode (0=success), Id (transaction ID),
+// Amount, ACode, Fild1/2/3, Sign.
+// Also handles legacy: token in query param, status=error in query param.
 router.get("/payment/hyp/callback", async (req: any, res) => {
-  const { status, token, TransactionId } = req.query as Record<string, string>;
+  const q = req.query as Record<string, string>;
+
+  // Extract token: new API puts it in Order, legacy puts it in ?token=
+  const token = q.Order || q.token;
+
+  // Determine success: new API CCode=0, legacy status=success
+  const isSuccess = q.CCode === "0" || (q.status === "success" && !q.CCode);
+
+  // Transaction ID: new API uses Id, legacy uses TransactionId
+  const transactionId = q.Id || q.TransactionId;
 
   if (!token) {
     return res.redirect("/?payment=error");
@@ -172,14 +174,12 @@ router.get("/payment/hyp/callback", async (req: any, res) => {
   try {
     const pending = await storage.getPendingPaymentByToken(token);
     if (!pending || pending.status === "completed") {
-      // Already processed or not found — just go to thanks
-      return res.redirect(`/thanks?payment=${status === "success" ? "success" : "failed"}`);
+      return res.redirect(`/thanks?payment=${isSuccess ? "success" : "failed"}`);
     }
 
-    if (status === "success") {
-      // Finalize order
-      const orderId = await finalizeOrder(pending, TransactionId);
-      await storage.updatePendingPaymentStatus(token, "completed", TransactionId);
+    if (isSuccess) {
+      const orderId = await finalizeOrder(pending, transactionId);
+      await storage.updatePendingPaymentStatus(token, "completed", transactionId);
       return res.redirect(`/thanks?payment=success&orderId=${orderId}`);
     } else {
       await storage.updatePendingPaymentStatus(token, "failed");
@@ -192,29 +192,30 @@ router.get("/payment/hyp/callback", async (req: any, res) => {
 });
 
 // ─── POST /api/payment/hyp/webhook ───────────────────────────────────────────
-// Server-to-server notification from HYP.
+// Server-to-server notification from HYP (must be enabled via HYP support).
+// New /pay API params: Order (token), CCode (0=success), Id (transaction ID).
+// Webhook activation: call HYP support *6488 ext. 3 or WhatsApp wa.me/972732345000.
 router.post("/payment/hyp/webhook", async (req: any, res) => {
   try {
-    const { Order: token, TransactionId, Status } = req.body;
+    const body = req.body as Record<string, string>;
+    const token = body.Order || body.token;
+    const transactionId = body.Id || body.TransactionId;
+    const isSuccess = body.CCode === "0" || body.Status === "000" || body.Status === "0";
 
-    if (!token) return res.status(400).send("Missing token");
+    if (!token) return res.status(400).send("Missing Order token");
 
     const pending = await storage.getPendingPaymentByToken(token);
     if (!pending) return res.status(404).send("Not found");
 
-    // Idempotent: if already completed ignore duplicate webhook
     if (pending.status === "completed") {
-      return res.send("OK");
+      return res.send("OK"); // idempotent
     }
 
-    if (Status === "000" || Status === "0") {
-      // Success
-      if (pending.status !== "completed") {
-        await finalizeOrder(pending, TransactionId);
-        await storage.updatePendingPaymentStatus(token, "completed", TransactionId);
-      }
+    if (isSuccess) {
+      await finalizeOrder(pending, transactionId);
+      await storage.updatePendingPaymentStatus(token, "completed", transactionId);
     } else {
-      await storage.updatePendingPaymentStatus(token, "failed", TransactionId);
+      await storage.updatePendingPaymentStatus(token, "failed", transactionId);
     }
 
     return res.send("OK");
@@ -225,7 +226,7 @@ router.post("/payment/hyp/webhook", async (req: any, res) => {
 });
 
 // ─── GET /api/payment/pending/:token ─────────────────────────────────────────
-// Client polls this to check payment status (optional, for loading screens).
+// Client polls this to check payment status (iOS PWA recovery mechanism).
 router.get("/payment/pending/:token", async (req: any, res) => {
   const { token } = req.params;
   const pending = await storage.getPendingPaymentByToken(token);
@@ -248,7 +249,6 @@ async function finalizeOrder(
     lastName?: string;
   };
 
-  // Generate guest tokens if this is a guest order
   const isGuest = !pending.userId;
   let extraFields: Partial<InsertOrder> = {};
 
@@ -286,7 +286,6 @@ async function finalizeOrder(
 
   const newOrder = await storage.createOrder(insertOrder, insertItems);
 
-  // Send confirmation email (best-effort)
   try {
     const settings = await storage.getStoreSettings();
     if (isGuest) {
