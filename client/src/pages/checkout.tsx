@@ -37,31 +37,69 @@ import { triggerPushRequestAfterAction } from "@/lib/prompt-utils";
 
 function HypPaymentBadges() {
   return (
-    <div className="flex items-center justify-center gap-1.5 mt-3 flex-wrap">
-      <div className="h-7 px-2.5 bg-[#1A1F71] rounded-md flex items-center justify-center">
-        <span className="text-white font-bold italic text-sm tracking-wider select-none">VISA</span>
-      </div>
-      <div className="h-7 w-12 bg-white border border-gray-200 rounded-md flex items-center justify-center">
-        <svg viewBox="0 0 38 24" className="w-9 h-6" aria-label="Mastercard">
-          <circle cx="15" cy="12" r="7" fill="#EB001B" />
-          <circle cx="23" cy="12" r="7" fill="#F79E1B" />
-          <path d="M19 6.54a7 7 0 0 1 0 10.92A7 7 0 0 1 19 6.54z" fill="#FF5F00" />
+    <div className="flex items-center justify-center gap-2.5 mt-3 flex-wrap">
+      {/* SSL */}
+      <div className="flex items-center gap-1" style={{ color: '#9ca3af' }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', color: '#9ca3af', userSelect: 'none' }}>SSL</span>
       </div>
-      <div className="h-7 px-2.5 bg-[#006FCF] rounded-md flex items-center justify-center">
-        <span className="text-white font-bold text-xs tracking-widest select-none">AMEX</span>
+
+      <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
+
+      {/* PCI DSS */}
+      <div className="flex items-center gap-1">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#9ca3af">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+        </svg>
+        <span style={{ fontSize: 9, fontWeight: 800, color: '#9ca3af', lineHeight: 1.15, userSelect: 'none' }}>PCI<br/>DSS</span>
       </div>
-      <div className="h-7 px-2.5 bg-orange-500 rounded-md flex items-center justify-center">
-        <span className="text-white font-bold text-xs select-none">ישראכרט</span>
-      </div>
-      <div className="h-7 px-2.5 bg-violet-600 rounded-md flex items-center justify-center">
-        <img
-          src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
-          alt="HYP"
-          className="h-4 brightness-0 invert"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-        />
-      </div>
+
+      <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
+
+      {/* HYP */}
+      <img
+        src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
+        alt="HYP"
+        style={{ height: 18, filter: 'grayscale(1) opacity(0.55)' }}
+        onError={(e) => {
+          const el = e.target as HTMLImageElement;
+          el.style.display = 'none';
+          const span = document.createElement('span');
+          span.style.cssText = 'font-size:12px;font-weight:800;color:#9ca3af;letter-spacing:1px;';
+          span.textContent = 'HYP';
+          el.parentNode?.insertBefore(span, el);
+        }}
+      />
+
+      <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
+
+      {/* VISA */}
+      <svg width="34" height="18" viewBox="0 0 34 18" aria-label="Visa">
+        <text x="0" y="15" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic"
+          fontSize="17" fill="#9ca3af">VISA</text>
+      </svg>
+
+      {/* Mastercard */}
+      <svg width="32" height="20" viewBox="0 0 38 24" aria-label="Mastercard">
+        <circle cx="14" cy="12" r="8" fill="#9ca3af" />
+        <circle cx="24" cy="12" r="8" fill="#6b7280" />
+        <path d="M19 5.5a8 8 0 0 1 0 13A8 8 0 0 1 19 5.5z" fill="#d1d5db" />
+      </svg>
+
+      {/* Amex */}
+      <svg width="40" height="18" viewBox="0 0 46 18" aria-label="American Express">
+        <text x="0" y="14" fontFamily="Arial, sans-serif" fontWeight="800"
+          fontSize="13" fill="#9ca3af" letterSpacing="0.5">AMEX</text>
+      </svg>
+
+      {/* Isracard */}
+      <svg width="52" height="18" viewBox="0 0 58 18" aria-label="ישראכרט">
+        <text x="0" y="14" fontFamily="Arial, sans-serif" fontWeight="700"
+          fontSize="12" fill="#9ca3af">ישראכרט</text>
+      </svg>
     </div>
   );
 }
