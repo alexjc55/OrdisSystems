@@ -37,60 +37,60 @@ import { triggerPushRequestAfterAction } from "@/lib/prompt-utils";
 
 function HypPaymentBadges() {
   return (
-    <div className="flex items-center justify-center gap-2.5 mt-3 flex-wrap">
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 10, flexWrap: 'nowrap', overflowX: 'auto', padding: '2px 0' }}>
       {/* SSL */}
-      <div className="flex items-center gap-1" style={{ color: '#9ca3af' }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.05em', color: '#9ca3af', userSelect: 'none' }}>SSL</span>
+        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.05em', color: '#9ca3af', userSelect: 'none', whiteSpace: 'nowrap' }}>SSL</span>
       </div>
 
-      <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
+      <span style={{ color: '#d1d5db', fontSize: 11, flexShrink: 0 }}>|</span>
 
       {/* PCI DSS */}
-      <div className="flex items-center gap-1">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="#9ca3af">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0 }}>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="#9ca3af">
           <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
         </svg>
-        <span style={{ fontSize: 9, fontWeight: 800, color: '#9ca3af', lineHeight: 1.15, userSelect: 'none' }}>PCI<br/>DSS</span>
+        <span style={{ fontSize: 8, fontWeight: 800, color: '#9ca3af', lineHeight: 1.15, userSelect: 'none' }}>PCI<br/>DSS</span>
       </div>
 
-      <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
+      <span style={{ color: '#d1d5db', fontSize: 11, flexShrink: 0 }}>|</span>
 
       {/* HYP */}
       <img
         src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
         alt="HYP"
-        style={{ height: 18, filter: 'grayscale(1) opacity(0.55)' }}
+        style={{ height: 14, filter: 'grayscale(1) opacity(0.55)', flexShrink: 0 }}
         onError={(e) => {
           const el = e.target as HTMLImageElement;
           el.style.display = 'none';
           const span = document.createElement('span');
-          span.style.cssText = 'font-size:12px;font-weight:800;color:#9ca3af;letter-spacing:1px;';
+          span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;white-space:nowrap;';
           span.textContent = 'HYP';
           el.parentNode?.insertBefore(span, el);
         }}
       />
 
-      <span style={{ color: '#d1d5db', fontSize: 14 }}>|</span>
+      <span style={{ color: '#d1d5db', fontSize: 11, flexShrink: 0 }}>|</span>
 
       {/* VISA */}
-      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 17, color: '#9ca3af', letterSpacing: 1, lineHeight: 1, userSelect: 'none' }}>VISA</span>
+      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 14, color: '#9ca3af', letterSpacing: 1, lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>VISA</span>
 
       {/* Mastercard */}
-      <svg width="32" height="20" viewBox="0 0 38 24" aria-label="Mastercard">
+      <svg width="26" height="16" viewBox="0 0 38 24" aria-label="Mastercard" style={{ flexShrink: 0 }}>
         <circle cx="14" cy="12" r="8" fill="#9ca3af" />
         <circle cx="24" cy="12" r="8" fill="#6b7280" />
         <path d="M19 5.5a8 8 0 0 1 0 13A8 8 0 0 1 19 5.5z" fill="#d1d5db" />
       </svg>
 
       {/* Amex */}
-      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 13, color: '#9ca3af', letterSpacing: '0.5px', lineHeight: 1, userSelect: 'none' }}>AMEX</span>
+      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 11, color: '#9ca3af', letterSpacing: '0.5px', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>AMEX</span>
 
       {/* PayPal */}
-      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 13, lineHeight: 1, userSelect: 'none' }}>
+      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 11, lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>
         <span style={{ color: '#6b7280' }}>Pay</span><span style={{ color: '#9ca3af' }}>Pal</span>
       </span>
     </div>
