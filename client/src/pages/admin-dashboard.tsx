@@ -8633,6 +8633,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [hypKey, setHypKey] = useState('');
   const [hypPassP, setHypPassP] = useState('');
   const [hypTestMode, setHypTestMode] = useState(true);
+  const [showHypHelp, setShowHypHelp] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -12623,6 +12624,132 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           />
 
           {watchedPaymentProvider === 'hyp' && (
+            <>
+            {/* HYP Setup Help Modal */}
+            {showHypHelp && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowHypHelp(false)}>
+                <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                  {/* Modal header */}
+                  <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-violet-600 to-purple-500 rounded-t-2xl">
+                    <div className="flex items-center gap-2">
+                      <img src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg" alt="HYP" className="h-6 brightness-0 invert" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      <span className="text-white font-semibold text-sm">
+                        {currentLanguage === 'ru' ? 'Инструкция по подключению' : currentLanguage === 'he' ? 'הוראות חיבור' : currentLanguage === 'ar' ? 'تعليمات الربط' : 'Setup Guide'}
+                      </span>
+                    </div>
+                    <button onClick={() => setShowHypHelp(false)} className="text-white/80 hover:text-white text-xl leading-none">✕</button>
+                  </div>
+
+                  {/* Steps */}
+                  <div className={`px-5 py-4 space-y-5 text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+
+                    {/* Step 1 */}
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">1</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {currentLanguage === 'ru' ? 'Зарегистрируйтесь как продавец' : currentLanguage === 'he' ? 'הירשם כסוחר' : currentLanguage === 'ar' ? 'سجّل كتاجر' : 'Register as a merchant'}
+                        </p>
+                        <p className="text-gray-500 mt-0.5">
+                          {currentLanguage === 'ru' ? 'Перейдите на сайт ' : currentLanguage === 'he' ? 'עבור לאתר ' : currentLanguage === 'ar' ? 'انتقل إلى موقع ' : 'Go to '}
+                          <a href="https://www.hyp.co.il" target="_blank" rel="noopener noreferrer" className="text-violet-600 underline">hyp.co.il</a>
+                          {currentLanguage === 'ru' ? ' и подайте заявку на подключение эквайринга.' : currentLanguage === 'he' ? ' והגש בקשה לחיבור סליקה.' : currentLanguage === 'ar' ? ' وقدّم طلب ربط خدمة الاستقطاع.' : ' and apply for a merchant account.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 2 */}
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">2</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {currentLanguage === 'ru' ? 'Получите Masof (номер терминала)' : currentLanguage === 'he' ? 'קבל את מספר המסוף (Masof)' : currentLanguage === 'ar' ? 'احصل على رقم الطرفية (Masof)' : 'Get your Masof (terminal number)'}
+                        </p>
+                        <p className="text-gray-500 mt-0.5">
+                          {currentLanguage === 'ru'
+                            ? 'Войдите в кабинет по ссылке выше. Перейдите в раздел «Настройки» → «Настройки терминала». Номер терминала (7 цифр) будет указан сверху страницы — это и есть Masof.'
+                            : currentLanguage === 'he'
+                            ? 'היכנס לחשבון דרך הקישור למעלה. עבור ל"הגדרות" ← "הגדרות מסוף". מספר המסוף (7 ספרות) יופיע בראש הדף.'
+                            : currentLanguage === 'ar'
+                            ? 'ادخل للحساب عبر الرابط أعلاه. اذهب إلى "الإعدادات" ← "إعدادات الطرفية". رقم الطرفية (7 أرقام) يظهر في أعلى الصفحة.'
+                            : 'Log in via the link above. Go to "Settings" → "Terminal Settings". The terminal number (7 digits) is shown at the top — this is your Masof.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">3</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {currentLanguage === 'ru' ? 'Установите PassP (удалённый пароль)' : currentLanguage === 'he' ? 'הגדר PassP (סיסמת Remote)' : currentLanguage === 'ar' ? 'اضبط PassP (كلمة مرور Remote)' : 'Set PassP (Remote Password)'}
+                        </p>
+                        <p className="text-gray-500 mt-0.5">
+                          {currentLanguage === 'ru'
+                            ? 'В панели управления: «Безопасность» → «Remote Password». Придумайте пароль и сохраните — он нужен для API-запросов. Это не пароль от входа в кабинет.'
+                            : currentLanguage === 'he'
+                            ? 'בלוח הבקרה: "אבטחה" ← "Remote Password". צור סיסמה ושמור אותה — היא נדרשת לבקשות API. זו אינה סיסמת הכניסה לחשבון.'
+                            : currentLanguage === 'ar'
+                            ? 'في لوحة التحكم: "الأمان" ← "Remote Password". اصنع كلمة مرور واحفظها — تُستخدم لطلبات API. هذه ليست كلمة مرور الدخول للحساب.'
+                            : 'In the control panel: "Security" → "Remote Password". Create a password and save it — it is used for API requests. This is not your login password.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 4 */}
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">4</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {currentLanguage === 'ru' ? 'Скопируйте KEY (API-ключ)' : currentLanguage === 'he' ? 'העתק את KEY (מפתח API)' : currentLanguage === 'ar' ? 'انسخ KEY (مفتاح API)' : 'Copy your KEY (API key)'}
+                        </p>
+                        <p className="text-gray-500 mt-0.5">
+                          {currentLanguage === 'ru'
+                            ? 'В панели управления: «Безопасность» → «API Key». Скопируйте ключ и вставьте в поле KEY выше. Если ключа нет — нажмите «Создать».'
+                            : currentLanguage === 'he'
+                            ? 'בלוח הבקרה: "אבטחה" ← "API Key". העתק את המפתח והדבק בשדה KEY למעלה. אם אין מפתח — לחץ "צור מפתח".'
+                            : currentLanguage === 'ar'
+                            ? 'في لوحة التحكم: "الأمان" ← "API Key". انسخ المفتاح والصقه في حقل KEY أعلاه. إذا لم يكن هناك مفتاح — اضغط "إنشاء مفتاح".'
+                            : 'In the control panel: "Security" → "API Key". Copy the key and paste it into the KEY field above. If there is no key — click "Generate Key".'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step 5 */}
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">5</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {currentLanguage === 'ru' ? 'Активируйте уведомления о платежах (Webhook)' : currentLanguage === 'he' ? 'הפעל התראות תשלום (Webhook)' : currentLanguage === 'ar' ? 'فعّل إشعارات الدفع (Webhook)' : 'Activate payment notifications (Webhook)'}
+                        </p>
+                        <p className="text-gray-500 mt-0.5">
+                          {currentLanguage === 'ru'
+                            ? 'Свяжитесь с поддержкой HYP и попросите активировать «Notify URL» для вашего терминала. Это необходимо чтобы заказы автоматически менялись на «Оплачено». Тел: *6488 доб. 3 или WhatsApp.'
+                            : currentLanguage === 'he'
+                            ? 'פנה לתמיכת HYP ובקש להפעיל "Notify URL" עבור המסוף שלך. זה נחוץ כדי שהזמנות יעודכנו אוטומטית ל"שולם". טל: *6488 שלוחה 3 או WhatsApp.'
+                            : currentLanguage === 'ar'
+                            ? 'تواصل مع دعم HYP واطلب تفعيل "Notify URL" لطرفيتك. هذا ضروري لتحديث الطلبات تلقائياً إلى "مدفوع". هاتف: *6488 داخلي 3 أو واتساب.'
+                            : 'Contact HYP support and ask to activate "Notify URL" for your terminal. This is required for orders to automatically update to "Paid". Tel: *6488 ext. 3 or WhatsApp.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Support link */}
+                    <div className={`pt-1 border-t flex ${isRTL ? 'flex-row-reverse' : ''} items-center justify-between gap-2`}>
+                      <a href="https://pay.hyp.co.il/p/?action=login" target="_blank" rel="noopener noreferrer"
+                        className="text-xs text-violet-600 underline underline-offset-2">
+                        {currentLanguage === 'ru' ? 'Открыть личный кабинет HYP →' : currentLanguage === 'he' ? 'פתח חשבון HYP ←' : currentLanguage === 'ar' ? 'افتح حساب HYP ←' : 'Open HYP merchant portal →'}
+                      </a>
+                      <button onClick={() => setShowHypHelp(false)}
+                        className="text-xs px-3 py-1.5 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors">
+                        {currentLanguage === 'ru' ? 'Понятно' : currentLanguage === 'he' ? 'הבנתי' : currentLanguage === 'ar' ? 'فهمت' : 'Got it'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="border rounded-xl overflow-hidden shadow-sm">
               {/* HYP branded header */}
               <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-violet-600 to-purple-500">
@@ -12632,15 +12759,25 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   className="h-7 brightness-0 invert"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
-                <a
-                  href="https://pay.hyp.co.il/p/?action=login"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
-                  style={{ color: '#ffffff' }}
-                >
-                  {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
-                </a>
+                <div className="flex items-center gap-3">
+                  <a
+                    href="https://pay.hyp.co.il/p/?action=login"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
+                    style={{ color: '#ffffff' }}
+                  >
+                    {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setShowHypHelp(true)}
+                    className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 transition-colors flex items-center justify-center text-white text-xs font-bold leading-none"
+                    title={currentLanguage === 'ru' ? 'Инструкция по подключению' : currentLanguage === 'he' ? 'הוראות חיבור' : currentLanguage === 'ar' ? 'تعليمات الربط' : 'Setup guide'}
+                  >
+                    ?
+                  </button>
+                </div>
               </div>
 
               {/* Fields */}
