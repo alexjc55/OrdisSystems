@@ -122,6 +122,7 @@
     "paymentOption": "Pay Online (Card)",
     "paymentFailed": "Payment failed. Please try again.",
     "checkingPaymentStatus": "Checking payment status...",
+    "cancelPaymentCheck": "Cancel",
     "orderSuccess": "Order placed successfully",
     "orderError": "Order error",
     "loginTab": "Sign In",

@@ -598,24 +598,40 @@ export default function Checkout() {
       if (!raw) return;
       let parsed: { token: string; timestamp: number };
       try { parsed = JSON.parse(raw); } catch { localStorage.removeItem(HYP_PENDING_KEY); return; }
-      if (Date.now() - parsed.timestamp > 3 * 60 * 60 * 1000) {
+      const MAX_POLL_MS = 5 * 60 * 1000; // 5 minutes max
+      if (Date.now() - parsed.timestamp > MAX_POLL_MS) {
         localStorage.removeItem(HYP_PENDING_KEY);
         return;
       }
       setIsCheckingHypPayment(true);
+      const deadlineTimer = setTimeout(() => {
+        stopPolling();
+        localStorage.removeItem(HYP_PENDING_KEY);
+        toast({ title: tShop('checkout.paymentFailed'), variant: 'destructive' });
+      }, MAX_POLL_MS - (Date.now() - parsed.timestamp));
       const poll = async () => {
         try {
           const result = await apiRequest('GET', `/api/payment/pending/${parsed.token}`);
           if (result.status === 'completed') {
+            clearTimeout(deadlineTimer);
             stopPolling();
             localStorage.removeItem(HYP_PENDING_KEY);
             window.location.href = '/thanks?payment=success';
           } else if (result.status === 'failed') {
+            clearTimeout(deadlineTimer);
             stopPolling();
             localStorage.removeItem(HYP_PENDING_KEY);
             toast({ title: tShop('checkout.paymentFailed'), variant: 'destructive' });
           }
-        } catch { /* network error — keep trying */ }
+        } catch (err: any) {
+          // 404 = token not found (payment was never created) — stop immediately
+          if (err?.status === 404 || err?.message?.includes('404') || err?.message?.includes('Not found')) {
+            clearTimeout(deadlineTimer);
+            stopPolling();
+            localStorage.removeItem(HYP_PENDING_KEY);
+          }
+          // other network errors — keep trying until deadline
+        }
       };
       poll();
       hypPollIntervalRef.current = setInterval(poll, 3000);
@@ -1057,9 +1073,20 @@ export default function Checkout() {
       {/* iOS PWA: HYP payment status check overlay */}
       {isCheckingHypPayment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center gap-4 mx-4">
+          <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center gap-4 mx-4 max-w-xs w-full">
             <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
             <p className="text-gray-800 font-medium text-center">{tShop('checkout.checkingPaymentStatus')}</p>
+            <button
+              onClick={() => {
+                if (hypPollIntervalRef.current) clearInterval(hypPollIntervalRef.current);
+                hypPollIntervalRef.current = null;
+                localStorage.removeItem(HYP_PENDING_KEY);
+                setIsCheckingHypPayment(false);
+              }}
+              className="text-sm text-gray-500 underline hover:text-gray-700 mt-1"
+            >
+              {tShop('checkout.cancelPaymentCheck') || 'Отмена'}
+            </button>
           </div>
         </div>
       )}

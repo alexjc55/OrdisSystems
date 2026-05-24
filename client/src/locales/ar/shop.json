@@ -144,6 +144,7 @@
     "paymentOption": "الدفع الإلكتروني (بطاقة)",
     "paymentFailed": "فشل الدفع. يرجى المحاولة مرة أخرى.",
     "checkingPaymentStatus": "جارٍ التحقق من حالة الدفع...",
+    "cancelPaymentCheck": "إلغاء",
     "success": "تم تأكيد الطلب بنجاح",
     "error": "خطأ في تأكيد الطلب",
     "cash": "نقدي",

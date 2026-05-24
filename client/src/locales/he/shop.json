@@ -473,6 +473,7 @@
   "checkout.paymentOption": "תשלום מקוון (כרטיס אשראי)",
   "checkout.paymentFailed": "שגיאה בתשלום. נסה שנית.",
   "checkout.checkingPaymentStatus": "בודק את סטטוס התשלום...",
+  "checkout.cancelPaymentCheck": "ביטול",
   "checkout.guest": "אורח",
   "checkout.signInToUseData": "התחבר כדי להשתמש בנתונים שמורים ולעקוב אחר הזמנות.",
   "checkout.guestWarning": "כאורח, לא תוכל לעקוב אחר סטטוס ההזמנה. אנו ממליצים להירשם לפונקציונליות מלאה.",
