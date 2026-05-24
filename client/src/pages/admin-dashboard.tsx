@@ -8633,7 +8633,6 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [hypKey, setHypKey] = useState('');
   const [hypPassP, setHypPassP] = useState('');
   const [hypTestMode, setHypTestMode] = useState(true);
-  const [showHypHelp, setShowHypHelp] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -10885,6 +10884,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
   const [isMobileQuickButtonsOpen, setIsMobileQuickButtonsOpen] = useState(false);
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
+  const [showHypHelp, setShowHypHelp] = useState(false);
 
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAdvertisingFeedsOpen, setIsAdvertisingFeedsOpen] = useState(false);
