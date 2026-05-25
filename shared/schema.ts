@@ -526,12 +526,15 @@ export const storeSettings = pgTable("store_settings", {
   giftMinOrderAmount: decimal("gift_min_order_amount", { precision: 10, scale: 2 }).default("300"),
 
   // Online payment provider settings
-  paymentProvider: varchar("payment_provider", { length: 20 }).default("none"), // "none" | "hyp"
-  hypMasof: varchar("hyp_masof", { length: 50 }), // HYP terminal number
+  paymentProvider: varchar("payment_provider", { length: 20 }).default("none"), // "none" | "hyp" (legacy, kept for compat)
+  hypMasof: varchar("hyp_masof", { length: 50 }), // HYP terminal number (legacy, kept for compat)
   hypSignature: varchar("hyp_signature", { length: 255 }), // HYP HMAC secret key (legacy, kept for compat)
-  hypKey: varchar("hyp_key", { length: 255 }), // HYP API Key (KEY param, required for new /pay API)
-  hypPassP: varchar("hyp_pass_p", { length: 255 }), // HYP remote password
-  hypTestMode: boolean("hyp_test_mode").default(true), // true = test, false = production
+  hypKey: varchar("hyp_key", { length: 255 }), // HYP API Key (legacy, kept for compat)
+  hypPassP: varchar("hyp_pass_p", { length: 255 }), // HYP remote password (legacy, kept for compat)
+  hypTestMode: boolean("hyp_test_mode").default(true), // true = test, false = production (legacy, kept for compat)
+  // Unified payment provider config (new architecture)
+  // Format: { active: "none"|"hyp"|"payme", hyp: { masof, passP, key, testMode } }
+  paymentProviderConfig: jsonb("payment_provider_config"),
 
   updatedAt: timestamp("updated_at").defaultNow(),
 });

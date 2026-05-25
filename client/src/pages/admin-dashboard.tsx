@@ -8642,11 +8642,12 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
-      setPaymentProvider(settings.paymentProvider || 'none');
-      setHypMasof(settings.hypMasof || '');
-      setHypKey((settings as any).hypKey || '');
-      setHypPassP(settings.hypPassP || '');
-      setHypTestMode(settings.hypTestMode !== false);
+      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean } } | null;
+      setPaymentProvider(ppc?.active || settings.paymentProvider || 'none');
+      setHypMasof(ppc?.hyp?.masof || settings.hypMasof || '');
+      setHypKey(ppc?.hyp?.key || (settings as any).hypKey || '');
+      setHypPassP(ppc?.hyp?.passP || settings.hypPassP || '');
+      setHypTestMode(ppc?.hyp?.testMode !== false && settings.hypTestMode !== false);
     }
   }, [settings]);
 
@@ -10927,11 +10928,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         { name: "Банковской картой", id: 2 },
         { name: "Банковский перевод", id: 3 }
       ],
-      paymentProvider: storeSettings?.paymentProvider || 'none',
-      hypMasof: storeSettings?.hypMasof || '',
-      hypKey: (storeSettings as any)?.hypKey || '',
-      hypPassP: storeSettings?.hypPassP || '',
-      hypTestMode: storeSettings?.hypTestMode !== false,
+      paymentProvider: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.active || storeSettings?.paymentProvider || 'none'; })(),
+      hypMasof: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.masof || storeSettings?.hypMasof || ''; })(),
+      hypKey: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.key || (storeSettings as any)?.hypKey || ''; })(),
+      hypPassP: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.passP || storeSettings?.hypPassP || ''; })(),
+      hypTestMode: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.testMode !== false && storeSettings?.hypTestMode !== false; })(),
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11110,11 +11111,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         facebookPixelId: storeSettings?.facebookPixelId || "",
         facebookAccessToken: storeSettings?.facebookAccessToken || "",
         mobileQuickButtons: (storeSettings as any)?.mobileQuickButtons || [],
-        paymentProvider: storeSettings?.paymentProvider || 'none',
-        hypMasof: storeSettings?.hypMasof || '',
-        hypKey: (storeSettings as any)?.hypKey || '',
-        hypPassP: storeSettings?.hypPassP || '',
-        hypTestMode: storeSettings?.hypTestMode !== false,
+        paymentProvider: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.active || storeSettings?.paymentProvider || 'none'; })(),
+        hypMasof: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.masof || storeSettings?.hypMasof || ''; })(),
+        hypKey: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.key || (storeSettings as any)?.hypKey || ''; })(),
+        hypPassP: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.passP || storeSettings?.hypPassP || ''; })(),
+        hypTestMode: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.testMode !== false && storeSettings?.hypTestMode !== false; })(),
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -11251,6 +11252,17 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           hypKey: data.hypKey || null,
           hypPassP: data.hypPassP || null,
           hypTestMode: data.hypTestMode,
+          paymentProviderConfig: {
+            active: data.paymentProvider || 'none',
+            ...(data.paymentProvider === 'hyp' ? {
+              hyp: {
+                masof: data.hypMasof || '',
+                passP: data.hypPassP || '',
+                key: data.hypKey || '',
+                testMode: data.hypTestMode !== false,
+              }
+            } : {}),
+          },
           // Include email notification settings directly (they're not multilingual)
           emailNotificationsEnabled: data.emailNotificationsEnabled,
           orderNotificationEmail: data.orderNotificationEmail,
