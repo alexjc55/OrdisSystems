@@ -30,3 +30,9 @@ id = "J6eE70g6o9LRRn7oGnBDU"
 uri = "file://db_dump.zip"
 type = "unspecified"
 title = "eDAHouse DB dump — 25.05.2026"
+
+[[outputs]]
+id = "WC6-hQAzOR3VMkfArOKs5"
+uri = "file://db_dump.txt"
+type = "text"
+title = "eDAHouse DB dump — 25.05.2026 (.sql)"
