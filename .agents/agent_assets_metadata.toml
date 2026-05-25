@@ -18,3 +18,9 @@ id = "wX6bljxPRBRrUzL4LYLZd"
 uri = "file://db_dump_20260512.zip"
 type = "unspecified"
 title = "Дамп базы данных — 12.05.2026"
+
+[[outputs]]
+id = "MeErTm4kDdTTj0xxCIoK1"
+uri = "file://dump_20260525_200700.zip"
+type = "unspecified"
+title = "eDAHouse DB dump — 25.05.2026"
