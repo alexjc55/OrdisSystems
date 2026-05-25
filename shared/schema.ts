@@ -525,14 +525,7 @@ export const storeSettings = pgTable("store_settings", {
   giftProductQuantity: decimal("gift_product_quantity", { precision: 10, scale: 2 }).default("1"),
   giftMinOrderAmount: decimal("gift_min_order_amount", { precision: 10, scale: 2 }).default("300"),
 
-  // Online payment provider settings
-  paymentProvider: varchar("payment_provider", { length: 20 }).default("none"), // "none" | "hyp" (legacy, kept for compat)
-  hypMasof: varchar("hyp_masof", { length: 50 }), // HYP terminal number (legacy, kept for compat)
-  hypSignature: varchar("hyp_signature", { length: 255 }), // HYP HMAC secret key (legacy, kept for compat)
-  hypKey: varchar("hyp_key", { length: 255 }), // HYP API Key (legacy, kept for compat)
-  hypPassP: varchar("hyp_pass_p", { length: 255 }), // HYP remote password (legacy, kept for compat)
-  hypTestMode: boolean("hyp_test_mode").default(true), // true = test, false = production (legacy, kept for compat)
-  // Unified payment provider config (new architecture)
+  // Online payment provider config
   // Format: { active: "none"|"hyp"|"payme", hyp: { masof, passP, key, testMode } }
   paymentProviderConfig: jsonb("payment_provider_config"),
 
@@ -800,12 +793,12 @@ export const productVolumeDiscounts = pgTable("product_volume_discounts", {
 // Pending payments table — temporary orders awaiting online payment confirmation
 export const pendingPayments = pgTable("pending_payments", {
   id: serial("id").primaryKey(),
-  token: varchar("token", { length: 128 }).notNull().unique(), // UUID used in HYP callback
+  token: varchar("token", { length: 128 }).notNull().unique(), // UUID passed to payment gateway, returned in callback
   orderData: jsonb("order_data").notNull(), // Full order snapshot (InsertOrder)
   orderItems: jsonb("order_items").notNull(), // Cart items snapshot
   userId: varchar("user_id").references(() => users.id), // null for guests
   status: varchar("status", { enum: ["pending", "completed", "failed", "expired"] }).default("pending").notNull(),
-  hypTransactionId: varchar("hyp_transaction_id", { length: 255 }), // Transaction ID returned by HYP
+  transactionId: varchar("transaction_id", { length: 255 }), // Transaction ID returned by payment gateway
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at").notNull(), // Auto-expire after 3 hours
 });

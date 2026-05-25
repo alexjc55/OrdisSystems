@@ -373,6 +373,12 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   facebookConversionsApiEnabled: z.boolean().default(false),
   facebookPixelId: z.string().optional(),
   facebookAccessToken: z.string().optional(),
+  // Payment provider form fields (packed into paymentProviderConfig on submit)
+  paymentProvider: z.string().default('none'),
+  hypMasof: z.string().optional(),
+  hypPassP: z.string().optional(),
+  hypKey: z.string().optional(),
+  hypTestMode: z.boolean().default(true),
 });
 
 
@@ -8643,11 +8649,11 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
       const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean } } | null;
-      setPaymentProvider(ppc?.active || settings.paymentProvider || 'none');
-      setHypMasof(ppc?.hyp?.masof || settings.hypMasof || '');
-      setHypKey(ppc?.hyp?.key || (settings as any).hypKey || '');
-      setHypPassP(ppc?.hyp?.passP || settings.hypPassP || '');
-      setHypTestMode(ppc?.hyp?.testMode !== false && settings.hypTestMode !== false);
+      setPaymentProvider(ppc?.active || 'none');
+      setHypMasof(ppc?.hyp?.masof || '');
+      setHypKey(ppc?.hyp?.key || '');
+      setHypPassP(ppc?.hyp?.passP || '');
+      setHypTestMode(ppc?.hyp?.testMode !== false);
     }
   }, [settings]);
 
@@ -10928,11 +10934,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         { name: "Банковской картой", id: 2 },
         { name: "Банковский перевод", id: 3 }
       ],
-      paymentProvider: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.active || storeSettings?.paymentProvider || 'none'; })(),
-      hypMasof: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.masof || storeSettings?.hypMasof || ''; })(),
-      hypKey: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.key || (storeSettings as any)?.hypKey || ''; })(),
-      hypPassP: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.passP || storeSettings?.hypPassP || ''; })(),
-      hypTestMode: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.testMode !== false && storeSettings?.hypTestMode !== false; })(),
+      paymentProvider: (storeSettings as any)?.paymentProviderConfig?.active || 'none',
+      hypMasof: (storeSettings as any)?.paymentProviderConfig?.hyp?.masof || '',
+      hypKey: (storeSettings as any)?.paymentProviderConfig?.hyp?.key || '',
+      hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
+      hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11111,11 +11117,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         facebookPixelId: storeSettings?.facebookPixelId || "",
         facebookAccessToken: storeSettings?.facebookAccessToken || "",
         mobileQuickButtons: (storeSettings as any)?.mobileQuickButtons || [],
-        paymentProvider: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.active || storeSettings?.paymentProvider || 'none'; })(),
-        hypMasof: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.masof || storeSettings?.hypMasof || ''; })(),
-        hypKey: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.key || (storeSettings as any)?.hypKey || ''; })(),
-        hypPassP: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.passP || storeSettings?.hypPassP || ''; })(),
-        hypTestMode: (() => { const c = (storeSettings as any)?.paymentProviderConfig; return c?.hyp?.testMode !== false && storeSettings?.hypTestMode !== false; })(),
+        paymentProvider: (storeSettings as any)?.paymentProviderConfig?.active || 'none',
+        hypMasof: (storeSettings as any)?.paymentProviderConfig?.hyp?.masof || '',
+        hypKey: (storeSettings as any)?.paymentProviderConfig?.hyp?.key || '',
+        hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
+        hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -11247,11 +11253,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           ...preservedData, 
           ...multilingualUpdates,
           paymentMethods: processedPaymentMethods,
-          paymentProvider: data.paymentProvider,
-          hypMasof: data.hypMasof || null,
-          hypKey: data.hypKey || null,
-          hypPassP: data.hypPassP || null,
-          hypTestMode: data.hypTestMode,
           paymentProviderConfig: {
             active: data.paymentProvider || 'none',
             ...(data.paymentProvider === 'hyp' ? {

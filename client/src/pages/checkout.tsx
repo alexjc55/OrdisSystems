@@ -1080,10 +1080,10 @@ export default function Checkout() {
 
   const isOnlinePayment = (method: string) => method === "__online__";
 
-  // Check if online payment is available (supports both new paymentProviderConfig and legacy paymentProvider)
+  // Check if online payment is available via paymentProviderConfig
   const isOnlinePaymentAvailable = Boolean(
-    (storeSettings?.paymentProvider === 'hyp' || (storeSettings as any)?.paymentProviderConfig?.active === 'hyp') &&
-    (storeSettings?.hypMasof || (storeSettings as any)?.paymentProviderConfig?.hyp?.masof)
+    (storeSettings as any)?.paymentProviderConfig?.active === 'hyp' &&
+    (storeSettings as any)?.paymentProviderConfig?.hyp?.masof
   );
 
   if (items.length === 0) {

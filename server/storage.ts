@@ -188,7 +188,7 @@ export interface IStorage {
   // Pending payments (online payment temp orders)
   createPendingPayment(data: InsertPendingPayment): Promise<PendingPayment>;
   getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined>;
-  updatePendingPaymentStatus(token: string, status: "pending" | "completed" | "failed" | "expired", hypTransactionId?: string): Promise<PendingPayment>;
+  updatePendingPaymentStatus(token: string, status: "pending" | "completed" | "failed" | "expired", transactionId?: string): Promise<PendingPayment>;
   deleteExpiredPendingPayments(): Promise<void>;
 }
 
@@ -2280,12 +2280,12 @@ export class DatabaseStorage implements IStorage {
   async updatePendingPaymentStatus(
     token: string,
     status: "pending" | "completed" | "failed" | "expired",
-    hypTransactionId?: string
+    transactionId?: string
   ): Promise<PendingPayment> {
     const db = await this.getDatabase();
     const [record] = await db
       .update(pendingPayments)
-      .set({ status, ...(hypTransactionId ? { hypTransactionId } : {}) })
+      .set({ status, ...(transactionId ? { transactionId } : {}) })
       .where(eq(pendingPayments.token, token))
       .returning();
     return record;

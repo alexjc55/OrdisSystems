@@ -118,19 +118,13 @@ export class HypProvider implements IPaymentProvider {
 // ─── Provider Factory ──────────────────────────────────────────────────────────
 
 /**
- * Resolves the active payment provider from settings.
- * Reads paymentProviderConfig first; falls back to legacy flat fields.
+ * Resolves the active payment provider from paymentProviderConfig.
  */
 export function getProvider(settings: {
   paymentProviderConfig?: any;
-  paymentProvider?: string | null;
-  hypMasof?: string | null;
-  hypPassP?: string | null;
-  hypKey?: string | null;
 }): IPaymentProvider | null {
   const config = settings.paymentProviderConfig as PaymentProviderConfig | null | undefined;
 
-  // New config takes priority
   if (config && config.active && config.active !== 'none') {
     if (config.active === 'hyp' && config.hyp?.masof && config.hyp?.passP && config.hyp?.key) {
       return new HypProvider(config.hyp.masof, config.hyp.passP, config.hyp.key);
@@ -138,46 +132,39 @@ export function getProvider(settings: {
     // Future providers: add cases here
   }
 
-  // Legacy flat fields fallback
-  if (settings.paymentProvider === 'hyp' && settings.hypMasof && settings.hypPassP && settings.hypKey) {
-    return new HypProvider(settings.hypMasof, settings.hypPassP, settings.hypKey);
-  }
-
   return null;
 }
 
 /**
- * Extracts the active provider name from settings (new config or legacy field).
+ * Returns the active provider name from paymentProviderConfig.
  */
 export function getActiveProviderName(settings: {
   paymentProviderConfig?: any;
-  paymentProvider?: string | null;
 }): string {
   const config = settings.paymentProviderConfig as PaymentProviderConfig | null | undefined;
-  if (config?.active && config.active !== 'none') return config.active;
-  return settings.paymentProvider || 'none';
+  return config?.active || 'none';
 }
 
 /**
  * Builds a PaymentProviderConfig object from admin form data.
- * Used when saving settings to merge into paymentProviderConfig jsonb.
+ * The form uses convenience field names (providerName, masof, passP, key, testMode).
  */
 export function buildProviderConfig(data: {
-  paymentProvider?: string;
-  hypMasof?: string | null;
-  hypPassP?: string | null;
-  hypKey?: string | null;
-  hypTestMode?: boolean;
+  providerName?: string;
+  masof?: string | null;
+  passP?: string | null;
+  key?: string | null;
+  testMode?: boolean;
 }): PaymentProviderConfig {
-  const active = (data.paymentProvider || 'none') as PaymentProviderConfig['active'];
+  const active = (data.providerName || 'none') as PaymentProviderConfig['active'];
   const result: PaymentProviderConfig = { active };
 
   if (active === 'hyp') {
     result.hyp = {
-      masof: data.hypMasof || '',
-      passP: data.hypPassP || '',
-      key: data.hypKey || '',
-      testMode: data.hypTestMode !== false,
+      masof: data.masof || '',
+      passP: data.passP || '',
+      key: data.key || '',
+      testMode: data.testMode !== false,
     };
   }
 
