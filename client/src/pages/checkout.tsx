@@ -905,7 +905,7 @@ export default function Checkout() {
       };
       
       if ((data as any)._useHyp) {
-        const hypResult = await apiRequest("POST", "/api/payment/hyp/initiate", {
+        const hypResult = await apiRequest("POST", "/api/payment/initiate", {
           items: regOrderPayload.items,
           totalAmount: regOrderPayload.totalAmount,
           orderData: {
@@ -1067,7 +1067,7 @@ export default function Checkout() {
       language: string;
       branchId?: number | null;
     }) => {
-      return await apiRequest("POST", "/api/payment/hyp/initiate", payload);
+      return await apiRequest("POST", "/api/payment/initiate", payload);
     },
     onSuccess: (data: { redirectUrl: string; token: string }) => {
       localStorage.setItem(HYP_PENDING_KEY, JSON.stringify({ token: data.token, timestamp: Date.now() }));
