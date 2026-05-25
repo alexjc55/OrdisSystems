@@ -24,3 +24,9 @@ id = "MeErTm4kDdTTj0xxCIoK1"
 uri = "file://dump_20260525_200700.zip"
 type = "unspecified"
 title = "eDAHouse DB dump — 25.05.2026"
+
+[[outputs]]
+id = "J6eE70g6o9LRRn7oGnBDU"
+uri = "file://db_dump.zip"
+type = "unspecified"
+title = "eDAHouse DB dump — 25.05.2026"
