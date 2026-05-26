@@ -60,7 +60,9 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   for (let i = 1; i <= 5; i++) {
     // Image fields use underscore format: slide1Image (ru base), slide1Image_en, slide1Image_he, slide1Image_ar
     // (different from text fields which use camelCase: slide1TitleHe)
+    // A slide only exists if the base image is set — deleting base removes it for all languages
     const baseImage = storeSettings?.[`slide${i}Image`] || '';
+    if (!baseImage) continue;
     const langImage = currentLanguage !== defaultLanguage
       ? (storeSettings?.[`slide${i}Image_${currentLanguage}`] || '')
       : baseImage;

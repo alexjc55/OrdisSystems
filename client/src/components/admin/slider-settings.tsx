@@ -180,7 +180,16 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
 
   const handleImageChange = (slideNum: number, url: string) => {
     const langKey = currentLanguage === 'ru' ? 'ru' : currentLanguage;
-    setAllSlideImages(prev => ({ ...prev, [`${slideNum}_${langKey}`]: url }));
+    setAllSlideImages(prev => {
+      const next = { ...prev, [`${slideNum}_${langKey}`]: url };
+      // Clearing the base (ru) image removes the slide entirely — wipe all language variants
+      if (langKey === 'ru' && url === '') {
+        next[`${slideNum}_en`] = '';
+        next[`${slideNum}_he`] = '';
+        next[`${slideNum}_ar`] = '';
+      }
+      return next;
+    });
   };
 
   return (
