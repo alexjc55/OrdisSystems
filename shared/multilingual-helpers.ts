@@ -298,8 +298,12 @@ export function getLocalizedImageField(
 }
 
 /**
- * Get localized field value for ADMIN PANEL (no fallback to default language)
- * Shows empty if field is not translated for specific language
+ * Get localized field value for ADMIN PANEL (no fallback to default language).
+ * Shows empty if field is not translated for specific language.
+ *
+ * DB schema is fixed: Russian always uses the base column (no suffix),
+ * all other languages use a camelCase suffix (storeNameEn, storeNameHe, storeNameAr).
+ * This mapping is independent of the store's defaultLanguage setting.
  */
 export function getLocalizedFieldForAdmin(
   obj: any,
@@ -308,25 +312,13 @@ export function getLocalizedFieldForAdmin(
   storeSettings?: { defaultLanguage?: string }
 ): string {
   if (!obj) return '';
-  
-  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
-  
-  // For default language, try base field first, then suffixed version
-  if (language === defaultLanguage) {
-    const baseValue = obj[fieldName];
-    if (baseValue) return baseValue;
-    
-    // Try camelCase format: deliveryInfoRu
-    const capitalizedLang = defaultLanguage.charAt(0).toUpperCase() + defaultLanguage.slice(1);
-    const camelCaseValue = obj[`${fieldName}${capitalizedLang}`];
-    if (camelCaseValue) return camelCaseValue;
-  } else {
-    // For non-default languages, try camelCase format: deliveryInfoHe, deliveryInfoEn
-    const capitalizedLang = language.charAt(0).toUpperCase() + language.slice(1);
-    const camelCaseValue = obj[`${fieldName}${capitalizedLang}`];
-    if (camelCaseValue) return camelCaseValue;
+
+  // Russian always maps to the base (un-suffixed) DB column.
+  if (language === 'ru') {
+    return obj[fieldName] || '';
   }
-  
-  // Return empty string (no fallback to default language)
-  return '';
+
+  // All other languages use a camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
+  const cap = language.charAt(0).toUpperCase() + language.slice(1);
+  return obj[`${fieldName}${cap}`] || '';
 }
