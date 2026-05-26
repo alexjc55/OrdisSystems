@@ -1036,13 +1036,14 @@ export default function Home() {
                         }}
                         pagination={{
                           clickable: true,
+                          el: '.swiper-special-offers-pagination',
                           bulletClass: 'swiper-pagination-bullet-custom',
                           bulletActiveClass: 'swiper-pagination-bullet-active-custom',
                         }}
                         onSlideChange={(swiper) => {
                           setCurrentSlide(swiper.activeIndex);
                         }}
-                        className="w-full pb-12"
+                        className="w-full pb-4"
                       >
                         {specialOffers.map((product) => (
                           <SwiperSlide key={product.id} className="h-auto">
@@ -1055,7 +1056,11 @@ export default function Home() {
                           </SwiperSlide>
                         ))}
                       </Swiper>
-
+                      {/* External pagination container — always centered, RTL-safe */}
+                      <div
+                        className="swiper-special-offers-pagination"
+                        style={{ textAlign: 'center', direction: 'ltr', marginTop: '12px' }}
+                      />
                     </div>
                   )}
                 </div>
