@@ -147,9 +147,11 @@ export function TranslationManager() {
       size="sm"
       className={`bg-primary text-white hover:bg-primary/90 ${className}`}
     >
-      {saveMutation.isPending
-        ? <><RefreshCw className="h-4 w-4 mr-1 animate-spin" />{adminT("actions.saving")}</>
-        : <><Save className="h-4 w-4 mr-1" />{adminT("translations.saveAll")}</>}
+      <span className="flex items-center flex-row gap-1">
+        {saveMutation.isPending
+          ? <><RefreshCw className="h-4 w-4 animate-spin" />{adminT("actions.saving")}</>
+          : <><Save className="h-4 w-4" />{adminT("translations.saveAll")}</>}
+      </span>
     </Button>
   );
 
