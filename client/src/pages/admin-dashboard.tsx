@@ -320,7 +320,8 @@ import {
   Percent,
   CheckCircle,
   XCircle,
-  Star
+  Star,
+  Download
 } from "lucide-react";
 
 // Validation schemas
@@ -3696,6 +3697,8 @@ export default function AdminDashboard() {
   // Image optimization state
   const [isOptimizingImages, setIsOptimizingImages] = useState(false);
   const [optimizationResults, setOptimizationResults] = useState<any>(null);
+  const [isImportingTranslations, setIsImportingTranslations] = useState(false);
+  const translationFileInputRef = useRef<HTMLInputElement>(null);
 
   // Availability modal state
   const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
@@ -7652,14 +7655,70 @@ export default function AdminDashboard() {
                     <BarcodeConfigSection />
                   </div>
 
-                  {/* Translation Management Section */}
+                  {/* Translation Export/Import Section */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">🌐 {adminT('translationManagement.translationManagement')}</h3>
                     <p className="text-sm text-gray-600">
-                      {adminT('translationManagement.translationManagementDescription')}
+                      {adminT('translationManagement.exportInfo')}
                     </p>
-                    
-                    <TranslationManager />
+
+                    <input
+                      ref={translationFileInputRef}
+                      type="file"
+                      accept=".xlsx"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setIsImportingTranslations(true);
+                        try {
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          const resp = await fetch('/api/translations/import', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include',
+                          });
+                          const data = await resp.json();
+                          if (resp.ok) {
+                            toast({ title: adminT('translationManagement.importTranslations'), description: `${data.importedRows} rows imported` });
+                          } else {
+                            toast({ title: 'Error', description: data.message, variant: 'destructive' });
+                          }
+                        } catch {
+                          toast({ title: 'Error', description: 'Import failed', variant: 'destructive' });
+                        } finally {
+                          setIsImportingTranslations(false);
+                          if (translationFileInputRef.current) translationFileInputRef.current.value = '';
+                        }
+                      }}
+                    />
+
+                    <div className={`flex flex-wrap gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <a
+                        href="/api/translations/export"
+                        download="translations.xlsx"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium bg-white hover:bg-gray-50 transition-colors"
+                        style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
+                      >
+                        <Download className="h-4 w-4" />
+                        {adminT('translationManagement.exportTranslations')}
+                      </a>
+
+                      <Button
+                        variant="outline"
+                        onClick={() => translationFileInputRef.current?.click()}
+                        disabled={isImportingTranslations}
+                        className="flex items-center gap-2"
+                      >
+                        {isImportingTranslations ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Upload className="h-4 w-4" />
+                        )}
+                        {adminT('translationManagement.importTranslations')}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
