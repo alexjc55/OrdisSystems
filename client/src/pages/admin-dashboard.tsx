@@ -3698,6 +3698,7 @@ export default function AdminDashboard() {
   const [isOptimizingImages, setIsOptimizingImages] = useState(false);
   const [optimizationResults, setOptimizationResults] = useState<any>(null);
   const [isImportingTranslations, setIsImportingTranslations] = useState(false);
+  const [selectedTranslationFile, setSelectedTranslationFile] = useState<File | null>(null);
   const translationFileInputRef = useRef<HTMLInputElement>(null);
 
   // Availability modal state
@@ -7659,65 +7660,107 @@ export default function AdminDashboard() {
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">🌐 {adminT('translationManagement.translationManagement')}</h3>
                     <p className="text-sm text-gray-600">
-                      {adminT('translationManagement.exportInfo')}
+                      {adminT('translationManagement.translationManagementDescription')}
                     </p>
+
+                    <div className="space-y-1">
+                      <p className="font-semibold text-gray-900">{adminT('translationManagement.translationManagement')}</p>
+                      <p className="text-sm text-gray-500">{adminT('translationManagement.manageAllTranslations')}</p>
+                    </div>
 
                     <input
                       ref={translationFileInputRef}
                       type="file"
                       accept=".xlsx"
                       className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        setIsImportingTranslations(true);
-                        try {
-                          const formData = new FormData();
-                          formData.append('file', file);
-                          const resp = await fetch('/api/translations/import', {
-                            method: 'POST',
-                            body: formData,
-                            credentials: 'include',
-                          });
-                          const data = await resp.json();
-                          if (resp.ok) {
-                            toast({ title: adminT('translationManagement.importTranslations'), description: `${data.importedRows} rows imported` });
-                          } else {
-                            toast({ title: 'Error', description: data.message, variant: 'destructive' });
-                          }
-                        } catch {
-                          toast({ title: 'Error', description: 'Import failed', variant: 'destructive' });
-                        } finally {
-                          setIsImportingTranslations(false);
-                          if (translationFileInputRef.current) translationFileInputRef.current.value = '';
-                        }
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setSelectedTranslationFile(file);
                       }}
                     />
 
-                    <div className={`flex flex-wrap gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <a
-                        href="/api/translations/export"
-                        download="translations.xlsx"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-md border text-sm font-medium bg-white hover:bg-gray-50 transition-colors"
-                        style={{ borderColor: 'var(--color-primary)', color: 'var(--color-primary)' }}
-                      >
-                        <Download className="h-4 w-4" />
-                        {adminT('translationManagement.exportTranslations')}
-                      </a>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${isRTL ? 'direction-rtl' : ''}`}>
+                      {/* Export card */}
+                      <div className="border border-gray-200 rounded-lg p-5 space-y-4 bg-white">
+                        <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <Download className="h-5 w-5" style={{ color: 'var(--color-primary)' }} />
+                          <span className="font-semibold text-gray-900">{adminT('translationManagement.exportTranslations')}</span>
+                        </div>
+                        <p className="text-sm text-gray-500">{adminT('translationManagement.downloadAllTranslations')}</p>
+                        <div className={`flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-md p-3 text-sm text-blue-700 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <span>{adminT('translationManagement.exportInfo')}</span>
+                        </div>
+                        <a
+                          href="/api/translations/export"
+                          download="translations.xlsx"
+                          className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                          style={{ backgroundColor: 'var(--color-primary)' }}
+                        >
+                          <Download className="h-4 w-4" />
+                          {adminT('translationManagement.exportToExcel')}
+                        </a>
+                      </div>
 
-                      <Button
-                        variant="outline"
-                        onClick={() => translationFileInputRef.current?.click()}
-                        disabled={isImportingTranslations}
-                        className="flex items-center gap-2"
-                      >
-                        {isImportingTranslations ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Upload className="h-4 w-4" />
-                        )}
-                        {adminT('translationManagement.importTranslations')}
-                      </Button>
+                      {/* Import card */}
+                      <div className="border border-gray-200 rounded-lg p-5 space-y-4 bg-white">
+                        <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <Upload className="h-5 w-5" style={{ color: 'var(--color-primary)' }} />
+                          <span className="font-semibold text-gray-900">{adminT('translationManagement.importTranslations')}</span>
+                        </div>
+                        <p className="text-sm text-gray-500">{adminT('translationManagement.uploadTranslationsFile')}</p>
+                        <div className={`flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-md p-3 text-sm text-amber-700 ${isRTL ? 'flex-row-reverse text-right' : ''}`}>
+                          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                          <span>{currentLanguage === 'en' ? 'Existing translations will be overwritten.' : currentLanguage === 'he' ? 'תרגומים קיימים יוחלפו.' : currentLanguage === 'ar' ? 'سيتم استبدال الترجمات الموجودة.' : 'Существующие переводы будут перезаписаны.'}</span>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-600">{adminT('translationManagement.selectFile')}</p>
+                          <button
+                            type="button"
+                            onClick={() => translationFileInputRef.current?.click()}
+                            className="w-full flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-600 bg-white hover:bg-gray-50 transition-colors"
+                          >
+                            <Upload className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                            <span className="truncate">{selectedTranslationFile ? selectedTranslationFile.name : (currentLanguage === 'en' ? 'No file chosen' : currentLanguage === 'he' ? 'לא נבחר קובץ' : currentLanguage === 'ar' ? 'لم يتم اختيار ملف' : 'Файл не выбран')}</span>
+                          </button>
+                        </div>
+                        <Button
+                          onClick={async () => {
+                            if (!selectedTranslationFile) return;
+                            setIsImportingTranslations(true);
+                            try {
+                              const formData = new FormData();
+                              formData.append('file', selectedTranslationFile);
+                              const resp = await fetch('/api/translations/import', {
+                                method: 'POST',
+                                body: formData,
+                                credentials: 'include',
+                              });
+                              const data = await resp.json();
+                              if (resp.ok) {
+                                toast({ title: adminT('translationManagement.importSuccess'), description: adminT('translationManagement.translationsImported').replace('{count}', String(data.importedRows)) });
+                                setSelectedTranslationFile(null);
+                                if (translationFileInputRef.current) translationFileInputRef.current.value = '';
+                              } else {
+                                toast({ title: adminT('translationManagement.importError'), description: data.message, variant: 'destructive' });
+                              }
+                            } catch {
+                              toast({ title: adminT('translationManagement.importError'), description: adminT('translationManagement.importFailed'), variant: 'destructive' });
+                            } finally {
+                              setIsImportingTranslations(false);
+                            }
+                          }}
+                          disabled={isImportingTranslations || !selectedTranslationFile}
+                          className="w-full flex items-center justify-center gap-2"
+                          variant="outline"
+                        >
+                          {isImportingTranslations ? (
+                            <><Loader2 className="h-4 w-4 animate-spin" />{adminT('translationManagement.importing')}</>
+                          ) : (
+                            <><Upload className="h-4 w-4" />{adminT('translationManagement.importFile')}</>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
