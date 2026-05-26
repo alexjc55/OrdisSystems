@@ -301,9 +301,8 @@ export function getLocalizedImageField(
  * Get localized field value for ADMIN PANEL (no fallback to default language).
  * Shows empty if field is not translated for specific language.
  *
- * DB schema is fixed: Russian always uses the base column (no suffix),
- * all other languages use a camelCase suffix (storeNameEn, storeNameHe, storeNameAr).
- * This mapping is independent of the store's defaultLanguage setting.
+ * The default language always maps to the base (un-suffixed) DB column.
+ * All other languages use a camelCase suffix (storeNameEn, storeNameHe, storeNameAr).
  */
 export function getLocalizedFieldForAdmin(
   obj: any,
@@ -313,12 +312,14 @@ export function getLocalizedFieldForAdmin(
 ): string {
   if (!obj) return '';
 
-  // Russian always maps to the base (un-suffixed) DB column.
-  if (language === 'ru') {
+  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
+
+  // Default language always maps to the base (un-suffixed) DB column.
+  if (language === defaultLanguage) {
     return obj[fieldName] || '';
   }
 
-  // All other languages use a camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
+  // Non-default languages use a camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
   const cap = language.charAt(0).toUpperCase() + language.slice(1);
   return obj[`${fieldName}${cap}`] || '';
 }
