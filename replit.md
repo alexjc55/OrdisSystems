@@ -6,6 +6,7 @@ eDAHouse is a comprehensive, multi-language e-commerce food delivery system supp
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 Translation management: Always ensure all changes are applied to all 4 languages (Russian, English, Hebrew, Arabic) when working with translations. User expects consistent coverage across all supported languages.
+Workflow: Before making ANY code changes, always explain the understanding of the problem and the plan of action, then ask "правильно понял?" and wait for confirmation. Only proceed after user says yes.
 
 ## RTL Architecture Notes (Critical)
 - **Admin products table RTL**: Column order is controlled by JS `isRTL` flag in `admin-dashboard.tsx`. `isRTL=true` → RTL branch renders [Status, Price, Category, Name] DOM order. CSS `direction: ltr !important` on `.products-container .table-container table` ensures visual left-to-right display so Status appears leftmost.

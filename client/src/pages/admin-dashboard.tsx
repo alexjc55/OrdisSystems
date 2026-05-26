@@ -11160,23 +11160,22 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
     <Form {...form}>
       <form onSubmit={form.handleSubmit((data) => {
         // Create multilingual updates for text fields - only update current language
-        const defaultLang = (storeSettings?.defaultLanguage || 'ru') as Language;
         const multilingualUpdates = {
-          ...createMultilingualUpdate('storeName', data.storeName, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('welcomeTitle', data.welcomeTitle, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('storeDescription', data.storeDescription, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('deliveryInfo', data.deliveryInfo, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('aboutText', data.aboutText, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('bannerButtonText', data.bannerButtonText, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('paymentInfo', data.paymentInfo, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('discountBadgeText', data.discountBadgeText, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('whatsappDefaultMessage', data.whatsappDefaultMessage, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('cartBannerText', data.cartBannerText, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('contactPhone', data.contactPhone, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('contactEmail', data.contactEmail, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('address', data.address, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('pwaName', data.pwaName, currentLanguage, defaultLang),
-          ...createMultilingualUpdate('pwaDescription', data.pwaDescription, currentLanguage, defaultLang),
+          ...createMultilingualUpdate('storeName', data.storeName, currentLanguage),
+          ...createMultilingualUpdate('welcomeTitle', data.welcomeTitle, currentLanguage),
+          ...createMultilingualUpdate('storeDescription', data.storeDescription, currentLanguage),
+          ...createMultilingualUpdate('deliveryInfo', data.deliveryInfo, currentLanguage),
+          ...createMultilingualUpdate('aboutText', data.aboutText, currentLanguage),
+          ...createMultilingualUpdate('bannerButtonText', data.bannerButtonText, currentLanguage),
+          ...createMultilingualUpdate('paymentInfo', data.paymentInfo, currentLanguage),
+          ...createMultilingualUpdate('discountBadgeText', data.discountBadgeText, currentLanguage),
+          ...createMultilingualUpdate('whatsappDefaultMessage', data.whatsappDefaultMessage, currentLanguage),
+          ...createMultilingualUpdate('cartBannerText', data.cartBannerText, currentLanguage),
+          ...createMultilingualUpdate('contactPhone', data.contactPhone, currentLanguage),
+          ...createMultilingualUpdate('contactEmail', data.contactEmail, currentLanguage),
+          ...createMultilingualUpdate('address', data.address, currentLanguage),
+          ...createMultilingualUpdate('pwaName', data.pwaName, currentLanguage),
+          ...createMultilingualUpdate('pwaDescription', data.pwaDescription, currentLanguage),
         };
         
         // Preserve existing data for other languages using correct database field names

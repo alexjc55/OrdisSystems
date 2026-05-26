@@ -38,14 +38,13 @@ export function getMultilingualValue(
 export function createMultilingualUpdate(
   baseField: string,
   value: string,
-  currentLanguage: Language,
-  defaultLanguage: Language = 'ru'
+  currentLanguage: Language
 ): Record<string, any> {
-  // Default language uses the base (un-suffixed) DB column.
-  if (currentLanguage === defaultLanguage) {
+  // Column mapping is FIXED: Russian always uses base column (no suffix),
+  // all other languages use camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
+  if (currentLanguage === 'ru') {
     return { [baseField]: value };
   }
-  // Non-default languages use camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
   const cap = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
   return { [`${baseField}${cap}`]: value };
 }

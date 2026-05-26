@@ -69,6 +69,10 @@ export interface MultilingualTheme {
 
 /**
  * Get localized field value from multilingual object
+ *
+ * Column mapping is FIXED (independent of defaultLanguage):
+ *   ru → fieldName (base column), he → fieldName_he, en → fieldName_en, ar → fieldName_ar
+ * defaultLanguage only controls the fallback priority when a field is empty.
  */
 export function getLocalizedStoreField(
   obj: MultilingualStoreSettings,
@@ -78,42 +82,44 @@ export function getLocalizedStoreField(
 ): string {
   const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
   if (!obj) return '';
-  
-  // Internal helper function to avoid type issues with recursion
+
+  // Fixed column mapping: ru → base field, others → suffixed field
   function getValue(lang: SupportedLanguage): string {
-    if (lang === defaultLanguage) {
-      // For default language, try base field first, then suffixed version
-      const baseValue = obj[fieldName];
-      if (baseValue) return baseValue;
-      
-      const suffixedValue = obj[`${fieldName}_${defaultLanguage}`];
-      if (suffixedValue) return suffixedValue;
-    } else {
-      // For non-default languages, try suffixed field first
-      const suffixedValue = obj[`${fieldName}_${lang}`];
-      if (suffixedValue) return suffixedValue;
+    if (lang === 'ru') {
+      return obj[fieldName] || obj[`${fieldName}_ru`] || '';
     }
-    return '';
+    return obj[`${fieldName}_${lang}`] || '';
   }
-  
-  // Try current language first
+
+  // 1. Try current language
   const currentValue = getValue(language);
   if (currentValue) return currentValue;
-  
-  // Fallback to default language if different (for public website)
+
+  // 2. Fallback to default language
   if (language !== defaultLanguage) {
     const fallbackValue = getValue(defaultLanguage);
     if (fallbackValue) return fallbackValue;
   }
-  
-  // Final fallback to base field
-  return obj[fieldName] || '';
+
+  // 3. Try all other languages in order
+  const allLangs: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
+  for (const lang of allLangs) {
+    if (lang !== language && lang !== defaultLanguage) {
+      const v = getValue(lang);
+      if (v) return v;
+    }
+  }
+
+  return '';
 }
 
 // No default theme values - system will show empty fields if no content exists
 
 /**
  * Get localized theme field value with smart fallback
+ *
+ * Column mapping is FIXED: ru → fieldName (base), others → fieldName_he/en/ar
+ * defaultLanguage only controls fallback priority.
  */
 export function getLocalizedThemeField(
   theme: MultilingualTheme,
@@ -123,36 +129,35 @@ export function getLocalizedThemeField(
 ): string {
   const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
   if (!theme) return '';
-  
-  // Internal helper function to avoid type issues with recursion
+
+  // Fixed column mapping: ru → base field, others → suffixed field
   function getValue(lang: SupportedLanguage): string {
-    if (lang === defaultLanguage) {
-      // For default language, try base field first
-      const baseValue = theme[fieldName];
-      if (baseValue) return baseValue;
-      // Also try suffixed version for consistency
-      const suffixedValue = theme[`${fieldName}_${lang}`];
-      if (suffixedValue) return suffixedValue;
-    } else {
-      // For non-default languages, try suffixed field first
-      const suffixedValue = theme[`${fieldName}_${lang}`];
-      if (suffixedValue) return suffixedValue;
+    if (lang === 'ru') {
+      return theme[fieldName] || theme[`${fieldName}_ru`] || '';
     }
-    return '';
+    return theme[`${fieldName}_${lang}`] || '';
   }
-  
-  // Try current language first
+
+  // 1. Try current language
   const currentValue = getValue(language);
   if (currentValue) return currentValue;
-  
-  // Fallback to default language if different (for public website)
+
+  // 2. Fallback to default language
   if (language !== defaultLanguage) {
     const fallbackValue = getValue(defaultLanguage);
     if (fallbackValue) return fallbackValue;
   }
-  
-  // Final fallback to base field
-  return theme[fieldName] || '';
+
+  // 3. Try all other languages in order
+  const allLangs: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
+  for (const lang of allLangs) {
+    if (lang !== language && lang !== defaultLanguage) {
+      const v = getValue(lang);
+      if (v) return v;
+    }
+  }
+
+  return '';
 }
 
 /**
@@ -262,7 +267,10 @@ export function getPaymentMethodName(
 // No default image values - system will show empty fields if no images exist
 
 /**
- * Get localized image field value with smart fallback to Russian, then empty string
+ * Get localized image field value with smart fallback.
+ *
+ * Column mapping is FIXED: ru → fieldName (base), others → fieldName_he/en/ar
+ * defaultLanguage only controls fallback priority.
  */
 export function getLocalizedImageField(
   obj: Record<string, any>,
@@ -271,38 +279,41 @@ export function getLocalizedImageField(
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
   if (!obj) return '';
-  
-  // Try current language field first
-  if (language === defaultLanguage) {
-    // For non-Russian defaults the image lives in fieldName_he/ar etc., not the base field.
-    if (defaultLanguage !== 'ru') {
-      const langValue = obj[`${fieldName}_${language}`];
-      if (langValue) return langValue;
-    }
-    const baseValue = obj[fieldName];
-    if (baseValue) return baseValue;
-  } else {
-    // For non-default languages, try suffixed field first
-    const suffixedValue = obj[`${fieldName}_${language}`];
-    if (suffixedValue) return suffixedValue;
+
+  // Fixed column mapping: ru → base field, others → suffixed field
+  function getValue(lang: SupportedLanguage): string {
+    if (lang === 'ru') return obj[fieldName] || '';
+    return obj[`${fieldName}_${lang}`] || '';
   }
-  
-  // Fallback to default language
+
+  // 1. Try current language
+  const current = getValue(language);
+  if (current) return current;
+
+  // 2. Fallback to default language
   if (language !== defaultLanguage) {
-    const fallbackValue = getLocalizedImageField(obj, fieldName, defaultLanguage, defaultLanguage);
-    if (fallbackValue) return fallbackValue;
+    const fallback = getValue(defaultLanguage);
+    if (fallback) return fallback;
   }
-  
-  // Final fallback to base field
-  return obj[fieldName] || '';
+
+  // 3. Try remaining languages
+  const allLangs: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
+  for (const lang of allLangs) {
+    if (lang !== language && lang !== defaultLanguage) {
+      const v = getValue(lang);
+      if (v) return v;
+    }
+  }
+
+  return '';
 }
 
 /**
- * Get localized field value for ADMIN PANEL (no fallback to default language).
- * Shows empty if field is not translated for specific language.
+ * Get localized field value for ADMIN PANEL (no fallback — shows empty if not translated).
  *
- * The default language always maps to the base (un-suffixed) DB column.
- * All other languages use a camelCase suffix (storeNameEn, storeNameHe, storeNameAr).
+ * Column mapping is FIXED (independent of defaultLanguage):
+ *   ru → fieldName (base column, no suffix)
+ *   he → fieldNameHe, en → fieldNameEn, ar → fieldNameAr (camelCase suffix)
  */
 export function getLocalizedFieldForAdmin(
   obj: any,
@@ -312,14 +323,12 @@ export function getLocalizedFieldForAdmin(
 ): string {
   if (!obj) return '';
 
-  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
-
-  // Default language always maps to the base (un-suffixed) DB column.
-  if (language === defaultLanguage) {
+  // Russian always maps to the base (un-suffixed) DB column.
+  if (language === 'ru') {
     return obj[fieldName] || '';
   }
 
-  // Non-default languages use a camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
+  // Other languages use camelCase suffix: storeNameHe, storeNameEn, storeNameAr.
   const cap = language.charAt(0).toUpperCase() + language.slice(1);
   return obj[`${fieldName}${cap}`] || '';
 }
