@@ -70,8 +70,11 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
   const [itemPrices, setItemPrices] = useState<Record<string, string>>({});
   const [itemUnits, setItemUnits] = useState<Record<string, string>>({});
   const [importResult, setImportResult] = useState<{ categoriesCreated: number; itemsCreated: number } | null>(null);
-  // Filter: 'all' | 'new'
   const [itemFilter, setItemFilter] = useState<'all' | 'new'>('new');
+  const [showManualPanel, setShowManualPanel] = useState(false);
+  const [manualJson, setManualJson] = useState('');
+  const [manualError, setManualError] = useState('');
+  const [manualLoading, setManualLoading] = useState(false);
 
   const t = (ru: string, en: string, he: string, ar: string) => {
     if (currentLanguage === 'en') return en;
@@ -110,6 +113,62 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     setItemUnits({});
     setImportResult(null);
     setItemFilter('new');
+    setShowManualPanel(false);
+    setManualJson('');
+    setManualError('');
+  };
+
+  const getDirectApiUrl = (restaurantUrl: string) => {
+    const match = restaurantUrl.match(/\/restaurants\/menu\/(?:delivery|pickup)\/(\d+)/);
+    if (match) return `https://www.10bis.co.il/NextApi/GetRestaurantMenu?restaurantId=${match[1]}&deliveryMethod=delivery`;
+    const match2 = restaurantUrl.match(/[?&]restaurantId=(\d+)/);
+    if (match2) return `https://www.10bis.co.il/NextApi/GetRestaurantMenu?restaurantId=${match2[1]}&deliveryMethod=delivery`;
+    return null;
+  };
+
+  const applyMenuData = (data: MenuData & { existingExternalIds: string[] }) => {
+    const existing = new Set<string>(data.existingExternalIds || []);
+    setExistingIds(existing);
+    setMenuData(data);
+    setSelectedCategoryIds(new Set(data.categories.map((c: ImportCategory) => c.id)));
+    const newItemIds = new Set<string>(
+      data.items.filter((i: ImportItem) => !existing.has(i.id)).map((i: ImportItem) => i.id)
+    );
+    setSelectedItemIds(newItemIds);
+    const prices: Record<string, string> = {};
+    const units: Record<string, string> = {};
+    data.items.forEach((item: ImportItem) => {
+      prices[item.id] = String(item.price);
+      units[item.id] = 'piece';
+    });
+    setItemPrices(prices);
+    setItemUnits(units);
+    setItemFilter(existing.size > 0 ? 'new' : 'all');
+    setStep('categories');
+  };
+
+  const handleManualParse = async () => {
+    if (!manualJson.trim()) return;
+    setManualLoading(true);
+    setManualError('');
+    try {
+      const resp = await fetch('/api/admin/catalog-import/parse-raw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ rawJson: manualJson.trim(), url: url.trim() })
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        setManualError(data.message || t('Ошибка разбора JSON', 'JSON parse error', 'שגיאה בניתוח JSON', 'خطأ في تحليل JSON'));
+        return;
+      }
+      applyMenuData(data);
+    } catch {
+      setManualError(t('Ошибка соединения.', 'Connection error.', 'שגיאת חיבור.', 'خطأ في الاتصال.'));
+    } finally {
+      setManualLoading(false);
+    }
   };
 
   const handleClose = () => {
@@ -121,6 +180,7 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     if (!url.trim()) return;
     setLoading(true);
     setError('');
+    setShowManualPanel(false);
     try {
       const resp = await fetch('/api/admin/catalog-import/fetch', {
         method: 'POST',
@@ -133,35 +193,7 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
         setError(data.message || t('Не удалось получить меню', 'Failed to fetch menu', 'לא ניתן לקבל תפריט', 'تعذر الحصول على القائمة'));
         return;
       }
-
-      const existing = new Set<string>(data.existingExternalIds || []);
-      setExistingIds(existing);
-      setMenuData(data);
-
-      // Pre-select all categories
-      setSelectedCategoryIds(new Set(data.categories.map((c: ImportCategory) => c.id)));
-
-      // Pre-select only NEW items (not in existingIds)
-      const newItemIds = new Set<string>(
-        data.items
-          .filter((i: ImportItem) => !existing.has(i.id))
-          .map((i: ImportItem) => i.id)
-      );
-      setSelectedItemIds(newItemIds);
-
-      const prices: Record<string, string> = {};
-      const units: Record<string, string> = {};
-      data.items.forEach((item: ImportItem) => {
-        prices[item.id] = String(item.price);
-        units[item.id] = 'piece';
-      });
-      setItemPrices(prices);
-      setItemUnits(units);
-
-      // Default filter to 'new' only if there are existing items
-      setItemFilter(existing.size > 0 ? 'new' : 'all');
-
-      setStep('categories');
+      applyMenuData(data);
     } catch {
       setError(t('Ошибка соединения.', 'Connection error.', 'שגיאת חיבור.', 'خطأ في الاتصال.'));
     } finally {
@@ -367,9 +399,65 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
               </div>
 
               {error && (
-                <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                  <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                  <span>{error}</span>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                    <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <div className="space-y-1">
+                      <div>{error}</div>
+                      {url.includes('10bis') && (
+                        <div>
+                          <button
+                            onClick={() => { setShowManualPanel(v => !v); setManualError(''); }}
+                            className="underline font-medium hover:no-underline cursor-pointer"
+                          >
+                            {t('Попробовать вручную →', 'Try manually →', 'נסה ידנית →', 'جرب يدويًا →')}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {showManualPanel && url.includes('10bis') && (() => {
+                    const apiUrl = getDirectApiUrl(url);
+                    return (
+                      <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 space-y-3 text-sm">
+                        <p className="font-semibold text-orange-800">
+                          {t('Ручной импорт 10bis', 'Manual 10bis import', 'ייבוא ידני מ-10bis', 'استيراد يدوي من 10bis')}
+                        </p>
+                        <ol className="list-decimal list-inside space-y-2 text-orange-700">
+                          <li>
+                            {t('Откройте эту ссылку в браузере: ', 'Open this link in your browser: ', 'פתח קישור זה בדפדפן: ', 'افتح هذا الرابط في المتصفح: ')}
+                            {apiUrl
+                              ? <a href={apiUrl} target="_blank" rel="noopener noreferrer" className="underline font-medium break-all">{apiUrl}</a>
+                              : <span className="text-red-600">{t('Не удалось определить ID ресторана', 'Could not determine restaurant ID', 'לא ניתן לקבוע מזהה מסעדה', 'تعذر تحديد معرف المطعم')}</span>
+                            }
+                          </li>
+                          <li>{t('Нажмите Ctrl+A (выделить всё), затем Ctrl+C (скопировать)', 'Press Ctrl+A to select all, then Ctrl+C to copy', 'לחץ Ctrl+A לבחירת הכל, ואז Ctrl+C להעתקה', 'اضغط Ctrl+A لتحديد الكل، ثم Ctrl+C للنسخ')}</li>
+                          <li>{t('Вставьте сюда (Ctrl+V):', 'Paste here (Ctrl+V):', 'הדבק כאן (Ctrl+V):', 'الصق هنا (Ctrl+V):')}</li>
+                        </ol>
+                        <textarea
+                          value={manualJson}
+                          onChange={e => { setManualJson(e.target.value); setManualError(''); }}
+                          placeholder={t('Вставьте JSON сюда...', 'Paste JSON here...', 'הדבק JSON כאן...', 'الصق JSON هנا...')}
+                          className="w-full h-28 rounded border border-orange-300 bg-white p-2 text-xs font-mono resize-none focus:outline-none focus:ring-1 focus:ring-orange-400"
+                        />
+                        {manualError && (
+                          <p className="text-red-600 text-xs">{manualError}</p>
+                        )}
+                        <Button
+                          size="sm"
+                          onClick={handleManualParse}
+                          disabled={!manualJson.trim() || manualLoading}
+                          className="w-full"
+                        >
+                          {manualLoading
+                            ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />{t('Обработка...', 'Processing...', 'מעבד...', 'جارٍ المعالجة...')}</>
+                            : t('Загрузить меню', 'Load menu', 'טען תפריט', 'تحميل القائمة')
+                          }
+                        </Button>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>

@@ -140,6 +140,71 @@ async function fetchWoltMenu(slug: string) {
   return { platform: 'wolt' as const, restaurantName, categories, items };
 }
 
+function parse10bisJson(json: any, restaurantId: string) {
+  const data = json.Data ?? json;
+  const categoriesRaw: any[] = data.categoriesList || [];
+  if (categoriesRaw.length === 0) throw new Error('No menu data in response');
+
+  const restaurantName: string = data.ShopInfo?.restaurantName || `Restaurant #${restaurantId}`;
+
+  const categories = categoriesRaw.map((cat: any) => ({
+    id: String(cat.categoryID ?? cat.categoryId),
+    name: cat.categoryName,
+    itemCount: (cat.dishList || []).length,
+    imageUrl: ''
+  }));
+
+  const items = categoriesRaw.flatMap((cat: any) => {
+    const catId = String(cat.categoryID ?? cat.categoryId);
+    return (cat.dishList || []).map((dish: any) => ({
+      id: String(dish.dishId),
+      name: dish.dishName,
+      description: dish.dishDescription || '',
+      price: Number(dish.dishPrice),
+      imageUrl: dish.dishImageUrl || '',
+      categoryId: catId
+    }));
+  });
+
+  return { platform: '10bis' as const, restaurantName, categories, items };
+}
+
+router.post('/admin/catalog-import/parse-raw', isAuthenticated, async (req: any, res) => {
+  try {
+    const user = await storage.getUser(req.user.id);
+    if (!user || user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
+
+    const { rawJson, url } = req.body;
+    if (!rawJson || typeof rawJson !== 'string') {
+      return res.status(400).json({ error: 'invalid_data', message: 'JSON обязателен' });
+    }
+
+    let parsed: any;
+    try {
+      parsed = JSON.parse(rawJson);
+    } catch {
+      return res.status(400).json({ error: 'invalid_json', message: 'Некорректный JSON. Убедитесь что скопировали весь текст.' });
+    }
+
+    const restaurantId = url ? (extract10bisId(url) || 'unknown') : 'unknown';
+    const menuData = parse10bisJson(parsed, restaurantId);
+
+    let existingExternalIds: string[] = [];
+    try {
+      const existingProducts = await db
+        .select({ externalId: products.externalId })
+        .from(products)
+        .where(eq(products.externalSource, '10bis'));
+      existingExternalIds = existingProducts.map(p => p.externalId).filter(Boolean) as string[];
+    } catch {}
+
+    res.json({ ...menuData, existingExternalIds });
+  } catch (error: any) {
+    console.error('Catalog import parse-raw error:', error.message);
+    res.status(400).json({ error: 'parse_failed', message: 'Не удалось разобрать JSON: ' + error.message });
+  }
+});
+
 router.post('/admin/catalog-import/fetch', isAuthenticated, async (req: any, res) => {
   try {
     const user = await storage.getUser(req.user.id);
