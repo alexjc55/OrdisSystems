@@ -31,7 +31,22 @@ function extract10bisId(url: string): string | null {
 async function fetch10bisMenu(restaurantId: string) {
   const resp = await fetch(
     `https://www.10bis.co.il/NextApi/GetRestaurantMenu?restaurantId=${restaurantId}&deliveryMethod=delivery`,
-    { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' } }
+    {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Referer': 'https://www.10bis.co.il/',
+        'Origin': 'https://www.10bis.co.il',
+        'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+      }
+    }
   );
   if (!resp.ok) throw new Error('Failed to fetch 10bis menu');
   const json = await resp.json() as any;
