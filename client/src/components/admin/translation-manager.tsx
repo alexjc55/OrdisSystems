@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useTranslation } from "react-i18next";
@@ -75,7 +75,6 @@ export function TranslationManager() {
     }
   }, [serverProducts]);
 
-  // Filters
   const [filterCat, setFilterCat] = useState("all");
   const [filterMissing, setFilterMissing] = useState("all");
 
@@ -113,7 +112,6 @@ export function TranslationManager() {
     saveMutation.mutate(local);
   };
 
-  // "Missing" means name or description is empty for that lang (ingredients are optional)
   function isMissingLang(p: ProductTranslation, lang: string): boolean {
     return !(p[fieldKey("name", lang)] || "").trim() || !(p[fieldKey("description", lang)] || "").trim();
   }
@@ -235,133 +233,152 @@ export function TranslationManager() {
           {adminT("translations.noProducts")}
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-          <table className="w-full text-xs border-collapse" style={{ direction: "ltr" }}>
-            <thead>
-              {/* Language header row */}
-              <tr className="bg-gray-100 border-b border-gray-200">
-                <th
-                  rowSpan={2}
-                  className="px-3 py-2 text-left font-semibold text-gray-700 sticky left-0 bg-gray-100 z-20 border-r border-gray-200 min-w-[160px] align-middle"
-                >
-                  {adminT("translations.product")}
-                </th>
-                {langOrder.map(lang => (
+        <div className="rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+          {/*
+            Контейнер с ограниченной высотой и двойным скролом:
+            - overflow-y: auto — вертикальный скрол внутри контейнера
+            - overflow-x: auto — горизонтальный скрол всегда виден внизу контейнера,
+              не надо листать до конца страницы
+            - max-h-[65vh] — занимает не более 65% высоты экрана
+          */}
+          <div className="overflow-x-auto overflow-y-auto" style={{ maxHeight: "65vh" }}>
+            <table className="w-full text-xs border-collapse" style={{ direction: "ltr" }}>
+              {/*
+                thead sticky — шапка таблицы остаётся видна при вертикальном скроле
+              */}
+              <thead className="sticky top-0 z-30">
+                {/* Language header row */}
+                <tr className="bg-gray-100 border-b border-gray-200">
                   <th
-                    key={lang}
-                    colSpan={3}
-                    className="px-2 py-2 text-center font-semibold text-gray-700 border-r border-gray-200 last:border-r-0"
+                    rowSpan={2}
+                    className="px-3 py-2 text-left font-semibold text-gray-700 bg-gray-100 border-r border-gray-200 min-w-[160px] align-middle md:sticky md:left-0 md:z-20"
                   >
-                    <span className="inline-flex items-center gap-1.5">
-                      <span>{LANG_FLAGS[lang]}</span>
-                      {ll(lang)}
-                    </span>
+                    {adminT("translations.product")}
                   </th>
-                ))}
-              </tr>
-              {/* Field sub-header row */}
-              <tr className="bg-gray-50 border-b border-gray-200">
-                {langOrder.map(lang =>
-                  (["name", "description", "ingredients"] as const).map(field => (
+                  {langOrder.map(lang => (
                     <th
-                      key={`${lang}_${field}`}
-                      className="px-2 py-1.5 text-center text-gray-500 font-normal border-r border-gray-200 last:border-r-0 min-w-[130px]"
+                      key={lang}
+                      colSpan={3}
+                      className="px-2 py-2 text-center font-semibold text-gray-700 border-r border-gray-200 last:border-r-0 bg-gray-100"
                     >
-                      {fl(field)}
+                      <span className="inline-flex items-center gap-1.5">
+                        <span>{LANG_FLAGS[lang]}</span>
+                        {ll(lang)}
+                      </span>
                     </th>
-                  ))
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((product, idx) => {
-                const cat = (categories as Category[]).find(c => c.id === product.categoryId);
-                const displayName = (product[fieldKey("name", defaultLang)] || product.name || `#${product.id}`) as string;
-                const catLabel = cat ? catName(cat, currentLang) : "—";
+                  ))}
+                </tr>
+                {/* Field sub-header row */}
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  {langOrder.map(lang =>
+                    (["name", "description", "ingredients"] as const).map(field => (
+                      <th
+                        key={`${lang}_${field}`}
+                        className="px-2 py-1.5 text-center text-gray-500 font-normal border-r border-gray-200 last:border-r-0 min-w-[130px] bg-gray-50"
+                      >
+                        {fl(field)}
+                      </th>
+                    ))
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((product, idx) => {
+                  const cat = (categories as Category[]).find(c => c.id === product.categoryId);
+                  const displayName = (product[fieldKey("name", defaultLang)] || product.name || `#${product.id}`) as string;
+                  const catLabel = cat ? catName(cat, currentLang) : "—";
+                  // Solid backgrounds for sticky first column (не прозрачные — иначе контент просвечивает)
+                  const rowBg = idx % 2 === 0 ? "bg-white" : "bg-gray-50";
 
-                return (
-                  <tr
-                    key={product.id}
-                    className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}
-                  >
-                    {/* Product info */}
-                    <td className="px-3 py-1.5 sticky left-0 bg-inherit z-10 border-r border-gray-200">
-                      <div className="font-medium text-gray-800 truncate max-w-[150px]" title={displayName}>
-                        {displayName}
-                      </div>
-                      <div className="text-gray-400 truncate max-w-[150px]">{catLabel}</div>
-                    </td>
+                  return (
+                    <tr
+                      key={product.id}
+                      className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${rowBg}`}
+                    >
+                      {/*
+                        Первая колонка:
+                        - md:sticky md:left-0 — фиксирована только на десктопе
+                        - На мобильном прокручивается вместе с таблицей
+                        - Явный фон (не bg-inherit) чтобы не просвечивал контент при горизонтальном скроле
+                      */}
+                      <td className={`px-3 py-1.5 border-r border-gray-200 md:sticky md:left-0 md:z-10 ${rowBg}`}>
+                        <div className="font-medium text-gray-800 truncate max-w-[150px]" title={displayName}>
+                          {displayName}
+                        </div>
+                        <div className="text-gray-400 truncate max-w-[150px]">{catLabel}</div>
+                      </td>
 
-                    {/* Editable cells */}
-                    {langOrder.map(lang => {
-                      const nk = fieldKey("name", lang);
-                      const dk = fieldKey("description", lang);
-                      const ik = fieldKey("ingredients", lang);
-                      const nv = (product[nk] || "") as string;
-                      const dv = (product[dk] || "") as string;
-                      const iv = (product[ik] || "") as string;
-                      const rtlCell = lang === "he" || lang === "ar";
-                      const missingName = !nv.trim();
-                      const missingDesc = !dv.trim();
+                      {/* Editable cells */}
+                      {langOrder.map(lang => {
+                        const nk = fieldKey("name", lang);
+                        const dk = fieldKey("description", lang);
+                        const ik = fieldKey("ingredients", lang);
+                        const nv = (product[nk] || "") as string;
+                        const dv = (product[dk] || "") as string;
+                        const iv = (product[ik] || "") as string;
+                        const rtlCell = lang === "he" || lang === "ar";
+                        const missingName = !nv.trim();
+                        const missingDesc = !dv.trim();
 
-                      return (
-                        <>
-                          {/* Name cell */}
-                          <td
-                            key={`${product.id}_${lang}_name`}
-                            className={`px-1 py-1 border-r border-gray-100 ${missingName ? "bg-red-50" : ""}`}
-                          >
-                            <Input
-                              value={nv}
-                              onChange={e => handleCell(product.id, nk, e.target.value)}
-                              className="h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent w-full"
-                              placeholder="—"
-                              dir={rtlCell ? "rtl" : "ltr"}
-                            />
-                          </td>
-                          {/* Description cell */}
-                          <td
-                            key={`${product.id}_${lang}_desc`}
-                            className={`px-1 py-1 border-r border-gray-100 ${missingDesc ? "bg-yellow-50" : ""}`}
-                          >
-                            <Textarea
-                              value={dv}
-                              onChange={e => handleCell(product.id, dk, e.target.value)}
-                              className="min-h-[28px] h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent resize-none w-full leading-tight"
-                              placeholder="—"
-                              dir={rtlCell ? "rtl" : "ltr"}
-                              rows={1}
-                              onFocus={e => {
-                                e.target.style.height = "auto";
-                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
-                              }}
-                              onBlur={e => { e.target.style.height = "28px"; }}
-                            />
-                          </td>
-                          {/* Ingredients cell */}
-                          <td key={`${product.id}_${lang}_ing`} className="px-1 py-1 border-r border-gray-100 last:border-r-0">
-                            <Textarea
-                              value={iv}
-                              onChange={e => handleCell(product.id, ik, e.target.value)}
-                              className="min-h-[28px] h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent resize-none w-full leading-tight"
-                              placeholder="—"
-                              dir={rtlCell ? "rtl" : "ltr"}
-                              rows={1}
-                              onFocus={e => {
-                                e.target.style.height = "auto";
-                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
-                              }}
-                              onBlur={e => { e.target.style.height = "28px"; }}
-                            />
-                          </td>
-                        </>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        return (
+                          <>
+                            {/* Name cell */}
+                            <td
+                              key={`${product.id}_${lang}_name`}
+                              className={`px-1 py-1 border-r border-gray-100 ${missingName ? "bg-red-50" : ""}`}
+                            >
+                              <Input
+                                value={nv}
+                                onChange={e => handleCell(product.id, nk, e.target.value)}
+                                className="h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent w-full"
+                                placeholder="—"
+                                dir={rtlCell ? "rtl" : "ltr"}
+                              />
+                            </td>
+                            {/* Description cell */}
+                            <td
+                              key={`${product.id}_${lang}_desc`}
+                              className={`px-1 py-1 border-r border-gray-100 ${missingDesc ? "bg-yellow-50" : ""}`}
+                            >
+                              <Textarea
+                                value={dv}
+                                onChange={e => handleCell(product.id, dk, e.target.value)}
+                                className="min-h-[28px] h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent resize-none w-full leading-tight"
+                                placeholder="—"
+                                dir={rtlCell ? "rtl" : "ltr"}
+                                rows={1}
+                                onFocus={e => {
+                                  e.target.style.height = "auto";
+                                  e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                                }}
+                                onBlur={e => { e.target.style.height = "28px"; }}
+                              />
+                            </td>
+                            {/* Ingredients cell */}
+                            <td key={`${product.id}_${lang}_ing`} className="px-1 py-1 border-r border-gray-100 last:border-r-0">
+                              <Textarea
+                                value={iv}
+                                onChange={e => handleCell(product.id, ik, e.target.value)}
+                                className="min-h-[28px] h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent resize-none w-full leading-tight"
+                                placeholder="—"
+                                dir={rtlCell ? "rtl" : "ltr"}
+                                rows={1}
+                                onFocus={e => {
+                                  e.target.style.height = "auto";
+                                  e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                                }}
+                                onBlur={e => { e.target.style.height = "28px"; }}
+                              />
+                            </td>
+                          </>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
