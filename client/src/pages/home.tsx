@@ -80,7 +80,10 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
 
   const isRTL = currentLanguage === 'he' || currentLanguage === 'ar';
   const phone = storeSettings?.contactPhone;
-  const whatsapp = storeSettings?.whatsappNumber || phone;
+  // WhatsApp номер берётся только из настройки whatsappPhoneNumber и только если чат включён
+  const whatsapp = storeSettings?.showWhatsAppChat && storeSettings?.whatsappPhoneNumber
+    ? storeSettings.whatsappPhoneNumber
+    : null;
   const address = getLocalizedField(storeSettings, 'address', currentLanguage as SupportedLanguage);
   const deliveryInfo = getMultilingualValue(storeSettings, 'deliveryInfo', currentLanguage as any);
   const paymentInfo = getMultilingualValue(storeSettings, 'paymentInfo', currentLanguage as any);
@@ -186,7 +189,8 @@ const InfoBlocks = memo(({ storeSettings, t, currentLanguage }: {
             <MessageCircle className="w-5 h-5 text-green-500" />
           </div>
           <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
-            <p className="font-semibold text-gray-900 text-base">WhatsApp</p>
+            <p className="text-xs text-gray-400">WhatsApp</p>
+            <p className="font-semibold text-gray-900 text-base">{whatsapp}</p>
           </div>
         </div>
       )}
