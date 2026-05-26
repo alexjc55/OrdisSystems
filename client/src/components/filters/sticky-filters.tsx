@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SearchInput from "@/components/SearchInput";
 import { ChevronLeft } from "lucide-react";
-import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useQuery } from "@tanstack/react-query";
 
@@ -45,6 +45,7 @@ export default function StickyFilters({
   showSearch
 }: StickyFiltersProps) {
   const { t } = useCommonTranslation();
+  const { t: tShop } = useShopTranslation();
   const { currentLanguage } = useLanguage();
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
@@ -115,8 +116,8 @@ export default function StickyFilters({
                       <SelectValue placeholder={t('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allProducts', 'Все товары')}</SelectItem>
-                      <SelectItem value="discount">{t('onlyDiscounted', 'Товары со скидкой')}</SelectItem>
+                      <SelectItem value="all">{tShop('allProducts', 'Все товары')}</SelectItem>
+                      <SelectItem value="discount">{tShop('onlyDiscounted', 'Товары со скидкой')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
