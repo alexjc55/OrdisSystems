@@ -88,8 +88,6 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       'logoUrl', 'logoUrl_en', 'logoUrl_he', 'logoUrl_ar',
       'bannerImageUrl', 'bannerImageUrl_en', 'bannerImageUrl_he', 'bannerImageUrl_ar',
       'cartBannerImage', 'cartBannerImage_en', 'cartBannerImage_he', 'cartBannerImage_ar',
-      'bottomBanner1Url', 'bottomBanner1Url_en', 'bottomBanner1Url_he', 'bottomBanner1Url_ar',
-      'bottomBanner2Url', 'bottomBanner2Url_en', 'bottomBanner2Url_he', 'bottomBanner2Url_ar',
       'slide1Image', 'slide2Image', 'slide3Image', 'slide4Image', 'slide5Image',
       'slide1Image_en', 'slide1Image_he', 'slide1Image_ar',
       'slide2Image_en', 'slide2Image_he', 'slide2Image_ar',
@@ -98,8 +96,13 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       'slide5Image_en', 'slide5Image_he', 'slide5Image_ar'
     ];
 
-    // Link fields must be explicitly clearable — an empty value means "remove the link"
-    const clearableFields = ['bottomBanner1Link', 'bottomBanner2Link'];
+    // Bottom banner images are explicitly clearable — user can delete them intentionally
+    // Link fields are also clearable — empty value means "remove the link"
+    const clearableFields = [
+      'bottomBanner1Link', 'bottomBanner2Link',
+      'bottomBanner1Url', 'bottomBanner1Url_en', 'bottomBanner1Url_he', 'bottomBanner1Url_ar',
+      'bottomBanner2Url', 'bottomBanner2Url_en', 'bottomBanner2Url_he', 'bottomBanner2Url_ar',
+    ];
 
     Object.keys(body).forEach(key => {
       const val = body[key];

@@ -1072,7 +1072,23 @@ export default function ThemeManager() {
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
     const defaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
     const requiredNameField = defaultLang === 'ru' ? 'name' : `name_${defaultLang}` as keyof typeof themeFields;
-    const nameVal = (themeFields[requiredNameField as keyof typeof themeFields] || '').trim();
+
+    // Auto-fill the default language name from Russian base name if it's empty.
+    // Allows saving without errors when the theme was created before the default language changed.
+    const autoFilledNames = {
+      name: themeFields.name,
+      name_en: themeFields.name_en,
+      name_he: themeFields.name_he,
+      name_ar: themeFields.name_ar,
+    };
+    if (defaultLang !== 'ru') {
+      const defaultKey = `name_${defaultLang}` as keyof typeof autoFilledNames;
+      if (!autoFilledNames[defaultKey] && autoFilledNames.name) {
+        autoFilledNames[defaultKey] = autoFilledNames.name;
+      }
+    }
+
+    const nameVal = (autoFilledNames[requiredNameField as keyof typeof autoFilledNames] || '').trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
@@ -1083,10 +1099,10 @@ export default function ThemeManager() {
     };
 
     const themeData = {
-      name: themeFields.name,
-      name_en: themeFields.name_en,
-      name_he: themeFields.name_he,
-      name_ar: themeFields.name_ar,
+      name: autoFilledNames.name,
+      name_en: autoFilledNames.name_en,
+      name_he: autoFilledNames.name_he,
+      name_ar: autoFilledNames.name_ar,
       description: themeFields.description,
       description_en: themeFields.description_en,
       description_he: themeFields.description_he,
