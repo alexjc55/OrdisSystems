@@ -1487,8 +1487,8 @@ body, html {
   height: 12px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.2);
-  margin: 0 4px;
-  display: inline-block;
+  display: block;
+  flex-shrink: 0;
   cursor: pointer;
   transition: background 0.2s;
 }

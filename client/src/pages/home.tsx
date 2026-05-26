@@ -1059,7 +1059,16 @@ export default function Home() {
                       {/* External pagination container — always centered, RTL-safe */}
                       <div
                         className="swiper-special-offers-pagination"
-                        style={{ textAlign: 'center', direction: 'ltr', marginTop: '12px' }}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: '8px',
+                          direction: 'ltr',
+                          marginTop: '12px',
+                          width: '100%',
+                        }}
                       />
                     </div>
                   )}
