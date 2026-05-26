@@ -194,9 +194,23 @@ export default function Header({ onResetView }: HeaderProps) {
                     </div>
                   );
                 })()}
-                <h1 className="text-lg md:text-2xl font-poppins font-bold text-primary truncate">
-                  {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"}
-                </h1>
+                {(() => {
+                  const mode = storeSettings?.logoTextMode || 'storeName';
+                  if (mode === 'none') return null;
+                  if (mode === 'welcomeTitle') {
+                    const title = getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage);
+                    return title ? (
+                      <span className="text-base md:text-lg font-normal text-gray-700 truncate">
+                        {title}
+                      </span>
+                    ) : null;
+                  }
+                  return (
+                    <h1 className="text-lg md:text-2xl font-poppins font-bold text-primary truncate">
+                      {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"}
+                    </h1>
+                  );
+                })()}
               </div>
             </Link>
             

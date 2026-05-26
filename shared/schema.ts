@@ -262,6 +262,7 @@ export const storeSettings = pgTable("store_settings", {
   showCartBanner: boolean("show_cart_banner").default(false), // Enable/disable cart banner
   cartBannerType: varchar("cart_banner_type", { enum: ["image", "text"] }).default("text"), // Banner type
   headerStyle: varchar("header_style", { enum: ["classic", "modern", "minimal", "slider"] }).default("classic"), // Header design style
+  logoTextMode: varchar("logo_text_mode", { length: 20 }).default("storeName"), // "storeName", "welcomeTitle", "none"
   categoryDisplayStyle: varchar("category_display_style", { length: 20 }).default("default"), // "default", "carousel", "photo_grid"
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Banner button text
   bannerButtonLink: varchar("banner_button_link", { length: 500 }).default("#categories"), // Banner button link
@@ -587,6 +588,10 @@ export const themes = pgTable("themes", {
   bannerButtonText_ar: varchar("banner_button_text_ar", { length: 100 }),
   bannerButtonLink: varchar("banner_button_link", { length: 200 }).default("#categories"),
   
+  // Logo text mode: what to show next to the logo in the header
+  // "storeName" = show store name (default), "welcomeTitle" = show welcome title (light weight), "none" = show nothing
+  logoTextMode: varchar("logo_text_mode", { length: 20 }).default("storeName"),
+
   // Image URLs - multilingual support
   logoUrl: varchar("logo_url", { length: 500 }).default(""),
   logoUrl_en: varchar("logo_url_en", { length: 500 }).default(""),

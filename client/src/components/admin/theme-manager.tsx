@@ -1408,6 +1408,19 @@ export default function ThemeManager() {
                         <div className="text-xs text-gray-500 mt-2">
                           {adminT('themes.storeLogoDescription')}
                         </div>
+                        <div className="mt-3 space-y-1">
+                          <Label htmlFor="logoTextModeCreate">{adminT('themes.logoTextMode')}</Label>
+                          <select
+                            name="logoTextMode"
+                            id="logoTextModeCreate"
+                            defaultValue="storeName"
+                            className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                          >
+                            <option value="storeName">{adminT('themes.logoTextModeStoreName')}</option>
+                            <option value="welcomeTitle">{adminT('themes.logoTextModeWelcomeTitle')}</option>
+                            <option value="none">{adminT('themes.logoTextModeNone')}</option>
+                          </select>
+                        </div>
                       </div>
                       
                       <div>
@@ -2181,6 +2194,19 @@ export default function ThemeManager() {
                         {i18n.language !== 'ar' && <input type="hidden" name="logoUrl_ar" value={themeImages.logoUrl_ar} />}
                         <div className="text-xs text-gray-500 mt-2">
                           {adminT('themes.storeLogoDescription')}
+                        </div>
+                        <div className="mt-3 space-y-1">
+                          <Label htmlFor="logoTextModeEdit">{adminT('themes.logoTextMode')}</Label>
+                          <select
+                            name="logoTextMode"
+                            id="logoTextModeEdit"
+                            defaultValue={(editingTheme as any)?.logoTextMode || 'storeName'}
+                            className="w-full px-3 py-2 border rounded-md bg-white text-sm"
+                          >
+                            <option value="storeName">{adminT('themes.logoTextModeStoreName')}</option>
+                            <option value="welcomeTitle">{adminT('themes.logoTextModeWelcomeTitle')}</option>
+                            <option value="none">{adminT('themes.logoTextModeNone')}</option>
+                          </select>
                         </div>
                       </div>
                       

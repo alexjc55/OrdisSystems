@@ -121,6 +121,7 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       const updateFields = [];
 
       if (themeData.headerStyle) updateFields.push(`header_style = '${themeData.headerStyle}'`);
+      if (themeData.logoTextMode !== undefined) updateFields.push(`logo_text_mode = '${themeData.logoTextMode || 'storeName'}'`);
       if (themeData.bannerButtonText !== undefined) updateFields.push(`banner_button_text = '${(themeData.bannerButtonText || 'Смотреть каталог').replace(/'/g, "''")}'`);
       if (themeData.bannerButtonLink !== undefined) updateFields.push(`banner_button_link = '${(themeData.bannerButtonLink || '#categories').replace(/'/g, "''")}'`);
 
@@ -202,11 +203,11 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
         if (themeData.sliderEffect !== undefined) updateFields.push(`slider_effect = '${themeData.sliderEffect || 'fade'}'`);
 
         for (let i = 1; i <= 5; i++) {
-          // Only update image URLs when non-empty — empty string must never overwrite an existing URL
-          if (themeData[`slide${i}Image`]) updateFields.push(`slide${i}_image = '${themeData[`slide${i}Image`].replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Image_en`]) updateFields.push(`slide${i}_image_en = '${themeData[`slide${i}Image_en`].replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Image_he`]) updateFields.push(`slide${i}_image_he = '${themeData[`slide${i}Image_he`].replace(/'/g, "''")}'`);
-          if (themeData[`slide${i}Image_ar`]) updateFields.push(`slide${i}_image_ar = '${themeData[`slide${i}Image_ar`].replace(/'/g, "''")}'`);
+          // Slide image fields are fully clearable: empty string means "remove this slide"
+          if (`slide${i}Image` in themeData) updateFields.push(`slide${i}_image = '${(themeData[`slide${i}Image`] || '').replace(/'/g, "''")}'`);
+          if (`slide${i}Image_en` in themeData) updateFields.push(`slide${i}_image_en = '${(themeData[`slide${i}Image_en`] || '').replace(/'/g, "''")}'`);
+          if (`slide${i}Image_he` in themeData) updateFields.push(`slide${i}_image_he = '${(themeData[`slide${i}Image_he`] || '').replace(/'/g, "''")}'`);
+          if (`slide${i}Image_ar` in themeData) updateFields.push(`slide${i}_image_ar = '${(themeData[`slide${i}Image_ar`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}Title`] !== undefined) updateFields.push(`slide${i}_title = '${(themeData[`slide${i}Title`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}TitleEn`] !== undefined) updateFields.push(`slide${i}_title_en = '${(themeData[`slide${i}TitleEn`] || '').replace(/'/g, "''")}'`);
           if (themeData[`slide${i}TitleHe`] !== undefined) updateFields.push(`slide${i}_title_he = '${(themeData[`slide${i}TitleHe`] || '').replace(/'/g, "''")}'`);
