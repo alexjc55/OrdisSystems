@@ -23,3 +23,7 @@ CREATE INDEX IF NOT EXISTS idx_pending_payments_token
 
 CREATE INDEX IF NOT EXISTS idx_pending_payments_expires_at
   ON pending_payments (expires_at);
+
+-- Выбор вывода рядом с лого ───────────────────────────────────────────────────
+ALTER TABLE themes ADD COLUMN IF NOT EXISTS logo_text_mode VARCHAR(20) DEFAULT 'storeName';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS logo_text_mode VARCHAR(20) DEFAULT 'storeName';

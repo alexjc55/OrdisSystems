@@ -70,8 +70,15 @@ export function getLocalizedField(
     defaultLanguage = storeSettingsOrDefault.defaultLanguage as SupportedLanguage;
   }
   
-  // If current language is default language, use base field
+  // If current language is default language, use base field.
+  // Exception: for non-Russian defaults (e.g. Hebrew/Arabic), the base 'name' field
+  // historically stores Russian text while the actual translation lives in 'name_he' etc.
+  // So we always try the explicit language-tagged field first, then fall back to the base field.
   if (currentLanguage === defaultLanguage) {
+    if (defaultLanguage !== 'ru') {
+      const langField = `${field}_${currentLanguage}`;
+      return item[langField] || item[field] || '';
+    }
     return item[field] || '';
   }
   

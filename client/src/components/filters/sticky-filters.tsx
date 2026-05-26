@@ -3,6 +3,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import SearchInput from "@/components/SearchInput";
 import { ChevronLeft } from "lucide-react";
 import { useCommonTranslation, useLanguage } from "@/hooks/use-language";
+import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
+import { useQuery } from "@tanstack/react-query";
 
 interface StickyFiltersProps {
   // Back button
@@ -44,6 +46,10 @@ export default function StickyFilters({
 }: StickyFiltersProps) {
   const { t } = useCommonTranslation();
   const { currentLanguage } = useLanguage();
+  const { data: storeSettingsData } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000,
+  });
 
   // Don't render if nothing to show
   if (!showBackButton && !showSearch && !showFilters) {
@@ -96,7 +102,7 @@ export default function StickyFilters({
                       <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name || `Category ${category.id}`}
+                          {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any) || category.name || `Category ${category.id}`}
                         </SelectItem>
                       ))}
                     </SelectContent>
