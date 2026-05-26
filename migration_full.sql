@@ -298,12 +298,6 @@ ALTER TABLE store_settings
   ADD COLUMN IF NOT EXISTS whatsapp_default_message_ar TEXT,
   ADD COLUMN IF NOT EXISTS whatsapp_default_message_he TEXT,
   ADD COLUMN IF NOT EXISTS whatsapp_default_message_en TEXT,
-  -- Страница авторизации
-  ADD COLUMN IF NOT EXISTS auth_page_title VARCHAR(255) DEFAULT 'Добро пожаловать в eDAHouse',
-  ADD COLUMN IF NOT EXISTS auth_page_subtitle TEXT DEFAULT 'Готовые блюда высокого качества с доставкой на дом',
-  ADD COLUMN IF NOT EXISTS auth_page_feature1 VARCHAR(255) DEFAULT 'Свежие готовые блюда каждый день',
-  ADD COLUMN IF NOT EXISTS auth_page_feature2 VARCHAR(255) DEFAULT 'Быстрая доставка в удобное время',
-  ADD COLUMN IF NOT EXISTS auth_page_feature3 VARCHAR(255) DEFAULT 'Широкий выбор блюд на любой вкус',
   -- Баннер корзины
   ADD COLUMN IF NOT EXISTS show_cart_banner BOOLEAN DEFAULT false,
   ADD COLUMN IF NOT EXISTS cart_banner_type VARCHAR DEFAULT 'text',
