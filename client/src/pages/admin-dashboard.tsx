@@ -12195,10 +12195,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex-1">
                     <p className="text-sm font-medium text-blue-800">
-                      📧 {adminT('emailDeliveryCheck')}
+                      📧 {adminT('settings.emailDeliveryCheck')}
                     </p>
                     <p className="text-xs text-blue-600">
-                      {adminT('emailDeliveryCheckDesc')}
+                      {adminT('settings.emailDeliveryCheckDesc')}
                     </p>
                   </div>
                   <Button
@@ -12209,7 +12209,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     disabled={testEmailMutation.isPending || !form.watch("orderNotificationEmail")}
                     onClick={() => handleTestEmail()}
                   >
-                    {testEmailMutation.isPending ? adminT('emailSending') : adminT('emailTestButton')}
+                    {testEmailMutation.isPending ? adminT('settings.emailSending') : adminT('settings.emailTestButton')}
                   </Button>
                 </div>
 
