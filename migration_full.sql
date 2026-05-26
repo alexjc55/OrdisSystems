@@ -161,6 +161,12 @@ CREATE TABLE IF NOT EXISTS pending_payments (
   expires_at TIMESTAMP NOT NULL
 );
 
+CREATE INDEX IF NOT EXISTS idx_pending_payments_token
+  ON pending_payments (token);
+
+CREATE INDEX IF NOT EXISTS idx_pending_payments_expires_at
+  ON pending_payments (expires_at);
+
 -- Закрытые даты (праздники)
 CREATE TABLE IF NOT EXISTS closed_dates (
   id SERIAL PRIMARY KEY,
@@ -188,6 +194,9 @@ ALTER TABLE users
 -- -----------------------------------------------------------
 -- categories
 -- -----------------------------------------------------------
+ALTER TABLE branches
+  ALTER COLUMN name DROP NOT NULL;
+
 ALTER TABLE categories
   ALTER COLUMN name DROP NOT NULL;
 
@@ -571,10 +580,17 @@ UPDATE store_settings
 SET enabled_languages = '["ru","en","he","ar"]'::jsonb
 WHERE enabled_languages IS NULL;
 
--- Установить language_order если NULL
+-- Инициализировать language_order из enabled_languages если уже заполнен
+UPDATE store_settings
+SET language_order = enabled_languages
+WHERE (language_order IS NULL OR language_order = '[]'::jsonb)
+  AND enabled_languages IS NOT NULL
+  AND enabled_languages != '[]'::jsonb;
+
+-- Финальный фолбэк если enabled_languages тоже пустой
 UPDATE store_settings
 SET language_order = '["ru","en","he","ar"]'::jsonb
-WHERE language_order IS NULL;
+WHERE language_order IS NULL OR language_order = '[]'::jsonb;
 
 -- Установить default_language если NULL
 UPDATE store_settings
