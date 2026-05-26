@@ -156,16 +156,22 @@ router.post('/admin/catalog-import/fetch', isAuthenticated, async (req: any, res
     }
 
     // Diff: find which external IDs already exist in DB for this platform
-    const existingProducts = await db
-      .select({ externalId: products.externalId })
-      .from(products)
-      .where(eq(products.externalSource, platform));
+    // Wrapped in try/catch — gracefully handles DB without external_id/external_source columns yet
+    let existingExternalIds: string[] = [];
+    try {
+      const existingProducts = await db
+        .select({ externalId: products.externalId })
+        .from(products)
+        .where(eq(products.externalSource, platform));
+      existingExternalIds = existingProducts
+        .map(p => p.externalId)
+        .filter(Boolean) as string[];
+    } catch (dbErr: any) {
+      // Columns may not exist on older DB — diff mode simply disabled
+      console.warn('Catalog import: could not query existing external IDs (run migration):', dbErr.message);
+    }
 
-    const existingExternalIds = new Set(
-      existingProducts.map(p => p.externalId).filter(Boolean)
-    );
-
-    res.json({ ...menuData, existingExternalIds: Array.from(existingExternalIds) });
+    res.json({ ...menuData, existingExternalIds });
   } catch (error: any) {
     console.error('Catalog import fetch error:', error.message);
     res.status(500).json({ error: 'fetch_failed', message: 'Не удалось получить меню с товарами: ' + error.message });
