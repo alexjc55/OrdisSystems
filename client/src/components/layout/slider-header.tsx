@@ -59,14 +59,25 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
   const slides: SlideData[] = [];
   for (let i = 1; i <= 5; i++) {
     // Image fields use underscore format: slide1Image (ru base), slide1Image_en, slide1Image_he, slide1Image_ar
-    // (different from text fields which use camelCase: slide1TitleHe)
-    // A slide only exists if the base image is set — deleting base removes it for all languages
-    const baseImage = storeSettings?.[`slide${i}Image`] || '';
+    // When defaultLanguage is not Russian, the "base" image lives in slide1Image_{defaultLanguage}.
+    // Fall back to the legacy slide1Image field in case it was set before the default changed.
+    const ruBase = storeSettings?.[`slide${i}Image`] || '';
+    const baseImage = defaultLanguage === 'ru'
+      ? ruBase
+      : (storeSettings?.[`slide${i}Image_${defaultLanguage}`] || ruBase);
     if (!baseImage) continue;
-    const langImage = currentLanguage !== defaultLanguage
-      ? (storeSettings?.[`slide${i}Image_${currentLanguage}`] || '')
-      : baseImage;
-    const slideImage = langImage || baseImage;
+
+    // For current user language: try language-specific override, fall back to base.
+    // Special case: when defaultLanguage !== 'ru', Russian users get slide1Image (the ru-specific
+    // override field) falling back to the default-language base.
+    let slideImage: string;
+    if (currentLanguage === defaultLanguage) {
+      slideImage = baseImage;
+    } else if (currentLanguage === 'ru' && defaultLanguage !== 'ru') {
+      slideImage = ruBase || baseImage;
+    } else {
+      slideImage = storeSettings?.[`slide${i}Image_${currentLanguage}`] || baseImage;
+    }
     if (slideImage) {
       slides.push({
         image: slideImage,

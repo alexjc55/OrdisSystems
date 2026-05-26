@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { getLocalizedFieldForAdmin } from "@shared/multilingual-helpers";
 import { createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
 import { type SupportedLanguage } from "@shared/localization";
+import { useQuery } from "@tanstack/react-query";
 
 interface SliderSettingsProps {
   id: string;
@@ -112,6 +113,8 @@ interface SliderSettingsProps {
 export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) {
   const { t: adminT, i18n } = useTranslation('admin');
   const currentLanguage = i18n.language as SupportedLanguage;
+  const { data: storeSettingsData } = useQuery<any>({ queryKey: ['/api/settings'], staleTime: 5 * 60 * 1000 });
+  const defaultLanguage: SupportedLanguage = (storeSettingsData?.defaultLanguage as SupportedLanguage) || 'ru';
 
   const slides = [1, 2, 3, 4, 5];
 
@@ -160,30 +163,37 @@ export function SliderSettings({ id, defaultValues = {} }: SliderSettingsProps) 
     });
   });
 
-  // Returns the displayed image for the current language (lang-specific or fallback to Russian base)
+  // The lang key used in allSlideImages for a given SupportedLanguage.
+  // 'ru' always maps to '_ru' (base field); all others map to their suffix.
+  const getLangKey = (lang: SupportedLanguage) => lang === 'ru' ? 'ru' : lang;
+
+  // The base lang key: when defaultLanguage is not Russian, the default image lives in _he/_ar etc.
+  const baseLangKey = getLangKey(defaultLanguage);
+
+  // Returns the displayed image for the current language, falling back to the default-language base.
   const getDisplayImage = (slideNum: number): string => {
-    const lang = currentLanguage === 'ru' ? 'ru' : currentLanguage;
-    return allSlideImages[`${slideNum}_${lang}`] || allSlideImages[`${slideNum}_ru`] || '';
+    const langKey = getLangKey(currentLanguage);
+    return allSlideImages[`${slideNum}_${langKey}`] || allSlideImages[`${slideNum}_${baseLangKey}`] || '';
   };
 
   // Returns true if the current language has its own image (not just the fallback)
   const hasOwnImage = (slideNum: number): boolean => {
-    if (currentLanguage === 'ru') return !!allSlideImages[`${slideNum}_ru`];
-    return !!allSlideImages[`${slideNum}_${currentLanguage}`];
+    return !!allSlideImages[`${slideNum}_${getLangKey(currentLanguage)}`];
   };
 
-  // The field name for the hidden input for the current language
+  // The form field name for the hidden input for the current language
   const getFieldName = (slideNum: number): string => {
     if (currentLanguage === 'ru') return `slide${slideNum}Image`;
     return `slide${slideNum}Image_${currentLanguage}`;
   };
 
   const handleImageChange = (slideNum: number, url: string) => {
-    const langKey = currentLanguage === 'ru' ? 'ru' : currentLanguage;
+    const langKey = getLangKey(currentLanguage);
     setAllSlideImages(prev => {
       const next = { ...prev, [`${slideNum}_${langKey}`]: url };
-      // Clearing the base (ru) image removes the slide entirely — wipe all language variants
-      if (langKey === 'ru' && url === '') {
+      // Clearing the default-language image removes the slide entirely — wipe all language variants
+      if (langKey === baseLangKey && url === '') {
+        next[`${slideNum}_ru`] = '';
         next[`${slideNum}_en`] = '';
         next[`${slideNum}_he`] = '';
         next[`${slideNum}_ar`] = '';
