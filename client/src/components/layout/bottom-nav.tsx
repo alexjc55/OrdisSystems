@@ -14,7 +14,7 @@ export function BottomNav() {
   const { items, toggleCart, setCartOpen } = useCartStore();
   const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
-  const { currentLanguage, changeLanguage } = useLanguage();
+  const { currentLanguage, changeLanguage, languages } = useLanguage();
   const { storeSettings } = useStoreSettings();
   const { isInstalled, installApp } = usePWA();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,14 +54,7 @@ export function BottomNav() {
     return false;
   };
 
-  const allLanguages: Array<{ code: 'ru' | 'en' | 'he' | 'ar', name: string }> = [
-    { code: 'ru', name: 'Русский' },
-    { code: 'en', name: 'English' },
-    { code: 'he', name: 'עברית' },
-    { code: 'ar', name: 'العربية' }
-  ];
-  const enabledLanguageCodes = storeSettings?.enabledLanguages || ['ru'];
-  const languages = allLanguages.filter(lang => enabledLanguageCodes.includes(lang.code));
+  const languageList = Object.entries(languages).map(([code, info]) => ({ code: code as 'ru' | 'en' | 'he' | 'ar', name: (info as any).name }));
 
   return (
     <>
@@ -183,11 +176,11 @@ export function BottomNav() {
               );
             })()}
 
-            {languages.length > 1 && (
+            {languageList.length > 1 && (
               <div className="border-t border-gray-100 pt-3">
                 <span className="text-xs font-medium text-gray-500 block mb-2">{t('language')}</span>
                 <div className="flex flex-wrap gap-2">
-                  {languages.map((lang) => (
+                  {languageList.map((lang) => (
                     <button
                       key={lang.code}
                       onClick={() => {
