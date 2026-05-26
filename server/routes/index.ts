@@ -20,6 +20,7 @@ import adminBranchRoutes from "./admin/branches.routes";
 import feedsRoutes from "./integrations/feeds.routes";
 import translationsRoutes from "./integrations/translations.routes";
 import barcodeRoutes from "./integrations/barcode.routes";
+import catalogImportRoutes from "./integrations/catalog-import.routes";
 import loyaltyRoutes from "./loyalty.routes";
 import adminCouponsRoutes from "./admin/coupons.routes";
 import adminProductTranslationsRoutes from "./admin/product-translations.routes";
@@ -108,6 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", feedsRoutes);
   app.use("/api", translationsRoutes);
   app.use("/api", barcodeRoutes);
+  app.use("/api", catalogImportRoutes);
   app.use("/api", loyaltyRoutes);
   app.use("/api", adminCouponsRoutes);
   app.use("/api", adminProductTranslationsRoutes);

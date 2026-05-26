@@ -61,6 +61,7 @@ import { insertStoreSettingsSchema, type StoreSettings, type CategoryWithCount }
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import ThemeManager from "@/components/admin/theme-manager";
 import { TranslationManager } from "@/components/admin/translation-manager";
+import { CatalogImportModal } from "@/components/admin/catalog-import-modal";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
 import { AdminCacheBuster } from "@/components/cache-buster";
 import { BarcodeConfigSection } from "@/components/barcode-config-section";
@@ -3699,6 +3700,7 @@ export default function AdminDashboard() {
   const [optimizationResults, setOptimizationResults] = useState<any>(null);
   const [isImportingTranslations, setIsImportingTranslations] = useState(false);
   const [selectedTranslationFile, setSelectedTranslationFile] = useState<File | null>(null);
+  const [showCatalogImportModal, setShowCatalogImportModal] = useState(false);
   const translationFileInputRef = useRef<HTMLInputElement>(null);
 
   // Availability modal state
@@ -7765,6 +7767,49 @@ export default function AdminDashboard() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* ── Catalog Import ─────────────────────────────────── */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className={`text-lg sm:text-xl flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <Store className="h-5 w-5" style={{ color: 'var(--color-primary)' }} />
+                    {currentLanguage === 'en' ? 'Catalog Import' : currentLanguage === 'he' ? 'ייבוא קטלוג' : currentLanguage === 'ar' ? 'استيراد الكتالوج' : 'Импорт каталога'}
+                  </CardTitle>
+                  <CardDescription>
+                    {currentLanguage === 'en' ? 'Import categories and products from Wolt or 10bis' : currentLanguage === 'he' ? 'ייבוא קטגוריות ומוצרים מ-Wolt או 10bis' : currentLanguage === 'ar' ? 'استيراد الفئات والمنتجات من Wolt أو 10bis' : 'Импорт категорий и товаров из Wolt или 10bis'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className={`flex items-start gap-4 flex-col sm:flex-row ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-600">
+                        {currentLanguage === 'en'
+                          ? 'Quickly import your entire menu — categories and products with photos and prices — from your restaurant page on Wolt or 10bis.'
+                          : currentLanguage === 'he'
+                          ? 'ייבוא מהיר של כל התפריט — קטגוריות ומוצרים עם תמונות ומחירים — מדף המסעדה שלכם ב-Wolt או 10bis.'
+                          : currentLanguage === 'ar'
+                          ? 'استورد قائمتك بالكامل بسرعة — الفئات والمنتجات مع الصور والأسعار — من صفحة مطعمك على Wolt أو 10bis.'
+                          : 'Быстро импортируйте всё меню — категории и товары с фотографиями и ценами — со страницы вашего ресторана в Wolt или 10bis.'}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => setShowCatalogImportModal(true)}
+                      className="flex-shrink-0 flex items-center gap-2"
+                      style={{ backgroundColor: 'var(--color-primary)', color: '#fff' }}
+                    >
+                      <Store className="h-4 w-4" />
+                      {currentLanguage === 'en' ? 'Import from Wolt / 10bis' : currentLanguage === 'he' ? 'ייבוא מ-Wolt / 10bis' : currentLanguage === 'ar' ? 'استيراد من Wolt / 10bis' : 'Импортировать из Wolt / 10bis'}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <CatalogImportModal
+                open={showCatalogImportModal}
+                onClose={() => setShowCatalogImportModal(false)}
+                currentLanguage={currentLanguage}
+                isRTL={isRTL}
+              />
 
               {/* ── Danger Zone (admin only) ──────────────────────────── */}
               {user?.role === 'admin' && (
