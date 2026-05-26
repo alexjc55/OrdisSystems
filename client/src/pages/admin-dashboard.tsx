@@ -11270,16 +11270,22 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           ...data, 
           ...preservedData, 
           ...multilingualUpdates,
-          // Phone and email are the same for all languages — override all variants
-          // with the current form value so they stay in sync.
-          contactPhone: data.contactPhone,
-          contactPhoneEn: data.contactPhone,
-          contactPhoneHe: data.contactPhone,
-          contactPhoneAr: data.contactPhone,
-          contactEmail: data.contactEmail,
-          contactEmailEn: data.contactEmail,
-          contactEmailHe: data.contactEmail,
-          contactEmailAr: data.contactEmail,
+          // Phone and email are the same for all languages — sync all variants.
+          // If the admin left the field blank, keep the existing stored value.
+          ...((() => {
+            const phone = data.contactPhone || storeSettings?.contactPhone || '';
+            const email = data.contactEmail || storeSettings?.contactEmail || '';
+            return {
+              contactPhone: phone,
+              contactPhoneEn: phone,
+              contactPhoneHe: phone,
+              contactPhoneAr: phone,
+              contactEmail: email,
+              contactEmailEn: email,
+              contactEmailHe: email,
+              contactEmailAr: email,
+            };
+          })()),
           // address IS multilingual — handled by multilingualUpdates + preservedData above.
           whatsappPhoneNumber: data.whatsappPhoneNumber,
           paymentMethods: processedPaymentMethods,
