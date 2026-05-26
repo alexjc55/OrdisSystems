@@ -176,7 +176,7 @@ export default function Header({ onResetView }: HeaderProps) {
             <Link href="/" onClick={() => onResetView?.()}>
               <div className="flex items-center cursor-pointer">
                 {(() => {
-                  const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage);
+                  const logoUrl = getLocalizedImageField(storeSettings, 'logoUrl', currentLanguage as SupportedLanguage, (storeSettings?.defaultLanguage || 'ru') as SupportedLanguage);
                   const validLogoUrl = logoUrl && logoUrl.trim() !== '' ? logoUrl : null;
                   
                   return validLogoUrl ? (

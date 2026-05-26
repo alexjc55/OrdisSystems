@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Clock, Phone, MapPin, CreditCard, Truck, Star, Shield, Heart, ChefHat, Zap, Award, Users, ThumbsUp, CheckCircle, Gift, Smile } from 'lucide-react';
 import { getLocalizedField, type SupportedLanguage } from '@shared/localization';
+import { getLocalizedImageField } from '@shared/multilingual-helpers';
 import { useLanguage } from '@/hooks/use-language';
 import { useState, useEffect } from 'react';
 import { SliderHeader } from './slider-header';
@@ -84,13 +85,14 @@ export function HeaderVariant({ storeSettings, style }: HeaderVariantProps) {
 }
 
 function ClassicHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
+  const defaultLang = (storeSettings?.defaultLanguage || 'ru') as SupportedLanguage;
   return (
     <>
       {/* Pure Image Banner - Only show if enabled */}
       {storeSettings?.showBannerImage !== false && (
         <div className="relative h-32 sm:h-40 overflow-hidden">
           <img 
-            src={storeSettings.bannerImageUrl || storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
+            src={getLocalizedImageField(storeSettings, 'bannerImageUrl', currentLanguage as SupportedLanguage, defaultLang) || storeSettings.bannerImage || "/api/uploads/Edahouse_sign__source_1750184330403.png"} 
             alt="Background" 
             className="w-full h-full object-cover"
           />
@@ -210,6 +212,7 @@ function ModernInfoBlocks({ storeSettings, currentLanguage }: { storeSettings: a
 }
 
 function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
+  const defaultLang = (storeSettings?.defaultLanguage || 'ru') as SupportedLanguage;
   const [appHash, setAppHash] = useState<string>('');
 
   // Get app hash for cache busting
@@ -258,7 +261,7 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
         <div 
           className="absolute inset-0 bg-cover bg-center transform scale-105 w-full h-full"
           style={{
-            backgroundImage: storeSettings?.bannerImageUrl ? `url(${storeSettings.bannerImageUrl}?v=${appHash})` : (storeSettings?.bannerImage ? `url(${storeSettings.bannerImage}?v=${appHash})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)')
+            backgroundImage: (() => { const u = getLocalizedImageField(storeSettings, 'bannerImageUrl', currentLanguage as SupportedLanguage, defaultLang) || storeSettings?.bannerImage; return u ? `url(${u}?v=${appHash})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'; })()
           }}
         />
         
@@ -300,6 +303,7 @@ function ModernHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSetti
 }
 
 function MinimalHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSettings: any, t: any, isRTL: boolean, currentLanguage: string }) {
+  const defaultLang = (storeSettings?.defaultLanguage || 'ru') as SupportedLanguage;
   // Only show header if banner is enabled, otherwise return null
   if (storeSettings?.showBannerImage === false) {
     return null;
@@ -320,7 +324,7 @@ function MinimalHeader({ storeSettings, t, isRTL, currentLanguage }: { storeSett
         <div 
           className="absolute inset-0 bg-cover bg-center w-full h-full"
           style={{
-            backgroundImage: storeSettings?.bannerImageUrl ? `url(${storeSettings.bannerImageUrl})` : (storeSettings?.bannerImage ? `url(${storeSettings.bannerImage})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'),
+            backgroundImage: (() => { const u = getLocalizedImageField(storeSettings, 'bannerImageUrl', currentLanguage as SupportedLanguage, defaultLang) || storeSettings?.bannerImage; return u ? `url(${u})` : 'url(/api/uploads/Edahouse_sign__source_1750184330403.png)'; })(),
             animation: 'float 6s ease-in-out infinite'
           }}
         />

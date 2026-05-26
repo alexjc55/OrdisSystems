@@ -274,7 +274,11 @@ export function getLocalizedImageField(
   
   // Try current language field first
   if (language === defaultLanguage) {
-    // For default language, try base field first
+    // For non-Russian defaults the image lives in fieldName_he/ar etc., not the base field.
+    if (defaultLanguage !== 'ru') {
+      const langValue = obj[`${fieldName}_${language}`];
+      if (langValue) return langValue;
+    }
     const baseValue = obj[fieldName];
     if (baseValue) return baseValue;
   } else {

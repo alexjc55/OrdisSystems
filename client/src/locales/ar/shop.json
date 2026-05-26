@@ -594,5 +594,22 @@
     "ready": "جاهز للاستلام",
     "delivered": "تم التسليم",
     "cancelled": "ملغي"
-  }
+  },
+  "cart.enterCoupon": "أدخل رمز الترويج",
+  "cart.applyCoupon": "تطبيق",
+  "cart.couponNotFound": "رمز الترويج غير موجود",
+  "cart.couponInactive": "رمز الترويج غير فعال",
+  "cart.couponExpired": "انتهت صلاحية رمز الترويج",
+  "cart.couponMaxUses": "تم الوصول إلى الحد الأقصى للاستخدام",
+  "cart.couponAlreadyUsed": "لقد استخدمت هذا الرمز من قبل",
+  "cart.couponNotEligible": "رمز الترويج هذا غير متاح لحسابك",
+  "cart.couponNotEligibleForCart": "رمز الترويج هذا لا ينطبق على عناصر سلتك",
+  "cart.couponMinOrder": "مبلغ الطلب أقل من الحد الأدنى لهذا الرمز",
+  "cart.couponError": "خطأ في التحقق من رمز الترويج",
+  "cart.loyaltyDiscount": "خصم العميل الدائم",
+  "cart.couponDiscount": "خصم رمز الترويج",
+  "cart.volumeDiscount": "خصم الكمية",
+  "cart.giftAvailable": "هدية مجانية مع طلبك!",
+  "cart.addGift": "إضافة هدية",
+  "cart.giftAdded": "تمت إضافة الهدية"
 }

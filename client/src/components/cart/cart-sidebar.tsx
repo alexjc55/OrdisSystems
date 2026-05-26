@@ -611,15 +611,15 @@ export default function CartSidebar() {
                       }}
                     >
                       <p className="text-sm leading-relaxed">
-                        {getLocalizedField(storeSettings, 'cartBannerText', currentLanguage as SupportedLanguage, 'ru') || storeSettings.cartBannerText}
+                        {getLocalizedField(storeSettings, 'cartBannerText', currentLanguage as SupportedLanguage, storeSettings as any) || storeSettings.cartBannerText}
                       </p>
                     </div>
                   )}
                   
-                  {storeSettings.cartBannerType === "image" && (getLocalizedField(storeSettings, 'cartBannerImage', currentLanguage as SupportedLanguage, 'ru') || storeSettings.cartBannerImage) && (
+                  {storeSettings.cartBannerType === "image" && (getLocalizedField(storeSettings, 'cartBannerImage', currentLanguage as SupportedLanguage, storeSettings as any) || storeSettings.cartBannerImage) && (
                     <div className="rounded-xl overflow-hidden shadow-md">
                       <img 
-                        src={getLocalizedField(storeSettings, 'cartBannerImage', currentLanguage as SupportedLanguage, 'ru') || storeSettings.cartBannerImage} 
+                        src={getLocalizedField(storeSettings, 'cartBannerImage', currentLanguage as SupportedLanguage, storeSettings as any) || storeSettings.cartBannerImage} 
                         alt="Cart Banner"
                         className="w-full h-auto max-h-[120px] object-cover"
                         style={{ maxHeight: "120px" }}
