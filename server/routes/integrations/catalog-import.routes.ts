@@ -159,17 +159,22 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     const user = await storage.getUser(req.user.id);
     if (!user || user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
 
-    const { categories, items } = req.body;
+    const { categories, items, targetLanguage } = req.body;
     if (!Array.isArray(categories) || !Array.isArray(items)) {
       return res.status(400).json({ message: 'Invalid data' });
     }
+
+    // Map target language to the correct DB field name
+    const lang = (targetLanguage && ['ru', 'en', 'he', 'ar'].includes(targetLanguage)) ? targetLanguage : 'ru';
+    const nameField = lang === 'ru' ? 'name' : `name_${lang}`;
+    const descField = lang === 'ru' ? 'description' : `description_${lang}`;
 
     const categoryIdMap = new Map<string, number>();
     let categoriesCreated = 0;
 
     for (const cat of categories) {
       const created = await storage.createCategory({
-        name: cat.name,
+        [nameField]: cat.name,
         isActive: true,
         sortOrder: 0
       } as any);
@@ -177,15 +182,19 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
       categoriesCreated++;
     }
 
+    const validUnits = ['piece', 'portion', 'kg', '100g', '100ml'];
+
     let itemsCreated = 0;
     for (const item of items) {
       const categoryId = categoryIdMap.get(item.categoryExternalId);
+      const unit = validUnits.includes(item.unit) ? item.unit : 'piece';
+      const price = String(Number(item.price).toFixed(2));
       await storage.createProduct({
-        name: item.name,
-        description: item.description || null,
-        price: String(Number(item.price).toFixed(2)),
-        pricePerKg: String(Number(item.price).toFixed(2)),
-        unit: 'piece',
+        [nameField]: item.name,
+        [descField]: item.description || null,
+        price,
+        pricePerKg: price,
+        unit,
         imageUrl: item.imageUrl || null,
         isActive: true,
         isAvailable: true,

@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Link, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Store, Package } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Store, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -39,17 +40,35 @@ interface Props {
   isRTL: boolean;
 }
 
+const UNIT_OPTIONS = [
+  { value: 'piece',   ru: 'штука',   en: 'piece',   he: 'יחידה',  ar: 'قطعة'  },
+  { value: 'portion', ru: 'порция',  en: 'portion', he: 'מנה',    ar: 'حصة'   },
+  { value: 'kg',      ru: 'кг',      en: 'kg',      he: 'ק"ג',    ar: 'كغ'    },
+  { value: '100g',    ru: '100г',    en: '100g',    he: '100 גר',  ar: '100غ'  },
+  { value: '100ml',   ru: '100мл',   en: '100ml',   he: '100 מל',  ar: '100مل' },
+];
+
+const LANG_OPTIONS = [
+  { value: 'ru', label: 'Русский' },
+  { value: 'en', label: 'English' },
+  { value: 'he', label: 'עברית'   },
+  { value: 'ar', label: 'العربية' },
+];
+
 export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Props) {
-  const { toast } = useToast();
+  useToast();
   const queryClient = useQueryClient();
 
   const [step, setStep] = useState<Step>('url');
   const [url, setUrl] = useState('');
+  const [targetLanguage, setTargetLanguage] = useState(currentLanguage || 'ru');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set());
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
+  const [itemPrices, setItemPrices] = useState<Record<string, string>>({});
+  const [itemUnits, setItemUnits] = useState<Record<string, string>>({});
   const [importResult, setImportResult] = useState<{ categoriesCreated: number; itemsCreated: number } | null>(null);
 
   const t = (ru: string, en: string, he: string, ar: string) => {
@@ -59,6 +78,15 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     return ru;
   };
 
+  const unitLabel = (val: string) => {
+    const opt = UNIT_OPTIONS.find(u => u.value === val);
+    if (!opt) return val;
+    if (currentLanguage === 'en') return opt.en;
+    if (currentLanguage === 'he') return opt.he;
+    if (currentLanguage === 'ar') return opt.ar;
+    return opt.ru;
+  };
+
   const resetModal = () => {
     setStep('url');
     setUrl('');
@@ -66,6 +94,8 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     setMenuData(null);
     setSelectedCategoryIds(new Set());
     setSelectedItemIds(new Set());
+    setItemPrices({});
+    setItemUnits({});
     setImportResult(null);
   };
 
@@ -91,10 +121,17 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
         return;
       }
       setMenuData(data);
-      const allCatIds = new Set(data.categories.map((c: ImportCategory) => c.id));
-      setSelectedCategoryIds(allCatIds);
-      const allItemIds = new Set(data.items.map((i: ImportItem) => i.id));
-      setSelectedItemIds(allItemIds);
+      setSelectedCategoryIds(new Set(data.categories.map((c: ImportCategory) => c.id)));
+      setSelectedItemIds(new Set(data.items.map((i: ImportItem) => i.id)));
+      // Pre-fill prices and units
+      const prices: Record<string, string> = {};
+      const units: Record<string, string> = {};
+      data.items.forEach((item: ImportItem) => {
+        prices[item.id] = String(item.price);
+        units[item.id] = 'piece';
+      });
+      setItemPrices(prices);
+      setItemUnits(units);
       setStep('categories');
     } catch {
       setError(t('Ошибка соединения. Попробуйте позже.', 'Connection error. Please try again.', 'שגיאת חיבור. נסה שוב.', 'خطأ في الاتصال. حاول مرة أخرى.'));
@@ -170,7 +207,8 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
         .map(i => ({
           name: i.name,
           description: i.description,
-          price: i.price,
+          price: parseFloat(itemPrices[i.id] ?? String(i.price)) || i.price,
+          unit: itemUnits[i.id] ?? 'piece',
           imageUrl: i.imageUrl,
           categoryExternalId: i.categoryId
         }));
@@ -179,7 +217,7 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ categories: categoriesToImport, items: itemsToImport })
+        body: JSON.stringify({ categories: categoriesToImport, items: itemsToImport, targetLanguage })
       });
       const data = await resp.json();
       if (!resp.ok) {
@@ -207,17 +245,17 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) handleClose(); }}>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
+      <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Store className="h-5 w-5" style={{ color: 'var(--color-primary)' }} />
+            <Store className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--color-primary)' }} />
             {t('Импорт каталога', 'Import catalog', 'ייבוא קטלוג', 'استيراد الكتالوج')}
             {menuData && <span className={isRTL ? 'mr-2' : 'ml-2'}>{platformBadge}</span>}
           </DialogTitle>
           {step === 'url' && (
             <DialogDescription>
               {t(
-                'Вставьте ссылку на ваш магазин в Wolt или 10bis, чтобы импортировать категории и товары.',
+                'Вставьте ссылку на ваш ресторан в Wolt или 10bis, чтобы импортировать категории и товары.',
                 'Paste the link to your restaurant on Wolt or 10bis to import categories and products.',
                 'הדבק את הקישור למסעדה שלך ב-Wolt או 10bis כדי לייבא קטגוריות ומוצרים.',
                 'الصق رابط مطعمك على Wolt أو 10bis لاستيراد الفئات والمنتجات.'
@@ -241,28 +279,42 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                 <label className="text-sm font-medium">
                   {t('Ссылка на ресторан', 'Restaurant link', 'קישור למסעדה', 'رابط المطعم')}
                 </label>
-                <div className="flex gap-2">
-                  <Input
-                    value={url}
-                    onChange={e => { setUrl(e.target.value); setError(''); }}
-                    placeholder={t(
-                      'https://wolt.com/... или https://www.10bis.co.il/...',
-                      'https://wolt.com/... or https://www.10bis.co.il/...',
-                      'https://wolt.com/... או https://www.10bis.co.il/...',
-                      'https://wolt.com/... أو https://www.10bis.co.il/...'
-                    )}
-                    onKeyDown={e => { if (e.key === 'Enter') handleFetch(); }}
-                    className={isRTL ? 'text-right' : ''}
-                  />
-                  <Button onClick={handleFetch} disabled={loading || !url.trim()}>
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (
-                      <>
-                        {t('Загрузить', 'Load', 'טען', 'تحميل')}
-                        <ArrowRight className={`h-4 w-4 ${isRTL ? 'mr-1 rotate-180' : 'ml-1'}`} />
-                      </>
-                    )}
-                  </Button>
-                </div>
+                <Input
+                  value={url}
+                  onChange={e => { setUrl(e.target.value); setError(''); }}
+                  placeholder={t(
+                    'https://wolt.com/... или https://www.10bis.co.il/...',
+                    'https://wolt.com/... or https://www.10bis.co.il/...',
+                    'https://wolt.com/... או https://www.10bis.co.il/...',
+                    'https://wolt.com/... أو https://www.10bis.co.il/...'
+                  )}
+                  onKeyDown={e => { if (e.key === 'Enter') handleFetch(); }}
+                  className={isRTL ? 'text-right' : ''}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {t('Язык импорта', 'Import language', 'שפת הייבוא', 'لغة الاستيراد')}
+                </label>
+                <p className="text-xs text-gray-500">
+                  {t(
+                    'Укажите язык, на котором написаны названия и описания в меню. Данные будут записаны в соответствующее языковое поле.',
+                    'Specify the language in which the menu names and descriptions are written. Data will be saved to the corresponding language field.',
+                    'ציין את השפה שבה כתובים השמות והתיאורים בתפריט. הנתונים יישמרו בשדה השפה המתאים.',
+                    'حدد اللغة التي كُتبت بها الأسماء والأوصاف في القائمة. سيتم حفظ البيانات في حقل اللغة المقابل.'
+                  )}
+                </p>
+                <Select value={targetLanguage} onValueChange={setTargetLanguage}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANG_OPTIONS.map(l => (
+                      <SelectItem key={l.value} value={l.value}>{l.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {error && (
@@ -317,12 +369,16 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
           {/* ── STEP 3: ITEMS ─────────────────────────────────── */}
           {step === 'items' && menuData && (
             <div className="space-y-3">
-              <p className="text-sm text-gray-600">
-                {t('Выберите товары для импорта', 'Select items to import', 'בחר פריטים לייבוא', 'اختر المنتجات للاستيراد')}
-                {' '}· {t('Выбрано', 'Selected', 'נבחרו', 'المحدد')} {selectedVisibleItems}
-              </p>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <p className="text-sm text-gray-600">
+                  {t('Выберите товары, скорректируйте цены и единицы', 'Select items, adjust prices and units', 'בחר פריטים, תקן מחירים ויחידות', 'اختر المنتجات وصحح الأسعار والوحدات')}
+                </p>
+                <span className="text-xs text-gray-400">
+                  {t('Выбрано', 'Selected', 'נבחרו', 'المحدد')}: {selectedVisibleItems}
+                </span>
+              </div>
 
-              <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+              <div className="space-y-5 max-h-[52vh] overflow-y-auto pr-1">
                 {menuData.categories
                   .filter(c => selectedCategoryIds.has(c.id))
                   .map(cat => {
@@ -330,8 +386,8 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                     if (catItems.length === 0) return null;
                     const allCatSelected = catItems.every(i => selectedItemIds.has(i.id));
                     return (
-                      <div key={cat.id} className="space-y-1">
-                        <div className="flex items-center gap-2 sticky top-0 bg-white py-1 z-10">
+                      <div key={cat.id} className="space-y-1.5">
+                        <div className="flex items-center gap-2 sticky top-0 bg-white py-1 z-10 border-b pb-2">
                           <Checkbox
                             checked={allCatSelected}
                             onCheckedChange={() => toggleCategoryItems(cat.id)}
@@ -339,15 +395,16 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                           <span className="font-semibold text-sm text-gray-800">{cat.name}</span>
                           <span className="text-xs text-gray-400">({catItems.filter(i => selectedItemIds.has(i.id)).length}/{catItems.length})</span>
                         </div>
-                        <div className="space-y-1 pl-7">
+                        <div className="space-y-1.5 pl-6">
                           {catItems.map(item => (
-                            <label
+                            <div
                               key={item.id}
-                              className="flex items-center gap-3 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                              className={`flex items-center gap-2 p-2 rounded-lg border transition-colors ${selectedItemIds.has(item.id) ? 'border-gray-200 bg-white' : 'border-gray-100 bg-gray-50 opacity-60'}`}
                             >
                               <Checkbox
                                 checked={selectedItemIds.has(item.id)}
                                 onCheckedChange={() => toggleItem(item.id)}
+                                className="flex-shrink-0"
                               />
                               {item.imageUrl && (
                                 <img
@@ -363,10 +420,37 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                                   <p className="text-xs text-gray-400 truncate">{item.description}</p>
                                 )}
                               </div>
-                              <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">
-                                {item.price.toFixed(2)} ₪
-                              </span>
-                            </label>
+                              {/* Price input */}
+                              <div className="flex items-center gap-1 flex-shrink-0">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  step="0.01"
+                                  value={itemPrices[item.id] ?? String(item.price)}
+                                  onChange={e => setItemPrices(prev => ({ ...prev, [item.id]: e.target.value }))}
+                                  className="w-20 h-8 text-sm text-center px-1"
+                                  disabled={!selectedItemIds.has(item.id)}
+                                />
+                                <span className="text-xs text-gray-500">₪</span>
+                              </div>
+                              {/* Unit selector */}
+                              <Select
+                                value={itemUnits[item.id] ?? 'piece'}
+                                onValueChange={v => setItemUnits(prev => ({ ...prev, [item.id]: v }))}
+                                disabled={!selectedItemIds.has(item.id)}
+                              >
+                                <SelectTrigger className="w-24 h-8 text-xs px-2">
+                                  <SelectValue>{unitLabel(itemUnits[item.id] ?? 'piece')}</SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {UNIT_OPTIONS.map(u => (
+                                    <SelectItem key={u.value} value={u.value}>
+                                      {currentLanguage === 'en' ? u.en : currentLanguage === 'he' ? u.he : currentLanguage === 'ar' ? u.ar : u.ru}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -412,7 +496,11 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
               <Button variant="outline" onClick={handleClose}>
                 {t('Отмена', 'Cancel', 'ביטול', 'إلغاء')}
               </Button>
-              <Button onClick={handleFetch} disabled={loading || !url.trim()} style={{ backgroundColor: 'var(--color-primary)', color: '#fff' }}>
+              <Button
+                onClick={handleFetch}
+                disabled={loading || !url.trim()}
+                style={{ backgroundColor: 'var(--color-primary)', color: '#fff' }}
+              >
                 {loading ? (
                   <><Loader2 className="h-4 w-4 animate-spin mr-2" />{t('Загружаю...', 'Loading...', 'טוען...', 'جار التحميل...')}</>
                 ) : (
@@ -428,9 +516,9 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                 <ArrowLeft className={`h-4 w-4 ${isRTL ? 'ml-1 rotate-180' : 'mr-1'}`} />
                 {t('Назад', 'Back', 'חזרה', 'رجوع')}
               </Button>
-              <div className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500">
                 {t('Выбрано', 'Selected', 'נבחרו', 'المحدد')}: {selectedCategoryIds.size}/{menuData?.categories.length}
-              </div>
+              </span>
               <Button
                 onClick={() => setStep('items')}
                 disabled={selectedCategoryIds.size === 0}
@@ -445,11 +533,11 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
             <>
               <Button variant="outline" onClick={() => { setStep('categories'); setError(''); }}>
                 <ArrowLeft className={`h-4 w-4 ${isRTL ? 'ml-1 rotate-180' : 'mr-1'}`} />
-                {t('Назад', 'Back', 'חזרה', 'رجوع')}
+                {t('Назад', 'Back', 'חזרה', 'رجוع')}
               </Button>
-              <div className="text-sm text-gray-500">
-                {t('Выбрано товаров', 'Selected items', 'פריטים נבחרו', 'المنتجات المحددة')}: {selectedVisibleItems}
-              </div>
+              <span className="text-sm text-gray-500">
+                {selectedVisibleItems} {t('товаров', 'items', 'פריטים', 'منتجات')}
+              </span>
               <Button
                 onClick={handleImport}
                 disabled={loading || selectedVisibleItems === 0}
