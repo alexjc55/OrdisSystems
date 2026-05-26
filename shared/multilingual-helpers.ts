@@ -72,22 +72,21 @@ export interface MultilingualTheme {
  *
  * Column mapping is FIXED (independent of defaultLanguage):
  *   ru → fieldName (base column), he → fieldName_he, en → fieldName_en, ar → fieldName_ar
- * defaultLanguage only controls the fallback priority when a field is empty.
+ *
+ * Fallback order uses languageOrder from storeSettings.
+ * Default language is always first in languageOrder (sort order = 1).
  */
 export function getLocalizedStoreField(
   obj: MultilingualStoreSettings,
   fieldName: string,
   language: SupportedLanguage,
-  storeSettings?: { defaultLanguage?: string }
+  storeSettings?: { defaultLanguage?: string; languageOrder?: string[]; enabledLanguages?: string[] }
 ): string {
-  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
   if (!obj) return '';
 
   // Fixed column mapping: ru → base field, others → suffixed field
   function getValue(lang: SupportedLanguage): string {
-    if (lang === 'ru') {
-      return obj[fieldName] || obj[`${fieldName}_ru`] || '';
-    }
+    if (lang === 'ru') return obj[fieldName] || obj[`${fieldName}_ru`] || '';
     return obj[`${fieldName}_${lang}`] || '';
   }
 
@@ -95,19 +94,15 @@ export function getLocalizedStoreField(
   const currentValue = getValue(language);
   if (currentValue) return currentValue;
 
-  // 2. Fallback to default language
-  if (language !== defaultLanguage) {
-    const fallbackValue = getValue(defaultLanguage);
-    if (fallbackValue) return fallbackValue;
-  }
+  // 2+3. Iterate enabled languages in sort order (default language is always first)
+  const languageOrder = (storeSettings?.languageOrder || storeSettings?.enabledLanguages || ['ru', 'en', 'he', 'ar']) as SupportedLanguage[];
+  const enabledSet = new Set(storeSettings?.enabledLanguages || languageOrder);
 
-  // 3. Try all other languages in order
-  const allLangs: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
-  for (const lang of allLangs) {
-    if (lang !== language && lang !== defaultLanguage) {
-      const v = getValue(lang);
-      if (v) return v;
-    }
+  for (const lang of languageOrder) {
+    if (lang === language) continue;
+    if (!enabledSet.has(lang)) continue;
+    const v = getValue(lang);
+    if (v) return v;
   }
 
   return '';
@@ -119,22 +114,19 @@ export function getLocalizedStoreField(
  * Get localized theme field value with smart fallback
  *
  * Column mapping is FIXED: ru → fieldName (base), others → fieldName_he/en/ar
- * defaultLanguage only controls fallback priority.
+ * Fallback order uses languageOrder from storeSettings (default language is always first).
  */
 export function getLocalizedThemeField(
   theme: MultilingualTheme,
   fieldName: string,
   language: SupportedLanguage,
-  storeSettings?: { defaultLanguage?: string }
+  storeSettings?: { defaultLanguage?: string; languageOrder?: string[]; enabledLanguages?: string[] }
 ): string {
-  const defaultLanguage = getEffectiveDefaultLanguage(storeSettings);
   if (!theme) return '';
 
   // Fixed column mapping: ru → base field, others → suffixed field
   function getValue(lang: SupportedLanguage): string {
-    if (lang === 'ru') {
-      return theme[fieldName] || theme[`${fieldName}_ru`] || '';
-    }
+    if (lang === 'ru') return theme[fieldName] || theme[`${fieldName}_ru`] || '';
     return theme[`${fieldName}_${lang}`] || '';
   }
 
@@ -142,19 +134,15 @@ export function getLocalizedThemeField(
   const currentValue = getValue(language);
   if (currentValue) return currentValue;
 
-  // 2. Fallback to default language
-  if (language !== defaultLanguage) {
-    const fallbackValue = getValue(defaultLanguage);
-    if (fallbackValue) return fallbackValue;
-  }
+  // 2+3. Iterate enabled languages in sort order (default language is always first)
+  const languageOrder = (storeSettings?.languageOrder || storeSettings?.enabledLanguages || ['ru', 'en', 'he', 'ar']) as SupportedLanguage[];
+  const enabledSet = new Set(storeSettings?.enabledLanguages || languageOrder);
 
-  // 3. Try all other languages in order
-  const allLangs: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
-  for (const lang of allLangs) {
-    if (lang !== language && lang !== defaultLanguage) {
-      const v = getValue(lang);
-      if (v) return v;
-    }
+  for (const lang of languageOrder) {
+    if (lang === language) continue;
+    if (!enabledSet.has(lang)) continue;
+    const v = getValue(lang);
+    if (v) return v;
   }
 
   return '';
