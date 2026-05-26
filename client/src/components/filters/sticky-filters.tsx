@@ -85,7 +85,7 @@ export default function StickyFilters({
                 <SearchInput
                   value={searchQuery}
                   onChange={onSearchChange}
-                  placeholder={searchPlaceholder || t('searchPlaceholder')}
+                  placeholder={searchPlaceholder || tShop('searchPlaceholder')}
                   data-testid="input-search"
                 />
               </div>
@@ -97,10 +97,10 @@ export default function StickyFilters({
                 <div className="flex-1 sm:min-w-[160px]">
                   <Select value={categoryFilter} onValueChange={onCategoryFilterChange}>
                     <SelectTrigger className="text-sm h-9" data-testid="select-category">
-                      <SelectValue placeholder={t('filterByCategory', 'Фильтр по категории')} />
+                      <SelectValue placeholder={tShop('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t('allCategories', 'Все категории')}</SelectItem>
+                      <SelectItem value="all">{tShop('allCategories', 'Все категории')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           {getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any) || category.name || `Category ${category.id}`}
@@ -113,7 +113,7 @@ export default function StickyFilters({
                 <div className="flex-1 sm:min-w-[140px]">
                   <Select value={discountFilter} onValueChange={onDiscountFilterChange}>
                     <SelectTrigger className="text-sm h-9" data-testid="select-discount">
-                      <SelectValue placeholder={t('filterByDiscount')} />
+                      <SelectValue placeholder={tShop('filterByDiscount')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{tShop('allProducts', 'Все товары')}</SelectItem>
