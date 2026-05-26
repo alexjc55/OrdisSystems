@@ -37,3 +37,19 @@ ALTER TABLE categories ALTER COLUMN name DROP NOT NULL;
 ALTER TABLE products ALTER COLUMN name DROP NOT NULL;
 ALTER TABLE branches ALTER COLUMN name DROP NOT NULL;
 ALTER TABLE themes ALTER COLUMN name DROP NOT NULL;
+
+-- Добавить колонку language_order в store_settings
+ALTER TABLE store_settings
+  ADD COLUMN IF NOT EXISTS language_order jsonb DEFAULT '["ru","en","he","ar"]'::jsonb;
+
+-- Инициализировать из enabled_languages для существующих строк
+UPDATE store_settings
+SET language_order = enabled_languages
+WHERE language_order IS NULL
+   OR language_order = '[]'::jsonb;
+
+-- Если enabled_languages тоже пустой — проставить дефолт
+UPDATE store_settings
+SET language_order = '["ru","en","he","ar"]'::jsonb
+WHERE language_order IS NULL
+   OR language_order = '[]'::jsonb;

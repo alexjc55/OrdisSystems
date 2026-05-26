@@ -1029,7 +1029,7 @@ export default function Home() {
                         spaceBetween={16}
                         slidesPerView={isMobile ? 1 : 3}
                         slidesPerGroup={isMobile ? 1 : 3}
-                        dir={currentLanguage === 'he' ? 'rtl' : 'ltr'}
+                        dir={(currentLanguage === 'he' || currentLanguage === 'ar') ? 'rtl' : 'ltr'}
                         navigation={{
                           prevEl: '.swiper-button-prev-custom',
                           nextEl: '.swiper-button-next-custom',

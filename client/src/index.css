@@ -1514,6 +1514,15 @@ body, html {
   text-align: inherit;
 }
 
+/* Pagination bullets always centered regardless of RTL direction */
+.swiper-pagination {
+  text-align: center !important;
+  direction: ltr !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+}
+
 /* RTL Carousel navigation for Hebrew and Arabic */
 html[lang="he"] .swiper-button-prev,
 html[lang="ar"] .swiper-button-prev {
