@@ -407,6 +407,9 @@ export default function ThemeManager() {
     description_ar: ''
   });
   
+  // State for logoTextMode in edit dialog (persists across tab switches)
+  const [editLogoTextMode, setEditLogoTextMode] = useState('storeName');
+
   // State for multilingual images
   const [themeImages, setThemeImages] = useState({
     logoUrl: '',
@@ -444,6 +447,7 @@ export default function ThemeManager() {
         description_he: (editingTheme as any).description_he || '',
         description_ar: (editingTheme as any).description_ar || ''
       });
+      setEditLogoTextMode((editingTheme as any).logoTextMode || 'storeName');
       setThemeImages({
         logoUrl: editingTheme.logoUrl || '',
         logoUrl_en: (editingTheme as any).logoUrl_en || '',
@@ -1109,7 +1113,7 @@ export default function ThemeManager() {
       contactsIconColor: convertColorToHsl(formData.get("contactsIconColor") as string),
       paymentDeliveryIconColor: convertColorToHsl(formData.get("paymentDeliveryIconColor") as string),
       headerStyle: formData.get("headerStyle") as string,
-      logoTextMode: formData.get("logoTextMode") as string || 'storeName',
+      logoTextMode: editLogoTextMode,
       bannerButtonText: formData.get("bannerButtonText") as string || adminT('themes.buttonTextDefault'),
       bannerButtonLink: formData.get("bannerButtonLink") as string || "#categories",
       logoUrl: formData.get("logoUrl") as string || themeImages.logoUrl,
@@ -1132,16 +1136,16 @@ export default function ThemeManager() {
       cartBannerTextColor: formData.get("cartBannerTextColor") as string || "#ffffff",
       // Bottom banners settings
       showBottomBanners: editVisualSettings.showBottomBanners,
-      // Three-level fallback: hidden input → in-memory state → previously saved theme value
-      bottomBanner1Url: (formData.get("bottomBanner1Url") as string) || themeImages.bottomBanner1Url || editingTheme?.bottomBanner1Url || "",
-      bottomBanner1Url_en: (formData.get("bottomBanner1Url_en") as string) || themeImages.bottomBanner1Url_en || (editingTheme as any)?.bottomBanner1Url_en || "",
-      bottomBanner1Url_he: (formData.get("bottomBanner1Url_he") as string) || themeImages.bottomBanner1Url_he || (editingTheme as any)?.bottomBanner1Url_he || "",
-      bottomBanner1Url_ar: (formData.get("bottomBanner1Url_ar") as string) || themeImages.bottomBanner1Url_ar || (editingTheme as any)?.bottomBanner1Url_ar || "",
+      // Use themeImages as source of truth (initialized from editingTheme, updated on user changes)
+      bottomBanner1Url: themeImages.bottomBanner1Url,
+      bottomBanner1Url_en: themeImages.bottomBanner1Url_en,
+      bottomBanner1Url_he: themeImages.bottomBanner1Url_he,
+      bottomBanner1Url_ar: themeImages.bottomBanner1Url_ar,
       bottomBanner1Link: formData.get("bottomBanner1Link") as string || "",
-      bottomBanner2Url: (formData.get("bottomBanner2Url") as string) || themeImages.bottomBanner2Url || editingTheme?.bottomBanner2Url || "",
-      bottomBanner2Url_en: (formData.get("bottomBanner2Url_en") as string) || themeImages.bottomBanner2Url_en || (editingTheme as any)?.bottomBanner2Url_en || "",
-      bottomBanner2Url_he: (formData.get("bottomBanner2Url_he") as string) || themeImages.bottomBanner2Url_he || (editingTheme as any)?.bottomBanner2Url_he || "",
-      bottomBanner2Url_ar: (formData.get("bottomBanner2Url_ar") as string) || themeImages.bottomBanner2Url_ar || (editingTheme as any)?.bottomBanner2Url_ar || "",
+      bottomBanner2Url: themeImages.bottomBanner2Url,
+      bottomBanner2Url_en: themeImages.bottomBanner2Url_en,
+      bottomBanner2Url_he: themeImages.bottomBanner2Url_he,
+      bottomBanner2Url_ar: themeImages.bottomBanner2Url_ar,
       bottomBanner2Link: formData.get("bottomBanner2Link") as string || "",
       modernBlock1Icon: formData.get("modernBlock1Icon") as string || "",
       modernBlock1Text: formData.get("modernBlock1Text") as string || "",
@@ -2228,7 +2232,8 @@ export default function ThemeManager() {
                           <select
                             name="logoTextMode"
                             id="logoTextModeEdit"
-                            defaultValue={(editingTheme as any)?.logoTextMode || 'storeName'}
+                            value={editLogoTextMode}
+                            onChange={(e) => setEditLogoTextMode(e.target.value)}
                             className="w-full px-3 py-2 border rounded-md bg-white text-sm"
                           >
                             <option value="storeName">{adminT('themes.logoTextModeStoreName')}</option>
