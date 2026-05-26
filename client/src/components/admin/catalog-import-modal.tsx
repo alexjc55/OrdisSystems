@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Store, Package } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Store, Package, Sparkles } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface ImportCategory {
@@ -28,6 +28,7 @@ interface MenuData {
   restaurantName: string;
   categories: ImportCategory[];
   items: ImportItem[];
+  existingExternalIds: string[];
 }
 
 type Step = 'url' | 'categories' | 'items' | 'done';
@@ -63,11 +64,14 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [menuData, setMenuData] = useState<MenuData | null>(null);
+  const [existingIds, setExistingIds] = useState<Set<string>>(new Set());
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set());
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [itemPrices, setItemPrices] = useState<Record<string, string>>({});
   const [itemUnits, setItemUnits] = useState<Record<string, string>>({});
   const [importResult, setImportResult] = useState<{ categoriesCreated: number; itemsCreated: number } | null>(null);
+  // Filter: 'all' | 'new'
+  const [itemFilter, setItemFilter] = useState<'all' | 'new'>('new');
 
   const t = (ru: string, en: string, he: string, ar: string) => {
     if (currentLanguage === 'en') return en;
@@ -92,16 +96,20 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     return u.ru;
   };
 
+  const isNew = (itemId: string) => !existingIds.has(itemId);
+
   const resetModal = () => {
     setStep('url');
     setUrl('');
     setError('');
     setMenuData(null);
+    setExistingIds(new Set());
     setSelectedCategoryIds(new Set());
     setSelectedItemIds(new Set());
     setItemPrices({});
     setItemUnits({});
     setImportResult(null);
+    setItemFilter('new');
   };
 
   const handleClose = () => {
@@ -125,9 +133,22 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
         setError(data.message || t('Не удалось получить меню', 'Failed to fetch menu', 'לא ניתן לקבל תפריט', 'تعذر الحصول على القائمة'));
         return;
       }
+
+      const existing = new Set<string>(data.existingExternalIds || []);
+      setExistingIds(existing);
       setMenuData(data);
+
+      // Pre-select all categories
       setSelectedCategoryIds(new Set(data.categories.map((c: ImportCategory) => c.id)));
-      setSelectedItemIds(new Set(data.items.map((i: ImportItem) => i.id)));
+
+      // Pre-select only NEW items (not in existingIds)
+      const newItemIds = new Set<string>(
+        data.items
+          .filter((i: ImportItem) => !existing.has(i.id))
+          .map((i: ImportItem) => i.id)
+      );
+      setSelectedItemIds(newItemIds);
+
       const prices: Record<string, string> = {};
       const units: Record<string, string> = {};
       data.items.forEach((item: ImportItem) => {
@@ -136,9 +157,13 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
       });
       setItemPrices(prices);
       setItemUnits(units);
+
+      // Default filter to 'new' only if there are existing items
+      setItemFilter(existing.size > 0 ? 'new' : 'all');
+
       setStep('categories');
     } catch {
-      setError(t('Ошибка соединения. Попробуйте позже.', 'Connection error. Please try again.', 'שגיאת חיבור. נסה שוב.', 'خطأ في الاتصال.'));
+      setError(t('Ошибка соединения.', 'Connection error.', 'שגיאת חיבור.', 'خطأ في الاتصال.'));
     } finally {
       setLoading(false);
     }
@@ -158,7 +183,8 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
         next.add(id);
         setSelectedItemIds(ip => {
           const in2 = new Set(ip);
-          menuData?.items.filter(i => i.categoryId === id).forEach(i => in2.add(i.id));
+          // When enabling a category, only auto-select new items
+          menuData?.items.filter(i => i.categoryId === id && isNew(i.id)).forEach(i => in2.add(i.id));
           return in2;
         });
       }
@@ -173,7 +199,8 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
       setSelectedItemIds(new Set());
     } else {
       setSelectedCategoryIds(new Set(menuData.categories.map(c => c.id)));
-      setSelectedItemIds(new Set(menuData.items.map(i => i.id)));
+      // Only auto-select new items
+      setSelectedItemIds(new Set(menuData.items.filter(i => isNew(i.id)).map(i => i.id)));
     }
   };
 
@@ -231,14 +258,20 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
           price: parseFloat(itemPrices[i.id] ?? String(i.price)) || i.price,
           unit: itemUnits[i.id] ?? 'piece',
           imageUrl: i.imageUrl,
-          categoryExternalId: i.categoryId
+          categoryExternalId: i.categoryId,
+          externalId: i.id,
         }));
 
       const resp = await fetch('/api/admin/catalog-import/import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ categories: categoriesToImport, items: itemsToImport, targetLanguage })
+        body: JSON.stringify({
+          categories: categoriesToImport,
+          items: itemsToImport,
+          targetLanguage,
+          platform: menuData.platform
+        })
       });
       const data = await resp.json();
       if (!resp.ok) {
@@ -259,6 +292,10 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
   const selectedVisibleItems = menuData?.items.filter(
     i => selectedCategoryIds.has(i.categoryId) && selectedItemIds.has(i.id)
   ).length ?? 0;
+
+  const totalNewItems = menuData?.items.filter(i => isNew(i.id)).length ?? 0;
+  const totalExistingItems = menuData ? menuData.items.length - totalNewItems : 0;
+  const isDiffMode = totalExistingItems > 0;
 
   const platformBadge = menuData?.platform === 'wolt'
     ? <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-700">Wolt</span>
@@ -341,6 +378,21 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
           {/* ── STEP 2: CATEGORIES ── */}
           {step === 'categories' && menuData && (
             <div className="space-y-3">
+              {/* Diff summary banner */}
+              {isDiffMode && (
+                <div className="flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 px-3 py-2">
+                  <Sparkles className="h-4 w-4 text-green-600 flex-shrink-0" />
+                  <span className="text-sm text-green-700">
+                    {t(
+                      `Найдено ${totalNewItems} новых позиций из ${menuData.items.length}`,
+                      `Found ${totalNewItems} new items out of ${menuData.items.length}`,
+                      `נמצאו ${totalNewItems} פריטים חדשים מתוך ${menuData.items.length}`,
+                      `تم العثور على ${totalNewItems} منتج جديد من ${menuData.items.length}`
+                    )}
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
                   {t('Выберите категории для импорта', 'Select categories to import', 'בחר קטגוריות לייבוא', 'اختر الفئات للاستيراد')}
@@ -352,14 +404,26 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                     : t('Выбрать все', 'Select all', 'בחר הכל', 'اختر الكل')}
                 </button>
               </div>
+
               <div className="space-y-2 max-h-72 overflow-y-auto">
-                {menuData.categories.map(cat => (
-                  <label key={cat.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
-                    <Checkbox checked={selectedCategoryIds.has(cat.id)} onCheckedChange={() => toggleCategory(cat.id)} />
-                    <span className="flex-1 font-medium text-sm">{cat.name}</span>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">{cat.itemCount} {t('товаров', 'items', 'פריטים', 'منتجات')}</span>
-                  </label>
-                ))}
+                {menuData.categories.map(cat => {
+                  const catItems = menuData.items.filter(i => i.categoryId === cat.id);
+                  const newCount = catItems.filter(i => isNew(i.id)).length;
+                  return (
+                    <label key={cat.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                      <Checkbox checked={selectedCategoryIds.has(cat.id)} onCheckedChange={() => toggleCategory(cat.id)} />
+                      <span className="flex-1 font-medium text-sm">{cat.name}</span>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {isDiffMode && newCount > 0 && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
+                            +{newCount} {t('новых', 'new', 'חדשים', 'جديد')}
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-400">{cat.itemCount} {t('всего', 'total', 'סה"כ', 'المجموع')}</span>
+                      </div>
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -368,7 +432,7 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
           {step === 'items' && menuData && (
             <div className="space-y-3">
 
-              {/* Global unit quick-apply bar */}
+              {/* Top bar: global unit apply + filter toggle */}
               <div className="flex items-center gap-2 flex-wrap rounded-lg bg-gray-50 border border-gray-200 px-3 py-2">
                 <span className="text-xs font-semibold text-gray-600 whitespace-nowrap">
                   {t('Применить ко всем:', 'Apply to all:', 'החל על הכל:', 'تطبيق على الكل:')}
@@ -385,28 +449,56 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                     </button>
                   ))}
                 </div>
-                <span className="text-xs text-gray-400 whitespace-nowrap">
-                  {selectedVisibleItems} {t('выбрано', 'selected', 'נבחרו', 'محدد')}
-                </span>
+
+                {/* New/All filter toggle — only show when there are existing items */}
+                {isDiffMode && (
+                  <div className="flex rounded-md border border-gray-300 overflow-hidden flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setItemFilter('new')}
+                      className={`px-2.5 py-1 text-xs font-medium transition-colors ${itemFilter === 'new' ? 'bg-green-500 text-white border-green-500' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      ✦ {t('Только новые', 'New only', 'חדשים בלבד', 'الجديدة فقط')} ({totalNewItems})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setItemFilter('all')}
+                      className={`px-2.5 py-1 text-xs font-medium transition-colors border-l border-gray-300 ${itemFilter === 'all' ? 'bg-gray-700 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+                    >
+                      {t('Все', 'All', 'הכל', 'الكل')} ({menuData.items.length})
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div className="space-y-4 max-h-[46vh] overflow-y-auto pr-1">
+              <div className="space-y-4 max-h-[44vh] overflow-y-auto pr-1">
                 {menuData.categories
                   .filter(c => selectedCategoryIds.has(c.id))
                   .map(cat => {
-                    const catItems = menuData.items.filter(i => i.categoryId === cat.id);
-                    if (catItems.length === 0) return null;
-                    const allCatSel = catItems.every(i => selectedItemIds.has(i.id));
+                    const allCatItems = menuData.items.filter(i => i.categoryId === cat.id);
+                    const visibleItems = itemFilter === 'new'
+                      ? allCatItems.filter(i => isNew(i.id))
+                      : allCatItems;
+                    if (visibleItems.length === 0) return null;
+
+                    const allCatSel = visibleItems.every(i => selectedItemIds.has(i.id));
+                    const newInCat = allCatItems.filter(i => isNew(i.id)).length;
+
                     return (
                       <div key={cat.id} className="space-y-1.5">
-                        {/* Category header with per-category unit selector */}
+                        {/* Category header */}
                         <div className="flex items-center gap-2 sticky top-0 bg-white py-1.5 z-10 border-b">
                           <Checkbox checked={allCatSel} onCheckedChange={() => toggleCategoryItems(cat.id)} />
                           <span className="font-semibold text-sm text-gray-800 flex-1 min-w-0 truncate">{cat.name}</span>
+                          {isDiffMode && newInCat > 0 && (
+                            <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700 flex-shrink-0">
+                              +{newInCat}
+                            </span>
+                          )}
                           <span className="text-xs text-gray-400 flex-shrink-0">
-                            ({catItems.filter(i => selectedItemIds.has(i.id)).length}/{catItems.length})
+                            ({visibleItems.filter(i => selectedItemIds.has(i.id)).length}/{visibleItems.length})
                           </span>
-                          {/* Category-level unit apply */}
+                          {/* Category unit apply */}
                           <Select value="" onValueChange={v => applyUnitToCategory(cat.id, v)}>
                             <SelectTrigger className="w-28 h-7 text-xs px-2 border-dashed flex-shrink-0">
                               <span className="text-gray-400 text-xs truncate">
@@ -421,19 +513,27 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                           </Select>
                         </div>
 
-                        {/* Items list */}
+                        {/* Items */}
                         <div className="space-y-1.5 pl-6">
-                          {catItems.map(item => {
+                          {visibleItems.map(item => {
+                            const itemIsNew = isNew(item.id);
                             const isSelected = selectedItemIds.has(item.id);
                             return (
                               <div
                                 key={item.id}
-                                className={`flex items-center gap-2 p-2 rounded-lg border transition-colors ${isSelected ? 'border-gray-200 bg-white' : 'border-gray-100 bg-gray-50 opacity-60'}`}
+                                className={`flex items-center gap-2 p-2 rounded-lg border transition-colors ${
+                                  !itemIsNew
+                                    ? 'border-gray-100 bg-gray-50 opacity-50'
+                                    : isSelected
+                                      ? 'border-gray-200 bg-white'
+                                      : 'border-gray-100 bg-gray-50 opacity-60'
+                                }`}
                               >
                                 <Checkbox
                                   checked={isSelected}
                                   onCheckedChange={() => toggleItem(item.id)}
                                   className="flex-shrink-0"
+                                  disabled={!itemIsNew}
                                 />
                                 {item.imageUrl && (
                                   <img
@@ -444,39 +544,55 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                                   />
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">{item.name}</p>
+                                  <div className="flex items-center gap-1.5">
+                                    <p className="text-sm font-medium truncate">{item.name}</p>
+                                    {!itemIsNew && (
+                                      <span className="px-1.5 py-0.5 rounded text-xs bg-gray-200 text-gray-500 whitespace-nowrap flex-shrink-0">
+                                        {t('уже есть', 'exists', 'קיים', 'موجود')}
+                                      </span>
+                                    )}
+                                  </div>
                                   {item.description && (
                                     <p className="text-xs text-gray-400 truncate">{item.description}</p>
                                   )}
                                 </div>
-                                {/* Editable price */}
-                                <div className="flex items-center gap-1 flex-shrink-0">
-                                  <Input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={itemPrices[item.id] ?? String(item.price)}
-                                    onChange={e => setItemPrices(prev => ({ ...prev, [item.id]: e.target.value }))}
-                                    className="w-20 h-8 text-sm text-center px-1"
-                                    disabled={!isSelected}
-                                  />
-                                  <span className="text-xs text-gray-500">₪</span>
-                                </div>
-                                {/* Per-item unit selector */}
-                                <Select
-                                  value={itemUnits[item.id] ?? 'piece'}
-                                  onValueChange={v => setItemUnits(prev => ({ ...prev, [item.id]: v }))}
-                                  disabled={!isSelected}
-                                >
-                                  <SelectTrigger className="w-24 h-8 text-xs px-2">
-                                    <SelectValue>{unitLabel(itemUnits[item.id] ?? 'piece')}</SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {UNIT_OPTIONS.map(u => (
-                                      <SelectItem key={u.value} value={u.value}>{locUnit(u)}</SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                                {/* Price input — only for new items */}
+                                {itemIsNew && (
+                                  <>
+                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                      <Input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={itemPrices[item.id] ?? String(item.price)}
+                                        onChange={e => setItemPrices(prev => ({ ...prev, [item.id]: e.target.value }))}
+                                        className="w-20 h-8 text-sm text-center px-1"
+                                        disabled={!isSelected}
+                                      />
+                                      <span className="text-xs text-gray-500">₪</span>
+                                    </div>
+                                    <Select
+                                      value={itemUnits[item.id] ?? 'piece'}
+                                      onValueChange={v => setItemUnits(prev => ({ ...prev, [item.id]: v }))}
+                                      disabled={!isSelected}
+                                    >
+                                      <SelectTrigger className="w-24 h-8 text-xs px-2">
+                                        <SelectValue>{unitLabel(itemUnits[item.id] ?? 'piece')}</SelectValue>
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {UNIT_OPTIONS.map(u => (
+                                          <SelectItem key={u.value} value={u.value}>{locUnit(u)}</SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </>
+                                )}
+                                {/* Existing item — just show price */}
+                                {!itemIsNew && (
+                                  <span className="text-sm text-gray-400 flex-shrink-0">
+                                    {item.price} ₪
+                                  </span>
+                                )}
                               </div>
                             );
                           })}
@@ -549,9 +665,9 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
             <>
               <Button variant="outline" onClick={() => { setStep('categories'); setError(''); }}>
                 <ArrowLeft className={`h-4 w-4 ${isRTL ? 'ml-1 rotate-180' : 'mr-1'}`} />
-                {t('Назад', 'Back', 'חזרה', 'رجوع')}
+                {t('Назад', 'Back', 'חזרה', 'رجוע')}
               </Button>
-              <span className="text-sm text-gray-500">{selectedVisibleItems} {t('товаров', 'items', 'פריטים', 'منتجات')}</span>
+              <span className="text-sm text-gray-500">{selectedVisibleItems} {t('к добавлению', 'to add', 'להוספה', 'للإضافة')}</span>
               <Button onClick={handleImport} disabled={loading || selectedVisibleItems === 0} style={{ backgroundColor: 'var(--color-primary)', color: '#fff' }}>
                 {loading
                   ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />{t('Импорт...', 'Importing...', 'מייבא...', 'استيراد...')}</>

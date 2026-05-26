@@ -105,6 +105,8 @@ export const products = pgTable("products", {
   discountValue: decimal("discount_value", { precision: 10, scale: 2 }),
   sortOrder: integer("sort_order").default(0),
   barcode: varchar("barcode", { length: 50 }), // Barcode for the product (not required)
+  externalId: varchar("external_id", { length: 255 }),   // External platform item ID (Wolt/10bis)
+  externalSource: varchar("external_source", { length: 50 }), // Platform: 'wolt' | '10bis'
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

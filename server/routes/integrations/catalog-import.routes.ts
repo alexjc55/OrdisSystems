@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { isAuthenticated } from "../../middleware/auth-guard";
 import { storage } from "../../storage";
+import { db } from "../../db";
+import { products } from "@shared/schema";
+import { eq, and, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -147,7 +150,17 @@ router.post('/admin/catalog-import/fetch', isAuthenticated, async (req: any, res
       menuData = await fetchWoltMenu(slug);
     }
 
-    res.json(menuData);
+    // Diff: find which external IDs already exist in DB for this platform
+    const existingProducts = await db
+      .select({ externalId: products.externalId })
+      .from(products)
+      .where(eq(products.externalSource, platform));
+
+    const existingExternalIds = new Set(
+      existingProducts.map(p => p.externalId).filter(Boolean)
+    );
+
+    res.json({ ...menuData, existingExternalIds: Array.from(existingExternalIds) });
   } catch (error: any) {
     console.error('Catalog import fetch error:', error.message);
     res.status(500).json({ error: 'fetch_failed', message: 'Не удалось получить меню с товарами: ' + error.message });
@@ -159,12 +172,11 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     const user = await storage.getUser(req.user.id);
     if (!user || user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
 
-    const { categories, items, targetLanguage } = req.body;
+    const { categories, items, targetLanguage, platform } = req.body;
     if (!Array.isArray(categories) || !Array.isArray(items)) {
       return res.status(400).json({ message: 'Invalid data' });
     }
 
-    // Map target language to the correct DB field name
     const lang = (targetLanguage && ['ru', 'en', 'he', 'ar'].includes(targetLanguage)) ? targetLanguage : 'ru';
     const nameField = lang === 'ru' ? 'name' : `name_${lang}`;
     const descField = lang === 'ru' ? 'description' : `description_${lang}`;
@@ -183,6 +195,7 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     }
 
     const validUnits = ['piece', 'portion', 'kg', '100g', '100ml'];
+    const validSource = ['wolt', '10bis'].includes(platform) ? platform : null;
 
     let itemsCreated = 0;
     for (const item of items) {
@@ -202,6 +215,8 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
         availabilityStatus: 'available',
         isSpecialOffer: false,
         sortOrder: 0,
+        externalId: item.externalId || null,
+        externalSource: validSource,
         categoryIds: categoryId ? [categoryId] : []
       } as any);
       itemsCreated++;
