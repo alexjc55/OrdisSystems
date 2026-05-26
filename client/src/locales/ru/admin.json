@@ -13,7 +13,8 @@
     "colors": "Цвета",
     "visuals": "Визуальные",
     "closedDates": "Выходные",
-    "branches": "Отделения"
+    "branches": "Отделения",
+    "translations": "Переводы"
   },
   "actions": {
     "add": "Добавить",
@@ -1197,9 +1198,26 @@
     "canManageThemesDescription": "Разрешить сотруднику управлять темами оформления",
     "canCreateOrders": "Создание заказов",
     "canCreateOrdersDescription": "Разрешить сотруднику создавать новые заказы из админ-панели",
+    "canManageTranslations": "Управление переводами",
+    "canManageTranslationsDescription": "Разрешить сотруднику редактировать переводы товаров",
     "coreWorkSections": "Основные рабочие разделы",
     "coreWorkSectionsDescription": "Эти разделы всегда доступны работникам для выполнения основных задач",
     "alwaysEnabled": "всегда включено"
+  },
+  "translations": {
+    "description": "Массовое редактирование переводов товаров на все активные языки",
+    "saveAll": "Сохранить всё",
+    "saveSuccess": "Переводы сохранены",
+    "saveError": "Ошибка сохранения",
+    "validationError": "Ошибка валидации",
+    "nameRequired": "Название на языке по умолчанию обязательно для каждого товара",
+    "missingCount": "Не переведено: {{count}}",
+    "allCategories": "Все категории",
+    "showAll": "Показать все",
+    "anyMissing": "Есть незаполненные переводы",
+    "missingForLang": "Нет перевода",
+    "product": "Товар",
+    "noProducts": "Нет товаров для отображения"
   },
   "translation": {
     "defaultLanguageMode": "Режим основного языка: {{language}}",

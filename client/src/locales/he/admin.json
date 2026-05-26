@@ -13,7 +13,8 @@
     "colors": "צבעים",
     "visuals": "ויזואלי",
     "closedDates": "חגים",
-    "branches": "סניפים"
+    "branches": "סניפים",
+    "translations": "תרגומים"
   },
   "actions": {
     "add": "הוסף",
@@ -680,9 +681,26 @@
     "canManageThemesDescription": "אפשר לעובד לנהל ערכות עיצוב",
     "canCreateOrders": "יצירת הזמנות",
     "canCreateOrdersDescription": "אפשר לעובד ליצור הזמנות חדשות מפאנל הניהול",
+    "canManageTranslations": "ניהול תרגומים",
+    "canManageTranslationsDescription": "אפשר לעובד לערוך תרגומי מוצרים",
     "coreWorkSections": "חלקי עבודה מרכזיים",
     "coreWorkSectionsDescription": "חלקים אלה זמינים תמיד לעובדים למשימות חיוניות",
     "alwaysEnabled": "תמיד מופעל"
+  },
+  "translations": {
+    "description": "עריכה המונית של תרגומי מוצרים לכל השפות הפעילות",
+    "saveAll": "שמור הכל",
+    "saveSuccess": "תרגומים נשמרו",
+    "saveError": "שגיאת שמירה",
+    "validationError": "שגיאת אימות",
+    "nameRequired": "שם המוצר בשפת ברירת המחדל הוא שדה חובה לכל מוצר",
+    "missingCount": "לא מתורגם: {{count}}",
+    "allCategories": "כל הקטגוריות",
+    "showAll": "הצג הכל",
+    "anyMissing": "יש תרגומים חסרים",
+    "missingForLang": "חסר תרגום",
+    "product": "מוצר",
+    "noProducts": "אין מוצרים להצגה"
   },
   "translation": {
     "defaultLanguageMode": "מצב שפת ברירת מחדל: {{language}}",

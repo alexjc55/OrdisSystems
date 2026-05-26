@@ -21,7 +21,8 @@
     "colors": "Colors",
     "visuals": "Visual",
     "closedDates": "Holidays",
-    "branches": "Branches"
+    "branches": "Branches",
+    "translations": "Translations"
   },
   "actions": {
     "add": "Add",
@@ -1137,9 +1138,26 @@
     "canManageThemesDescription": "Allow employee to manage design themes",
     "canCreateOrders": "Create Orders",
     "canCreateOrdersDescription": "Allow employee to create new orders from admin panel",
+    "canManageTranslations": "Manage Translations",
+    "canManageTranslationsDescription": "Allow employee to edit product translations",
     "coreWorkSections": "Core Work Sections",
     "coreWorkSectionsDescription": "These sections are always available to workers for essential tasks",
     "alwaysEnabled": "always enabled"
+  },
+  "translations": {
+    "description": "Bulk editing of product translations for all active languages",
+    "saveAll": "Save all",
+    "saveSuccess": "Translations saved",
+    "saveError": "Save error",
+    "validationError": "Validation error",
+    "nameRequired": "Product name in the default language is required for every product",
+    "missingCount": "Not translated: {{count}}",
+    "allCategories": "All categories",
+    "showAll": "Show all",
+    "anyMissing": "Has missing translations",
+    "missingForLang": "Missing translation",
+    "product": "Product",
+    "noProducts": "No products to display"
   },
   "translation": {
     "defaultLanguageMode": "Default language mode: {{language}}",

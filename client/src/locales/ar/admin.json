@@ -13,7 +13,8 @@
     "colors": "الألوان",
     "visuals": "المرئي",
     "closedDates": "عطلات",
-    "branches": "الفروع"
+    "branches": "الفروع",
+    "translations": "الترجمات"
   },
   "actions": {
     "add": "إضافة",
@@ -1014,9 +1015,26 @@
     "canManageThemesDescription": "السماح للموظف بإدارة مواضيع التصميم",
     "canCreateOrders": "إنشاء الطلبات",
     "canCreateOrdersDescription": "السماح للموظف بإنشاء طلبات جديدة من لوحة الإدارة",
+    "canManageTranslations": "إدارة الترجمات",
+    "canManageTranslationsDescription": "السماح للموظف بتعديل ترجمات المنتجات",
     "coreWorkSections": "أقسام العمل الأساسية",
     "coreWorkSectionsDescription": "المنتجات والفئات والطلبات متاحة دائماً للموظفين",
     "alwaysEnabled": "مفعل دائماً"
+  },
+  "translations": {
+    "description": "تحرير جماعي لترجمات المنتجات لجميع اللغات النشطة",
+    "saveAll": "حفظ الكل",
+    "saveSuccess": "تم حفظ الترجمات",
+    "saveError": "خطأ في الحفظ",
+    "validationError": "خطأ في التحقق",
+    "nameRequired": "اسم المنتج باللغة الافتراضية مطلوب لكل منتج",
+    "missingCount": "غير مترجم: {{count}}",
+    "allCategories": "جميع الفئات",
+    "showAll": "عرض الكل",
+    "anyMissing": "يوجد ترجمات ناقصة",
+    "missingForLang": "ترجمة مفقودة",
+    "product": "المنتج",
+    "noProducts": "لا توجد منتجات للعرض"
   },
   "translation": {
     "defaultLanguageMode": "وضع اللغة الافتراضية: {{language}}",

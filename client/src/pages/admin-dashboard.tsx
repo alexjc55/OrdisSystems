@@ -5389,6 +5389,21 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     )}
+                    {hasPermission("canManageTranslations") && (
+                      <div 
+                        onClick={() => {
+                          setActiveTab("translations");
+                          document.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}));
+                        }} 
+                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 min-h-[80px] flex items-center justify-center w-full ${activeTab === 'translations' ? 'bg-primary text-primary-foreground shadow-md' : 'bg-white hover:bg-primary hover:text-primary-foreground hover:shadow-md border border-gray-200'}`}
+                        style={{minWidth: '0', overflow: 'hidden'}}
+                      >
+                        <div className={`flex flex-col items-center gap-1 ${isRTL ? 'text-right' : 'text-center'} w-full`}>
+                          <Globe className="w-5 h-5 flex-shrink-0" />
+                          <span className="text-xs font-medium leading-tight text-center truncate w-full">{adminT('tabs.translations')}</span>
+                        </div>
+                      </div>
+                    )}
                     {user?.role === 'admin' && (
                       <div 
                         onClick={() => {
@@ -5474,6 +5489,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="coupons" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={currentLanguage === 'ru' ? 'Купоны и лояльность' : currentLanguage === 'he' ? 'קופונים ונאמנות' : currentLanguage === 'ar' ? 'كوبونات والولاء' : 'Coupons & Loyalty'}>
                       <Tag className="w-4 h-4 ml-1" />
                       <span className="admin-tab-text">{currentLanguage === 'ru' ? 'Купоны' : currentLanguage === 'he' ? 'קופונים' : currentLanguage === 'ar' ? 'كوبونات' : 'Coupons'}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageTranslations") && (
+                    <TabsTrigger value="translations" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.translations')}>
+                      <Globe className="w-4 h-4 ml-1" />
+                      <span className="admin-tab-text">{adminT('tabs.translations')}</span>
                     </TabsTrigger>
                   )}
                   {isAdmin && (
@@ -5586,6 +5607,12 @@ export default function AdminDashboard() {
                     <TabsTrigger value="coupons" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={currentLanguage === 'ru' ? 'Купоны и лояльность' : currentLanguage === 'he' ? 'קופונים ונאמנות' : currentLanguage === 'ar' ? 'كوبونات والولاء' : 'Coupons & Loyalty'}>
                       <Tag className="w-4 h-4 mr-1" />
                       <span className="admin-tab-text">{currentLanguage === 'ru' ? 'Купоны' : currentLanguage === 'he' ? 'קופונים' : currentLanguage === 'ar' ? 'كوبونات' : 'Coupons'}</span>
+                    </TabsTrigger>
+                  )}
+                  {hasPermission("canManageTranslations") && (
+                    <TabsTrigger value="translations" className="admin-tabs-trigger text-xs sm:text-sm whitespace-nowrap" title={adminT('tabs.translations')}>
+                      <Globe className="w-4 h-4 mr-1" />
+                      <span className="admin-tab-text">{adminT('tabs.translations')}</span>
                     </TabsTrigger>
                   )}
 
@@ -8021,6 +8048,32 @@ export default function AdminDashboard() {
                           )}
                         </Button>
                       </div>
+
+                      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={isRTL ? 'text-right' : 'text-left'}>
+                          <label className="text-sm font-medium">{adminT('systemSettings.canManageTranslations')}</label>
+                          <p className="text-xs text-gray-500">{adminT('systemSettings.canManageTranslationsDescription')}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            updateStoreSettingsMutation.mutate({
+                              workerPermissions: {
+                                ...(storeSettings?.workerPermissions || {}),
+                                canManageTranslations: !((storeSettings?.workerPermissions as any)?.canManageTranslations || false)
+                              }
+                            })
+                          }
+                          className="h-8 w-8 p-0"
+                        >
+                          {(storeSettings?.workerPermissions as any)?.canManageTranslations ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-gray-400" />
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -8033,6 +8086,13 @@ export default function AdminDashboard() {
           {(hasPermission("canManageSettings") || hasPermission("canManageThemes")) && (
             <TabsContent value="themes" className="space-y-4 sm:space-y-6">
               <ThemeManager />
+            </TabsContent>
+          )}
+
+          {/* Translation Management */}
+          {hasPermission("canManageTranslations") && (
+            <TabsContent value="translations" className="space-y-4 sm:space-y-6">
+              <TranslationManager />
             </TabsContent>
           )}
 

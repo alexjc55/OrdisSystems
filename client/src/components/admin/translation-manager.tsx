@@ -1,256 +1,376 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
-import { Download, Upload, FileSpreadsheet, AlertCircle, CheckCircle2, Info } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useAdminTranslation } from "@/hooks/use-language";
-import { apiRequest } from "@/lib/queryClient";
-import { cn } from "@/lib/utils";
+import { Save, RefreshCw, Filter, X, AlertCircle, Globe } from "lucide-react";
+
+type ProductTranslation = {
+  id: number;
+  categoryId: number | null;
+  name: string | null;
+  name_en: string | null;
+  name_he: string | null;
+  name_ar: string | null;
+  description: string | null;
+  description_en: string | null;
+  description_he: string | null;
+  description_ar: string | null;
+  ingredients: string | null;
+  ingredients_en: string | null;
+  ingredients_he: string | null;
+  ingredients_ar: string | null;
+};
+
+type Category = { id: number; name: string; name_en?: string | null; name_he?: string | null; name_ar?: string | null };
+
+const LANG_SUFFIX: Record<string, string> = { ru: "", en: "_en", he: "_he", ar: "_ar" };
+const LANG_FLAGS: Record<string, string> = { ru: "🇷🇺", en: "🇬🇧", he: "🇮🇱", ar: "🇸🇦" };
+const LANG_LABELS: Record<string, string> = { ru: "Русский", en: "English", he: "עברית", ar: "العربية" };
+const FIELD_LABELS: Record<string, Record<string, string>> = {
+  name:        { ru: "Название",  en: "Name",        he: "שם",       ar: "اسم"    },
+  description: { ru: "Описание",  en: "Description", he: "תיאור",    ar: "وصف"    },
+  ingredients: { ru: "Состав",    en: "Ingredients", he: "מרכיבים",  ar: "مكونات" },
+};
+
+function fieldKey(base: string, lang: string): keyof ProductTranslation {
+  return (base + LANG_SUFFIX[lang]) as keyof ProductTranslation;
+}
+
+function catName(cat: Category, lang: string): string {
+  if (lang === "en" && cat.name_en) return cat.name_en;
+  if (lang === "he" && cat.name_he) return cat.name_he;
+  if (lang === "ar" && cat.name_ar) return cat.name_ar;
+  return cat.name;
+}
 
 export function TranslationManager() {
-  const [uploading, setUploading] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { t: adminT, i18n } = useTranslation("admin");
+  const currentLang = i18n.language || "ru";
   const { toast } = useToast();
-  const { t } = useAdminTranslation();
+  const isRTL = currentLang === "he" || currentLang === "ar";
 
-  const handleExport = async () => {
-    try {
-      setExporting(true);
-      
-      const response = await fetch('/api/translations/export', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      if (!response.ok) {
-        throw new Error('Export failed');
-      }
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `translations_${new Date().toISOString().split('T')[0]}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      
-      toast({
-        title: t("translationManagement.exportSuccess"),
-        description: t("translationManagement.translationsExported"),
-      });
-    } catch (error) {
-      console.error('Export error:', error);
-      toast({
-        title: t("translationManagement.exportError"),
-        description: t("translationManagement.exportFailed"),
-        variant: "destructive"
-      });
-    } finally {
-      setExporting(false);
+  const { data: storeSettings } = useQuery<any>({ queryKey: ["/api/settings"] });
+  const { data: categories = [] } = useQuery<Category[]>({ queryKey: ["/api/categories"] });
+
+  const langOrder: string[] = ((storeSettings?.languageOrder || ["ru", "en", "he", "ar"]) as string[]).filter(
+    (l) => ((storeSettings?.enabledLanguages || ["ru", "en", "he", "ar"]) as string[]).includes(l)
+  );
+  const defaultLang: string = storeSettings?.defaultLanguage || "ru";
+
+  const { data: serverProducts = [], isLoading } = useQuery<ProductTranslation[]>({
+    queryKey: ["/api/admin/translations/products"],
+  });
+
+  const [local, setLocal] = useState<ProductTranslation[]>([]);
+
+  useEffect(() => {
+    if (serverProducts.length > 0) {
+      setLocal(serverProducts.map(p => ({ ...p })));
     }
-  };
+  }, [serverProducts]);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
-      if (!validTypes.includes(file.type) && !file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-        toast({
-          title: t("translationManagement.invalidFileType"),
-          description: t("translationManagement.pleaseSelectExcelFile"),
-          variant: "destructive"
-        });
-        return;
-      }
-      setSelectedFile(file);
-    }
-  };
+  // Filters
+  const [filterCat, setFilterCat] = useState("all");
+  const [filterMissing, setFilterMissing] = useState("all");
 
-  const handleImport = async () => {
-    if (!selectedFile) {
+  const saveMutation = useMutation({
+    mutationFn: (updates: ProductTranslation[]) =>
+      apiRequest("PUT", "/api/admin/translations/products", { updates }),
+    onSuccess: () => {
+      toast({ title: adminT("translations.saveSuccess") });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/translations/products"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+    },
+    onError: () => {
+      toast({ title: adminT("translations.saveError"), variant: "destructive" });
+    },
+  });
+
+  const handleCell = useCallback(
+    (id: number, key: keyof ProductTranslation, val: string) => {
+      setLocal(prev => prev.map(p => p.id === id ? { ...p, [key]: val } : p));
+    },
+    []
+  );
+
+  const handleSave = () => {
+    const nameKey = fieldKey("name", defaultLang);
+    const invalid = local.find(p => !(p[nameKey] || "").trim());
+    if (invalid) {
       toast({
-        title: t("translationManagement.noFileSelected"),
-        description: t("translationManagement.pleaseSelectFile"),
-        variant: "destructive"
+        title: adminT("translations.validationError"),
+        description: adminT("translations.nameRequired"),
+        variant: "destructive",
       });
       return;
     }
-
-    try {
-      setUploading(true);
-      
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      
-      const response = await fetch('/api/translations/import', {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      });
-      
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.message || 'Import failed');
-      }
-      
-      toast({
-        title: t("translationManagement.importSuccess"),
-        description: t("translationManagement.translationsImported").replace('{count}', result.importedRows),
-      });
-      
-      setSelectedFile(null);
-      // Reset file input
-      const fileInput = document.getElementById('file-input') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-      
-    } catch (error: any) {
-      console.error('Import error:', error);
-      toast({
-        title: t("translationManagement.importError"),
-        description: error.message || t("translationManagement.importFailed"),
-        variant: "destructive"
-      });
-    } finally {
-      setUploading(false);
-    }
+    saveMutation.mutate(local);
   };
 
+  // "Missing" means name or description is empty for that lang (ingredients are optional)
+  function isMissingLang(p: ProductTranslation, lang: string): boolean {
+    return !(p[fieldKey("name", lang)] || "").trim() || !(p[fieldKey("description", lang)] || "").trim();
+  }
+  function hasAnyMissing(p: ProductTranslation): boolean {
+    return langOrder.some(l => isMissingLang(p, l));
+  }
+
+  const filtered = local.filter(p => {
+    if (filterCat !== "all" && String(p.categoryId) !== filterCat) return false;
+    if (filterMissing === "any_missing") return hasAnyMissing(p);
+    if (filterMissing.startsWith("lang_")) return isMissingLang(p, filterMissing.slice(5));
+    return true;
+  });
+
+  const missingCount = local.filter(hasAnyMissing).length;
+
+  const fl = (base: string) => FIELD_LABELS[base]?.[currentLang] ?? FIELD_LABELS[base]?.["ru"] ?? base;
+  const ll = (lang: string) => LANG_LABELS[lang] ?? lang.toUpperCase();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-gray-500">
+        <RefreshCw className="h-5 w-5 animate-spin mr-2" />
+        {adminT("actions.loading")}
+      </div>
+    );
+  }
+
+  const SaveBtn = ({ className = "" }: { className?: string }) => (
+    <Button
+      onClick={handleSave}
+      disabled={saveMutation.isPending}
+      size="sm"
+      className={`bg-primary text-white hover:bg-primary/90 ${className}`}
+    >
+      {saveMutation.isPending
+        ? <><RefreshCw className="h-4 w-4 mr-1 animate-spin" />{adminT("actions.saving")}</>
+        : <><Save className="h-4 w-4 mr-1" />{adminT("translations.saveAll")}</>}
+    </Button>
+  );
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">{t("translationManagement.translationManagement")}</h2>
-        <p className="text-muted-foreground">
-          {t("translationManagement.manageAllTranslations")}
-        </p>
+    <div className="space-y-4" dir={isRTL ? "rtl" : "ltr"}>
+
+      {/* Header */}
+      <div className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${isRTL ? "sm:flex-row-reverse" : ""}`}>
+        <div className={isRTL ? "text-right" : "text-left"}>
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            {adminT("tabs.translations")}
+          </h2>
+          <p className="text-sm text-gray-500 mt-0.5">{adminT("translations.description")}</p>
+        </div>
+        <div className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+          {missingCount > 0 && (
+            <Badge variant="outline" className="text-orange-600 border-orange-300 bg-orange-50 gap-1">
+              <AlertCircle className="h-3 w-3" />
+              {adminT("translations.missingCount", { count: missingCount })}
+            </Badge>
+          )}
+          <SaveBtn />
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Export Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Download className="h-5 w-5" />
-              {t("translationManagement.exportTranslations")}
-            </CardTitle>
-            <CardDescription>
-              {t("translationManagement.downloadAllTranslations")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert>
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                {t("translationManagement.exportInfo")}
-              </AlertDescription>
-            </Alert>
-            
-            <Button 
-              onClick={handleExport} 
-              disabled={exporting}
-              className="w-full"
-            >
-              <FileSpreadsheet className="h-4 w-4 mr-2" />
-              {exporting ? t("translationManagement.exporting") : t("translationManagement.exportToExcel")}
-            </Button>
-          </CardContent>
-        </Card>
+      {/* Filters */}
+      <div className={`flex flex-wrap gap-3 items-center p-3 bg-gray-50 rounded-lg border ${isRTL ? "flex-row-reverse" : ""}`}>
+        <div className="flex items-center gap-1.5 text-sm text-gray-600 font-medium">
+          <Filter className="h-4 w-4 text-gray-400" />
+          {adminT("actions.filter")}:
+        </div>
 
-        {/* Import Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Upload className="h-5 w-5" />
-              {t("translationManagement.importTranslations")}
-            </CardTitle>
-            <CardDescription>
-              {t("translationManagement.uploadTranslationsFile")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                {t("translationManagement.importWarning")}
-              </AlertDescription>
-            </Alert>
-            
-            <div className="space-y-2">
-              <Label htmlFor="file-input">{t("translationManagement.selectFile")}</Label>
-              <Input
-                id="file-input"
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleFileSelect}
-                disabled={uploading}
-              />
-            </div>
-            
-            {selectedFile && (
-              <Alert>
-                <CheckCircle2 className="h-4 w-4" />
-                <AlertDescription>
-                  {t("translationManagement.fileSelected")}: {selectedFile.name}
-                </AlertDescription>
-              </Alert>
-            )}
-            
-            <Button 
-              onClick={handleImport} 
-              disabled={uploading || !selectedFile}
-              className="w-full"
-              variant={selectedFile ? "default" : "secondary"}
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              {uploading ? t("translationManagement.importing") : t("translationManagement.importFile")}
-            </Button>
-          </CardContent>
-        </Card>
+        <Select value={filterCat} onValueChange={setFilterCat}>
+          <SelectTrigger className="h-8 text-xs w-44 bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{adminT("translations.allCategories")}</SelectItem>
+            {(categories as Category[]).map(cat => (
+              <SelectItem key={cat.id} value={String(cat.id)}>
+                {catName(cat, currentLang)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={filterMissing} onValueChange={setFilterMissing}>
+          <SelectTrigger className="h-8 text-xs w-60 bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{adminT("translations.showAll")}</SelectItem>
+            <SelectItem value="any_missing">{adminT("translations.anyMissing")}</SelectItem>
+            {langOrder.map(lang => (
+              <SelectItem key={lang} value={`lang_${lang}`}>
+                {adminT("translations.missingForLang")}: {ll(lang)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {(filterCat !== "all" || filterMissing !== "all") && (
+          <Button
+            variant="ghost" size="sm"
+            className="h-8 text-xs text-gray-400 hover:text-gray-700"
+            onClick={() => { setFilterCat("all"); setFilterMissing("all"); }}
+          >
+            <X className="h-3 w-3 mr-1" />{adminT("actions.reset")}
+          </Button>
+        )}
+
+        <span className="text-xs text-gray-400 ml-auto">
+          {filtered.length} / {local.length}
+        </span>
       </div>
 
-      <Separator />
+      {/* Table */}
+      {filtered.length === 0 ? (
+        <div className="py-12 text-center text-gray-400 text-sm border rounded-lg">
+          {adminT("translations.noProducts")}
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+          <table className="w-full text-xs border-collapse" style={{ direction: "ltr" }}>
+            <thead>
+              {/* Language header row */}
+              <tr className="bg-gray-100 border-b border-gray-200">
+                <th
+                  rowSpan={2}
+                  className="px-3 py-2 text-left font-semibold text-gray-700 sticky left-0 bg-gray-100 z-20 border-r border-gray-200 min-w-[160px] align-middle"
+                >
+                  {adminT("translations.product")}
+                </th>
+                {langOrder.map(lang => (
+                  <th
+                    key={lang}
+                    colSpan={3}
+                    className="px-2 py-2 text-center font-semibold text-gray-700 border-r border-gray-200 last:border-r-0"
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <span>{LANG_FLAGS[lang]}</span>
+                      {ll(lang)}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+              {/* Field sub-header row */}
+              <tr className="bg-gray-50 border-b border-gray-200">
+                {langOrder.map(lang =>
+                  (["name", "description", "ingredients"] as const).map(field => (
+                    <th
+                      key={`${lang}_${field}`}
+                      className="px-2 py-1.5 text-center text-gray-500 font-normal border-r border-gray-200 last:border-r-0 min-w-[130px]"
+                    >
+                      {fl(field)}
+                    </th>
+                  ))
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((product, idx) => {
+                const cat = (categories as Category[]).find(c => c.id === product.categoryId);
+                const displayName = (product[fieldKey("name", defaultLang)] || product.name || `#${product.id}`) as string;
+                const catLabel = cat ? catName(cat, currentLang) : "—";
 
-      {/* Instructions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("translationManagement.instructions")}</CardTitle>
-          <CardDescription>
-            {t("translationManagement.howToUseTranslationManager")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <h4 className="font-medium">{t("translationManagement.step1Export")}</h4>
-            <p className="text-sm text-muted-foreground">
-              {t("translationManagement.step1Description")}
-            </p>
-          </div>
-          
-          <div className="space-y-2">
-            <h4 className="font-medium">{t("translationManagement.step2Edit")}</h4>
-            <p className="text-sm text-muted-foreground">
-              {t("translationManagement.step2Description")}
-            </p>
-          </div>
-          
-          <div className="space-y-2">
-            <h4 className="font-medium">{t("translationManagement.step3Import")}</h4>
-            <p className="text-sm text-muted-foreground">
-              {t("translationManagement.step3Description")}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+                return (
+                  <tr
+                    key={product.id}
+                    className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}
+                  >
+                    {/* Product info */}
+                    <td className="px-3 py-1.5 sticky left-0 bg-inherit z-10 border-r border-gray-200">
+                      <div className="font-medium text-gray-800 truncate max-w-[150px]" title={displayName}>
+                        {displayName}
+                      </div>
+                      <div className="text-gray-400 truncate max-w-[150px]">{catLabel}</div>
+                    </td>
+
+                    {/* Editable cells */}
+                    {langOrder.map(lang => {
+                      const nk = fieldKey("name", lang);
+                      const dk = fieldKey("description", lang);
+                      const ik = fieldKey("ingredients", lang);
+                      const nv = (product[nk] || "") as string;
+                      const dv = (product[dk] || "") as string;
+                      const iv = (product[ik] || "") as string;
+                      const rtlCell = lang === "he" || lang === "ar";
+                      const missingName = !nv.trim();
+                      const missingDesc = !dv.trim();
+
+                      return (
+                        <>
+                          {/* Name cell */}
+                          <td
+                            key={`${product.id}_${lang}_name`}
+                            className={`px-1 py-1 border-r border-gray-100 ${missingName ? "bg-red-50" : ""}`}
+                          >
+                            <Input
+                              value={nv}
+                              onChange={e => handleCell(product.id, nk, e.target.value)}
+                              className="h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent w-full"
+                              placeholder="—"
+                              dir={rtlCell ? "rtl" : "ltr"}
+                            />
+                          </td>
+                          {/* Description cell */}
+                          <td
+                            key={`${product.id}_${lang}_desc`}
+                            className={`px-1 py-1 border-r border-gray-100 ${missingDesc ? "bg-yellow-50" : ""}`}
+                          >
+                            <Textarea
+                              value={dv}
+                              onChange={e => handleCell(product.id, dk, e.target.value)}
+                              className="min-h-[28px] h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent resize-none w-full leading-tight"
+                              placeholder="—"
+                              dir={rtlCell ? "rtl" : "ltr"}
+                              rows={1}
+                              onFocus={e => {
+                                e.target.style.height = "auto";
+                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                              }}
+                              onBlur={e => { e.target.style.height = "28px"; }}
+                            />
+                          </td>
+                          {/* Ingredients cell */}
+                          <td key={`${product.id}_${lang}_ing`} className="px-1 py-1 border-r border-gray-100 last:border-r-0">
+                            <Textarea
+                              value={iv}
+                              onChange={e => handleCell(product.id, ik, e.target.value)}
+                              className="min-h-[28px] h-7 text-xs border border-transparent focus:border-primary/40 rounded px-1.5 bg-transparent resize-none w-full leading-tight"
+                              placeholder="—"
+                              dir={rtlCell ? "rtl" : "ltr"}
+                              rows={1}
+                              onFocus={e => {
+                                e.target.style.height = "auto";
+                                e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                              }}
+                              onBlur={e => { e.target.style.height = "28px"; }}
+                            />
+                          </td>
+                        </>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Bottom save for long tables */}
+      {filtered.length > 5 && (
+        <div className={`flex pt-2 ${isRTL ? "justify-start" : "justify-end"}`}>
+          <SaveBtn />
+        </div>
+      )}
     </div>
   );
 }
