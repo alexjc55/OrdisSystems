@@ -324,45 +324,48 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
                 backgroundImage: `url(${slide.image})`,
               }}
             />
-            
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
-            
-            {/* Content */}
-            <div className={`absolute ${getContentPositionClasses(slide.textPosition)} z-10`} style={{
-              maxWidth: slide.textPosition.includes('center-') ? '600px' : '500px',
-              width: slide.textPosition.includes('center-') ? 'calc(100vw - 2rem)' : 'auto'
-            }}>
-              <div className={`relative p-6 rounded-lg backdrop-blur-sm bg-black/30 ${getTextAlignmentClasses(slide.textPosition)}`}>
-                <div className="flex flex-col space-y-4">
-                  {slide.title && (
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-                      {slide.title}
-                    </h1>
-                  )}
-                  
-                  {slide.subtitle && (
-                    <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-[rgba(255,255,255,0.9)] leading-relaxed">
-                      {slide.subtitle}
-                    </p>
-                  )}
-                  
-                  {slide.buttonText && slide.buttonLink && (
-                    <div className="pt-4">
-                      <Button
-                        asChild
-                        size="lg"
-                        className="bg-primary hover:bg-primary-hover text-white px-8 py-3 text-lg font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
-                      >
-                        <a href={slide.buttonLink}>
-                          {slide.buttonText}
-                        </a>
-                      </Button>
+
+            {/* Gradient Overlay + Content — only rendered when slide has text/button */}
+            {(slide.title || slide.subtitle || (slide.buttonText && slide.buttonLink)) && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+
+                <div className={`absolute ${getContentPositionClasses(slide.textPosition)} z-10`} style={{
+                  maxWidth: slide.textPosition.includes('center-') ? '600px' : '500px',
+                  width: slide.textPosition.includes('center-') ? 'calc(100vw - 2rem)' : 'auto'
+                }}>
+                  <div className={`relative p-6 rounded-lg backdrop-blur-sm bg-black/30 ${getTextAlignmentClasses(slide.textPosition)}`}>
+                    <div className="flex flex-col space-y-4">
+                      {slide.title && (
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                          {slide.title}
+                        </h1>
+                      )}
+
+                      {slide.subtitle && (
+                        <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl text-[rgba(255,255,255,0.9)] leading-relaxed">
+                          {slide.subtitle}
+                        </p>
+                      )}
+
+                      {slide.buttonText && slide.buttonLink && (
+                        <div className="pt-4">
+                          <Button
+                            asChild
+                            size="lg"
+                            className="bg-primary hover:bg-primary-hover text-white px-8 py-3 text-lg font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
+                          >
+                            <a href={slide.buttonLink}>
+                              {slide.buttonText}
+                            </a>
+                          </Button>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         ))}
       </div>

@@ -100,9 +100,10 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
     Object.keys(body).forEach(key => {
       const val = body[key];
       if (val === null || val === undefined) return;
-      // Never overwrite existing image/URL fields with an empty string — preserve the DB value
-      if (urlFields.includes(key) && val === '') return;
-      // Always include explicitly clearable fields (even empty) so the user can remove a link
+      // Slide image fields are clearable — user may want to remove a slide entirely
+      // Other image/URL fields (logo, banners) are protected from accidental empty overwrites
+      if (urlFields.includes(key) && val === '' && !key.startsWith('slide')) return;
+      // Always include explicitly clearable fields, non-empty values, and slide-related fields
       if (clearableFields.includes(key) || val !== '' || key.startsWith('slider') || key.startsWith('slide')) {
         themeData[key] = val;
       }
