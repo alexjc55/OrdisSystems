@@ -94,8 +94,10 @@ export function getLocalizedField(
   }
   
   // Fallback to default language field for public website
+  // When defaultLanguage='he', defaultField='name_he'. But if admin filled only
+  // the base 'name' field (not 'name_he'), we must also try the base field.
   const defaultField = defaultLanguage === 'ru' ? field : `${field}_${defaultLanguage}`;
-  return item[defaultField] || '';
+  return item[defaultField] || item[field] || '';
 }
 
 /**
