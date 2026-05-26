@@ -342,7 +342,7 @@ const productSchema = z.object({
 });
 
 const categorySchema = z.object({
-  name: z.string().min(1),
+  name: z.string().optional(),
   name_en: z.string().optional(),
   name_he: z.string().optional(),
   name_ar: z.string().optional(),
@@ -9771,15 +9771,16 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       return;
     }
 
-    // Get values from default language fields
-    const defaultName = formData.name || '';
-    const defaultDescription = formData.description || '';
-    const defaultIngredients = formData.ingredients || '';
+    // Get values from the store's default language fields
+    const srcSuffix = productStoreDefaultLang === 'ru' ? '' : `_${productStoreDefaultLang}`;
+    const defaultName = formData[`name${srcSuffix}`] || '';
+    const defaultDescription = formData[`description${srcSuffix}`] || '';
+    const defaultIngredients = formData[`ingredients${srcSuffix}`] || '';
     
     if (!defaultName && !defaultDescription && !defaultIngredients) {
       toast({
-        title: 'Нет данных для копирования',
-        description: 'Заполните поля на русском языке сначала',
+        title: adminT('translation.noDataToCopy') || 'Нет данных для копирования',
+        description: adminT('translation.fillDefaultFirst') || 'Заполните поля на основном языке сначала',
         variant: 'destructive'
       });
       return;
@@ -10557,6 +10558,22 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     }
   }, [open, category, form]);
 
+  const langToTabKey: Record<string, string> = { ru: 'basic', en: 'english', he: 'hebrew', ar: 'arabic' };
+  const langToField: Record<string, string> = { ru: 'name', en: 'name_en', he: 'name_he', ar: 'name_ar' };
+
+  const handleCategorySubmit = (data: any) => {
+    const reqField = langToField[categoryDefaultLang] || 'name';
+    if (!data[reqField]?.trim()) {
+      form.setError(reqField as any, { message: adminT('categories.categoryNameRequired') });
+      const tabKey = langToTabKey[categoryDefaultLang] || 'basic';
+      if (availableTabs.some((t: any) => t.key === tabKey)) {
+        setActiveTab(tabKey);
+      }
+      return;
+    }
+    onSubmit(data);
+  };
+
   if (!open) return null;
 
   return (
@@ -10595,7 +10612,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleCategorySubmit)} className="space-y-4">
             {activeTab === "basic" && (
               <>
                 <FormField
@@ -10603,7 +10620,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (Русский)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (Русский){categoryDefaultLang === 'ru' ? ' *' : ''}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder={adminT('categories.fields.namePlaceholder')} 
@@ -10793,7 +10810,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                   name="name_en"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (English)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (English){categoryDefaultLang === 'en' ? ' *' : ''}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Category name in English" 
@@ -10835,7 +10852,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                   name="name_he"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (עברית)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (עברית){categoryDefaultLang === 'he' ? ' *' : ''}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="שם הקטגוריה בעברית" 
@@ -10877,7 +10894,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                   name="name_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (العربية)</FormLabel>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.name')} (العربية){categoryDefaultLang === 'ar' ? ' *' : ''}</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="اسم الفئة بالعربية" 

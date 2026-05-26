@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { isAuthenticated } from "../../middleware/auth-guard";
 import { getDB } from "../../db";
-import { products, storeSettings } from "@shared/schema";
+import { products, productCategories, storeSettings } from "@shared/schema";
 import { eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
@@ -44,23 +44,44 @@ router.get("/admin/translations/products", isAuthenticated, async (req: any, res
   try {
     if (!await checkAccess(req, res)) return;
     const db = await getDB();
-    const rows = await db.select({
-      id: products.id,
-      categoryId: products.categoryId,
-      name: products.name,
-      name_en: products.name_en,
-      name_he: products.name_he,
-      name_ar: products.name_ar,
-      description: products.description,
-      description_en: products.description_en,
-      description_he: products.description_he,
-      description_ar: products.description_ar,
-      ingredients: products.ingredients,
-      ingredients_en: products.ingredients_en,
-      ingredients_he: products.ingredients_he,
-      ingredients_ar: products.ingredients_ar,
-    }).from(products);
-    res.json(rows);
+
+    // Fetch all products (select * to avoid Drizzle column resolution issues)
+    // then pick only the translation-relevant fields
+    const allProducts = await db.select().from(products).orderBy(products.id);
+    const rows = allProducts.map((p: any) => ({
+      id: p.id,
+      name: p.name ?? "",
+      name_en: p.name_en ?? "",
+      name_he: p.name_he ?? "",
+      name_ar: p.name_ar ?? "",
+      description: p.description ?? "",
+      description_en: p.description_en ?? "",
+      description_he: p.description_he ?? "",
+      description_ar: p.description_ar ?? "",
+      ingredients: p.ingredients ?? "",
+      ingredients_en: p.ingredients_en ?? "",
+      ingredients_he: p.ingredients_he ?? "",
+      ingredients_ar: p.ingredients_ar ?? "",
+    }));
+
+    // Fetch first category per product via junction table
+    const productIds = rows.map(r => r.id);
+    const catLinks = productIds.length > 0
+      ? await db.select({
+          productId: productCategories.productId,
+          categoryId: productCategories.categoryId,
+        }).from(productCategories)
+          .where(inArray(productCategories.productId, productIds))
+      : [];
+
+    // Map productId → first categoryId
+    const catMap = new Map<number, number>();
+    for (const link of catLinks) {
+      if (!catMap.has(link.productId)) catMap.set(link.productId, link.categoryId);
+    }
+
+    const result = rows.map(r => ({ ...r, categoryId: catMap.get(r.id) ?? null }));
+    res.json(result);
   } catch (error) {
     console.error("Error fetching product translations:", error);
     res.status(500).json({ message: "Failed to fetch product translations" });
