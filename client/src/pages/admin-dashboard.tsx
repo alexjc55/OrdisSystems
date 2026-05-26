@@ -10491,15 +10491,19 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
   
-  // Define available language tabs based on enabled languages
+  // Define available language tabs based on enabled languages and their order from settings
   const enabledLanguages = (settings as any)?.enabledLanguages || ['ru', 'en', 'he', 'ar'];
   const categoryDefaultLang = (settings as any)?.defaultLanguage || 'ru';
-  const availableTabs = [
+  const languageOrder: string[] = (settings as any)?.languageOrder || enabledLanguages;
+  const allCategoryTabs = [
     { key: 'basic', label: adminT('categories.tabs.basic'), icon: Info, langCode: 'ru' },
     { key: 'english', label: 'English', icon: Globe, langCode: 'en' },
     { key: 'hebrew', label: 'עברית', icon: Languages, langCode: 'he' },
     { key: 'arabic', label: 'العربية', icon: Type, langCode: 'ar' }
-  ].filter(tab => tab.langCode === 'ru' || enabledLanguages.includes(tab.langCode));
+  ];
+  const availableTabs = languageOrder
+    .map(code => allCategoryTabs.find(tab => tab.langCode === code))
+    .filter((tab): tab is NonNullable<typeof tab> => tab != null && enabledLanguages.includes(tab.langCode));
 
   // Reset activeTab if current tab is not available
   useEffect(() => {
@@ -11837,8 +11841,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                             {/* Make default button */}
                             <button
                               type="button"
+                              draggable={false}
+                              onMouseDown={(e) => e.stopPropagation()}
                               title={isDefault ? (isRTL ? 'שפת ברירת מחדל' : 'Основной язык') : (isRTL ? 'הגדר כברירת מחדל' : 'Сделать основным')}
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 if (isDefault) return;
                                 const newOrder = [code, ...langOrder.filter((c: string) => c !== code)];
                                 setOrder(newOrder);
@@ -11853,8 +11860,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                             ) : (
                               <button
                                 type="button"
+                                draggable={false}
+                                onMouseDown={(e) => e.stopPropagation()}
                                 title={isRTL ? 'השבת שפה' : 'Отключить язык'}
-                                onClick={() => {
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   if (langOrder.length <= 1) return;
                                   const newOrder = langOrder.filter((c: string) => c !== code);
                                   setOrder(newOrder);
