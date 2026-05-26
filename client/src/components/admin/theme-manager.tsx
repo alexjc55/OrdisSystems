@@ -137,6 +137,40 @@ function hslToHex(hslString: string): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+// ─── ColorInput ───────────────────────────────────────────────────────────────
+// Must be defined OUTSIDE ThemeManager so React keeps a stable component
+// identity across re-renders (inner const = new type every render = remount).
+function ColorInput({ label, name, defaultValue }: { label: string; name: string; defaultValue: string }) {
+  const [color, setColor] = useState(() => hslToHex(defaultValue));
+
+  // Sync when the edited theme changes (different defaultValue incoming)
+  useEffect(() => {
+    setColor(hslToHex(defaultValue));
+  }, [defaultValue]);
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name}>{label}</Label>
+      <div className="flex gap-2">
+        <input
+          type="color"
+          value={color}
+          className="w-16 h-10 rounded cursor-pointer border border-input"
+          onChange={(e) => setColor(e.target.value)}
+        />
+        <Input
+          type="text"
+          name={name}
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+          className="flex-1"
+          placeholder="#ff6600"
+        />
+      </div>
+    </div>
+  );
+}
+
 interface ThemeData {
   id: string;
   name: string;
@@ -1243,36 +1277,6 @@ export default function ThemeManager() {
     updateThemeMutation.mutate({ id: themeId, ...defaultColors });
   };
 
-  const ColorInput = ({ label, name, defaultValue }: { label: string; name: string; defaultValue: string }) => {
-    const hexValue = hslToHex(defaultValue);
-    return (
-      <div className="space-y-2">
-        <Label htmlFor={name}>{label}</Label>
-        <div className="flex gap-2">
-          <Input
-            type="color"
-            id={name + "_color"}
-            defaultValue={hexValue}
-            className="w-16 h-10 rounded cursor-pointer"
-            onChange={(e) => {
-              // Update the text input when color picker changes
-              const textInput = e.target.parentElement?.querySelector('input[type="text"]') as HTMLInputElement;
-              if (textInput) {
-                textInput.value = e.target.value;
-              }
-            }}
-          />
-          <Input
-            type="text"
-            name={name}
-            defaultValue={hexValue}
-            className="flex-1"
-            placeholder="#ff6600"
-          />
-        </div>
-      </div>
-    );
-  };
 
   if (isLoading) {
     return (
