@@ -319,7 +319,9 @@ import {
   Gift,
   Percent,
   CheckCircle,
-  XCircle
+  XCircle,
+  Star,
+  GripVertical
 } from "lucide-react";
 
 // Validation schemas
@@ -10896,6 +10898,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
   const [isWorkingHoursOpen, setIsWorkingHoursOpen] = useState(false);
   const [isDeliveryPaymentOpen, setIsDeliveryPaymentOpen] = useState(false);
   const [showHypHelp, setShowHypHelp] = useState(false);
+  const [dragOverLang, setDragOverLang] = useState<string | null>(null);
 
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAdvertisingFeedsOpen, setIsAdvertisingFeedsOpen] = useState(false);
@@ -10977,7 +10980,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       cartBannerBgColor: storeSettings?.cartBannerBgColor || "#f97316",
       cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
       defaultLanguage: storeSettings?.defaultLanguage || "ru",
-      enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
+      enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he", "ar"],
+      languageOrder: (storeSettings as any)?.languageOrder || storeSettings?.enabledLanguages || ["ru", "en", "he", "ar"],
       // PWA Settings
       pwaIcon: storeSettings?.pwaIcon || "",
       pwaName: getLocalizedFieldForAdmin(storeSettings, 'pwaName', currentLanguage, storeSettings) || "",
@@ -11096,7 +11100,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         cartBannerTextColor: storeSettings?.cartBannerTextColor || "#ffffff",
 
         defaultLanguage: storeSettings?.defaultLanguage || "ru",
-        enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he"],
+        enabledLanguages: storeSettings?.enabledLanguages || ["ru", "en", "he", "ar"],
+        languageOrder: (storeSettings as any)?.languageOrder || storeSettings?.enabledLanguages || ["ru", "en", "he", "ar"],
         bannerButtonLink: storeSettings?.bannerButtonLink || "",
         modernBlock1Icon: storeSettings?.modernBlock1Icon || "",
         modernBlock1Text: storeSettings?.modernBlock1Text || "",
@@ -11668,103 +11673,145 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           </CollapsibleTrigger>
           
           <CollapsibleContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">{adminT('storeSettings.defaultLanguage')}</h4>
-                <div className="p-3 border rounded-lg bg-gray-50">
-                  <Select 
-                    value={form.watch("defaultLanguage") || "ru"}
-                    onValueChange={(value) => form.setValue("defaultLanguage", value)}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(LANGUAGES).filter(([code]) => {
-                        const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
-                        return enabledLanguages.includes(code);
-                      }).map(([code, info]) => (
-                        <SelectItem key={code} value={code}>
-                          <div className="flex items-center gap-2">
-                            <span>{(info as any).flag}</span>
-                            <span>{(info as any).name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <p className="text-xs text-gray-500">
-                  {adminT('storeSettings.defaultLanguageDescription')}
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <h4 className="text-sm font-medium">{adminT('storeSettings.availableLanguages')}</h4>
-                <div className="space-y-3">
-                  {Object.entries(LANGUAGES).map(([code, info]) => {
-                    const enabledLanguages = form.watch("enabledLanguages") || ["ru", "en", "he"];
-                    const isEnabled = enabledLanguages.includes(code);
-                    
-                    return (
-                      <div key={code} className="flex items-center justify-between p-3 border rounded-lg rtl:flex-row-reverse">
-                        <div className="flex items-center gap-3 rtl:flex-row-reverse">
-                          <span className="text-lg">{(info as any).flag}</span>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{(info as any).name}</span>
-                            <span className="text-xs text-gray-500">{(info as any).nativeName}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className={`text-xs font-medium ${isEnabled ? 'text-green-600' : 'text-gray-400'}`}>
-                            {isEnabled ? adminT('storeSettings.languageActive') : adminT('storeSettings.languageDisabled')}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const currentEnabled = form.getValues("enabledLanguages") || ["ru", "en", "he"];
-                              const currentDefault = form.getValues("defaultLanguage") || "ru";
-                              let newEnabled;
-                              
-                              if (isEnabled) {
-                                newEnabled = currentEnabled.filter((lang: string) => lang !== code);
-                              } else {
-                                newEnabled = [...currentEnabled, code];
-                              }
-                              
-                              // Ensure at least one language is always enabled
-                              if (newEnabled.length === 0) {
-                                newEnabled = ["ru"];
-                              }
-                              
-                              form.setValue("enabledLanguages", newEnabled);
-                              
-                              // If the default language is being disabled, switch to the first enabled language
-                              if (!newEnabled.includes(currentDefault)) {
-                                form.setValue("defaultLanguage", newEnabled[0]);
-                              }
+            {/* Unified drag-and-drop language order list */}
+            {(() => {
+              const langOrder: string[] = form.watch("languageOrder") || ["ru", "en", "he", "ar"];
+              const defaultLang: string = langOrder[0] || "ru";
+              const allLangEntries = Object.entries(LANGUAGES);
+              const disabledLangs = allLangEntries.filter(([code]) => !langOrder.includes(code));
+
+              const setOrder = (newOrder: string[]) => {
+                form.setValue("languageOrder", newOrder);
+                form.setValue("enabledLanguages", newOrder);
+                form.setValue("defaultLanguage", newOrder[0] || "ru");
+              };
+
+              return (
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-sm font-medium mb-1">{adminT('storeSettings.availableLanguages') || 'Порядок языков'}</h4>
+                    <p className="text-xs text-gray-500 mb-3">
+                      {isRTL
+                        ? 'גרור לשינוי סדר. ⭐ = שפת ברירת מחדל (תמיד ראשונה). לחץ על ⭐ להגדרה כברירת מחדל.'
+                        : 'Перетащите для изменения порядка. ⭐ = основной язык (всегда первый). Нажмите ⭐ чтобы сделать основным.'}
+                    </p>
+
+                    {/* Enabled languages — draggable */}
+                    <div className="space-y-2">
+                      {langOrder.map((code: string, index: number) => {
+                        const info = LANGUAGES[code as keyof typeof LANGUAGES];
+                        if (!info) return null;
+                        const isDefault = index === 0;
+                        return (
+                          <div
+                            key={code}
+                            draggable
+                            onDragStart={(e) => { e.dataTransfer.setData('text/plain', String(index)); e.dataTransfer.effectAllowed = 'move'; }}
+                            onDragOver={(e) => { e.preventDefault(); setDragOverLang(code); }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const fromIndex = Number(e.dataTransfer.getData('text/plain'));
+                              if (fromIndex === index) { setDragOverLang(null); return; }
+                              const newOrder = [...langOrder];
+                              newOrder.splice(fromIndex, 1);
+                              newOrder.splice(index, 0, langOrder[fromIndex]);
+                              setOrder(newOrder);
+                              setDragOverLang(null);
                             }}
-                            className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+                            onDragEnd={() => setDragOverLang(null)}
+                            className={`flex items-center gap-3 p-3 border-2 rounded-lg bg-white cursor-grab active:cursor-grabbing select-none transition-all ${
+                              dragOverLang === code ? 'border-primary bg-primary/5 shadow-md' : isDefault ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200'
+                            } ${isRTL ? 'flex-row-reverse' : ''}`}
                           >
-                            {isEnabled ? (
-                              <Eye className="h-5 w-5 text-green-600 hover:scale-110 transition-transform" />
+                            <GripVertical className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                            <span className="text-xs font-bold text-gray-400 w-5 flex-shrink-0 text-center">{index + 1}</span>
+                            <span className="text-xl flex-shrink-0">{(info as any).flag}</span>
+                            <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+                              <div className="font-medium text-sm">{(info as any).name}</div>
+                              <div className="text-xs text-gray-500">{(info as any).nativeName}</div>
+                            </div>
+                            {/* Make default button */}
+                            <button
+                              type="button"
+                              title={isDefault ? (isRTL ? 'שפת ברירת מחדל' : 'Основной язык') : (isRTL ? 'הגדר כברירת מחדל' : 'Сделать основным')}
+                              onClick={() => {
+                                if (isDefault) return;
+                                const newOrder = [code, ...langOrder.filter((c: string) => c !== code)];
+                                setOrder(newOrder);
+                              }}
+                              className={`p-1.5 rounded-md transition-colors flex-shrink-0 ${isDefault ? 'text-yellow-500 cursor-default' : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'}`}
+                            >
+                              <Star className={`h-4 w-4 ${isDefault ? 'fill-yellow-500' : ''}`} />
+                            </button>
+                            {/* Disable button — not available for default */}
+                            {isDefault ? (
+                              <div className="w-7 flex-shrink-0" />
                             ) : (
-                              <EyeOff className="h-5 w-5 text-gray-400 hover:scale-110 transition-transform" />
+                              <button
+                                type="button"
+                                title={isRTL ? 'השבת שפה' : 'Отключить язык'}
+                                onClick={() => {
+                                  if (langOrder.length <= 1) return;
+                                  const newOrder = langOrder.filter((c: string) => c !== code);
+                                  setOrder(newOrder);
+                                }}
+                                className="p-1.5 rounded-md text-green-600 hover:bg-red-50 hover:text-red-500 transition-colors flex-shrink-0"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </button>
                             )}
-                          </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Disabled languages */}
+                    {disabledLangs.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <div className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+                          {isRTL ? 'שפות מושבתות' : 'Отключённые языки'}
                         </div>
+                        {disabledLangs.map(([code, info]) => (
+                          <div
+                            key={code}
+                            className={`flex items-center gap-3 p-3 border border-dashed border-gray-200 rounded-lg bg-gray-50 opacity-70 ${isRTL ? 'flex-row-reverse' : ''}`}
+                          >
+                            <div className="w-4 flex-shrink-0" />
+                            <div className="w-5 flex-shrink-0" />
+                            <span className="text-xl flex-shrink-0">{(info as any).flag}</span>
+                            <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+                              <div className="font-medium text-sm text-gray-500">{(info as any).name}</div>
+                              <div className="text-xs text-gray-400">{(info as any).nativeName}</div>
+                            </div>
+                            <div className="w-7 flex-shrink-0" />
+                            <button
+                              type="button"
+                              title={isRTL ? 'הפעל שפה' : 'Включить язык'}
+                              onClick={() => {
+                                const newOrder = [...langOrder, code];
+                                setOrder(newOrder);
+                              }}
+                              className="p-1.5 rounded-md text-gray-400 hover:bg-green-50 hover:text-green-600 transition-colors flex-shrink-0"
+                            >
+                              <EyeOff className="h-4 w-4" />
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                    );
-                  })}
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-            
+              );
+            })()}
+
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 text-blue-600 mt-0.5">ℹ️</div>
+                <div className="text-blue-600 mt-0.5 flex-shrink-0">ℹ️</div>
                 <div className="text-sm text-blue-800">
-                  <strong>{adminT('storeSettings.noteTitle')}:</strong> {adminT('storeSettings.languageNote')}
+                  <strong>{isRTL ? 'סדר עדיפויות' : 'Порядок приоритетов'}:</strong>{' '}
+                  {isRTL
+                    ? 'אם תרגום חסר לשפה מבוקשת, המערכת תחפש לפי הסדר הנ"ל ותציג את השפה הראשונה שנמצאה.'
+                    : 'Если перевод отсутствует для запрошенного языка, система проверяет языки в указанном порядке и показывает первый найденный.'}
                 </div>
               </div>
             </div>

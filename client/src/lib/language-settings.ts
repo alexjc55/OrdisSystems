@@ -5,6 +5,7 @@ import { LANGUAGES } from './i18n';
 let languageSettings: {
   defaultLanguage: string;
   enabledLanguages: string[];
+  languageOrder: string[];
 } | null = null;
 
 // Load language settings from database
@@ -13,9 +14,11 @@ export const loadLanguageSettings = async () => {
     const response = await fetch('/api/settings');
     if (response.ok) {
       const settings = await response.json();
+      const enabledLangs = settings.enabledLanguages || ['ru', 'en', 'he'];
       languageSettings = {
         defaultLanguage: settings.defaultLanguage || 'ru',
-        enabledLanguages: settings.enabledLanguages || ['ru', 'en', 'he']
+        enabledLanguages: enabledLangs,
+        languageOrder: settings.languageOrder || enabledLangs,
       };
       return languageSettings;
     }
@@ -26,7 +29,8 @@ export const loadLanguageSettings = async () => {
   // Fallback settings
   languageSettings = {
     defaultLanguage: 'ru',
-    enabledLanguages: ['ru', 'en', 'he']
+    enabledLanguages: ['ru', 'en', 'he'],
+    languageOrder: ['ru', 'en', 'he'],
   };
   return languageSettings;
 };

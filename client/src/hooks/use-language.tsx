@@ -32,21 +32,23 @@ export function useLanguage() {
   const currentLanguage = (i18n.language || 'ru') as Language;
   const currentLanguageInfo = LANGUAGES[currentLanguage] || LANGUAGES.ru;
   
-  // Get enabled languages from database settings with fixed order (Hebrew first)
+  // Get enabled languages ordered by languageOrder (admin-configured priority)
   const getEnabledLanguages = () => {
-    const languageOrder = ['he', 'ar', 'ru', 'en']; // Hebrew first, then Arabic as requested
-    
-    if (storeSettings?.enabledLanguages && Array.isArray(storeSettings.enabledLanguages)) {
-      const enabledLangs: Record<string, any> = {};
-      // Maintain order by iterating through languageOrder
-      languageOrder.forEach((lang) => {
-        if (storeSettings.enabledLanguages?.includes(lang) && LANGUAGES[lang as keyof typeof LANGUAGES]) {
-          enabledLangs[lang] = LANGUAGES[lang as keyof typeof LANGUAGES];
-        }
-      });
-      return enabledLangs;
-    }
-    return LANGUAGES; // Fallback to all languages if no settings
+    const settings = storeSettings as any;
+    // Use languageOrder if available, otherwise fall back to enabledLanguages or default order
+    const order: string[] = (settings?.languageOrder && Array.isArray(settings.languageOrder) && settings.languageOrder.length > 0)
+      ? settings.languageOrder
+      : (settings?.enabledLanguages && Array.isArray(settings.enabledLanguages))
+        ? settings.enabledLanguages
+        : ['he', 'ar', 'ru', 'en'];
+
+    const enabledLangs: Record<string, any> = {};
+    order.forEach((lang) => {
+      if (LANGUAGES[lang as keyof typeof LANGUAGES]) {
+        enabledLangs[lang] = LANGUAGES[lang as keyof typeof LANGUAGES];
+      }
+    });
+    return enabledLangs;
   };
   
   const changeLanguage = async (lng: Language) => {

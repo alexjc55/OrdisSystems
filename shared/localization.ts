@@ -58,46 +58,52 @@ export function getLocalizedField(
   item: any,
   field: string,
   currentLanguage: SupportedLanguage,
-  storeSettingsOrDefault?: { defaultLanguage?: string } | SupportedLanguage
+  storeSettingsOrDefault?: { defaultLanguage?: string; languageOrder?: string[] } | SupportedLanguage
 ): string {
   if (!item) return '';
   
   // Handle flexible parameter type
   let defaultLanguage: SupportedLanguage = 'ru';
+  let languageOrder: string[] = ['ru', 'en', 'he', 'ar'];
   if (typeof storeSettingsOrDefault === 'string') {
     defaultLanguage = storeSettingsOrDefault;
-  } else if (storeSettingsOrDefault?.defaultLanguage) {
-    defaultLanguage = storeSettingsOrDefault.defaultLanguage as SupportedLanguage;
-  }
-  
-  // If current language is default language, use base field.
-  // Exception: for non-Russian defaults (e.g. Hebrew/Arabic), the base 'name' field
-  // historically stores Russian text while the actual translation lives in 'name_he' etc.
-  // So we always try the explicit language-tagged field first, then fall back to the base field.
-  if (currentLanguage === defaultLanguage) {
-    if (defaultLanguage !== 'ru') {
-      const langField = `${field}_${currentLanguage}`;
-      return item[langField] || item[field] || '';
+  } else if (storeSettingsOrDefault) {
+    if (storeSettingsOrDefault.defaultLanguage) {
+      defaultLanguage = storeSettingsOrDefault.defaultLanguage as SupportedLanguage;
     }
-    return item[field] || '';
+    if (storeSettingsOrDefault.languageOrder && Array.isArray(storeSettingsOrDefault.languageOrder) && storeSettingsOrDefault.languageOrder.length > 0) {
+      languageOrder = storeSettingsOrDefault.languageOrder;
+    }
   }
-  
-  // Try to get localized field - support both formats
-  const localizedFieldUnderscore = `${field}_${currentLanguage}`;
-  const localizedFieldCamelCase = `${field}${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`;
-  
-  let localizedValue = item[localizedFieldUnderscore] || item[localizedFieldCamelCase];
-  
-  // If localized value exists, use it
-  if (localizedValue) {
-    return localizedValue;
+
+  // Helper: get field value for a given language code
+  const getForLang = (lang: string): string => {
+    if (lang === 'ru') return item[field] || '';
+    const underscoreKey = `${field}_${lang}`;
+    const camelKey = `${field}${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+    return item[underscoreKey] || item[camelKey] || '';
+  };
+
+  // 1. Try the requested language first
+  const directValue = getForLang(currentLanguage);
+  if (directValue) return directValue;
+
+  // 2. Walk the language priority order (skip currentLanguage, already tried)
+  for (const lang of languageOrder) {
+    if (lang === currentLanguage) continue;
+    const v = getForLang(lang);
+    if (v) return v;
   }
-  
-  // Fallback to default language field for public website
-  // When defaultLanguage='he', defaultField='name_he'. But if admin filled only
-  // the base 'name' field (not 'name_he'), we must also try the base field.
-  const defaultField = defaultLanguage === 'ru' ? field : `${field}_${defaultLanguage}`;
-  return item[defaultField] || item[field] || '';
+
+  // 3. Last resort: try any language field that has a value
+  const allLangs = ['ru', 'en', 'he', 'ar'];
+  for (const lang of allLangs) {
+    if (lang === currentLanguage || languageOrder.includes(lang)) continue;
+    const v = getForLang(lang);
+    if (v) return v;
+  }
+
+  return '';
 }
 
 /**

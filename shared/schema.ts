@@ -287,6 +287,7 @@ export const storeSettings = pgTable("store_settings", {
   }),
   defaultLanguage: varchar("default_language", { length: 5 }).default("ru"), // Default site language
   enabledLanguages: jsonb("enabled_languages").default(["ru", "en", "he", "ar"]), // Array of enabled language codes
+  languageOrder: jsonb("language_order").default(["ru", "en", "he", "ar"]), // Ordered array of enabled languages (index 0 = default/highest priority)
   
   // Admin features toggles
   enableAdminOrderCreation: boolean("enable_admin_order_creation").default(true), // Enable/disable admin order creation feature
@@ -899,6 +900,7 @@ export const insertStoreSettingsSchema = createInsertSchema(storeSettings).omit(
   footerHtml: z.string().optional(),
   defaultLanguage: z.string().optional(),
   enabledLanguages: z.array(z.string()).optional(),
+  languageOrder: z.array(z.string()).optional(),
 });
 
 export const updateStoreSettingsSchema = insertStoreSettingsSchema.partial();
