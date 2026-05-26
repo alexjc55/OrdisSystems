@@ -1,6 +1,6 @@
 // Service Worker for eDAHouse PWA
 const APP_VERSION = '1.0.0';
-const BUILD_TIMESTAMP = '20260509-2240';
+const BUILD_TIMESTAMP = '20260526-1400';
 const STATIC_CACHE = `edahouse-static-v${APP_VERSION}-${BUILD_TIMESTAMP}`;
 
 // Only cache true static assets with content hashes (icons + hashed JS/CSS)
