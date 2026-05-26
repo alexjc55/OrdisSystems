@@ -34,29 +34,34 @@ async function fetch10bisMenu(restaurantId: string) {
     { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' } }
   );
   if (!resp.ok) throw new Error('Failed to fetch 10bis menu');
-  const data = await resp.json() as any;
-  if (!data.ShopInfo && !data.categoriesList) throw new Error('No menu data in response');
+  const json = await resp.json() as any;
 
-  const restaurantName: string = data.ShopInfo?.restaurantName || 'Restaurant';
+  // API wraps everything in json.Data
+  const data = json.Data ?? json;
   const categoriesRaw: any[] = data.categoriesList || [];
+  if (categoriesRaw.length === 0) throw new Error('No menu data in response');
+
+  // Restaurant name not returned by this endpoint — use ID as fallback
+  const restaurantName: string = data.ShopInfo?.restaurantName || `Restaurant #${restaurantId}`;
 
   const categories = categoriesRaw.map((cat: any) => ({
-    id: String(cat.categoryId),
+    id: String(cat.categoryID ?? cat.categoryId),
     name: cat.categoryName,
     itemCount: (cat.dishList || []).length,
     imageUrl: ''
   }));
 
-  const items = categoriesRaw.flatMap((cat: any) =>
-    (cat.dishList || []).map((dish: any) => ({
+  const items = categoriesRaw.flatMap((cat: any) => {
+    const catId = String(cat.categoryID ?? cat.categoryId);
+    return (cat.dishList || []).map((dish: any) => ({
       id: String(dish.dishId),
       name: dish.dishName,
       description: dish.dishDescription || '',
       price: Number(dish.dishPrice),
       imageUrl: dish.dishImageUrl || '',
-      categoryId: String(cat.categoryId)
-    }))
-  );
+      categoryId: catId
+    }));
+  });
 
   return { platform: '10bis' as const, restaurantName, categories, items };
 }
