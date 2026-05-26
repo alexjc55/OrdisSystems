@@ -320,8 +320,7 @@ import {
   Percent,
   CheckCircle,
   XCircle,
-  Star,
-  GripVertical
+  Star
 } from "lucide-react";
 
 // Validation schemas
