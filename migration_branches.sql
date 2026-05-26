@@ -27,3 +27,13 @@ CREATE INDEX IF NOT EXISTS idx_pending_payments_expires_at
 -- Выбор вывода рядом с лого ───────────────────────────────────────────────────
 ALTER TABLE themes ADD COLUMN IF NOT EXISTS logo_text_mode VARCHAR(20) DEFAULT 'storeName';
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS logo_text_mode VARCHAR(20) DEFAULT 'storeName';
+
+
+
+-- Variant A: Remove NOT NULL from base name fields
+-- Run this on each site's database
+
+ALTER TABLE categories ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE products ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE branches ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE themes ALTER COLUMN name DROP NOT NULL;
