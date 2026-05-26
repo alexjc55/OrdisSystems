@@ -384,7 +384,7 @@ export function TranslationManager() {
 
       {/* Bottom save for long tables */}
       {filtered.length > 5 && (
-        <div className={`flex pt-2 ${isRTL ? "justify-start" : "justify-end"}`}>
+        <div className="flex pt-2 justify-end">
           <SaveBtn />
         </div>
       )}
