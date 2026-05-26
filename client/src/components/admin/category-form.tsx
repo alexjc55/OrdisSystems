@@ -134,7 +134,12 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Название категории</FormLabel>
+                  <FormLabel>
+                    Название категории{' '}
+                    <span className="text-xs text-muted-foreground font-normal">
+                      ({defaultLang.toUpperCase()}) *
+                    </span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Например: Рыба" {...field} />
                   </FormControl>

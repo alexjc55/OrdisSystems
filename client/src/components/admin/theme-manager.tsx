@@ -576,6 +576,8 @@ export default function ThemeManager() {
     queryKey: ["/api/settings"],
   });
 
+  const themesDefaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+
   const createThemeMutation = useMutation({
     mutationFn: async (themeData: Omit<ThemeData, "id" | "isActive">) => {
       return await apiRequest("POST", "/api/admin/themes", themeData);
@@ -1356,7 +1358,17 @@ export default function ThemeManager() {
                   <div className="grid grid-cols-1 gap-4">
                     {/* Многоязычное название темы */}
                     <div className="space-y-2">
-                      <Label htmlFor="name">{adminT('themes.name')} ({i18n.language.toUpperCase()})</Label>
+                      <Label htmlFor="name">
+                        {adminT('themes.name')} ({i18n.language.toUpperCase()})
+                        {i18n.language === themesDefaultLang && (
+                          <span className="text-destructive ml-1">*</span>
+                        )}
+                        {i18n.language !== themesDefaultLang && (
+                          <span className="text-xs text-muted-foreground font-normal ml-1">
+                            ({adminT('themes.requiredLanguage') || 'обяз.'}: {themesDefaultLang.toUpperCase()})
+                          </span>
+                        )}
+                      </Label>
                       <Input 
                         id="name" 
                         name={i18n.language === 'ru' ? 'name' : `name_${i18n.language}`}
@@ -1367,7 +1379,7 @@ export default function ThemeManager() {
                           const fieldName = i18n.language === 'ru' ? 'name' : `name_${i18n.language}`;
                           setThemeFields(prev => ({ ...prev, [fieldName]: e.target.value }));
                         }}
-                        required={i18n.language === 'ru'}
+                        required={i18n.language === themesDefaultLang}
                       />
                       {/* Скрытые поля для других языков */}
                       {i18n.language !== 'ru' && <input type="hidden" name="name" value={themeFields.name} />}
@@ -2134,7 +2146,17 @@ export default function ThemeManager() {
                   <div className="grid grid-cols-1 gap-4">
                     {/* Многоязычное название темы */}
                     <div className="space-y-2">
-                      <Label htmlFor="edit-name">{adminT('themes.name')} ({i18n.language.toUpperCase()})</Label>
+                      <Label htmlFor="edit-name">
+                        {adminT('themes.name')} ({i18n.language.toUpperCase()})
+                        {i18n.language === themesDefaultLang && (
+                          <span className="text-destructive ml-1">*</span>
+                        )}
+                        {i18n.language !== themesDefaultLang && (
+                          <span className="text-xs text-muted-foreground font-normal ml-1">
+                            ({adminT('themes.requiredLanguage') || 'обяз.'}: {themesDefaultLang.toUpperCase()})
+                          </span>
+                        )}
+                      </Label>
                       <Input 
                         id="edit-name" 
                         name={i18n.language === 'ru' ? 'name' : `name_${i18n.language}`}
@@ -2144,7 +2166,7 @@ export default function ThemeManager() {
                           const fieldName = i18n.language === 'ru' ? 'name' : `name_${i18n.language}`;
                           setThemeFields(prev => ({ ...prev, [fieldName]: e.target.value }));
                         }}
-                        required={i18n.language === 'ru'}
+                        required={i18n.language === themesDefaultLang}
                       />
                       {/* Скрытые поля для других языков */}
                       {i18n.language !== 'ru' && <input type="hidden" name="name" value={themeFields.name} />}

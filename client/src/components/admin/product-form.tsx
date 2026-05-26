@@ -134,7 +134,12 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Название товара</FormLabel>
+                  <FormLabel>
+                    Название товара{' '}
+                    <span className="text-xs text-muted-foreground font-normal">
+                      ({defaultLang.toUpperCase()}) *
+                    </span>
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="Например: Лосось свежий" {...field} />
                   </FormControl>

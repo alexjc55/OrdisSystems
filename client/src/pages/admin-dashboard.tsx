@@ -11261,11 +11261,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           ...preservedData, 
           ...multilingualUpdates,
           // Non-multilingual fields — always take the value directly from the form,
-          // overriding preservedData which may contain stale storeSettings values
+          // overriding preservedData which may contain stale storeSettings values.
+          // Phone, email and address are the same for all languages.
           contactPhone: data.contactPhone,
           contactPhoneEn: data.contactPhone,
           contactPhoneHe: data.contactPhone,
           contactPhoneAr: data.contactPhone,
+          contactEmail: data.contactEmail,
+          contactEmailEn: data.contactEmail,
+          contactEmailHe: data.contactEmail,
+          contactEmailAr: data.contactEmail,
+          address: data.address,
+          addressEn: data.address,
+          addressHe: data.address,
+          addressAr: data.address,
           whatsappPhoneNumber: data.whatsappPhoneNumber,
           paymentMethods: processedPaymentMethods,
           paymentProviderConfig: {
