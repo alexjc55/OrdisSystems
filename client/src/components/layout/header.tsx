@@ -12,27 +12,29 @@ import { Button } from "@/components/ui/button";
 import { usePWA } from "@/hooks/usePWA";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
+const LANG_FALLBACK_ORDER: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
+
 function getMultilingualValue(
   storeSettings: any,
   baseField: string,
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  let langField: string;
-  
-  if (currentLanguage === 'ru') {
-    langField = baseField;
-  } else {
-    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
-    langField = `${baseField}${capitalizedLang}`;
+  if (!storeSettings) return '';
+
+  const getField = (lang: SupportedLanguage) =>
+    lang === 'ru' ? baseField : `${baseField}${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+
+  const currentValue = storeSettings[getField(currentLanguage)];
+  if (currentValue && currentValue.trim() !== '') return currentValue;
+
+  for (const lang of LANG_FALLBACK_ORDER) {
+    if (lang === currentLanguage) continue;
+    const val = storeSettings[getField(lang)];
+    if (val && val.trim() !== '') return val;
   }
-  
-  const currentValue = storeSettings?.[langField];
-  if (currentValue && currentValue.trim() !== '') {
-    return currentValue;
-  }
-  
-  return storeSettings?.[baseField] || '';
+
+  return '';
 }
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

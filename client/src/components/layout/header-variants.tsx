@@ -6,31 +6,29 @@ import { useLanguage } from '@/hooks/use-language';
 import { useState, useEffect } from 'react';
 import { SliderHeader } from './slider-header';
 
-// Import multilingual helper function with fallback to default language
+const LANG_FALLBACK_ORDER: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
+
 function getMultilingualValue(
   storeSettings: any,
   baseField: string,
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  let langField: string;
-  
-  if (currentLanguage === 'ru') {
-    langField = baseField;
-  } else {
-    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
-    langField = `${baseField}${capitalizedLang}`;
+  if (!storeSettings) return '';
+
+  const getField = (lang: SupportedLanguage) =>
+    lang === 'ru' ? baseField : `${baseField}${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+
+  const currentValue = storeSettings[getField(currentLanguage)];
+  if (currentValue && currentValue.trim() !== '') return currentValue;
+
+  for (const lang of LANG_FALLBACK_ORDER) {
+    if (lang === currentLanguage) continue;
+    const val = storeSettings[getField(lang)];
+    if (val && val.trim() !== '') return val;
   }
-  
-  // Try to get value for current language, fallback to default language if empty
-  const currentValue = storeSettings?.[langField];
-  if (currentValue && currentValue.trim() !== '') {
-    return currentValue;
-  }
-  
-  // Fallback to default language (Russian) - ALWAYS return fallback
-  const fallbackValue = storeSettings?.[baseField];
-  return fallbackValue || '';
+
+  return '';
 }
 
 // Helper function to get icon component

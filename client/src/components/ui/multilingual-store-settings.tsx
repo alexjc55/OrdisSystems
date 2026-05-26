@@ -3,37 +3,36 @@ import { type Language } from '@/lib/i18n';
 // Simple multilingual field helpers for store settings
 // Automatically uses current language or falls back to default
 
+const LANG_FALLBACK_ORDER: Language[] = ['ru', 'en', 'he', 'ar'];
+
+function getFieldNameForLang(baseField: string, lang: Language): string {
+  if (lang === 'ru') return baseField;
+  const cap = lang.charAt(0).toUpperCase() + lang.slice(1);
+  return `${baseField}${cap}`;
+}
+
 export function getMultilingualValue(
   storeSettings: any,
   baseField: string,
   currentLanguage: Language,
   defaultLanguage: Language = 'ru'
 ): string {
-  // Convert field name to proper database field format
-  // Database uses camelCase: storeNameEn, welcomeTitleEn, etc.
-  let langField: string;
-  
-  if (currentLanguage === 'ru') {
-    // For Russian, use base field name
-    langField = baseField;
-  } else {
-    // For other languages, capitalize the language code and append
-    const capitalizedLang = currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
-    langField = `${baseField}${capitalizedLang}`;
+  if (!storeSettings) return '';
+
+  // Try current language first
+  const currentField = getFieldNameForLang(baseField, currentLanguage);
+  const currentValue = storeSettings[currentField];
+  if (currentValue && currentValue.trim() !== '') return currentValue;
+
+  // Fallback through all languages in order (skip current already tried)
+  for (const lang of LANG_FALLBACK_ORDER) {
+    if (lang === currentLanguage) continue;
+    const field = getFieldNameForLang(baseField, lang);
+    const val = storeSettings[field];
+    if (val && val.trim() !== '') return val;
   }
-  
-  // Try to get value for current language, fallback to default language if empty
-  const currentValue = storeSettings?.[langField];
-  if (currentValue && currentValue.trim() !== '') {
-    return currentValue;
-  }
-  
-  // Fallback to default language (Russian) if current language field is empty
-  if (currentLanguage !== defaultLanguage) {
-    return storeSettings?.[baseField] || '';
-  }
-  
-  return currentValue || '';
+
+  return '';
 }
 
 export function createMultilingualUpdate(

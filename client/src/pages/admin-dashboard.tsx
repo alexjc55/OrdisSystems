@@ -11174,6 +11174,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           ...createMultilingualUpdate('contactPhone', data.contactPhone, currentLanguage),
           ...createMultilingualUpdate('contactEmail', data.contactEmail, currentLanguage),
           ...createMultilingualUpdate('address', data.address, currentLanguage),
+          ...createMultilingualUpdate('pwaName', data.pwaName, currentLanguage),
+          ...createMultilingualUpdate('pwaDescription', data.pwaDescription, currentLanguage),
         };
         
         // Preserve existing data for other languages using correct database field names
@@ -11231,6 +11233,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           addressEn: storeSettings?.addressEn || '',
           addressHe: storeSettings?.addressHe || '',
           addressAr: storeSettings?.addressAr || '',
+          pwaName: storeSettings?.pwaName || '',
+          pwaNameEn: storeSettings?.pwaNameEn || '',
+          pwaNameHe: storeSettings?.pwaNameHe || '',
+          pwaNameAr: storeSettings?.pwaNameAr || '',
+          pwaDescription: storeSettings?.pwaDescription || '',
+          pwaDescriptionEn: storeSettings?.pwaDescriptionEn || '',
+          pwaDescriptionHe: storeSettings?.pwaDescriptionHe || '',
+          pwaDescriptionAr: storeSettings?.pwaDescriptionAr || '',
         };
         
         // Handle payment methods specially - preserve all language data
@@ -11260,9 +11270,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           ...data, 
           ...preservedData, 
           ...multilingualUpdates,
-          // Non-multilingual fields — always take the value directly from the form,
-          // overriding preservedData which may contain stale storeSettings values.
-          // Phone, email and address are the same for all languages.
+          // Phone and email are the same for all languages — override all variants
+          // with the current form value so they stay in sync.
           contactPhone: data.contactPhone,
           contactPhoneEn: data.contactPhone,
           contactPhoneHe: data.contactPhone,
@@ -11271,10 +11280,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           contactEmailEn: data.contactEmail,
           contactEmailHe: data.contactEmail,
           contactEmailAr: data.contactEmail,
-          address: data.address,
-          addressEn: data.address,
-          addressHe: data.address,
-          addressAr: data.address,
+          // address IS multilingual — handled by multilingualUpdates + preservedData above.
           whatsappPhoneNumber: data.whatsappPhoneNumber,
           paymentMethods: processedPaymentMethods,
           paymentProviderConfig: {

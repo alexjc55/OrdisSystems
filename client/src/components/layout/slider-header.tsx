@@ -12,21 +12,31 @@ function getLangField(baseField: string, lang: SupportedLanguage, defaultLanguag
   return `${baseField}${cap}`;
 }
 
-// Import multilingual helper function with fallback to default language
+const LANG_FALLBACK_ORDER: SupportedLanguage[] = ['ru', 'en', 'he', 'ar'];
+
+// Import multilingual helper function with fallback through all languages
 function getMultilingualValue(
   storeSettings: any,
   baseField: string,
   currentLanguage: SupportedLanguage,
   defaultLanguage: SupportedLanguage = 'ru'
 ): string {
-  const langField = getLangField(baseField, currentLanguage, defaultLanguage);
-  const currentValue = storeSettings?.[langField];
-  if (currentValue && currentValue.trim() !== '') {
-    return currentValue;
+  if (!storeSettings) return '';
+
+  const currentField = getLangField(baseField, currentLanguage, defaultLanguage);
+  const currentValue = storeSettings[currentField];
+  if (currentValue && currentValue.trim() !== '') return currentValue;
+
+  // Fallback: try default language first, then all others
+  const ordered = [defaultLanguage, ...LANG_FALLBACK_ORDER.filter(l => l !== defaultLanguage)];
+  for (const lang of ordered) {
+    if (lang === currentLanguage) continue;
+    const field = getLangField(baseField, lang, defaultLanguage);
+    const val = storeSettings[field];
+    if (val && val.trim() !== '') return val;
   }
-  // Fallback to default language
-  const defaultField = getLangField(baseField, defaultLanguage, defaultLanguage);
-  return storeSettings?.[defaultField] || '';
+
+  return '';
 }
 
 interface SliderHeaderProps {
