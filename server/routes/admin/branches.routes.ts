@@ -3,6 +3,7 @@ import { storage } from "../../storage";
 import { insertBranchSchema } from "@shared/schema";
 import { BRANCHES_ENABLED, MAX_BRANCHES } from "../../config";
 import { z } from "zod";
+import { getDefaultLang, checkRequiredName, sendNameRequiredError } from "../../utils/lang-validation";
 
 const router = Router();
 
@@ -76,6 +77,9 @@ router.post("/admin/branches", requireBranches, requireAdmin, async (req, res) =
         return res.status(403).json({ message: `Branch limit reached. Maximum allowed: ${MAX_BRANCHES}` });
       }
     }
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(req.body, defaultLang, true);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const data = insertBranchSchema.parse(req.body);
     const branch = await storage.createBranch(data);
     res.status(201).json(branch);
@@ -93,6 +97,9 @@ router.put("/admin/branches/:id", requireBranches, requireAdmin, async (req, res
   try {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ message: "Invalid branch id" });
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(req.body, defaultLang, true);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const data = insertBranchSchema.partial().parse(req.body);
     const branch = await storage.updateBranch(id, data);
     if (!branch) return res.status(404).json({ message: "Branch not found" });

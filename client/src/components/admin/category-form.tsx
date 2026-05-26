@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -25,6 +25,13 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
   const { t: adminT } = useAdminTranslation();
   const { t: commonT } = useCommonTranslation();
   const [categoryImage, setCategoryImage] = useState('');
+
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000,
+  });
+  const defaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+  const nameField = defaultLang === 'ru' ? 'name' : `name_${defaultLang}`;
 
   const categorySchema = z.object({
     name: z.string().min(1, adminT('categories.categoryNameRequired')).max(255, adminT('categories.categoryNameTooLong')),
@@ -62,11 +69,15 @@ export default function CategoryForm({ onClose }: CategoryFormProps) {
 
   const createCategoryMutation = useMutation({
     mutationFn: async (data: CategoryFormData) => {
-      const categoryData = {
+      const categoryData: any = {
         ...data,
         image: categoryImage || null,
         isActive: true,
       };
+      if (defaultLang !== 'ru') {
+        categoryData[nameField] = data.name;
+        delete categoryData.name;
+      }
       await apiRequest("POST", "/api/categories", categoryData);
     },
     onSuccess: () => {

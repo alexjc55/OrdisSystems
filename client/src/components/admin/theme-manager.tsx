@@ -898,7 +898,9 @@ export default function ThemeManager() {
   });
 
   const handleCreateTheme = (formData: FormData) => {
-    const nameVal = themeFields.name.trim();
+    const defaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+    const requiredNameField = defaultLang === 'ru' ? 'name' : `name_${defaultLang}` as keyof typeof themeFields;
+    const nameVal = (themeFields[requiredNameField as keyof typeof themeFields] || '').trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;
@@ -1062,7 +1064,9 @@ export default function ThemeManager() {
   };
 
   const handleUpdateTheme = (formData: FormData, themeId: string) => {
-    const nameVal = themeFields.name.trim();
+    const defaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+    const requiredNameField = defaultLang === 'ru' ? 'name' : `name_${defaultLang}` as keyof typeof themeFields;
+    const nameVal = (themeFields[requiredNameField as keyof typeof themeFields] || '').trim();
     if (!nameVal) {
       toast({ title: adminT('themes.nameRequired') || 'Введите название темы', variant: 'destructive' });
       return;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,6 +28,13 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
   const queryClient = useQueryClient();
   const { t: adminT } = useAdminTranslation();
   const { t: commonT } = useCommonTranslation();
+
+  const { data: storeSettings } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000,
+  });
+  const defaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+  const nameField = defaultLang === 'ru' ? 'name' : `name_${defaultLang}`;
 
   const productSchema = z.object({
     name: z.string().min(1, adminT('products.nameRequired')),
@@ -61,11 +68,15 @@ export default function ProductForm({ categories, onClose }: ProductFormProps) {
 
   const createProductMutation = useMutation({
     mutationFn: async (data: ProductFormData) => {
-      const productData = {
+      const productData: any = {
         ...data,
         pricePerKg: parseFloat(data.pricePerKg).toFixed(2),
         isActive: true,
       };
+      if (defaultLang !== 'ru') {
+        productData[nameField] = data.name;
+        delete productData.name;
+      }
       await apiRequest("POST", "/api/products", productData);
     },
     onSuccess: () => {

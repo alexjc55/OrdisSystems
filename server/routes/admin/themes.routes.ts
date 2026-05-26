@@ -6,6 +6,7 @@ import { sql } from "drizzle-orm";
 import { insertThemeSchema } from "@shared/schema";
 import { z } from "zod";
 import { deleteUploadFile, extractThemeImageUrls } from "../../utils/delete-upload-file";
+import { getDefaultLang, checkRequiredName, sendNameRequiredError } from "../../utils/lang-validation";
 
 const router = Router();
 
@@ -45,6 +46,9 @@ router.post('/admin/themes', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Admin access required" });
     }
 
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(req.body, defaultLang);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const bodyWithDefaults = {
       ...req.body,
       whatsappPhone: req.body.whatsappPhone || "",
@@ -114,6 +118,12 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       field => field in themeData && existingTheme && (existingTheme as any)[field] && (existingTheme as any)[field] !== themeData[field]
     );
     changedImageFields.forEach(field => deleteUploadFile((existingTheme as any)[field]));
+
+    // Validate required name field based on store default language
+    const putDefaultLang = await getDefaultLang();
+    const mergedThemeData = { ...existingTheme, ...themeData };
+    const missingField = checkRequiredName(mergedThemeData, putDefaultLang);
+    if (missingField) return sendNameRequiredError(res, missingField, putDefaultLang);
 
     const theme = await storage.updateTheme(id, themeData);
 

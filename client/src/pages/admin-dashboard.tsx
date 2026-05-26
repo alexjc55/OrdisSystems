@@ -8160,47 +8160,30 @@ export default function AdminDashboard() {
                       {editingBranch ? adminT('branches.editBranch') : adminT('branches.createBranch')}
                     </DialogTitle>
                   </DialogHeader>
+                  {(() => {
+                    const branchDefaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+                    const branchLangMap: Record<string, { value: string; onChange: (v: string) => void; dir: string; code: string }> = {
+                      ru: { value: branchFormName, onChange: setBranchFormName, dir: 'ltr', code: 'RU' },
+                      en: { value: branchFormNameEn, onChange: setBranchFormNameEn, dir: 'ltr', code: 'EN' },
+                      he: { value: branchFormNameHe, onChange: setBranchFormNameHe, dir: 'rtl', code: 'HE' },
+                      ar: { value: branchFormNameAr, onChange: setBranchFormNameAr, dir: 'rtl', code: 'AR' },
+                    };
+                    return (
                   <div className={`space-y-4 ${isRTL ? 'rtl' : 'ltr'}`}>
-                    <div>
-                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (RU) *</label>
-                      <Input
-                        value={branchFormName}
-                        onChange={(e) => setBranchFormName(e.target.value)}
-                        placeholder={adminT('branches.namePlaceholder')}
-                        className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                        dir="ltr"
-                      />
-                    </div>
-                    <div>
-                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (EN)</label>
-                      <Input
-                        value={branchFormNameEn}
-                        onChange={(e) => setBranchFormNameEn(e.target.value)}
-                        placeholder={adminT('branches.namePlaceholder')}
-                        className="text-sm"
-                        dir="ltr"
-                      />
-                    </div>
-                    <div>
-                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (HE)</label>
-                      <Input
-                        value={branchFormNameHe}
-                        onChange={(e) => setBranchFormNameHe(e.target.value)}
-                        placeholder={adminT('branches.namePlaceholder')}
-                        className="text-sm"
-                        dir="rtl"
-                      />
-                    </div>
-                    <div>
-                      <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.name')} (AR)</label>
-                      <Input
-                        value={branchFormNameAr}
-                        onChange={(e) => setBranchFormNameAr(e.target.value)}
-                        placeholder={adminT('branches.namePlaceholder')}
-                        className="text-sm"
-                        dir="rtl"
-                      />
-                    </div>
+                    {Object.entries(branchLangMap).map(([lang, cfg]) => (
+                      <div key={lang}>
+                        <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {adminT('branches.name')} ({cfg.code}){lang === branchDefaultLang ? ' *' : ''}
+                        </label>
+                        <Input
+                          value={cfg.value}
+                          onChange={(e) => cfg.onChange(e.target.value)}
+                          placeholder={adminT('branches.namePlaceholder')}
+                          className={`text-sm ${lang === branchDefaultLang ? 'border-primary' : ''} ${isRTL ? 'text-right' : 'text-left'}`}
+                          dir={cfg.dir}
+                        />
+                      </div>
+                    ))}
                     <div>
                       <label className={`text-sm font-medium block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('branches.sortOrder')}</label>
                       <Input
@@ -8221,15 +8204,24 @@ export default function AdminDashboard() {
                       </label>
                     </div>
                   </div>
+                    );
+                  })()}
+                  {(() => {
+                    const branchDefaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+                    const branchValueMap: Record<string, string> = {
+                      ru: branchFormName, en: branchFormNameEn, he: branchFormNameHe, ar: branchFormNameAr
+                    };
+                    const isRequiredFilled = branchValueMap[branchDefaultLang]?.trim().length > 0;
+                    return (
                   <div className={`flex justify-between pt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Button variant="outline" onClick={() => setIsBranchFormOpen(false)} className="text-sm">
                       {adminT('actions.cancel')}
                     </Button>
                     <Button
                       onClick={() => {
-                        if (!branchFormName.trim()) return;
+                        if (!isRequiredFilled) return;
                         const payload = {
-                          name: branchFormName,
+                          name: branchFormName || undefined,
                           nameEn: branchFormNameEn.trim() || undefined,
                           nameHe: branchFormNameHe.trim() || undefined,
                           nameAr: branchFormNameAr.trim() || undefined,
@@ -8243,11 +8235,13 @@ export default function AdminDashboard() {
                         }
                       }}
                       className="bg-primary hover:bg-primary text-white text-sm"
-                      disabled={!branchFormName.trim() || createBranchMutation.isPending || updateBranchMutation.isPending}
+                      disabled={!isRequiredFilled || createBranchMutation.isPending || updateBranchMutation.isPending}
                     >
                       {editingBranch ? adminT('actions.update') : adminT('actions.create')}
                     </Button>
                   </div>
+                    );
+                  })()}
                 </DialogContent>
               </Dialog>
 
@@ -9493,6 +9487,13 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   });
   const categoryDisplayStyle = activeTheme?.categoryDisplayStyle || 'default';
   const showCategoryIcons = categoryDisplayStyle !== 'photo_grid';
+
+  const { data: productDialogSettings } = useQuery({
+    queryKey: ['/api/settings'],
+    staleTime: 5 * 60 * 1000,
+  });
+  const productStoreDefaultLang = (productDialogSettings as any)?.defaultLanguage || 'ru';
+
   const translationManager = useTranslationManager({
     defaultLanguage: 'ru',
     baseFields: ['name', 'description', 'ingredients']
@@ -9866,6 +9867,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 <FormItem>
                   <FormLabel className="text-sm">
                     {translationManager.getFieldLabel('name', adminT('products.dialog.nameLabel'))}
+                    {translationManager.currentLanguage === productStoreDefaultLang ? ' *' : ''}
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -10429,6 +10431,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   
   // Define available language tabs based on enabled languages
   const enabledLanguages = (settings as any)?.enabledLanguages || ['ru', 'en', 'he', 'ar'];
+  const categoryDefaultLang = (settings as any)?.defaultLanguage || 'ru';
   const availableTabs = [
     { key: 'basic', label: adminT('categories.tabs.basic'), icon: Info, langCode: 'ru' },
     { key: 'english', label: 'English', icon: Globe, langCode: 'en' },
@@ -10511,6 +10514,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
         <div className="flex border-b border-gray-200 mb-4">
           {availableTabs.map((tab) => {
             const IconComponent = tab.icon;
+            const isRequired = tab.langCode === categoryDefaultLang;
             return (
               <button
                 key={tab.key}
@@ -10523,7 +10527,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                 }`}
               >
                 <IconComponent className="h-4 w-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="hidden sm:inline">{tab.label}{isRequired ? ' *' : ''}</span>
               </button>
             );
           })}

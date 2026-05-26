@@ -58,7 +58,7 @@ export const userAddresses = pgTable("user_addresses", {
 // Categories table
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(), // Default language (Russian)
+  name: varchar("name", { length: 255 }), // Russian (base). Required field determined by defaultLanguage setting
   name_en: varchar("name_en", { length: 255 }),
   name_he: varchar("name_he", { length: 255 }),
   name_ar: varchar("name_ar", { length: 255 }),
@@ -77,7 +77,7 @@ export const categories = pgTable("categories", {
 // Products table (removed categoryId - now using many-to-many relation)
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(), // Default language (Russian)
+  name: varchar("name", { length: 255 }), // Russian (base). Required field determined by defaultLanguage setting
   name_en: varchar("name_en", { length: 255 }),
   name_he: varchar("name_he", { length: 255 }),
   name_ar: varchar("name_ar", { length: 255 }),
@@ -123,7 +123,7 @@ export const productCategories = pgTable("product_categories", {
 // Branches table (multi-branch feature, enabled via BRANCHES_ENABLED env var)
 export const branches = pgTable("branches", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }), // Russian (base). Required field determined by defaultLanguage setting
   nameEn: varchar("name_en", { length: 255 }),
   nameHe: varchar("name_he", { length: 255 }),
   nameAr: varchar("name_ar", { length: 255 }),
@@ -536,7 +536,7 @@ export const storeSettings = pgTable("store_settings", {
 // Themes table for theme management
 export const themes = pgTable("themes", {
   id: varchar("id", { length: 50 }).primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(), // Russian name (base)
+  name: varchar("name", { length: 100 }), // Russian (base). Required field determined by defaultLanguage setting
   name_en: varchar("name_en", { length: 100 }),
   name_he: varchar("name_he", { length: 100 }),
   name_ar: varchar("name_ar", { length: 100 }),
@@ -921,7 +921,7 @@ const baseThemeSchema = createInsertSchema(themes).omit({
 
 export const insertThemeSchema = z.object({
   id: z.string().optional(),
-  name: z.string(),
+  name: z.string().nullable().optional(),
   name_en: z.string().nullable().optional(),
   name_he: z.string().nullable().optional(),
   name_ar: z.string().nullable().optional(),

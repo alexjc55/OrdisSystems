@@ -6,6 +6,7 @@ import { upload, processUploadedImage, optimizeImage, generateThumbnail, optimiz
 import { insertCategorySchema, insertProductSchema, insertProductBranchAvailabilitySchema } from "@shared/schema";
 import { BRANCHES_ENABLED } from "../config";
 import { z } from "zod";
+import { getDefaultLang, checkRequiredName, sendNameRequiredError } from "../utils/lang-validation";
 import path from "path";
 import fs from "fs";
 import { deleteUploadFile } from "../utils/delete-upload-file";
@@ -55,6 +56,9 @@ router.post('/categories', isAuthenticated, async (req: any, res) => {
     }
     const rawData = req.body;
     console.log('Category create - Raw data received:', JSON.stringify(rawData, null, 2));
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(rawData, defaultLang);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const schemaData = insertCategorySchema.parse(rawData);
     const multilingualFields: any = {};
     const supportedLanguages = ['en', 'he', 'ar'];
@@ -110,6 +114,9 @@ router.put('/categories/:id', isAuthenticated, async (req: any, res) => {
       return res.status(403).json({ message: "Insufficient permissions" });
     }
     const id = parseInt(req.params.id);
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(req.body, defaultLang);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const categoryData = insertCategorySchema.partial().parse(req.body);
     if ('imageUrl' in categoryData) {
       const existing = await storage.getCategoryById(id);
@@ -135,6 +142,11 @@ router.patch('/categories/:id', isAuthenticated, async (req: any, res) => {
     }
     const id = parseInt(req.params.id);
     const rawData = req.body;
+    if ('name' in rawData || rawData.name_en !== undefined || rawData.name_he !== undefined || rawData.name_ar !== undefined) {
+      const defaultLang = await getDefaultLang();
+      const missingField = checkRequiredName(rawData, defaultLang);
+      if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
+    }
     const schemaData = insertCategorySchema.partial().parse(rawData);
     const multilingualFields: any = {};
     const supportedLanguages = ['en', 'he', 'ar'];
@@ -350,6 +362,9 @@ router.post('/products', isAuthenticated, async (req: any, res) => {
     if (rawData.discountValue === "") rawData.discountValue = null;
     if (rawData.discountType === "") rawData.discountType = null;
     const { branchAvailability, ...rest } = rawData;
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(rest, defaultLang);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const productData = insertProductSchema.parse(rest);
     const product = await storage.createProduct(productData);
     if (BRANCHES_ENABLED && branchAvailability) {
@@ -374,6 +389,9 @@ router.put('/products/:id', isAuthenticated, async (req: any, res) => {
     }
     const id = parseInt(req.params.id);
     const { branchAvailability, ...rest } = req.body;
+    const defaultLang = await getDefaultLang();
+    const missingField = checkRequiredName(rest, defaultLang);
+    if (missingField) return sendNameRequiredError(res, missingField, defaultLang);
     const productData = insertProductSchema.partial().parse(rest);
     if ('imageUrl' in productData) {
       const existing = await storage.getProductById(id);
