@@ -509,9 +509,7 @@ export default function Home() {
       const welcomeTitle = getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage);
       const welcomeSubtitle = getLocalizedField(storeSettings, 'welcomeSubtitle', currentLanguage);
       
-      const title = welcomeTitle 
-        ? `${storeName} - ${welcomeTitle}`
-        : storeName || 'eDAHouse';
+      const title = storeName || 'eDAHouse';
         
       const description = welcomeSubtitle || 
         getLocalizedField(storeSettings, 'description', currentLanguage) ||

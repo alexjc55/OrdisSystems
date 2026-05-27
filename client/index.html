@@ -130,7 +130,7 @@
           var el = document.getElementById('splash-store-name');
           if (el) el.textContent = name || '●';
           if (document.title === '{{storeName}}' || document.title === '{{storeName}} ') {
-            document.title = name || '';
+            document.title = name || 'eDAHouse';
           }
           var appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
           if (appleTitle && appleTitle.getAttribute('content') === '{{storeName}}') appleTitle.setAttribute('content', name || '');
