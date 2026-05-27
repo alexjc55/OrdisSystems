@@ -153,7 +153,12 @@
         // Fetch store name if not cached — always call applyName to clear {{storeName}} placeholder
         if (!cachedSettings || !cachedSettings.storeName) {
           fetch('/api/settings').then(function(r) { return r.json(); }).then(function(d) {
-            var name = (d && d.storeName) ? d.storeName : '';
+            var name = '';
+            if (d) {
+              var lang = d.defaultLanguage || 'ru';
+              var byLang = { ru: d.storeName, he: d.storeNameHe, en: d.storeNameEn, ar: d.storeNameAr };
+              name = byLang[lang] || d.storeName || d.storeNameHe || d.storeNameEn || d.storeNameAr || '';
+            }
             try { sessionStorage.setItem('_storeSettings', JSON.stringify({ storeName: name })); } catch(e) {}
             applyName(name);
           }).catch(function() { applyName(''); });
