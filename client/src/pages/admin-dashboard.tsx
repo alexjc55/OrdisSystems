@@ -4450,12 +4450,7 @@ export default function AdminDashboard() {
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: number) => {
-      const response = await apiRequest('DELETE', `/api/categories/${categoryId}`, {});
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw errorData;
-      }
-      return response.json();
+      return await apiRequest('DELETE', `/api/categories/${categoryId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories', 'includeInactive'] });
