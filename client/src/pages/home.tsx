@@ -31,6 +31,7 @@ import { getLocalizedField, type SupportedLanguage } from "@shared/localization"
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import CategoryNav from "@/components/menu/category-nav";
+import CategoryCarousel from "@/components/menu/category-carousel";
 import ProductCard from "@/components/menu/product-card";
 import { HeaderVariant } from "@/components/layout/header-variants";
 import SearchInput from "@/components/SearchInput";
@@ -814,10 +815,7 @@ export default function Home() {
                   const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
                   return (
                     <div id="categories" className="mb-8">
-                      <div
-                        className="flex flex-nowrap gap-2 overflow-x-auto pb-1"
-                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-                      >
+                      <CategoryCarousel>
                         <UTMLink
                           href="/all-products"
                           onClick={() => handleCategorySelect(0)}
@@ -846,7 +844,7 @@ export default function Home() {
                             </UTMLink>
                           );
                         })}
-                      </div>
+                      </CategoryCarousel>
                     </div>
                   );
                 }
