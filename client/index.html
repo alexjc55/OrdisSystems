@@ -13,6 +13,7 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{siteUrl}}" />
     <meta property="og:title" content="{{storeName}}" />
     <meta property="og:description" content="{{storeDescription}}" />
     <meta property="og:locale" content="ru_RU" />
@@ -124,18 +125,17 @@
           document.body.style.backgroundColor = color;
         }
 
-        // Apply store name to title/splash
+        // Apply store name to title/splash — called even with empty string to clear {{storeName}} placeholder
         function applyName(name) {
-          if (!name) return;
           var el = document.getElementById('splash-store-name');
-          if (el) el.textContent = name;
-          if (document.title === '{{storeName}}' || document.title === '●') {
-            document.title = name;
+          if (el) el.textContent = name || '●';
+          if (document.title === '{{storeName}}' || document.title === '{{storeName}} ') {
+            document.title = name || '';
           }
           var appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-          if (appleTitle && appleTitle.getAttribute('content') === '{{storeName}}') appleTitle.setAttribute('content', name);
+          if (appleTitle && appleTitle.getAttribute('content') === '{{storeName}}') appleTitle.setAttribute('content', name || '');
           var appName = document.querySelector('meta[name="application-name"]');
-          if (appName && appName.getAttribute('content') === '{{storeName}}') appName.setAttribute('content', name);
+          if (appName && appName.getAttribute('content') === '{{storeName}}') appName.setAttribute('content', name || '');
         }
 
         // Try cached data first for instant apply
@@ -150,14 +150,13 @@
         if (cachedTheme && cachedTheme.color) applyThemeColor(cachedTheme.color);
         if (cachedTheme && cachedTheme.splashBg) applySplashBg(cachedTheme.splashBg);
 
-        // Fetch store name if not cached
+        // Fetch store name if not cached — always call applyName to clear {{storeName}} placeholder
         if (!cachedSettings || !cachedSettings.storeName) {
           fetch('/api/settings').then(function(r) { return r.json(); }).then(function(d) {
-            if (d && d.storeName) {
-              try { sessionStorage.setItem('_storeSettings', JSON.stringify({ storeName: d.storeName })); } catch(e) {}
-              applyName(d.storeName);
-            }
-          }).catch(function() {});
+            var name = (d && d.storeName) ? d.storeName : '';
+            try { sessionStorage.setItem('_storeSettings', JSON.stringify({ storeName: name })); } catch(e) {}
+            applyName(name);
+          }).catch(function() { applyName(''); });
         }
 
         // Fetch active theme color and splash background

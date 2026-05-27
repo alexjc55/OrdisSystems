@@ -106,10 +106,12 @@ export function metaInjectionMiddleware() {
         ? getFullImageUrl(logoUrlRaw, origin)
         : '';
 
-      // Replace placeholders — this runs for ALL visitors in production
+      // Replace placeholders
+      const absoluteSiteUrl = `${origin}${req.path === '/' ? '' : req.path}` || origin;
       html = html.replace(/\{\{storeName\}\}/g, escapeHtml(storeName));
       html = html.replace(/\{\{storeDescription\}\}/g, escapeHtml(storeDescription));
       html = html.replace(/\{\{logoUrl\}\}/g, absoluteLogoUrl);
+      html = html.replace(/\{\{siteUrl\}\}/g, absoluteSiteUrl);
 
       // ── Bot-only: inject structured data (JSON-LD) ──────────────────────────
       const userAgent = req.headers['user-agent'];
