@@ -549,6 +549,28 @@ router.patch('/products/:id/availability', isAuthenticated, async (req: any, res
   }
 });
 
+router.patch('/products/:id/special-offer', isAuthenticated, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+    const id = parseInt(req.params.id);
+    const { isSpecialOffer } = req.body;
+    if (typeof isSpecialOffer !== 'boolean') {
+      return res.status(400).json({ message: "isSpecialOffer must be a boolean" });
+    }
+    const product = await storage.updateProduct(id, { isSpecialOffer });
+    clearCachePattern('admin-products');
+    clearCachePattern('products');
+    res.json(product);
+  } catch (error) {
+    console.error("Error toggling special offer:", error);
+    res.status(500).json({ message: "Failed to toggle special offer" });
+  }
+});
+
 router.delete('/products/:id', isAuthenticated, async (req: any, res) => {
   try {
     const userId = req.user.id;

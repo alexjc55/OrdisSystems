@@ -4401,6 +4401,25 @@ export default function AdminDashboard() {
     }
   });
 
+  const toggleSpecialOfferMutation = useMutation({
+    mutationFn: async ({ id, isSpecialOffer }: { id: number; isSpecialOffer: boolean }) => {
+      const response = await fetch(`/api/products/${id}/special-offer`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isSpecialOffer }),
+      });
+      if (!response.ok) throw new Error('Failed to toggle special offer');
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+    },
+    onError: () => {
+      toast({ title: adminT('actions.error'), variant: "destructive" });
+    }
+  });
+
   const updateBranchAvailabilityQuickMutation = useMutation({
     mutationFn: async ({ productId, branchId, availabilityStatus }: { productId: number; branchId: number; availabilityStatus: string }) => {
       const isAvailable = availabilityStatus !== 'completely_unavailable';
@@ -5902,6 +5921,20 @@ export default function AdminDashboard() {
                                           : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        disabled={toggleSpecialOfferMutation.isPending}
+                                        onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !product.isSpecialOffer })}
+                                        className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
+                                          product.isSpecialOffer
+                                            ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
+                                            : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
+                                        }`}
+                                        title={product.isSpecialOffer ? adminT('products.productsWithDiscount') : adminT('products.productsWithDiscount')}
+                                      >
+                                        <Star className={`h-5 w-5 ${product.isSpecialOffer ? 'fill-current' : ''}`} />
+                                      </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
@@ -6061,6 +6094,20 @@ export default function AdminDashboard() {
                                           ? <Eye className="h-6 w-6" /> 
                                           : <EyeOff className="h-6 w-6" />
                                         }
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        disabled={toggleSpecialOfferMutation.isPending}
+                                        onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !product.isSpecialOffer })}
+                                        className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
+                                          product.isSpecialOffer
+                                            ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
+                                            : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
+                                        }`}
+                                        title={adminT('products.productsWithDiscount')}
+                                      >
+                                        <Star className={`h-5 w-5 ${product.isSpecialOffer ? 'fill-current' : ''}`} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
