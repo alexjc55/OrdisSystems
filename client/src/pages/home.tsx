@@ -810,12 +810,12 @@ export default function Home() {
                   const pillBase = "flex flex-col items-center justify-start gap-1 rounded-2xl border transition-all duration-200";
                   const pillActive = "bg-primary text-white border-primary shadow-md";
                   const pillInactive = "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary";
-                  const pillSize = "flex-none md:flex-1 md:min-w-[80px]";
+                  const pillSize = "flex-none";
                   const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
                   return (
                     <div id="categories" className="mb-8">
                       <div
-                        className="flex flex-nowrap gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-x-visible md:pb-0"
+                        className="flex flex-nowrap gap-2 overflow-x-auto pb-1"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
                       >
                         <UTMLink
