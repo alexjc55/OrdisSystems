@@ -4401,6 +4401,8 @@ export default function AdminDashboard() {
     }
   });
 
+  const [optimisticSpecialOffers, setOptimisticSpecialOffers] = useState<Map<number, boolean>>(new Map());
+
   const toggleSpecialOfferMutation = useMutation({
     mutationFn: async ({ id, isSpecialOffer }: { id: number; isSpecialOffer: boolean }) => {
       const response = await fetch(`/api/products/${id}/special-offer`, {
@@ -4411,28 +4413,18 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to toggle special offer');
       return await response.json();
     },
-    onMutate: async ({ id, isSpecialOffer }) => {
-      await queryClient.cancelQueries({ queryKey: ['/api/admin/products'] });
-      queryClient.setQueriesData({ queryKey: ['/api/admin/products'] }, (oldData: any) => {
-        if (!oldData?.data) return oldData;
-        return {
-          ...oldData,
-          data: oldData.data.map((p: any) => p.id === id ? { ...p, isSpecialOffer } : p),
-        };
-      });
+    onMutate: ({ id, isSpecialOffer }) => {
+      setOptimisticSpecialOffers(prev => new Map(prev).set(id, isSpecialOffer));
     },
-    onSuccess: ({ id, isSpecialOffer }: any, variables) => {
-      queryClient.setQueriesData({ queryKey: ['/api/admin/products'] }, (oldData: any) => {
-        if (!oldData?.data) return oldData;
-        return {
-          ...oldData,
-          data: oldData.data.map((p: any) => p.id === variables.id ? { ...p, isSpecialOffer: variables.isSpecialOffer } : p),
-        };
-      });
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-    },
-    onError: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setTimeout(() => {
+        setOptimisticSpecialOffers(prev => { const n = new Map(prev); n.delete(id); return n; });
+      }, 1500);
+    },
+    onError: (_, { id }) => {
+      setOptimisticSpecialOffers(prev => { const n = new Map(prev); n.delete(id); return n; });
       toast({ title: adminT('actions.error'), variant: "destructive" });
     },
   });
@@ -5881,6 +5873,7 @@ export default function AdminDashboard() {
                         </TableHeader>
                         <TableBody>
                           {filteredProducts.map((product: any) => {
+                            const displaySpecialOffer = optimisticSpecialOffers.has(product.id) ? optimisticSpecialOffers.get(product.id)! : !!product.isSpecialOffer;
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
                             // All branch availability records for this product (for mixed status display)
@@ -5941,15 +5934,15 @@ export default function AdminDashboard() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !product.isSpecialOffer })}
+                                        onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !displaySpecialOffer })}
                                         className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
-                                          product.isSpecialOffer
+                                          displaySpecialOffer
                                             ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
                                             : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                       >
-                                        <Star className="h-5 w-5" style={{ fill: product.isSpecialOffer ? '#eab308' : 'none', stroke: product.isSpecialOffer ? '#eab308' : 'currentColor' }} />
+                                        <Star className="h-5 w-5" style={{ fill: displaySpecialOffer ? '#eab308' : 'none', stroke: displaySpecialOffer ? '#eab308' : 'currentColor' }} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -6107,15 +6100,15 @@ export default function AdminDashboard() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !product.isSpecialOffer })}
+                                        onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !displaySpecialOffer })}
                                         className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
-                                          product.isSpecialOffer
+                                          displaySpecialOffer
                                             ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
                                             : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                       >
-                                        <Star className="h-5 w-5" style={{ fill: product.isSpecialOffer ? '#eab308' : 'none', stroke: product.isSpecialOffer ? '#eab308' : 'currentColor' }} />
+                                        <Star className="h-5 w-5" style={{ fill: displaySpecialOffer ? '#eab308' : 'none', stroke: displaySpecialOffer ? '#eab308' : 'currentColor' }} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
