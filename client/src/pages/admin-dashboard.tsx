@@ -5947,7 +5947,14 @@ export default function AdminDashboard() {
                                           </div>
                                         </div>
                                       ) : (
-                                        <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                        <div className="space-y-1">
+                                          <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
+                                          {product.isSpecialOffer && (
+                                            <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-semibold bg-orange-50 border border-orange-200 text-orange-600">
+                                              ★ {adminT('products.productsWithDiscount')}
+                                            </div>
+                                          )}
+                                        </div>
                                       )}
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>

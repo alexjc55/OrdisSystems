@@ -191,8 +191,8 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           </div>
         )}
         
-        {/* Discount badge - only show if it's a special offer */}
-        {product.isSpecialOffer && (
+        {/* Discount badge - only show when special offer has an actual discount */}
+        {product.isSpecialOffer && product.discountType && product.discountValue && !isNaN(parseFloat(product.discountValue)) && (
           <div className="absolute top-2 left-2">
             <Badge className="bg-primary text-white text-sm px-3 py-1.5 font-semibold shadow-lg">
               <Star className="w-4 h-4 mr-1.5 rtl:mr-0 rtl:ml-1.5 fill-current" />

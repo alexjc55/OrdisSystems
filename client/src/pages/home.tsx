@@ -634,16 +634,26 @@ export default function Home() {
       productsToShow = allProducts
         .filter(product => product.categories?.some(cat => cat.id === categoryId))
         .sort((a, b) => {
+          if (a.isSpecialOffer && !b.isSpecialOffer) return -1;
+          if (!a.isSpecialOffer && b.isSpecialOffer) return 1;
           const aOrder = (a.sortOrder ?? 0) === 0 ? 999999 : (a.sortOrder ?? 0);
           const bOrder = (b.sortOrder ?? 0) === 0 ? 999999 : (b.sortOrder ?? 0);
           if (aOrder !== bOrder) return aOrder - bOrder;
           return (a.name || '').localeCompare(b.name || '');
         });
     } else if (selectedCategoryId === 0) {
-      // Show all products
-      productsToShow = allProducts;
+      // Show all products — special offers first
+      productsToShow = [...allProducts].sort((a, b) => {
+        if (a.isSpecialOffer && !b.isSpecialOffer) return -1;
+        if (!a.isSpecialOffer && b.isSpecialOffer) return 1;
+        return 0;
+      });
     } else if (selectedCategoryId !== null && products) {
-      productsToShow = products;
+      productsToShow = [...products].sort((a, b) => {
+        if (a.isSpecialOffer && !b.isSpecialOffer) return -1;
+        if (!a.isSpecialOffer && b.isSpecialOffer) return 1;
+        return 0;
+      });
     } else {
       productsToShow = [];
     }
