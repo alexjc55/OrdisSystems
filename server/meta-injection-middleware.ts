@@ -88,9 +88,21 @@ export function metaInjectionMiddleware() {
         settings?.description ||
         '';
 
+      // Build origin for absolute URLs (required for og:image)
+      const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
+      const host = (req.headers['x-forwarded-host'] as string) || req.headers.host || 'localhost:5000';
+      const origin = `${protocol}://${host}`;
+
+      // Build absolute logo URL for og:image
+      const logoUrlRaw: string = (settings as any)?.logoUrl || '';
+      const absoluteLogoUrl = logoUrlRaw
+        ? getFullImageUrl(logoUrlRaw, origin)
+        : '';
+
       // Replace placeholders — this runs for ALL visitors in production
       html = html.replace(/\{\{storeName\}\}/g, escapeHtml(storeName));
       html = html.replace(/\{\{storeDescription\}\}/g, escapeHtml(storeDescription));
+      html = html.replace(/\{\{logoUrl\}\}/g, absoluteLogoUrl);
 
       // ── Bot-only: inject structured data (JSON-LD) ──────────────────────────
       const userAgent = req.headers['user-agent'];
@@ -103,11 +115,7 @@ export function metaInjectionMiddleware() {
         const allCategories = await storage.getCategories(false);
         const allProducts = await storage.getProducts();
 
-        const protocol = req.secure || req.headers['x-forwarded-proto'] === 'https' ? 'https' : 'http';
-        const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:5000';
-        const origin = `${protocol}://${host}`;
-
-        const logoUrl = settings?.logoUrl ? getFullImageUrl(settings.logoUrl, origin) : undefined;
+        const logoUrl = absoluteLogoUrl || undefined;
 
         const structuredDataParts: string[] = [];
 
