@@ -810,7 +810,7 @@ export default function Home() {
                   const pillBase = "flex flex-col items-center justify-start gap-1 rounded-2xl border transition-all duration-200";
                   const pillActive = "bg-primary text-white border-primary shadow-md";
                   const pillInactive = "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary";
-                  const pillSize = "flex-none";
+                  const pillSize = "flex-1 basis-[88px] min-w-[88px]";
                   const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
                   return (
                     <div id="categories" className="mb-8">
