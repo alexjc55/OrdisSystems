@@ -1,134 +1,25 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SearchInput from "@/components/SearchInput";
-import { ChevronLeft, ChevronRight, ChevronDown, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
-import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useQuery } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
+import { CategoryDropdown, buildCategoryOptions } from "@/components/ui/category-dropdown";
 
 interface StickyFiltersProps {
-  // Back button
   showBackButton: boolean;
   onBack: () => void;
-  
-  // Search
   searchQuery: string;
   onSearchChange: (query: string) => void;
   searchPlaceholder?: string;
-  
-  // Category filter
   categoryFilter: string;
   onCategoryFilterChange: (value: string) => void;
   categories: any[];
-  
-  // Discount filter
   discountFilter: string;
   onDiscountFilterChange: (value: string) => void;
-  
-  // Show conditions
   showFilters: boolean;
   showSearch: boolean;
-}
-
-function CategoryDropdown({
-  value,
-  onChange,
-  categories,
-  placeholder,
-  allCategoriesLabel,
-  currentLanguage,
-  storeSettingsData,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  categories: any[];
-  placeholder: string;
-  allCategoriesLabel: string;
-  currentLanguage: string;
-  storeSettingsData: any;
-}) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
-
-  const allOptions = [
-    { id: "all", label: allCategoriesLabel },
-    ...categories.map((cat) => ({
-      id: cat.id.toString(),
-      label:
-        getLocalizedField(cat, "name", currentLanguage as SupportedLanguage, storeSettingsData) ||
-        cat.name ||
-        `Category ${cat.id}`,
-    })),
-  ];
-
-  const selected = allOptions.find((o) => o.id === value);
-  const displayLabel = selected ? selected.label : placeholder;
-
-  const isRTL = currentLanguage === 'he' || currentLanguage === 'ar';
-  const dir = isRTL ? 'rtl' : 'ltr';
-
-  return (
-    <div ref={containerRef} className="relative w-full" dir={dir}>
-      <button
-        type="button"
-        onClick={() => setOpen((p) => !p)}
-        className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-        data-testid="select-category"
-        style={{ textAlign: 'start' }}
-      >
-        <span className="truncate">{displayLabel}</span>
-        <ChevronDown className="h-4 w-4 opacity-50 shrink-0 ms-2" />
-      </button>
-
-      {open && (
-        <div className="absolute z-50 mt-1 min-w-[190px] rounded-md border bg-popover text-popover-foreground shadow-md">
-          <div
-            className="overflow-y-auto overscroll-contain"
-            style={{ maxHeight: "15rem", touchAction: "pan-y", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
-          >
-            <div className="p-1">
-              {allOptions.map((opt) => (
-                <div
-                  key={opt.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => { onChange(opt.id); setOpen(false); }}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { onChange(opt.id); setOpen(false); } }}
-                  className={cn(
-                    "relative whitespace-nowrap rounded-sm py-1.5 ps-8 pe-3 text-sm cursor-pointer select-none",
-                    isRTL ? "text-right" : "text-left",
-                    value === opt.id
-                      ? "bg-primary text-white"
-                      : "hover:bg-primary hover:text-white"
-                  )}
-                >
-                  {value === opt.id && (
-                    <span className="absolute start-2 top-1/2 -translate-y-1/2 flex h-3.5 w-3.5 items-center justify-center">
-                      <Check className="h-4 w-4" />
-                    </span>
-                  )}
-                  {opt.label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 }
 
 export default function StickyFilters({
@@ -156,6 +47,13 @@ export default function StickyFilters({
   if (!showBackButton && !showSearch && !showFilters) {
     return null;
   }
+
+  const categoryOptions = buildCategoryOptions(
+    categories,
+    currentLanguage,
+    storeSettingsData,
+    tShop('allCategories', 'Все категории')
+  );
 
   return (
     <div className="fixed top-16 left-0 right-0 z-40 bg-gray-100 border-b border-gray-300 shadow-sm">
@@ -200,11 +98,9 @@ export default function StickyFilters({
                   <CategoryDropdown
                     value={categoryFilter}
                     onChange={onCategoryFilterChange}
-                    categories={categories}
-                    placeholder={tShop('filterByCategory', 'Фильтр по категории')}
-                    allCategoriesLabel={tShop('allCategories', 'Все категории')}
+                    options={categoryOptions}
                     currentLanguage={currentLanguage}
-                    storeSettingsData={storeSettingsData}
+                    data-testid="select-category"
                   />
                 </div>
 

@@ -41,6 +41,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CategoryDropdown, buildCategoryOptions } from "@/components/ui/category-dropdown";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -5693,24 +5694,18 @@ export default function AdminDashboard() {
                   </div>
                   <div className={`flex flex-col gap-3 lg:flex-shrink-0 ${isRTL ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}>
                     <div className="relative min-w-[180px]">
-                      <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
-                      <Select value={selectedCategoryFilter} onValueChange={setSelectedCategoryFilter}>
-                        <SelectTrigger className={`text-sm ${isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}`}>
-                          <SelectValue placeholder={adminT('products.allCategories')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">{adminT('products.allCategories')}</SelectItem>
-                          {(categories as any[] || []).map((category: any) => (
-                            <SelectItem 
-                              key={category.id}
-                                          title={getLocalizedField(category, 'name', i18n.language as SupportedLanguage)} 
-                              value={category.id.toString()}
-                            >
-                              {getLocalizedField(category, 'name', i18n.language as SupportedLanguage)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <CategoryDropdown
+                        value={selectedCategoryFilter}
+                        onChange={setSelectedCategoryFilter}
+                        options={buildCategoryOptions(
+                          (categories as any[]) || [],
+                          i18n.language,
+                          storeSettings,
+                          String(adminT('products.allCategories'))
+                        )}
+                        currentLanguage={i18n.language}
+                        triggerClassName={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                      />
                     </div>
                     <div className="relative min-w-[160px]">
                       <Filter className={`absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
@@ -9747,7 +9742,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const productStoreDefaultLang = (productDialogSettings as any)?.defaultLanguage || 'ru';
 
   const translationManager = useTranslationManager({
-    defaultLanguage: 'ru',
+    defaultLanguage: (productStoreDefaultLang as any) || 'ru',
     baseFields: ['name', 'description', 'ingredients']
   });
   
