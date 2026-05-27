@@ -521,6 +521,9 @@ export const storeSettings = pgTable("store_settings", {
   facebookConversionsApiEnabled: boolean("facebook_conversions_api_enabled").default(false),
   facebookAccessToken: varchar("facebook_access_token", { length: 500 }), // Store access token in DB
 
+  // Feed security token
+  feedToken: varchar("feed_token", { length: 36 }), // UUID token required on all feed endpoints
+
   // Mobile menu quick buttons
   mobileQuickButtons: jsonb("mobile_quick_buttons").default([]), // Array of section keys shown as quick buttons in mobile menu
 

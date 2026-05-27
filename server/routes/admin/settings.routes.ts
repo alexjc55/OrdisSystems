@@ -12,11 +12,37 @@ const router = Router();
 
 router.get('/settings', async (req, res) => {
   try {
-    const settings = await storage.getStoreSettings();
+    let settings = await storage.getStoreSettings();
+    if (settings && !settings.feedToken) {
+      const { randomUUID } = await import('crypto');
+      const feedToken = randomUUID();
+      settings = await storage.updateStoreSettings({ ...settings, feedToken }) as typeof settings;
+    }
     res.json(settings);
   } catch (error) {
     console.error("Error fetching store settings:", error);
     res.status(500).json({ message: "Failed to fetch store settings" });
+  }
+});
+
+router.post('/settings/regenerate-feed-token', isAuthenticated, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await storage.getUser(userId);
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+    const settings = await storage.getStoreSettings();
+    if (!settings) {
+      return res.status(404).json({ message: "Store settings not found" });
+    }
+    const { randomUUID } = await import('crypto');
+    const feedToken = randomUUID();
+    const updatedSettings = await storage.updateStoreSettings({ ...settings, feedToken });
+    res.json({ feedToken: updatedSettings?.feedToken });
+  } catch (error) {
+    console.error("Error regenerating feed token:", error);
+    res.status(500).json({ message: "Failed to regenerate feed token" });
   }
 });
 

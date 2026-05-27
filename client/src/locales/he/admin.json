@@ -652,6 +652,12 @@
     "canViewSettingsDescription": "אפשר צפייה בהגדרות החנות",
     "canManageSettingsDescription": "אפשר שינוי הגדרות החנות",
     "canEditOrders": "עריכת הזמנות",
+    "advertisingFeeds": "פידים לפרסום",
+    "feedsDescription": "קישורים לפידי מוצרים לאינטגרציה עם פלטפורמות הפרסום Facebook, Google Ads ו-Yandex Direct. הפידים מתעדכנים אוטומטית עם שינוי מוצרים.",
+    "feedsNote": "הקישורים מפנים לקטגוריות מוצרים מכיוון שאין דפי מוצר נפרדים. הפידים תומכים בכל שפות החנות.",
+    "feedToken": "טוקן גישה לפידים",
+    "regenerateFeedToken": "חדש טוקן",
+    "regenerateFeedTokenWarning": "אזהרה! לאחר חידוש הטוקן כל קישורי הפידים הקיימים יפסיקו לעבוד. להמשיך?",
     "deliveryTimeMode": {
       "hours": "על בסיס שעות פתיחת החנות",
       "halfDay": "חצי ראשון/חצי שני של היום",

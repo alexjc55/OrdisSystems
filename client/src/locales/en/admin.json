@@ -697,6 +697,9 @@
     "advertisingFeeds": "Advertising Feeds",
     "feedsDescription": "Product feed links for integration with Facebook, Google Ads and Yandex Direct advertising platforms. Feeds automatically update when products change.",
     "feedsNote": "Links point to product categories since there are no individual product pages. Feeds support all store languages.",
+    "feedToken": "Feed access token",
+    "regenerateFeedToken": "Regenerate token",
+    "regenerateFeedTokenWarning": "Warning! After regenerating, all current feed links will stop working. Continue?",
     "deliveryTimeMode": {
       "hours": "Based on store working hours",
       "halfDay": "First/Second half of day",

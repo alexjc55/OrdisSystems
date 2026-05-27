@@ -561,7 +561,9 @@ ALTER TABLE store_settings
   -- Онлайн-оплата
   ADD COLUMN IF NOT EXISTS payment_provider_config JSONB,
   -- Скидочный бейдж
-  ADD COLUMN IF NOT EXISTS discount_badge_text VARCHAR(50) DEFAULT 'Скидка';
+  ADD COLUMN IF NOT EXISTS discount_badge_text VARCHAR(50) DEFAULT 'Скидка',
+  -- Токен безопасности фидов
+  ADD COLUMN IF NOT EXISTS feed_token VARCHAR(36);
 
 
 -- ============================================================

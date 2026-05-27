@@ -986,6 +986,12 @@
     "canViewSettingsDescription": "السماح بعرض إعدادات المتجر",
     "canManageSettingsDescription": "السماح بتغيير إعدادات المتجر",
     "canEditOrders": "تعديل الطلبات",
+    "advertisingFeeds": "خلاصات الإعلانات",
+    "feedsDescription": "روابط خلاصات المنتجات للتكامل مع منصات الإعلانات Facebook وGoogle Ads وYandex Direct. تتحدث الخلاصات تلقائياً عند تغيير المنتجات.",
+    "feedsNote": "الروابط تشير إلى فئات المنتجات إذ لا توجد صفحات منتجات منفصلة. الخلاصات تدعم جميع لغات المتجر.",
+    "feedToken": "رمز الوصول للخلاصات",
+    "regenerateFeedToken": "تجديد الرمز",
+    "regenerateFeedTokenWarning": "تحذير! بعد التجديد ستتوقف جميع روابط الخلاصات الحالية عن العمل. هل تريد المتابعة؟",
     "deliveryTimeMode": {
       "hours": "بناءً على ساعات عمل المتجر",
       "halfDay": "النصف الأول/الثاني من اليوم",

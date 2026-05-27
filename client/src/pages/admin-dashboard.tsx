@@ -11148,7 +11148,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAdvertisingFeedsOpen, setIsAdvertisingFeedsOpen] = useState(false);
 
-  
+  const queryClient = useQueryClient();
+
+  const regenerateFeedTokenMutation = useMutation({
+    mutationFn: () => apiRequest('POST', '/api/admin/settings/regenerate-feed-token'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/settings'] });
+    },
+    onError: () => {
+      toast({ title: adminT('common.error'), variant: 'destructive' });
+    }
+  });
+
+  const feedUrl = (url: string) => `${url}${url.includes('?') ? '&' : '?'}token=${storeSettings?.feedToken || ''}`;
+
   const form = useForm({
     resolver: zodResolver(storeSettingsSchema),
     defaultValues: {
@@ -13527,10 +13540,38 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           
           <CollapsibleContent className="space-y-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className={`text-sm text-blue-800 mb-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <p className={`text-sm text-blue-800 mb-3 ${isRTL ? 'text-right' : 'text-left'}`}>
                 {adminT('storeSettings.feedsDescription')}
               </p>
-              
+
+              <div className={`flex flex-wrap items-center gap-2 p-3 bg-white rounded-lg border border-blue-200 mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className="flex-1 min-w-0">
+                  <span className={`text-xs text-gray-500 block mb-1 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('storeSettings.feedToken')}:</span>
+                  <code className="text-xs font-mono text-gray-700 break-all select-all">{storeSettings?.feedToken || '...'}</code>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button
+                    type="button"
+                    className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                    onClick={() => storeSettings?.feedToken && navigator.clipboard.writeText(storeSettings.feedToken)}
+                  >
+                    {adminT('common.copy')}
+                  </button>
+                  <button
+                    type="button"
+                    className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-xs"
+                    onClick={() => {
+                      if (window.confirm(adminT('storeSettings.regenerateFeedTokenWarning'))) {
+                        regenerateFeedTokenMutation.mutate();
+                      }
+                    }}
+                    disabled={regenerateFeedTokenMutation.isPending}
+                  >
+                    {regenerateFeedTokenMutation.isPending ? adminT('common.loading') : adminT('storeSettings.regenerateFeedToken')}
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Facebook Catalog Feed */}
                 <div className="bg-white border rounded-lg p-4">
@@ -13547,7 +13588,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                         <button 
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook`)}
+                          onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/facebook`))}
                           title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/facebook
@@ -13556,7 +13597,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=ru`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/facebook?lang=ru`))}
                             title="Russian"
                           >
                             RU
@@ -13566,7 +13607,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=en`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/facebook?lang=en`))}
                             title="English"
                           >
                             EN
@@ -13576,7 +13617,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=he`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/facebook?lang=he`))}
                             title="Hebrew"
                           >
                             HE
@@ -13586,7 +13627,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?lang=ar`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/facebook?lang=ar`))}
                             title="Arabic"
                           >
                             AR
@@ -13599,7 +13640,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       <button 
                         type="button"
                         className="ml-1 px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs font-mono select-all cursor-pointer"
-                        onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/facebook?format=csv`)}
+                        onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/facebook?format=csv`))}
                         title={adminT('common.copyLink')}
                       >
                         /api/feed/facebook?format=csv
@@ -13623,7 +13664,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                         <button 
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google`)}
+                          onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/google`))}
                           title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/google
@@ -13632,7 +13673,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=ru`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/google?lang=ru`))}
                             title="Russian"
                           >
                             RU
@@ -13642,7 +13683,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=en`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/google?lang=en`))}
                             title="English"
                           >
                             EN
@@ -13652,7 +13693,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=he`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/google?lang=he`))}
                             title="Hebrew"
                           >
                             HE
@@ -13662,7 +13703,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/google?lang=ar`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/google?lang=ar`))}
                             title="Arabic"
                           >
                             AR
@@ -13688,7 +13729,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                         <button 
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex`)}
+                          onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/yandex`))}
                           title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/yandex
@@ -13697,7 +13738,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=ru`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/yandex?lang=ru`))}
                             title="Russian"
                           >
                             RU
@@ -13707,7 +13748,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=en`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/yandex?lang=en`))}
                             title="English"
                           >
                             EN
@@ -13717,7 +13758,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=he`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/yandex?lang=he`))}
                             title="Hebrew"
                           >
                             HE
@@ -13727,7 +13768,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/yandex?lang=ar`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/yandex?lang=ar`))}
                             title="Arabic"
                           >
                             AR
@@ -13753,7 +13794,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                         <button 
                           type="button"
                           className="px-2 py-1 bg-primary text-white hover:bg-primary/80 rounded text-xs font-mono select-all cursor-pointer border-2 border-primary"
-                          onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json`)}
+                          onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/json`))}
                           title={`${adminT('common.copyLink')} (${adminT('common.default')}: ${storeSettings?.defaultLanguage?.toUpperCase() || 'RU'})`}
                         >
                           /api/feed/json
@@ -13762,7 +13803,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=ru`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/json?lang=ru`))}
                             title="Russian"
                           >
                             RU
@@ -13772,7 +13813,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=en`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/json?lang=en`))}
                             title="English"
                           >
                             EN
@@ -13782,7 +13823,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=he`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/json?lang=he`))}
                             title="Hebrew"
                           >
                             HE
@@ -13792,7 +13833,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           <button 
                             type="button"
                             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
-                            onClick={() => navigator.clipboard.writeText(`${window.location.origin}/api/feed/json?lang=ar`)}
+                            onClick={() => navigator.clipboard.writeText(feedUrl(`${window.location.origin}/api/feed/json?lang=ar`))}
                             title="Arabic"
                           >
                             AR

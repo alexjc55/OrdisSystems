@@ -15,7 +15,25 @@ const getDefaultLanguageFromDB = async (): Promise<string> => {
   }
 };
 
-router.get("/feed/facebook", async (req, res) => {
+const validateFeedToken = async (req: any, res: any, next: any) => {
+  try {
+    const db = await getDB();
+    const storeData = await db.select().from(storeSettings).limit(1);
+    const storedToken = storeData?.[0]?.feedToken;
+    if (storedToken) {
+      const requestToken = req.query.token as string;
+      if (!requestToken || requestToken !== storedToken) {
+        return res.status(401).json({ message: 'Unauthorized: invalid or missing feed token' });
+      }
+    }
+    next();
+  } catch (error) {
+    console.error('Error validating feed token:', error);
+    next(error);
+  }
+};
+
+router.get("/feed/facebook", validateFeedToken, async (req, res) => {
   try {
     const defaultLang = await getDefaultLanguageFromDB();
     const language = req.query.lang as string || defaultLang;
@@ -41,7 +59,7 @@ router.get("/feed/facebook", async (req, res) => {
   }
 });
 
-router.get("/feed/google", async (req, res) => {
+router.get("/feed/google", validateFeedToken, async (req, res) => {
   try {
     const defaultLang = await getDefaultLanguageFromDB();
     const language = req.query.lang as string || defaultLang;
@@ -59,7 +77,7 @@ router.get("/feed/google", async (req, res) => {
   }
 });
 
-router.get("/feed/yandex", async (req, res) => {
+router.get("/feed/yandex", validateFeedToken, async (req, res) => {
   try {
     const defaultLang = await getDefaultLanguageFromDB();
     const language = req.query.lang as string || defaultLang;
@@ -77,7 +95,7 @@ router.get("/feed/yandex", async (req, res) => {
   }
 });
 
-router.get("/feed/json", async (req, res) => {
+router.get("/feed/json", validateFeedToken, async (req, res) => {
   try {
     const defaultLang = await getDefaultLanguageFromDB();
     const language = req.query.lang as string || defaultLang;
