@@ -18,20 +18,20 @@ import type { CategoryWithCount, ProductWithCategories } from '@shared/schema';
  * - For bot requests only: additionally injects structured data (JSON-LD) for rich results.
  */
 
-// Simple in-memory cache so we don't re-read disk on every request
-let _cachedHtmlTemplate: string | null = null;
-let _cachedHtmlMtime = 0;
+// Per-path in-memory cache so we don't re-read disk on every request
+const _htmlTemplateCache = new Map<string, { content: string; mtime: number }>();
 
 async function getHtmlTemplate(htmlPath: string): Promise<string> {
   try {
     const stat = await fs.promises.stat(htmlPath);
     const mtime = stat.mtimeMs;
-    if (_cachedHtmlTemplate && mtime === _cachedHtmlMtime) {
-      return _cachedHtmlTemplate;
+    const cached = _htmlTemplateCache.get(htmlPath);
+    if (cached && cached.mtime === mtime) {
+      return cached.content;
     }
-    _cachedHtmlTemplate = await fs.promises.readFile(htmlPath, 'utf-8');
-    _cachedHtmlMtime = mtime;
-    return _cachedHtmlTemplate;
+    const content = await fs.promises.readFile(htmlPath, 'utf-8');
+    _htmlTemplateCache.set(htmlPath, { content, mtime });
+    return content;
   } catch {
     return '';
   }
@@ -72,13 +72,20 @@ export function metaInjectionMiddleware() {
     }
 
     try {
-      // Determine HTML source (built dist in production)
-      const htmlPath = path.resolve(process.cwd(), 'dist/public/index.html');
-      let html = await getHtmlTemplate(htmlPath);
-
-      if (!html) {
+      // Non-bot requests are always handled by Vite (dev) or serveStatic (production)
+      // — they don't need server-side meta injection, React Helmet covers them client-side.
+      const uaCheck = req.headers['user-agent'];
+      if (!shouldUseSSR(uaCheck, req.query)) {
         return next();
       }
+
+      // Bot request: use client/index.html as the template (always current, always has
+      // all {{placeholder}} tags including {{logoUrl}}).  Fall back to dist only if
+      // client/index.html is somehow missing.
+      const devHtmlPath = path.resolve(process.cwd(), 'client/index.html');
+      const prodHtmlPath = path.resolve(process.cwd(), 'dist/public/index.html');
+      let html = await getHtmlTemplate(devHtmlPath) || await getHtmlTemplate(prodHtmlPath);
+      if (!html) return next();
 
       // Load store settings
       const settings = await getSettings();

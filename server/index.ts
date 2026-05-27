@@ -67,17 +67,18 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // SEO bot middleware runs in BOTH dev and production — it intercepts bot
+  // requests (WhatsApp, Facebook, Telegram, Google, etc.) and serves them
+  // fully-formed HTML with og:image, og:title, JSON-LD, etc.
+  // For non-bot requests in dev mode it calls next() so Vite handles them.
+  app.use(metaInjectionMiddleware());
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
-    // Note: SEO bot middleware is disabled in development to avoid conflicts with Vite
-    // It will be enabled on VPS in production mode
   } else {
-    // PRODUCTION MODE: Enable SEO bot middleware BEFORE static serving
-    // This allows bots to get HTML with structured data while users get static files
-    app.use(metaInjectionMiddleware());
     serveStatic(app);
   }
 
