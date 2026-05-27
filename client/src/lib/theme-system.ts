@@ -101,8 +101,8 @@ export interface Theme {
 // Default eDAHouse theme
 export const defaultTheme: Theme = {
   id: 'edahouse-default',
-  name: 'eDAHouse Оригинальная',
-  description: 'Стандартная тема оформления eDAHouse с оранжевыми акцентами',
+  name: 'Ordis Оригинальная',
+  description: 'Стандартная тема оформления Ordis с оранжевыми акцентами',
   colors: {
     primary: 'hsl(24.6, 95%, 53.1%)',
     primaryText: 'hsl(0, 0%, 100%)',

@@ -448,8 +448,8 @@ export default function Home() {
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
       
       const title = categoryName 
-        ? `${categoryName} - ${storeName || 'eDAHouse'}`
-        : storeName || 'eDAHouse';
+        ? `${categoryName} - ${storeName || 'Ordis'}`
+        : storeName || 'Ordis';
         
       const description = categoryDescription || 
         `Просмотр товаров в категории ${categoryName} в магазине ${storeName}`;
@@ -478,8 +478,8 @@ export default function Home() {
     } else if (selectedCategoryId === 0) {
       // All products page SEO
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
-      const title = `${t('allProducts')} - ${storeName || 'eDAHouse'}`;
-      const description = `${t('allProducts')} — ${storeName || 'eDAHouse'}`;
+      const title = `${t('allProducts')} - ${storeName || 'Ordis'}`;
+      const description = `${t('allProducts')} — ${storeName || 'Ordis'}`;
       
       return {
         title,
@@ -492,8 +492,8 @@ export default function Home() {
     } else if (searchQuery.length > 2) {
       // Search results SEO
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
-      const title = `${t('searchResults')}: "${searchQuery}" - ${storeName || 'eDAHouse'}`;
-      const description = `${t('searchResults')}: "${searchQuery}" — ${storeName || 'eDAHouse'}`;
+      const title = `${t('searchResults')}: "${searchQuery}" - ${storeName || 'Ordis'}`;
+      const description = `${t('searchResults')}: "${searchQuery}" — ${storeName || 'Ordis'}`;
       
       return {
         title,
@@ -509,11 +509,11 @@ export default function Home() {
       const welcomeTitle = getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage);
       const welcomeSubtitle = getLocalizedField(storeSettings, 'welcomeSubtitle', currentLanguage);
       
-      const title = storeName || 'eDAHouse';
+      const title = storeName || 'Ordis';
         
       const description = welcomeSubtitle || 
         getLocalizedField(storeSettings, 'description', currentLanguage) ||
-        getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage) || storeName || 'eDAHouse';
+        getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage) || storeName || 'Ordis';
       
       // Prepare categories for sitelinks (active categories only)
       const categoriesForSEO = categories

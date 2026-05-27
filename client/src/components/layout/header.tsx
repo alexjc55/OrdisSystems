@@ -184,7 +184,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   return validLogoUrl ? (
                     <img 
                       src={validLogoUrl} 
-                      alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"} 
+                      alt={getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || 'Ordis'} 
                       className="h-8 md:h-10 w-auto mr-2 md:mr-3 rtl:mr-0 rtl:ml-2 md:rtl:ml-3 flex-shrink-0"
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
@@ -209,7 +209,7 @@ export default function Header({ onResetView }: HeaderProps) {
                   }
                   return (
                     <h1 className="text-lg md:text-2xl font-poppins font-bold text-primary truncate">
-                      {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || "eDAHouse"}
+                      {getMultilingualValue(storeSettings, 'storeName', currentLanguage as SupportedLanguage) || 'Ordis'}
                     </h1>
                   );
                 })()}

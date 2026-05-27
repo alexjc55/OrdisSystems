@@ -106,7 +106,7 @@ export function SliderHeader({ storeSettings, t, isRTL, currentLanguage }: Slide
       <div className="relative h-[60vh] md:h-[80vh] bg-gradient-to-br from-primary to-primary-hover flex items-center justify-center">
         <div className="text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
-            {getMultilingualValue(storeSettings, 'storeName', currentLanguage, defaultLanguage) || "eDAHouse"}
+            {getMultilingualValue(storeSettings, 'storeName', currentLanguage, defaultLanguage) || 'Ordis'}
           </h1>
           <p className="text-xl md:text-2xl opacity-90">
             {getMultilingualValue(storeSettings, 'welcomeTitle', currentLanguage, defaultLanguage) || t('welcome')}

@@ -4,7 +4,7 @@
 export const themeConfig = {
   // Brand Identity
   brand: {
-    name: "eDAHouse",
+    name: "Ordis",
     primaryColor: "hsl(24.6, 95%, 53.1%)", // Orange
     primaryColorDark: "hsl(20.5, 90%, 48%)",
     primaryColorLight: "hsl(24.6, 95%, 96%)",

@@ -52,11 +52,11 @@ export default function GuestOrderPage() {
   // SEO for guest order page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
   const title = order 
-    ? `${t('order.order')} #${order.id} - ${storeName || 'eDAHouse'}` 
-    : `${t('order.viewOrder')} - ${storeName || 'eDAHouse'}`;
+    ? `${t('order.order')} #${order.id} - ${storeName || 'Ordis'}` 
+    : `${t('order.viewOrder')} - ${storeName || 'Ordis'}`;
   const description = order 
     ? `${t('order.orderDetails')} #${order.id} - ${order.status}` 
-    : `${t('order.viewOrderDetails')} ${storeName || 'eDAHouse'}`;
+    : `${t('order.viewOrderDetails')} ${storeName || 'Ordis'}`;
   
   useSEO({
     title,

@@ -11247,7 +11247,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       // Email notification settings
       emailNotificationsEnabled: storeSettings?.emailNotificationsEnabled || false,
       orderNotificationEmail: storeSettings?.orderNotificationEmail || "",
-      orderNotificationFromName: storeSettings?.orderNotificationFromName || "eDAHouse Store",
+      orderNotificationFromName: storeSettings?.orderNotificationFromName || "Ordis",
       orderNotificationFromEmail: storeSettings?.orderNotificationFromEmail || "noreply@edahouse.com",
       smtpHost: storeSettings?.smtpHost || "",
       smtpPort: storeSettings?.smtpPort || 587,
@@ -11370,7 +11370,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         // Email notification settings
         emailNotificationsEnabled: storeSettings?.emailNotificationsEnabled || false,
         orderNotificationEmail: storeSettings?.orderNotificationEmail || "",
-        orderNotificationFromName: storeSettings?.orderNotificationFromName || "eDAHouse Store",
+        orderNotificationFromName: storeSettings?.orderNotificationFromName || "Ordis",
         orderNotificationFromEmail: storeSettings?.orderNotificationFromEmail || "noreply@edahouse.com",
         smtpHost: storeSettings?.smtpHost || "",
         smtpPort: storeSettings?.smtpPort || 587,

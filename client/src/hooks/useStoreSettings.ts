@@ -20,7 +20,7 @@ export function useStoreSettings() {
           // Ensure all required fields have safe fallbacks
           return {
             ...data,
-            storeName: data.storeName || "eDAHouse",
+            storeName: data.storeName || "Ordis",
             welcomeTitle: data.welcomeTitle || "",
             storeDescription: data.storeDescription || "",
             workingHours: data.workingHours || {}
@@ -29,7 +29,7 @@ export function useStoreSettings() {
         
         // Return safe default structure
         return {
-          storeName: "eDAHouse",
+          storeName: "Ordis",
           welcomeTitle: "",
           storeDescription: "",
           workingHours: {}
@@ -37,7 +37,7 @@ export function useStoreSettings() {
       } catch (error) {
         console.error('Error fetching store settings:', error);
         return {
-          storeName: "eDAHouse",
+          storeName: "Ordis",
           welcomeTitle: "",
           storeDescription: "",
           workingHours: {}

@@ -192,8 +192,8 @@ export default function ThanksPage() {
 
   // SEO for thanks page
   const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
-  const title = `${t('thanks.title')} - ${storeName || 'eDAHouse'}`;
-  const description = `${t('thanks.orderConfirmed')} ${storeName || 'eDAHouse'}`;
+  const title = `${t('thanks.title')} - ${storeName || 'Ordis'}`;
+  const description = `${t('thanks.orderConfirmed')} ${storeName || 'Ordis'}`;
   
   useSEO({
     title,
@@ -538,7 +538,7 @@ export default function ThanksPage() {
         {/* Footer Message */}
         <div className="text-center mt-12 text-gray-500">
           <p className="text-sm">
-            {t('thanks.footerMessage').replace('{{storeName}}', storeName || 'eDAHouse')}
+            {t('thanks.footerMessage').replace('{{storeName}}', storeName || 'Ordis')}
           </p>
         </div>
       </div>

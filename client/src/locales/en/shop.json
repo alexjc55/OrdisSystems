@@ -1,7 +1,7 @@
 {
   "paymentMethod": "Payment Method",
   "searchResults": "Search Results",
-  "defaultWelcomeTitle": "eDAHouse - Home-cooked Food by Weight",
+  "defaultWelcomeTitle": "Ordis",
   "foundItems": "Found {{count}} items",
   "workingHours": "Working Hours",
   "notSpecified": "Not specified",

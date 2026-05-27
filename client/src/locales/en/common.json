@@ -495,8 +495,8 @@
   },
   "pwa": {
     "installTitle": "Install App",
-    "installDescription": "Install eDAHouse for convenient access without browser",
-    "installDescriptionIOS": "Add eDAHouse to your home screen for quick access",
+    "installDescription": "Install Ordis for convenient access without browser",
+    "installDescriptionIOS": "Add Ordis to your home screen for quick access",
     "install": "Install",
     "installApp": "Install App",
     "later": "Later",

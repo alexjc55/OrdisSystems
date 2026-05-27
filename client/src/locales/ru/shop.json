@@ -1,7 +1,7 @@
 {
   "paymentMethod": "Способ оплаты",
   "searchResults": "Результаты поиска",
-  "defaultWelcomeTitle": "eDAHouse - Домашняя еда на развес",
+  "defaultWelcomeTitle": "Ordis",
   "foundItems": "Найдено {{count}} товаров",
   "workingHours": "Часы работы",
   "notSpecified": "Не указано",
