@@ -208,7 +208,9 @@ ALTER TABLE categories
   ADD COLUMN IF NOT EXISTS description_en TEXT,
   ADD COLUMN IF NOT EXISTS description_he TEXT,
   ADD COLUMN IF NOT EXISTS description_ar TEXT,
-  ADD COLUMN IF NOT EXISTS image VARCHAR(500);
+  ADD COLUMN IF NOT EXISTS image VARCHAR(500),
+  ADD COLUMN IF NOT EXISTS external_id VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS external_source VARCHAR(50);
 
 -- -----------------------------------------------------------
 -- products

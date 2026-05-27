@@ -29,6 +29,7 @@ interface MenuData {
   categories: ImportCategory[];
   items: ImportItem[];
   existingExternalIds: string[];
+  existingCategoryExternalIds: string[];
 }
 
 type Step = 'url' | 'categories' | 'items' | 'done';
@@ -65,11 +66,12 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
   const [error, setError] = useState('');
   const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [existingIds, setExistingIds] = useState<Set<string>>(new Set());
+  const [existingCategoryIds, setExistingCategoryIds] = useState<Set<string>>(new Set());
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set());
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [itemPrices, setItemPrices] = useState<Record<string, string>>({});
   const [itemUnits, setItemUnits] = useState<Record<string, string>>({});
-  const [importResult, setImportResult] = useState<{ categoriesCreated: number; itemsCreated: number } | null>(null);
+  const [importResult, setImportResult] = useState<{ categoriesCreated: number; categoriesMatched: number; itemsCreated: number } | null>(null);
   const [itemFilter, setItemFilter] = useState<'all' | 'new'>('new');
   const [showManualPanel, setShowManualPanel] = useState(false);
   const [manualJson, setManualJson] = useState('');
@@ -107,6 +109,7 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     setError('');
     setMenuData(null);
     setExistingIds(new Set());
+    setExistingCategoryIds(new Set());
     setSelectedCategoryIds(new Set());
     setSelectedItemIds(new Set());
     setItemPrices({});
@@ -126,9 +129,11 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     return null;
   };
 
-  const applyMenuData = (data: MenuData & { existingExternalIds: string[] }) => {
+  const applyMenuData = (data: MenuData & { existingExternalIds: string[]; existingCategoryExternalIds: string[] }) => {
     const existing = new Set<string>(data.existingExternalIds || []);
+    const existingCats = new Set<string>(data.existingCategoryExternalIds || []);
     setExistingIds(existing);
+    setExistingCategoryIds(existingCats);
     setMenuData(data);
     setSelectedCategoryIds(new Set(data.categories.map((c: ImportCategory) => c.id)));
     const newItemIds = new Set<string>(
@@ -146,6 +151,8 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     setItemFilter(existing.size > 0 ? 'new' : 'all');
     setStep('categories');
   };
+
+  const isCategoryExisting = (catId: string) => existingCategoryIds.has(catId);
 
   const handleManualParse = async () => {
     if (!manualJson.trim()) return;
@@ -497,11 +504,17 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                 {menuData.categories.map(cat => {
                   const catItems = menuData.items.filter(i => i.categoryId === cat.id);
                   const newCount = catItems.filter(i => isNew(i.id)).length;
+                  const catExists = isCategoryExisting(cat.id);
                   return (
                     <label key={cat.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                       <Checkbox checked={selectedCategoryIds.has(cat.id)} onCheckedChange={() => toggleCategory(cat.id)} />
                       <span className="flex-1 font-medium text-sm">{cat.name}</span>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {catExists && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-500">
+                            {t('в каталоге', 'in catalog', 'בקטלוג', 'في الكتالوج')}
+                          </span>
+                        )}
                         {isDiffMode && newCount > 0 && (
                           <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
                             +{newCount} {t('новых', 'new', 'חדשים', 'جديد')}
@@ -707,14 +720,26 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                 <h3 className="text-xl font-semibold text-gray-900">
                   {t('Импорт завершён!', 'Import complete!', 'הייבוא הושלם!', 'اكتمل الاستيراد!')}
                 </h3>
-                <p className="text-gray-600 mt-2">
-                  {t('Создано', 'Created', 'נוצרו', 'تم إنشاء')}{' '}
-                  <b>{importResult.categoriesCreated}</b>{' '}
-                  {t('категорий', 'categories', 'קטגוריות', 'فئات')}{' '}
-                  {t('и', 'and', 'ו-', 'و')}{' '}
-                  <b>{importResult.itemsCreated}</b>{' '}
-                  {t('товаров', 'products', 'מוצרים', 'منتجات')}
-                </p>
+                <div className="text-gray-600 mt-2 space-y-1">
+                  {importResult.categoriesCreated > 0 && (
+                    <p>
+                      {t('Создано', 'Created', 'נוצרו', 'تم إنشاء')}{' '}
+                      <b>{importResult.categoriesCreated}</b>{' '}
+                      {t('новых категорий', 'new categories', 'קטגוריות חדשות', 'فئات جديدة')}
+                    </p>
+                  )}
+                  {importResult.categoriesMatched > 0 && (
+                    <p>
+                      <b>{importResult.categoriesMatched}</b>{' '}
+                      {t('категорий уже были в каталоге', 'categories already in catalog', 'קטגוריות כבר היו בקטלוג', 'فئات كانت موجودة بالفعل')}
+                    </p>
+                  )}
+                  <p>
+                    {t('Добавлено', 'Added', 'נוספו', 'تمت إضافة')}{' '}
+                    <b>{importResult.itemsCreated}</b>{' '}
+                    {t('товаров', 'products', 'מוצרים', 'منتجات')}
+                  </p>
+                </div>
               </div>
             </div>
           )}

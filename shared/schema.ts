@@ -70,6 +70,8 @@ export const categories = pgTable("categories", {
   image: varchar("image", { length: 500 }),
   isActive: boolean("is_active").default(true).notNull(),
   sortOrder: integer("sort_order").default(0),
+  externalId: varchar("external_id", { length: 255 }),
+  externalSource: varchar("external_source", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

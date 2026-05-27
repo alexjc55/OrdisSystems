@@ -2,8 +2,8 @@ import { Router } from "express";
 import { isAuthenticated } from "../../middleware/auth-guard";
 import { storage } from "../../storage";
 import { db } from "../../db";
-import { products } from "@shared/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { products, categories } from "@shared/schema";
+import { eq, and } from "drizzle-orm";
 
 const router = Router();
 
@@ -51,15 +51,13 @@ async function fetch10bisMenu(restaurantId: string) {
   if (!resp.ok) throw new Error('Failed to fetch 10bis menu');
   const json = await resp.json() as any;
 
-  // API wraps everything in json.Data
   const data = json.Data ?? json;
   const categoriesRaw: any[] = data.categoriesList || [];
   if (categoriesRaw.length === 0) throw new Error('No menu data in response');
 
-  // Restaurant name not returned by this endpoint — use ID as fallback
   const restaurantName: string = data.ShopInfo?.restaurantName || `Restaurant #${restaurantId}`;
 
-  const categories = categoriesRaw.map((cat: any) => ({
+  const cats = categoriesRaw.map((cat: any) => ({
     id: String(cat.categoryID ?? cat.categoryId),
     name: cat.categoryName,
     itemCount: (cat.dishList || []).length,
@@ -78,7 +76,7 @@ async function fetch10bisMenu(restaurantId: string) {
     }));
   });
 
-  return { platform: '10bis' as const, restaurantName, categories, items };
+  return { platform: '10bis' as const, restaurantName, categories: cats, items };
 }
 
 async function fetchWoltMenu(slug: string) {
@@ -119,7 +117,7 @@ async function fetchWoltMenu(slug: string) {
   if (!text || text.trim().length === 0) throw new Error('Empty response from Wolt');
   const menuData = JSON.parse(text) as any;
 
-  const categories = (menuData.categories || []).map((cat: any) => ({
+  const cats = (menuData.categories || []).map((cat: any) => ({
     id: cat.id,
     name: cat.name,
     itemCount: cat.item_count || 0,
@@ -137,7 +135,7 @@ async function fetchWoltMenu(slug: string) {
       categoryId: item.category || ''
     }));
 
-  return { platform: 'wolt' as const, restaurantName, categories, items };
+  return { platform: 'wolt' as const, restaurantName, categories: cats, items };
 }
 
 function parse10bisJson(json: any, restaurantId: string) {
@@ -147,7 +145,7 @@ function parse10bisJson(json: any, restaurantId: string) {
 
   const restaurantName: string = data.ShopInfo?.restaurantName || `Restaurant #${restaurantId}`;
 
-  const categories = categoriesRaw.map((cat: any) => ({
+  const cats = categoriesRaw.map((cat: any) => ({
     id: String(cat.categoryID ?? cat.categoryId),
     name: cat.categoryName,
     itemCount: (cat.dishList || []).length,
@@ -166,7 +164,32 @@ function parse10bisJson(json: any, restaurantId: string) {
     }));
   });
 
-  return { platform: '10bis' as const, restaurantName, categories, items };
+  return { platform: '10bis' as const, restaurantName, categories: cats, items };
+}
+
+// Helper: fetch existing product external IDs and category external IDs for a platform
+async function fetchExistingIds(platform: string) {
+  let existingExternalIds: string[] = [];
+  let existingCategoryExternalIds: string[] = [];
+  try {
+    const existingProducts = await db
+      .select({ externalId: products.externalId })
+      .from(products)
+      .where(eq(products.externalSource, platform));
+    existingExternalIds = existingProducts.map(p => p.externalId).filter(Boolean) as string[];
+  } catch (e: any) {
+    console.warn('Catalog import: could not query existing product external IDs:', e.message);
+  }
+  try {
+    const existingCats = await db
+      .select({ externalId: categories.externalId })
+      .from(categories)
+      .where(eq(categories.externalSource, platform));
+    existingCategoryExternalIds = existingCats.map(c => c.externalId).filter(Boolean) as string[];
+  } catch (e: any) {
+    console.warn('Catalog import: could not query existing category external IDs:', e.message);
+  }
+  return { existingExternalIds, existingCategoryExternalIds };
 }
 
 router.post('/admin/catalog-import/parse-raw', isAuthenticated, async (req: any, res) => {
@@ -189,16 +212,9 @@ router.post('/admin/catalog-import/parse-raw', isAuthenticated, async (req: any,
     const restaurantId = url ? (extract10bisId(url) || 'unknown') : 'unknown';
     const menuData = parse10bisJson(parsed, restaurantId);
 
-    let existingExternalIds: string[] = [];
-    try {
-      const existingProducts = await db
-        .select({ externalId: products.externalId })
-        .from(products)
-        .where(eq(products.externalSource, '10bis'));
-      existingExternalIds = existingProducts.map(p => p.externalId).filter(Boolean) as string[];
-    } catch {}
+    const { existingExternalIds, existingCategoryExternalIds } = await fetchExistingIds('10bis');
 
-    res.json({ ...menuData, existingExternalIds });
+    res.json({ ...menuData, existingExternalIds, existingCategoryExternalIds });
   } catch (error: any) {
     console.error('Catalog import parse-raw error:', error.message);
     res.status(400).json({ error: 'parse_failed', message: 'Не удалось разобрать JSON: ' + error.message });
@@ -235,23 +251,9 @@ router.post('/admin/catalog-import/fetch', isAuthenticated, async (req: any, res
       menuData = await fetchWoltMenu(slug);
     }
 
-    // Diff: find which external IDs already exist in DB for this platform
-    // Wrapped in try/catch — gracefully handles DB without external_id/external_source columns yet
-    let existingExternalIds: string[] = [];
-    try {
-      const existingProducts = await db
-        .select({ externalId: products.externalId })
-        .from(products)
-        .where(eq(products.externalSource, platform));
-      existingExternalIds = existingProducts
-        .map(p => p.externalId)
-        .filter(Boolean) as string[];
-    } catch (dbErr: any) {
-      // Columns may not exist on older DB — diff mode simply disabled
-      console.warn('Catalog import: could not query existing external IDs (run migration):', dbErr.message);
-    }
+    const { existingExternalIds, existingCategoryExternalIds } = await fetchExistingIds(platform);
 
-    res.json({ ...menuData, existingExternalIds });
+    res.json({ ...menuData, existingExternalIds, existingCategoryExternalIds });
   } catch (error: any) {
     console.error('Catalog import fetch error:', error.message);
     res.status(500).json({ error: 'fetch_failed', message: 'Не удалось получить меню с товарами: ' + error.message });
@@ -263,8 +265,8 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     const user = await storage.getUser(req.user.id);
     if (!user || user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
 
-    const { categories, items, targetLanguage, platform } = req.body;
-    if (!Array.isArray(categories) || !Array.isArray(items)) {
+    const { categories: categoriesToImport, items, targetLanguage, platform } = req.body;
+    if (!Array.isArray(categoriesToImport) || !Array.isArray(items)) {
       return res.status(400).json({ message: 'Invalid data' });
     }
 
@@ -272,21 +274,50 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     const nameField = lang === 'ru' ? 'name' : `name_${lang}`;
     const descField = lang === 'ru' ? 'description' : `description_${lang}`;
 
+    const validSource = ['wolt', '10bis'].includes(platform) ? platform : null;
+
     const categoryIdMap = new Map<string, number>();
     let categoriesCreated = 0;
+    let categoriesMatched = 0;
 
-    for (const cat of categories) {
-      const created = await storage.createCategory({
-        [nameField]: cat.name,
-        isActive: true,
-        sortOrder: 0
-      } as any);
-      categoryIdMap.set(cat.externalId, created.id);
-      categoriesCreated++;
+    for (const cat of categoriesToImport) {
+      // Check if a category with this external_id+source already exists
+      let existingCatId: number | null = null;
+      if (cat.externalId && validSource) {
+        try {
+          const found = await db
+            .select({ id: categories.id })
+            .from(categories)
+            .where(and(
+              eq(categories.externalId, cat.externalId),
+              eq(categories.externalSource, validSource)
+            ))
+            .limit(1);
+          if (found.length > 0) {
+            existingCatId = found[0].id;
+          }
+        } catch {}
+      }
+
+      if (existingCatId !== null) {
+        // Reuse existing category
+        categoryIdMap.set(cat.externalId, existingCatId);
+        categoriesMatched++;
+      } else {
+        // Create new category with external_id tracking
+        const created = await storage.createCategory({
+          [nameField]: cat.name,
+          isActive: true,
+          sortOrder: 0,
+          externalId: cat.externalId || null,
+          externalSource: validSource,
+        } as any);
+        categoryIdMap.set(cat.externalId, created.id);
+        categoriesCreated++;
+      }
     }
 
     const validUnits = ['piece', 'portion', 'kg', '100g', '100ml'];
-    const validSource = ['wolt', '10bis'].includes(platform) ? platform : null;
 
     let itemsCreated = 0;
     for (const item of items) {
@@ -313,7 +344,7 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
       itemsCreated++;
     }
 
-    res.json({ categoriesCreated, itemsCreated });
+    res.json({ categoriesCreated, categoriesMatched, itemsCreated });
   } catch (error: any) {
     console.error('Catalog import error:', error);
     res.status(500).json({ message: error.message || 'Import failed' });
