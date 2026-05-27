@@ -73,10 +73,10 @@ export function generateRestaurantSchema(
       "@type": "PostalAddress",
       "streetAddress": settings.address
     } : undefined,
-    "servesCuisine": "Домашняя кухня",
+    "servesCuisine": "Home cooking",
     "priceRange": "$$",
-    "serviceType": "Доставка еды",
-    "areaServed": "Местная доставка",
+    "serviceType": "Food delivery",
+    "areaServed": "Local delivery",
     "openingHours": settings.workingHours ? 
       Object.entries(settings.workingHours)
         .filter(([_, hours]: [string, any]) => hours.isOpen)
@@ -87,8 +87,8 @@ export function generateRestaurantSchema(
     // Delivery information
     "hasDeliveryMethod": settings.deliveryFee || settings.freeDeliveryFrom ? {
       "@type": "DeliveryMethod",
-      "name": "Доставка на дом",
-      "deliveryTime": settings.deliveryInfo || "В соответствии с расписанием работы",
+      "name": "Home delivery",
+      "deliveryTime": settings.deliveryInfo || "According to working hours",
       "deliveryCharge": settings.deliveryFee ? {
         "@type": "MonetaryAmount",
         "value": parseFloat(settings.deliveryFee),
@@ -96,7 +96,7 @@ export function generateRestaurantSchema(
       } : undefined,
       "offers": settings.freeDeliveryFrom ? {
         "@type": "Offer",
-        "name": "Бесплатная доставка",
+        "name": "Free delivery",
         "eligibleTransactionVolume": {
           "@type": "PriceSpecification",
           "price": parseFloat(settings.freeDeliveryFrom),
@@ -107,7 +107,7 @@ export function generateRestaurantSchema(
     // Payment methods
     "paymentAccepted": settings.paymentMethods && Array.isArray(settings.paymentMethods) 
       ? settings.paymentMethods.filter((pm: any) => pm.enabled).map((pm: any) => pm.name)
-      : ["Наличные", "Кредитная карта"]
+      : ["Cash", "Credit card"]
   };
 }
 
@@ -123,8 +123,8 @@ export function generateCategoriesItemListSchema(
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": "Категории товаров",
-    "description": "Категории блюд для доставки",
+    "name": "Menu categories",
+    "description": "Food delivery menu categories",
     "itemListElement": categories.map((category, index) => ({
       "@type": "ListItem",
       "position": index + 1,
@@ -148,8 +148,8 @@ export function generateProductsItemListSchema(
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "name": title || "Специальные предложения",
-    "description": "Популярные блюда с доставкой",
+    "name": title || "Special offers",
+    "description": "Popular dishes with delivery",
     "itemListElement": products.map((product, index) => ({
       "@type": "ListItem",
       "position": index + 1,
@@ -174,7 +174,7 @@ export function generateProductSchema(
     "name": product.name,
     "description": product.description || product.name,
     "image": product.imageUrl ? (product.imageUrl.startsWith('http') ? product.imageUrl : origin + product.imageUrl) : undefined,
-    "category": product.category || "Готовая еда",
+    "category": product.category || "Ready meals",
     "offers": {
       "@type": "Offer",
       "price": product.price,
@@ -182,8 +182,7 @@ export function generateProductSchema(
       "availability": product.isAvailable !== false ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "url": currentUrl,
       "seller": {
-        "@type": "Restaurant",
-        "name": "eDAHouse"
+        "@type": "Restaurant"
       }
     }
   };

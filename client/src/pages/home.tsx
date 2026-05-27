@@ -479,7 +479,7 @@ export default function Home() {
       // All products page SEO
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
       const title = `${t('allProducts')} - ${storeName || 'eDAHouse'}`;
-      const description = `Просмотр всех товаров в магазине ${storeName}`;
+      const description = `${t('allProducts')} — ${storeName || 'eDAHouse'}`;
       
       return {
         title,
@@ -493,7 +493,7 @@ export default function Home() {
       // Search results SEO
       const storeName = getLocalizedField(storeSettings, 'storeName', currentLanguage);
       const title = `${t('searchResults')}: "${searchQuery}" - ${storeName || 'eDAHouse'}`;
-      const description = `Результаты поиска "${searchQuery}" в магазине ${storeName}`;
+      const description = `${t('searchResults')}: "${searchQuery}" — ${storeName || 'eDAHouse'}`;
       
       return {
         title,
@@ -515,7 +515,7 @@ export default function Home() {
         
       const description = welcomeSubtitle || 
         getLocalizedField(storeSettings, 'description', currentLanguage) ||
-        'Система доставки готовой еды с многоязычной поддержкой';
+        getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage) || storeName || 'eDAHouse';
       
       // Prepare categories for sitelinks (active categories only)
       const categoriesForSEO = categories

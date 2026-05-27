@@ -84,9 +84,13 @@ Sitemap: ${req.protocol}://${req.get('host')}/sitemap.xml`);
 router.get('/sitemap.xml', async (req, res) => {
   try {
     const categories = await storage.getCategories();
-    const products = await storage.getProducts();
+    const settings = await storage.getStoreSettings();
     const baseUrl = `${req.protocol}://${req.get('host')}`;
-    const languages = ['ru', 'en', 'he', 'ar'];
+    const allLanguages = ['ru', 'en', 'he', 'ar'];
+    const enabledLanguages: string[] = Array.isArray((settings as any)?.enabledLanguages) && (settings as any).enabledLanguages.length > 0
+      ? (settings as any).enabledLanguages
+      : allLanguages;
+    const languages = allLanguages.filter(l => enabledLanguages.includes(l));
     const now = new Date().toISOString();
 
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>

@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -114,6 +115,9 @@ export default function ChangePasswordPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
+      <Helmet>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Link href="/">

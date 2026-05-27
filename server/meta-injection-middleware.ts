@@ -150,7 +150,7 @@ export function metaInjectionMiddleware() {
         const productsSchema = generateProductsItemListSchema(
           featuredProducts,
           origin,
-          settings?.storeName ? `Специальные предложения ${settings.storeName}` : 'Специальные предложения'
+          settings?.storeName ? `Special offers — ${settings.storeName}` : 'Special offers'
         );
         if (productsSchema) {
           structuredDataParts.push(`

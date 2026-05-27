@@ -519,7 +519,8 @@ export default function Checkout() {
     keywords: generateKeywords(title, description),
     ogTitle: title,
     ogDescription: description,
-    canonical: currentLanguage === 'ru' ? '/checkout' : `/${currentLanguage}/checkout`
+    canonical: currentLanguage === 'ru' ? '/checkout' : `/${currentLanguage}/checkout`,
+    noindex: true
   });
   
   // Helper function to get payment method name for current language with fallback to Russian

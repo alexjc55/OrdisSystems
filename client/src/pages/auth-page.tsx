@@ -60,7 +60,8 @@ export default function AuthPage() {
     keywords: generateKeywords(title, description),
     ogTitle: title,
     ogDescription: description,
-    canonical: currentLanguage === 'ru' ? '/auth' : `/${currentLanguage}/auth`
+    canonical: currentLanguage === 'ru' ? '/auth' : `/${currentLanguage}/auth`,
+    noindex: true
   });
 
   // Dynamic validation messages based on current language

@@ -12,6 +12,7 @@ interface SEOData {
   ogDescription?: string;
   ogImage?: string;
   canonical?: string;
+  noindex?: boolean;
 }
 
 /**
@@ -27,6 +28,7 @@ export function useSEO(seoData: SEOData) {
       keywords={seoData.keywords}
       ogImage={seoData.ogImage}
       canonical={seoData.canonical}
+      noindex={seoData.noindex}
     />
   );
 }

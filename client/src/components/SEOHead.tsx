@@ -16,6 +16,7 @@ interface SEOHeadProps {
   keywords?: string;
   canonical?: string;
   ogImage?: string;
+  noindex?: boolean;
   geo?: {
     region?: string;
     placename?: string;
@@ -86,6 +87,7 @@ export function SEOHead({
   keywords, 
   canonical,
   ogImage,
+  noindex,
   geo,
   categories,
   products,
@@ -167,8 +169,11 @@ export function SEOHead({
       {keywords && <meta name="keywords" content={keywords} />}
       <html lang={currentLanguage} />
       
+      {/* Robots */}
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      
       {/* Canonical URL */}
-      <link rel="canonical" href={canonicalUrl} />
+      {!noindex && <link rel="canonical" href={canonicalUrl} />}
       
       {/* Hreflang Links for Multilingual SEO */}
       {hreflangLinks.map((link, index) => (

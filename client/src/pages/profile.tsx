@@ -67,7 +67,8 @@ export default function Profile() {
     keywords: generateKeywords(title, description),
     ogTitle: title,
     ogDescription: description,
-    canonical: currentLanguage === 'ru' ? '/profile' : `/${currentLanguage}/profile`
+    canonical: currentLanguage === 'ru' ? '/profile' : `/${currentLanguage}/profile`,
+    noindex: true
   });
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<UserAddress | null>(null);
