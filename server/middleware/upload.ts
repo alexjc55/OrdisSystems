@@ -82,22 +82,33 @@ export async function processUploadedImage(req: any, res: any, next: any) {
     const originalPath = req.file.path;
     const filename = req.file.filename;
     const nameWithoutExt = path.parse(filename).name;
-    const optimizedPath = path.join(optimizedDir, `${nameWithoutExt}.jpg`);
+
+    // Detect if PNG with alpha channel — preserve transparency instead of converting to JPEG
+    const metadata = await sharp(originalPath).metadata();
+    const isPngWithAlpha = metadata.format === 'png' && metadata.hasAlpha;
+    const outputExt = isPngWithAlpha ? 'png' : 'jpg';
+
+    const optimizedPath = path.join(optimizedDir, `${nameWithoutExt}.${outputExt}`);
     const thumbnailPath = path.join(thumbnailsDir, `${nameWithoutExt}.jpg`);
 
-    await optimizeImage(originalPath, optimizedPath, 80, 800);
+    if (isPngWithAlpha) {
+      await sharp(originalPath)
+        .resize(800, null, { withoutEnlargement: true, fit: 'inside' })
+        .png({ compressionLevel: 6 })
+        .toFile(optimizedPath);
+    } else {
+      await optimizeImage(originalPath, optimizedPath, 80, 800);
+    }
+
     await generateThumbnail(originalPath, thumbnailPath, 200);
 
     const originalSize = fs.statSync(originalPath).size;
     const optimizedSize = fs.statSync(optimizedPath).size;
-    const thumbnailSize = fs.statSync(thumbnailPath).size;
 
-    console.log(`📸 Image optimized: ${filename}`);
-    console.log(`   Original: ${(originalSize / 1024).toFixed(1)}KB`);
-    console.log(`   Optimized: ${(optimizedSize / 1024).toFixed(1)}KB (${((1 - optimizedSize / originalSize) * 100).toFixed(1)}% smaller)`);
-    console.log(`   Thumbnail: ${(thumbnailSize / 1024).toFixed(1)}KB`);
+    console.log(`📸 Image optimized: ${filename} (${isPngWithAlpha ? 'PNG+alpha preserved' : 'JPEG'})`);
+    console.log(`   Original: ${(originalSize / 1024).toFixed(1)}KB → Optimized: ${(optimizedSize / 1024).toFixed(1)}KB`);
 
-    req.file.optimizedPath = `/uploads/optimized/${nameWithoutExt}.jpg`;
+    req.file.optimizedPath = `/uploads/optimized/${nameWithoutExt}.${outputExt}`;
     req.file.thumbnailPath = `/uploads/thumbnails/${nameWithoutExt}.jpg`;
     req.file.originalPath = req.file.path;
     next();

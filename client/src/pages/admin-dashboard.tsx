@@ -10804,153 +10804,6 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="icon"
-                  render={({ field }) => {
-                    const commonIcons = [
-                      "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛", 
-                      "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
-                      "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯",
-                      "🥫", "🧄", "🫒", "🌶️", "🥒", "🍅", "🥑", "🥬",
-                      "🍄", "🌰", "🥔", "🍠", "🫘", "🧊", "🍳", "🥓",
-                      "🌭", "🥨", "🧈", "🥤", "☕", "🍵", "🧃", "🍷",
-                      "🧂", "🫚", "🌿", "🍀", "🥄", "🍋", "🥥", "🌱",
-                      "🫖", "🧉", "🥝", "🍊", "🍌", "🫐", "🍇", "🍈",
-                      "🥣", "🍶", "🏺", "🧊", "🔥", "⭐", "✨", "🎭",
-                      "🔶", "🟫", "🟠", "🟡", "🟢", "🔴", "🟣", "⚫"
-                    ];
-                    
-                    return (
-                      <FormItem>
-                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
-                        <div className="space-y-3">
-                          {/* Current selected icon display */}
-                          <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            {field.value && field.value.startsWith('/uploads/') ? (
-                              <img 
-                                src={field.value} 
-                                alt="Category icon" 
-                                className="w-8 h-8 object-cover rounded"
-                              />
-                            ) : (
-                              <span className="text-2xl">{field.value}</span>
-                            )}
-                            <div className="flex-1">
-                              <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
-                              <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
-                            </div>
-                          </div>
-                          
-                          {/* Icon grid selector */}
-                          <div>
-                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
-                            <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-12 gap-2">
-                              {commonIcons.map((icon) => (
-                                <Button
-                                  key={icon}
-                                  type="button"
-                                  variant={field.value === icon ? "default" : "outline"}
-                                  className={`h-10 w-10 p-0 text-lg ${
-                                    field.value === icon 
-                                      ? "bg-primary border-primary hover:bg-primary" 
-                                      : "hover:bg-orange-50 hover:border-orange-300"
-                                  }`}
-                                  onClick={() => field.onChange(icon)}
-                                >
-                                  {icon}
-                                </Button>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          {/* Custom icon input */}
-                          <div>
-                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
-                            <FormControl>
-                              <Input 
-                                placeholder={adminT('categories.iconPlaceholder')}
-                                value={field.value}
-                                onChange={(e) => field.onChange(e.target.value)}
-                                className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
-                                dir={isRTL ? 'rtl' : 'ltr'}
-                              />
-                            </FormControl>
-                          </div>
-                          
-                          {/* Image upload option */}
-                          <div>
-                            <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
-                              <ImageUpload
-                                value=""
-                                onChange={(url) => {
-                                  if (url) {
-                                    field.onChange(url);
-                                  }
-                                }}
-                              />
-                              <div className={`text-xs text-gray-400 mt-2 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
-                                {adminT('categories.recommendedSize')}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                      </FormItem>
-                    );
-                  }}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('themes.categoryPhotoHint')}</FormLabel>
-                      <FormControl>
-                        <div className="space-y-2">
-                          {field.value && (
-                            <div className="relative w-full h-32 rounded-lg overflow-hidden border">
-                              <img src={field.value} alt="category" className="w-full h-full object-cover" />
-                              <button
-                                type="button"
-                                onClick={() => field.onChange("")}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
-                              >×</button>
-                            </div>
-                          )}
-                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
-                            <ImageUpload
-                              value=""
-                              onChange={(url) => { if (url) field.onChange(url); }}
-                            />
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="isActive"
-                  render={({ field }) => (
-                    <FormItem className={`flex items-center justify-between rounded-lg border p-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <div className={isRTL ? 'text-right' : 'text-left'}>
-                        <FormLabel className="text-sm font-medium">{adminT('categories.showCategory')}</FormLabel>
-                        <p className="text-xs text-gray-500">{adminT('categories.hidden')}</p>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
               </>
             )}
 
@@ -11079,6 +10932,127 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
                 />
               </>
             )}
+
+            {/* ── Shared fields: always visible regardless of active language tab ── */}
+            <div className="border-t border-gray-100 pt-4 space-y-4">
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => {
+                  const commonIcons = [
+                    "🥗", "🍖", "🐟", "🥩", "🥕", "🍎", "🍞", "🥛",
+                    "🍽️", "🥘", "🍱", "🥙", "🧀", "🍯", "🥜", "🍲",
+                    "🍰", "🥧", "🍚", "🌮", "🍕", "🍝", "🥪", "🌯",
+                    "🥫", "🧄", "🫒", "🌶️", "🥒", "🍅", "🥑", "🥬",
+                    "🍄", "🌰", "🥔", "🍠", "🫘", "🧊", "🍳", "🥓",
+                    "🌭", "🥨", "🧈", "🥤", "☕", "🍵", "🧃", "🍷",
+                    "🧂", "🫚", "🌿", "🍀", "🥄", "🍋", "🥥", "🌱",
+                    "🫖", "🧉", "🥝", "🍊", "🍌", "🫐", "🍇", "🍈",
+                    "🥣", "🍶", "🏺", "🧊", "🔥", "⭐", "✨", "🎭",
+                    "🔶", "🟫", "🟠", "🟡", "🟢", "🔴", "🟣", "⚫"
+                  ];
+                  return (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.fields.icon')}</FormLabel>
+                      <div className="space-y-3">
+                        <div className={`flex items-center gap-3 p-3 border rounded-lg bg-gray-50 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          {field.value && field.value.startsWith('/uploads/') ? (
+                            <img src={field.value} alt="Category icon" className="w-8 h-8 object-cover rounded" />
+                          ) : (
+                            <span className="text-2xl">{field.value}</span>
+                          )}
+                          <div className="flex-1">
+                            <div className={`text-sm font-medium ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.selectedIcon')}</div>
+                            <div className={`text-xs text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.clickToSelect')}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.popularIcons')}:</div>
+                          <div className="grid grid-cols-8 sm:grid-cols-10 lg:grid-cols-12 gap-2">
+                            {commonIcons.map((icon) => (
+                              <Button
+                                key={icon}
+                                type="button"
+                                variant={field.value === icon ? "default" : "outline"}
+                                className={`h-10 w-10 p-0 text-lg ${field.value === icon ? "bg-primary border-primary hover:bg-primary" : "hover:bg-orange-50 hover:border-orange-300"}`}
+                                onClick={() => field.onChange(icon)}
+                              >{icon}</Button>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.customIcon')}:</div>
+                          <FormControl>
+                            <Input
+                              placeholder={adminT('categories.iconPlaceholder')}
+                              value={field.value}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}
+                              dir={isRTL ? 'rtl' : 'ltr'}
+                            />
+                          </FormControl>
+                        </div>
+                        <div>
+                          <div className={`text-xs text-gray-600 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.uploadImage')}:</div>
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
+                            <ImageUpload
+                              value=""
+                              onChange={(url) => { if (url) field.onChange(url); }}
+                            />
+                            <div className={`text-xs text-gray-400 mt-2 ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('categories.recommendedSize')}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>{adminT('themes.categoryPhotoHint')}</FormLabel>
+                    <FormControl>
+                      <div className="space-y-2">
+                        {field.value && (
+                          <div className="relative w-full h-32 rounded-lg overflow-hidden border">
+                            <img src={field.value} alt="category" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => field.onChange("")}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                            >×</button>
+                          </div>
+                        )}
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 hover:border-orange-300 transition-colors">
+                          <ImageUpload value="" onChange={(url) => { if (url) field.onChange(url); }} />
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`} />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="isActive"
+                render={({ field }) => (
+                  <FormItem className={`flex items-center justify-between rounded-lg border p-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormLabel className="text-sm font-medium">{adminT('categories.showCategory')}</FormLabel>
+                      <p className="text-xs text-gray-500">{adminT('categories.hidden')}</p>
+                    </div>
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className={`flex flex-col sm:flex-row justify-center gap-3 ${isRTL ? 'sm:flex-row-reverse rtl:space-x-reverse' : 'space-x-4'}`}>
               <Button 
