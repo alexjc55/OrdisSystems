@@ -77,15 +77,19 @@ function CategoryDropdown({
   const selected = allOptions.find((o) => o.id === value);
   const displayLabel = selected ? selected.label : placeholder;
 
+  const isRTL = currentLanguage === 'he' || currentLanguage === 'ar';
+  const dir = isRTL ? 'rtl' : 'ltr';
+
   return (
-    <div ref={containerRef} className="relative w-full">
+    <div ref={containerRef} className="relative w-full" dir={dir}>
       <button
         type="button"
         onClick={() => setOpen((p) => !p)}
         className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         data-testid="select-category"
+        style={{ textAlign: 'start' }}
       >
-        <span className="truncate text-start">{displayLabel}</span>
+        <span className="truncate">{displayLabel}</span>
         <ChevronDown className="h-4 w-4 opacity-50 shrink-0 ms-2" />
       </button>
 
@@ -104,8 +108,9 @@ function CategoryDropdown({
                     onChange(opt.id);
                     setOpen(false);
                   }}
+                  style={{ textAlign: 'start' }}
                   className={cn(
-                    "relative flex w-full cursor-default select-none items-center justify-start text-start rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none",
+                    "relative flex w-full cursor-default select-none items-center justify-start rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none",
                     value === opt.id
                       ? "bg-primary text-white"
                       : "hover:bg-primary hover:text-white"
