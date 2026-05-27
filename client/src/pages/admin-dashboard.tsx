@@ -5941,16 +5941,15 @@ export default function AdminDashboard() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        disabled={toggleSpecialOfferMutation.isPending}
                                         onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !product.isSpecialOffer })}
                                         className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
                                           product.isSpecialOffer
                                             ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
                                             : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
                                         }`}
-                                        title={product.isSpecialOffer ? adminT('products.productsWithDiscount') : adminT('products.productsWithDiscount')}
+                                        title={adminT('products.productsWithDiscount')}
                                       >
-                                        <Star className={`h-5 w-5 ${product.isSpecialOffer ? 'fill-current' : ''}`} />
+                                        <Star className={`h-5 w-5 ${product.isSpecialOffer ? 'fill-yellow-500' : ''}`} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -5997,14 +5996,7 @@ export default function AdminDashboard() {
                                           </div>
                                         </div>
                                       ) : (
-                                        <div className="space-y-1">
-                                          <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
-                                          {product.isSpecialOffer && (
-                                            <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-semibold bg-orange-50 border border-orange-200 text-orange-600">
-                                              ★ {adminT('products.productsWithDiscount')}
-                                            </div>
-                                          )}
-                                        </div>
+                                        <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
                                       )}
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
                                     </div>
@@ -6115,7 +6107,6 @@ export default function AdminDashboard() {
                                       <Button
                                         size="sm"
                                         variant="ghost"
-                                        disabled={toggleSpecialOfferMutation.isPending}
                                         onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !product.isSpecialOffer })}
                                         className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
                                           product.isSpecialOffer
@@ -6124,7 +6115,7 @@ export default function AdminDashboard() {
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                       >
-                                        <Star className={`h-5 w-5 ${product.isSpecialOffer ? 'fill-current' : ''}`} />
+                                        <Star className={`h-5 w-5 ${product.isSpecialOffer ? 'fill-yellow-500' : ''}`} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
