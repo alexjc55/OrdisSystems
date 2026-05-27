@@ -10,15 +10,21 @@ export default function CategoryCarousel({ children, isRTL = false }: CategoryCa
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollStart, setCanScrollStart] = useState(false);
   const [canScrollEnd, setCanScrollEnd] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
-  // Normalize scrollLeft to 0..maxScroll range regardless of RTL browser quirks
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   const getNormalized = (el: HTMLElement) => {
     const raw = el.scrollLeft;
     if (!isRTL) return raw;
-    // Chrome RTL: scrollLeft is negative (0 = right/start, negative = scrolled left)
-    // Firefox RTL: scrollLeft is positive, 0 = right/start, max = scrolled left
-    if (raw <= 0) return Math.abs(raw);                              // Chrome
-    return el.scrollWidth - el.clientWidth - raw;                   // Firefox
+    if (raw <= 0) return Math.abs(raw);
+    return el.scrollWidth - el.clientWidth - raw;
   };
 
   const checkScroll = useCallback(() => {
@@ -34,88 +40,100 @@ export default function CategoryCarousel({ children, isRTL = false }: CategoryCa
     const el = scrollRef.current;
     if (!el) return;
     checkScroll();
-    el.addEventListener('scroll', checkScroll, { passive: true });
+    el.addEventListener("scroll", checkScroll, { passive: true });
     const ro = new ResizeObserver(checkScroll);
     ro.observe(el);
     return () => {
-      el.removeEventListener('scroll', checkScroll);
+      el.removeEventListener("scroll", checkScroll);
       ro.disconnect();
     };
   }, [checkScroll]);
 
-  const scrollBy = (towardEnd: boolean) => {
+  const doScroll = (towardEnd: boolean) => {
     const el = scrollRef.current;
     if (!el) return;
-    // In RTL, "toward end" means scrolling left (negative scrollLeft in Chrome)
-    const amount = 280;
-    let delta = towardEnd ? amount : -amount;
+    let delta = towardEnd ? 280 : -280;
     if (isRTL) delta = -delta;
-    el.scrollBy({ left: delta, behavior: 'smooth' });
+    el.scrollBy({ left: delta, behavior: "smooth" });
   };
 
   const onWheel = (e: React.WheelEvent) => {
     const el = scrollRef.current;
-    if (!el) return;
-    if (e.deltaY !== 0) {
-      e.preventDefault();
-      el.scrollLeft += isRTL ? -e.deltaY : e.deltaY;
-    }
+    if (!el || e.deltaY === 0) return;
+    e.preventDefault();
+    el.scrollLeft += isRTL ? -e.deltaY : e.deltaY;
   };
 
-  // Arrow button base style — display is controlled by className (hidden md:flex), not here
-  const arrowStyle: React.CSSProperties = {
-    position: 'absolute',
-    top: '50%',
-    transform: 'translateY(-50%)',
+  const startSide = isRTL ? "right" : "left";
+  const endSide   = isRTL ? "left"  : "right";
+
+  // Wrapper div handles ALL positioning — button inside only handles appearance.
+  // This prevents global button CSS (direction: rtl, etc.) from affecting layout.
+  const wrapperStyle = (side: string): React.CSSProperties => ({
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    [side]: -14,
     zIndex: 10,
     width: 32,
     height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '50%',
-    backgroundColor: 'white',
-    border: '1px solid #e5e7eb',
-    boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
-    cursor: 'pointer',
+    pointerEvents: "auto",
+  });
+
+  const btnStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    backgroundColor: "white",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+    cursor: "pointer",
   };
 
-  // In RTL: "start" is on the right side, "end" is on the left side
-  const startSide = isRTL ? 'right' : 'left';
-  const endSide   = isRTL ? 'left'  : 'right';
-
   return (
-    <div style={{ position: 'relative' }}>
-      {/* "Back to start" arrow — appears on START side */}
-      {canScrollStart && (
-        <button
-          onClick={() => scrollBy(false)}
-          className="hidden md:flex hover:bg-gray-50"
-          style={{ ...arrowStyle, [startSide]: -14 }}
-          aria-label={isRTL ? 'קדימה' : 'Назад'}
-        >
-          {isRTL ? <ChevronRight className="w-4 h-4 text-gray-600" /> : <ChevronLeft className="w-4 h-4 text-gray-600" />}
-        </button>
+    <div style={{ position: "relative" }}>
+      {isDesktop && canScrollStart && (
+        <div style={wrapperStyle(startSide)}>
+          <button
+            onClick={() => doScroll(false)}
+            style={btnStyle}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#f9fafb")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "white")}
+            aria-label={isRTL ? "קדימה" : "Назад"}
+          >
+            {isRTL
+              ? <ChevronRight className="w-4 h-4 text-gray-600" />
+              : <ChevronLeft  className="w-4 h-4 text-gray-600" />}
+          </button>
+        </div>
       )}
 
       <div
         ref={scrollRef}
         className="flex flex-nowrap gap-2 overflow-x-auto pb-1"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" } as React.CSSProperties}
         onWheel={onWheel}
       >
         {children}
       </div>
 
-      {/* "Go to end" arrow — appears on END side */}
-      {canScrollEnd && (
-        <button
-          onClick={() => scrollBy(true)}
-          className="hidden md:flex hover:bg-gray-50"
-          style={{ ...arrowStyle, [endSide]: -14 }}
-          aria-label={isRTL ? 'אחורה' : 'Вперёд'}
-        >
-          {isRTL ? <ChevronLeft className="w-4 h-4 text-gray-600" /> : <ChevronRight className="w-4 h-4 text-gray-600" />}
-        </button>
+      {isDesktop && canScrollEnd && (
+        <div style={wrapperStyle(endSide)}>
+          <button
+            onClick={() => doScroll(true)}
+            style={btnStyle}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#f9fafb")}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "white")}
+            aria-label={isRTL ? "אחורה" : "Вперёд"}
+          >
+            {isRTL
+              ? <ChevronLeft  className="w-4 h-4 text-gray-600" />
+              : <ChevronRight className="w-4 h-4 text-gray-600" />}
+          </button>
+        </div>
       )}
     </div>
   );
