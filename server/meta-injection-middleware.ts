@@ -89,7 +89,20 @@ export function metaInjectionMiddleware() {
 
       // Load store settings
       const settings = await getSettings();
-      const storeName = settings?.storeName || '';
+      // Pick storeName from the default-language field (falls back through all languages)
+      const _defLang: string = (settings as any)?.defaultLanguage || 'ru';
+      const _nameMap: Record<string, string> = {
+        ru: (settings as any)?.storeName || '',
+        he: (settings as any)?.storeNameHe || '',
+        en: (settings as any)?.storeNameEn || '',
+        ar: (settings as any)?.storeNameAr || '',
+      };
+      const storeName = _nameMap[_defLang]
+        || (settings as any)?.storeName
+        || (settings as any)?.storeNameHe
+        || (settings as any)?.storeNameEn
+        || (settings as any)?.storeNameAr
+        || '';
       const storeDescription =
         settings?.welcomeSubtitle ||
         settings?.description ||
@@ -167,7 +180,7 @@ export function metaInjectionMiddleware() {
         const productsSchema = generateProductsItemListSchema(
           featuredProducts,
           origin,
-          settings?.storeName ? `Special offers — ${settings.storeName}` : 'Special offers'
+          storeName ? `Special offers — ${storeName}` : 'Special offers'
         );
         if (productsSchema) {
           structuredDataParts.push(`

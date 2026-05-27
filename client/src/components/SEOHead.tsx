@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { getLocalizedField } from '@shared/localization';
 import {
   generateRestaurantSchema,
   generateCategoriesItemListSchema,
@@ -110,7 +111,7 @@ export function SEOHead({
 
   // Build full title
   const settingsData = settings as any;
-  const fullTitle = title || settingsData?.storeName || '';
+  const fullTitle = title || getLocalizedField(settingsData, 'storeName', currentLanguage) || '';
 
   // Build canonical URL
   const canonicalUrl = canonical ? origin + canonical : href;
