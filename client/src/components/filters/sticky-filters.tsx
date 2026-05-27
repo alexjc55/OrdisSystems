@@ -94,7 +94,7 @@ function CategoryDropdown({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full min-w-[8rem] rounded-md border bg-popover text-popover-foreground shadow-md">
+        <div className="absolute z-50 mt-1 min-w-full w-max max-w-xs rounded-md border bg-popover text-popover-foreground shadow-md">
           <div
             className="overflow-y-auto overscroll-contain"
             style={{ maxHeight: "15rem", touchAction: "pan-y", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
@@ -108,9 +108,9 @@ function CategoryDropdown({
                     onChange(opt.id);
                     setOpen(false);
                   }}
+                  style={{ textAlign: isRTL ? 'right' : 'left' }}
                   className={cn(
-                    "relative block w-full cursor-default select-none rounded-sm py-2 ps-8 pe-3 text-sm outline-none",
-                    isRTL ? "text-right" : "text-left",
+                    "relative block w-full cursor-default select-none whitespace-nowrap rounded-sm py-1.5 ps-8 pe-3 text-sm outline-none",
                     value === opt.id
                       ? "bg-primary text-white"
                       : "hover:bg-primary hover:text-white"
