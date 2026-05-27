@@ -108,20 +108,20 @@ function CategoryDropdown({
                     onChange(opt.id);
                     setOpen(false);
                   }}
-                  style={{ textAlign: 'start' }}
                   className={cn(
-                    "relative flex w-full cursor-default select-none items-center justify-start rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none",
+                    "relative block w-full cursor-default select-none rounded-sm py-2 ps-8 pe-3 text-sm outline-none",
+                    isRTL ? "text-right" : "text-left",
                     value === opt.id
                       ? "bg-primary text-white"
                       : "hover:bg-primary hover:text-white"
                   )}
                 >
                   {value === opt.id && (
-                    <span className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center">
+                    <span className="absolute start-2 top-1/2 -translate-y-1/2 flex h-3.5 w-3.5 items-center justify-center">
                       <Check className="h-4 w-4" />
                     </span>
                   )}
-                  <span className="text-start">{opt.label}</span>
+                  {opt.label}
                 </button>
               ))}
             </div>
