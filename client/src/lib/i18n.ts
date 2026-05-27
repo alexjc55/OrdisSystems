@@ -133,10 +133,16 @@ export const updateDocumentDirection = (lng: string) => {
   }
 };
 
-// Get initial language from localStorage only (URL handling moved to hook)
+// Get initial language — URL path prefix has highest priority
 const getInitialLanguage = () => {
   if (typeof window !== 'undefined') {
-    // Check localStorage
+    // URL path prefix: /ru/... /en/... /he/... /ar/...
+    const pathMatch = window.location.pathname.match(/^\/(ru|en|he|ar)(\/|$)/);
+    if (pathMatch && Object.keys(LANGUAGES).includes(pathMatch[1])) {
+      localStorage.setItem('language', pathMatch[1]);
+      return pathMatch[1];
+    }
+    // Fallback: localStorage
     const saved = localStorage.getItem('language');
     if (saved && Object.keys(LANGUAGES).includes(saved)) {
       return saved;

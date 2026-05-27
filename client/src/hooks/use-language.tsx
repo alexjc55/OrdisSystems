@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { LANGUAGES, Language, isRTL, updateDocumentDirection, adminTranslations, commonTranslations, shopTranslations } from '../lib/i18n';
+import { stripLangPrefix, buildLangUrl } from './use-lang-prefix';
 
 function lookupInBundle(bundle: Record<string, any>, lang: string, key: string): string | undefined {
   const obj = bundle[lang] || bundle['ru'] || bundle['en'];
@@ -52,14 +53,12 @@ export function useLanguage() {
   };
   
   const changeLanguage = async (lng: Language) => {
-    console.log('Changing language to:', lng);
-    await i18n.changeLanguage(lng);
-    updateDocumentDirection(lng);
+    const defaultLang = (storeSettings as any)?.defaultLanguage || 'ru';
+    const innerPath = stripLangPrefix(window.location.pathname);
+    const search = window.location.search;
+    const newUrl = buildLangUrl(innerPath, lng, defaultLang) + search;
     localStorage.setItem('language', lng);
-    // Force re-render by triggering a small delay
-    setTimeout(() => {
-      window.dispatchEvent(new Event('languageChanged'));
-    }, 100);
+    window.location.href = newUrl;
   };
   
   return {

@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
@@ -24,6 +24,9 @@ import BranchSelectionModal from "@/components/BranchSelectionModal";
 import { useEffect, useState, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { updateDocumentDirection } from "@/lib/i18n";
+import { getLangPrefix, stripLangPrefix } from "@/hooks/use-lang-prefix";
+import { useLanguage } from "@/hooks/use-language";
+import { Helmet } from "react-helmet-async";
 
 // Loads the active theme from the server and applies all saved colors to CSS variables.
 // This ensures that admin-configured colors persist across page refreshes.
@@ -103,6 +106,24 @@ function ActiveThemeApplier() {
 
   return null;
 }
+function HreflangTags() {
+  const { enabledLanguages, defaultLanguage } = useLanguage();
+  const [location] = useLocation();
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const innerPath = location === '/' ? '' : location;
+  return (
+    <Helmet>
+      {(enabledLanguages as string[]).map(lang => {
+        const url = lang === defaultLanguage
+          ? `${origin}${innerPath || '/'}`
+          : `${origin}/${lang}${innerPath || ''}`;
+        return <link key={lang} rel="alternate" hreflang={lang} href={url} />;
+      })}
+      <link rel="alternate" hreflang="x-default" href={`${origin}${innerPath || '/'}`} />
+    </Helmet>
+  );
+}
+
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 
@@ -400,6 +421,7 @@ function Router() {
         <CustomHtml html={storeSettings.headerHtml} type="head" />
       )}
       
+      <HreflangTags />
       <Suspense fallback={
         <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
           <div style={{ width: 40, height: 40, border: '4px solid #fed7aa', borderTopColor: '#f97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -481,19 +503,22 @@ function Router() {
 }
 
 function App() {
+  const langPrefix = typeof window !== 'undefined' ? getLangPrefix(window.location.pathname) : '';
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <ActiveThemeApplier />
-        <AuthProvider>
-          <BranchProvider>
-            <TooltipProvider>
-              <LanguageInitializer />
-              <Toaster />
-              <Router />
-            </TooltipProvider>
-          </BranchProvider>
-        </AuthProvider>
+        <WouterRouter base={langPrefix}>
+          <ActiveThemeApplier />
+          <AuthProvider>
+            <BranchProvider>
+              <TooltipProvider>
+                <LanguageInitializer />
+                <Toaster />
+                <Router />
+              </TooltipProvider>
+            </BranchProvider>
+          </AuthProvider>
+        </WouterRouter>
       </QueryClientProvider>
     </HelmetProvider>
   );
