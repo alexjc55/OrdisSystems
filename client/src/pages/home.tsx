@@ -744,8 +744,9 @@ export default function Home() {
                       if (searchQuery && searchQuery.length > 2) {
                         return `${t('searchResults')}: "${searchQuery}"`;
                       }
-                      if (selectedCategory?.name) {
-                        return getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru');
+                      if (selectedCategory) {
+                        const catName = getLocalizedField(selectedCategory, 'name', currentLanguage as SupportedLanguage, 'ru');
+                        if (catName) return catName;
                       }
                       if (storeSettings?.welcomeTitle) {
                         return getLocalizedField(storeSettings, 'welcomeTitle', currentLanguage as SupportedLanguage, 'ru');
@@ -766,8 +767,9 @@ export default function Home() {
                       if (searchQuery && searchQuery.length > 2) {
                         return t('foundItems').replace('{count}', displayProducts.length.toString());
                       }
-                      if (selectedCategory?.description) {
-                        return getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru');
+                      if (selectedCategory) {
+                        const catDesc = getLocalizedField(selectedCategory, 'description', currentLanguage as SupportedLanguage, 'ru');
+                        if (catDesc) return catDesc;
                       }
                       if (storeSettings?.storeDescription) {
                         return getLocalizedField(storeSettings, 'storeDescription', currentLanguage as SupportedLanguage, 'ru');
