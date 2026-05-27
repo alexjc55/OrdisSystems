@@ -5931,19 +5931,16 @@ export default function AdminDashboard() {
                                           : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
+                                      <button
                                         onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !displaySpecialOffer })}
-                                        className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
-                                          displaySpecialOffer
-                                            ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
-                                            : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
+                                        className={`h-8 w-8 p-0 rounded-lg text-xl leading-none transition-all duration-200 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-yellow-50 ${
+                                          displaySpecialOffer ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
+                                        type="button"
                                       >
-                                        <Star className="h-5 w-5" style={{ fill: displaySpecialOffer ? '#eab308' : 'none', stroke: displaySpecialOffer ? '#eab308' : 'currentColor' }} />
-                                      </Button>
+                                        {displaySpecialOffer ? '★' : '☆'}
+                                      </button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
@@ -6097,19 +6094,16 @@ export default function AdminDashboard() {
                                           : <EyeOff className="h-6 w-6" />
                                         }
                                       </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
+                                      <button
                                         onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !displaySpecialOffer })}
-                                        className={`h-8 w-8 p-0 rounded-lg transition-all duration-200 ${
-                                          displaySpecialOffer
-                                            ? 'text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50'
-                                            : 'text-gray-300 hover:text-yellow-400 hover:bg-yellow-50'
+                                        className={`h-8 w-8 p-0 rounded-lg text-xl leading-none transition-all duration-200 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-yellow-50 ${
+                                          displaySpecialOffer ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
+                                        type="button"
                                       >
-                                        <Star className="h-5 w-5" style={{ fill: displaySpecialOffer ? '#eab308' : 'none', stroke: displaySpecialOffer ? '#eab308' : 'currentColor' }} />
-                                      </Button>
+                                        {displaySpecialOffer ? '★' : '☆'}
+                                      </button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
                                           {adminT('products.preorder')}
