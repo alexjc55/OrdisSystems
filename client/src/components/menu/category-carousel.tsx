@@ -3,19 +3,32 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CategoryCarouselProps {
   children: React.ReactNode;
+  isRTL?: boolean;
 }
 
-export default function CategoryCarousel({ children }: CategoryCarouselProps) {
+export default function CategoryCarousel({ children, isRTL = false }: CategoryCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollStart, setCanScrollStart] = useState(false);
+  const [canScrollEnd, setCanScrollEnd] = useState(false);
+
+  // Normalize scrollLeft to 0..maxScroll range regardless of RTL browser quirks
+  const getNormalized = (el: HTMLElement) => {
+    const raw = el.scrollLeft;
+    if (!isRTL) return raw;
+    // Chrome RTL: scrollLeft is negative (0 = right/start, negative = scrolled left)
+    // Firefox RTL: scrollLeft is positive, 0 = right/start, max = scrolled left
+    if (raw <= 0) return Math.abs(raw);                              // Chrome
+    return el.scrollWidth - el.clientWidth - raw;                   // Firefox
+  };
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
-  }, []);
+    const norm = getNormalized(el);
+    const max = el.scrollWidth - el.clientWidth;
+    setCanScrollStart(norm > 4);
+    setCanScrollEnd(norm < max - 4);
+  }, [isRTL]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -30,10 +43,14 @@ export default function CategoryCarousel({ children }: CategoryCarouselProps) {
     };
   }, [checkScroll]);
 
-  const scroll = (dir: 'left' | 'right') => {
+  const scrollBy = (towardEnd: boolean) => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir === 'left' ? -280 : 280, behavior: 'smooth' });
+    // In RTL, "toward end" means scrolling left (negative scrollLeft in Chrome)
+    const amount = 280;
+    let delta = towardEnd ? amount : -amount;
+    if (isRTL) delta = -delta;
+    el.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
   const onWheel = (e: React.WheelEvent) => {
@@ -41,19 +58,44 @@ export default function CategoryCarousel({ children }: CategoryCarouselProps) {
     if (!el) return;
     if (e.deltaY !== 0) {
       e.preventDefault();
-      el.scrollLeft += e.deltaY;
+      el.scrollLeft += isRTL ? -e.deltaY : e.deltaY;
     }
   };
 
+  // Arrow button base style — using inline style to avoid Tailwind transform conflicts
+  const arrowStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    zIndex: 10,
+    width: 32,
+    height: 32,
+    display: 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    backgroundColor: 'white',
+    border: '1px solid #e5e7eb',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+    cursor: 'pointer',
+    flexShrink: 0,
+  };
+
+  // In RTL: "start" is on the right side, "end" is on the left side
+  const startSide = isRTL ? 'right' : 'left';
+  const endSide   = isRTL ? 'left'  : 'right';
+
   return (
-    <div className="relative group/carousel">
-      {canScrollLeft && (
+    <div style={{ position: 'relative' }}>
+      {/* "Back to start" arrow — appears on START side */}
+      {canScrollStart && (
         <button
-          onClick={() => scroll('left')}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-8 h-8 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50 transition-all"
-          aria-label="Прокрутить влево"
+          onClick={() => scrollBy(false)}
+          className="hidden md:flex hover:bg-gray-50"
+          style={{ ...arrowStyle, [startSide]: -14 }}
+          aria-label={isRTL ? 'קדימה' : 'Назад'}
         >
-          <ChevronLeft className="w-4 h-4 text-gray-600" />
+          {isRTL ? <ChevronRight className="w-4 h-4 text-gray-600" /> : <ChevronLeft className="w-4 h-4 text-gray-600" />}
         </button>
       )}
 
@@ -66,13 +108,15 @@ export default function CategoryCarousel({ children }: CategoryCarouselProps) {
         {children}
       </div>
 
-      {canScrollRight && (
+      {/* "Go to end" arrow — appears on END side */}
+      {canScrollEnd && (
         <button
-          onClick={() => scroll('right')}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-8 h-8 items-center justify-center rounded-full bg-white border border-gray-200 shadow-md hover:bg-gray-50 transition-all"
-          aria-label="Прокрутить вправо"
+          onClick={() => scrollBy(true)}
+          className="hidden md:flex hover:bg-gray-50"
+          style={{ ...arrowStyle, [endSide]: -14 }}
+          aria-label={isRTL ? 'אחורה' : 'Вперёд'}
         >
-          <ChevronRight className="w-4 h-4 text-gray-600" />
+          {isRTL ? <ChevronLeft className="w-4 h-4 text-gray-600" /> : <ChevronRight className="w-4 h-4 text-gray-600" />}
         </button>
       )}
     </div>

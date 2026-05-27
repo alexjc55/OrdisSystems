@@ -815,7 +815,7 @@ export default function Home() {
                   const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
                   return (
                     <div id="categories" className="mb-8">
-                      <CategoryCarousel>
+                      <CategoryCarousel isRTL={currentLanguage === 'he' || currentLanguage === 'ar'}>
                         <UTMLink
                           href="/all-products"
                           onClick={() => handleCategorySelect(0)}
