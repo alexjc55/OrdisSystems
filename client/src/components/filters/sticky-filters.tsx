@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SearchInput from "@/components/SearchInput";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useQuery } from "@tanstack/react-query";
@@ -73,8 +73,11 @@ export default function StickyFilters({
                   className="text-gray-600 hover:text-primary p-2 h-9 inline-flex items-center"
                   data-testid="button-back"
                 >
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="ml-1 sm:inline">{t('buttons.back', 'Назад')}</span>
+                  {(currentLanguage === 'he' || currentLanguage === 'ar')
+                    ? <ChevronRight className="h-4 w-4" />
+                    : <ChevronLeft className="h-4 w-4" />
+                  }
+                  <span className="ml-1 rtl:ml-0 rtl:mr-1 sm:inline">{t('buttons.back', 'Назад')}</span>
                 </Button>
               </div>
             )}
@@ -99,7 +102,7 @@ export default function StickyFilters({
                     <SelectTrigger className="text-sm h-9" data-testid="select-category">
                       <SelectValue placeholder={tShop('filterByCategory', 'Фильтр по категории')} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent position="popper" className="max-h-72 overflow-y-auto">
                       <SelectItem value="all">{tShop('allCategories', 'Все категории')}</SelectItem>
                       {categories.map((category) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
