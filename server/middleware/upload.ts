@@ -83,15 +83,17 @@ export async function processUploadedImage(req: any, res: any, next: any) {
     const filename = req.file.filename;
     const nameWithoutExt = path.parse(filename).name;
 
-    // Detect if PNG with alpha channel — preserve transparency instead of converting to JPEG
+    // Preserve PNG as PNG (never convert to JPEG) to keep transparency intact.
+    // For any other format, optimise to JPEG.
     const metadata = await sharp(originalPath).metadata();
-    const isPngWithAlpha = metadata.format === 'png' && metadata.hasAlpha;
-    const outputExt = isPngWithAlpha ? 'png' : 'jpg';
+    const isPng = metadata.format === 'png';
+    const outputExt = isPng ? 'png' : 'jpg';
 
     const optimizedPath = path.join(optimizedDir, `${nameWithoutExt}.${outputExt}`);
     const thumbnailPath = path.join(thumbnailsDir, `${nameWithoutExt}.jpg`);
 
-    if (isPngWithAlpha) {
+    if (isPng) {
+      // Re-compress PNG without touching colour space or alpha channel
       await sharp(originalPath)
         .resize(800, null, { withoutEnlargement: true, fit: 'inside' })
         .png({ compressionLevel: 6 })
@@ -105,7 +107,7 @@ export async function processUploadedImage(req: any, res: any, next: any) {
     const originalSize = fs.statSync(originalPath).size;
     const optimizedSize = fs.statSync(optimizedPath).size;
 
-    console.log(`📸 Image optimized: ${filename} (${isPngWithAlpha ? 'PNG+alpha preserved' : 'JPEG'})`);
+    console.log(`📸 Image optimized: ${filename} (${isPng ? 'PNG preserved' : 'JPEG'})`);
     console.log(`   Original: ${(originalSize / 1024).toFixed(1)}KB → Optimized: ${(optimizedSize / 1024).toFixed(1)}KB`);
 
     req.file.optimizedPath = `/uploads/optimized/${nameWithoutExt}.${outputExt}`;

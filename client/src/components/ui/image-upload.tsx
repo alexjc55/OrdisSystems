@@ -116,11 +116,18 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
     <div className="space-y-4">
       {preview ? (
         <div className="relative">
-          <div className="relative w-full h-48 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
+          {/* Checkerboard pattern shows through transparent areas of PNG images */}
+          <div
+            className="relative w-full h-48 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden"
+            style={{
+              backgroundImage: 'repeating-conic-gradient(#e5e7eb 0% 25%, white 0% 50%)',
+              backgroundSize: '20px 20px',
+            }}
+          >
             <img
               src={preview}
               alt="Preview"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
             <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
               <Button
