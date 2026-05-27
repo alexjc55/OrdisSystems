@@ -5949,7 +5949,7 @@ export default function AdminDashboard() {
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                       >
-                                        <Star className="h-5 w-5" fill={product.isSpecialOffer ? 'currentColor' : 'none'} />
+                                        <Star className="h-5 w-5" style={{ fill: product.isSpecialOffer ? '#eab308' : 'none', stroke: product.isSpecialOffer ? '#eab308' : 'currentColor' }} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -6115,7 +6115,7 @@ export default function AdminDashboard() {
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                       >
-                                        <Star className="h-5 w-5" fill={product.isSpecialOffer ? 'currentColor' : 'none'} />
+                                        <Star className="h-5 w-5" style={{ fill: product.isSpecialOffer ? '#eab308' : 'none', stroke: product.isSpecialOffer ? '#eab308' : 'currentColor' }} />
                                       </Button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
