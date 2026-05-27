@@ -105,8 +105,10 @@ function CategoryDropdown({
                     setOpen(false);
                   }}
                   className={cn(
-                    "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none hover:bg-primary hover:text-white",
-                    value === opt.id && "bg-primary/10"
+                    "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 ps-8 pe-2 text-sm outline-none",
+                    value === opt.id
+                      ? "bg-primary text-white"
+                      : "hover:bg-primary hover:text-white"
                   )}
                 >
                   {value === opt.id && (
