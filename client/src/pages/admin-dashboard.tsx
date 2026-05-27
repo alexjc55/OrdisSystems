@@ -4411,13 +4411,30 @@ export default function AdminDashboard() {
       if (!response.ok) throw new Error('Failed to toggle special offer');
       return await response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
+    onMutate: async ({ id, isSpecialOffer }) => {
+      await queryClient.cancelQueries({ queryKey: ['/api/admin/products'] });
+      queryClient.setQueriesData({ queryKey: ['/api/admin/products'] }, (oldData: any) => {
+        if (!oldData?.data) return oldData;
+        return {
+          ...oldData,
+          data: oldData.data.map((p: any) => p.id === id ? { ...p, isSpecialOffer } : p),
+        };
+      });
+    },
+    onSuccess: ({ id, isSpecialOffer }: any, variables) => {
+      queryClient.setQueriesData({ queryKey: ['/api/admin/products'] }, (oldData: any) => {
+        if (!oldData?.data) return oldData;
+        return {
+          ...oldData,
+          data: oldData.data.map((p: any) => p.id === variables.id ? { ...p, isSpecialOffer: variables.isSpecialOffer } : p),
+        };
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/products'] });
     },
     onError: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
       toast({ title: adminT('actions.error'), variant: "destructive" });
-    }
+    },
   });
 
   const updateBranchAvailabilityQuickMutation = useMutation({
