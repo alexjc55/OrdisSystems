@@ -62,7 +62,7 @@ export default function CategoryCarousel({ children, isRTL = false }: CategoryCa
     }
   };
 
-  // Arrow button base style — using inline style to avoid Tailwind transform conflicts
+  // Arrow button base style — display is controlled by className (hidden md:flex), not here
   const arrowStyle: React.CSSProperties = {
     position: 'absolute',
     top: '50%',
@@ -70,7 +70,6 @@ export default function CategoryCarousel({ children, isRTL = false }: CategoryCa
     zIndex: 10,
     width: 32,
     height: 32,
-    display: 'none',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '50%',
@@ -78,7 +77,6 @@ export default function CategoryCarousel({ children, isRTL = false }: CategoryCa
     border: '1px solid #e5e7eb',
     boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
     cursor: 'pointer',
-    flexShrink: 0,
   };
 
   // In RTL: "start" is on the right side, "end" is on the left side
