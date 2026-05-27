@@ -279,9 +279,33 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     const categoryIdMap = new Map<string, number>();
     let categoriesCreated = 0;
     let categoriesMatched = 0;
+    let categoriesLinked = 0;
 
     for (const cat of categoriesToImport) {
-      // Check if a category with this external_id+source already exists
+      // Case 1: Admin manually linked this imported category to an existing catalog category
+      if (cat.existingCategoryId) {
+        categoryIdMap.set(cat.externalId, cat.existingCategoryId);
+        categoriesLinked++;
+        // Fill external_id on the existing category if it's empty (so next import auto-matches)
+        if (cat.externalId && validSource) {
+          try {
+            const existing = await db
+              .select({ id: categories.id, externalId: categories.externalId })
+              .from(categories)
+              .where(eq(categories.id, cat.existingCategoryId))
+              .limit(1);
+            if (existing.length > 0 && !existing[0].externalId) {
+              await db
+                .update(categories)
+                .set({ externalId: cat.externalId, externalSource: validSource })
+                .where(eq(categories.id, cat.existingCategoryId));
+            }
+          } catch {}
+        }
+        continue;
+      }
+
+      // Case 2: Auto-match by external_id+source
       let existingCatId: number | null = null;
       if (cat.externalId && validSource) {
         try {
@@ -300,11 +324,11 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
       }
 
       if (existingCatId !== null) {
-        // Reuse existing category
+        // Reuse existing category (matched by external_id)
         categoryIdMap.set(cat.externalId, existingCatId);
         categoriesMatched++;
       } else {
-        // Create new category with external_id tracking
+        // Case 3: Create new category with external_id tracking
         const created = await storage.createCategory({
           [nameField]: cat.name,
           isActive: true,
@@ -344,7 +368,7 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
       itemsCreated++;
     }
 
-    res.json({ categoriesCreated, categoriesMatched, itemsCreated });
+    res.json({ categoriesCreated, categoriesMatched, categoriesLinked, itemsCreated });
   } catch (error: any) {
     console.error('Catalog import error:', error);
     res.status(500).json({ message: error.message || 'Import failed' });

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Store, Package, Sparkles } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, CheckCircle, AlertCircle, Store, Package, Sparkles, Link2, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface ImportCategory {
@@ -30,6 +30,14 @@ interface MenuData {
   items: ImportItem[];
   existingExternalIds: string[];
   existingCategoryExternalIds: string[];
+}
+
+interface CatalogCategory {
+  id: number;
+  name: string | null;
+  name_en: string | null;
+  name_he: string | null;
+  name_ar: string | null;
 }
 
 type Step = 'url' | 'categories' | 'items' | 'done';
@@ -71,12 +79,22 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [itemPrices, setItemPrices] = useState<Record<string, string>>({});
   const [itemUnits, setItemUnits] = useState<Record<string, string>>({});
-  const [importResult, setImportResult] = useState<{ categoriesCreated: number; categoriesMatched: number; itemsCreated: number } | null>(null);
+  const [importResult, setImportResult] = useState<{ categoriesCreated: number; categoriesMatched: number; categoriesLinked: number; itemsCreated: number } | null>(null);
   const [itemFilter, setItemFilter] = useState<'all' | 'new'>('new');
   const [showManualPanel, setShowManualPanel] = useState(false);
   const [manualJson, setManualJson] = useState('');
   const [manualError, setManualError] = useState('');
   const [manualLoading, setManualLoading] = useState(false);
+  const [catalogCategories, setCatalogCategories] = useState<CatalogCategory[]>([]);
+  const [categoryMappings, setCategoryMappings] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (!open) return;
+    fetch('/api/categories?includeInactive=true', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setCatalogCategories(data); })
+      .catch(() => {});
+  }, [open]);
 
   const t = (ru: string, en: string, he: string, ar: string) => {
     if (currentLanguage === 'en') return en;
@@ -103,6 +121,13 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
 
   const isNew = (itemId: string) => !existingIds.has(itemId);
 
+  const getCatalogCategoryName = (cat: CatalogCategory) => {
+    if (currentLanguage === 'en' && cat.name_en) return cat.name_en;
+    if (currentLanguage === 'he' && cat.name_he) return cat.name_he;
+    if (currentLanguage === 'ar' && cat.name_ar) return cat.name_ar;
+    return cat.name || cat.name_en || cat.name_he || cat.name_ar || `#${cat.id}`;
+  };
+
   const resetModal = () => {
     setStep('url');
     setUrl('');
@@ -119,6 +144,7 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     setShowManualPanel(false);
     setManualJson('');
     setManualError('');
+    setCategoryMappings({});
   };
 
   const getDirectApiUrl = (restaurantUrl: string) => {
@@ -287,7 +313,11 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
     try {
       const categoriesToImport = menuData.categories
         .filter(c => selectedCategoryIds.has(c.id))
-        .map(c => ({ externalId: c.id, name: c.name }));
+        .map(c => ({
+          externalId: c.id,
+          name: c.name,
+          existingCategoryId: categoryMappings[c.id] ?? undefined,
+        }));
 
       const itemsToImport = menuData.items
         .filter(i => selectedItemIds.has(i.id) && selectedCategoryIds.has(i.categoryId))
@@ -505,24 +535,66 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                   const catItems = menuData.items.filter(i => i.categoryId === cat.id);
                   const newCount = catItems.filter(i => isNew(i.id)).length;
                   const catExists = isCategoryExisting(cat.id);
+                  const mappedCatId = categoryMappings[cat.id];
+                  const mappedCat = mappedCatId ? catalogCategories.find(c => c.id === mappedCatId) : null;
                   return (
-                    <label key={cat.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
-                      <Checkbox checked={selectedCategoryIds.has(cat.id)} onCheckedChange={() => toggleCategory(cat.id)} />
-                      <span className="flex-1 font-medium text-sm">{cat.name}</span>
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
-                        {catExists && (
-                          <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-500">
-                            {t('в каталоге', 'in catalog', 'בקטלוג', 'في الكتالوج')}
-                          </span>
-                        )}
-                        {isDiffMode && newCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
-                            +{newCount} {t('новых', 'new', 'חדשים', 'جديد')}
-                          </span>
-                        )}
-                        <span className="text-xs text-gray-400">{cat.itemCount} {t('всего', 'total', 'סה"כ', 'المجموع')}</span>
-                      </div>
-                    </label>
+                    <div key={cat.id} className="rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                      <label className="flex items-center gap-3 p-3 cursor-pointer">
+                        <Checkbox checked={selectedCategoryIds.has(cat.id)} onCheckedChange={() => toggleCategory(cat.id)} />
+                        <span className="flex-1 font-medium text-sm">{cat.name}</span>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {catExists && (
+                            <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-500">
+                              {t('в каталоге', 'in catalog', 'בקטלוג', 'في الكتالوج')}
+                            </span>
+                          )}
+                          {isDiffMode && newCount > 0 && (
+                            <span className="px-1.5 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
+                              +{newCount} {t('новых', 'new', 'חדשים', 'جديد')}
+                            </span>
+                          )}
+                          <span className="text-xs text-gray-400">{cat.itemCount} {t('всего', 'total', 'סה"כ', 'المجموع')}</span>
+                        </div>
+                      </label>
+                      {/* Manual mapping — only for categories not already auto-matched */}
+                      {!catExists && catalogCategories.length > 0 && (
+                        <div className="px-3 pb-3 flex items-center gap-2">
+                          <Link2 className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+                          {mappedCat ? (
+                            <div className="flex items-center gap-1.5 flex-1">
+                              <span className="text-xs text-blue-700 bg-blue-50 border border-blue-200 rounded px-2 py-0.5 font-medium">
+                                → {getCatalogCategoryName(mappedCat)}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => setCategoryMappings(prev => { const n = { ...prev }; delete n[cat.id]; return n; })}
+                                className="text-gray-400 hover:text-red-500 transition-colors"
+                              >
+                                <X className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          ) : (
+                            <Select
+                              value=""
+                              onValueChange={val => {
+                                if (val) setCategoryMappings(prev => ({ ...prev, [cat.id]: Number(val) }));
+                              }}
+                            >
+                              <SelectTrigger className="h-7 text-xs flex-1 text-gray-400 border-dashed">
+                                <SelectValue placeholder={t('Привязать к существующей...', 'Link to existing...', 'קשר לקיים...', 'ربط بموجود...')} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {catalogCategories.map(c => (
+                                  <SelectItem key={c.id} value={String(c.id)} className="text-xs">
+                                    {getCatalogCategoryName(c)}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -726,6 +798,12 @@ export function CatalogImportModal({ open, onClose, currentLanguage, isRTL }: Pr
                       {t('Создано', 'Created', 'נוצרו', 'تم إنشاء')}{' '}
                       <b>{importResult.categoriesCreated}</b>{' '}
                       {t('новых категорий', 'new categories', 'קטגוריות חדשות', 'فئات جديدة')}
+                    </p>
+                  )}
+                  {importResult.categoriesLinked > 0 && (
+                    <p>
+                      <b>{importResult.categoriesLinked}</b>{' '}
+                      {t('категорий привязано к существующим', 'categories linked to existing', 'קטגוריות קושרו לקיימות', 'فئات مرتبطة بالموجودة')}
                     </p>
                   )}
                   {importResult.categoriesMatched > 0 && (
