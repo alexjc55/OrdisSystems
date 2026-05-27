@@ -94,23 +94,22 @@ function CategoryDropdown({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 min-w-full w-max max-w-xs rounded-md border bg-popover text-popover-foreground shadow-md">
+        <div className="absolute z-50 mt-1 min-w-[190px] rounded-md border bg-popover text-popover-foreground shadow-md">
           <div
             className="overflow-y-auto overscroll-contain"
             style={{ maxHeight: "15rem", touchAction: "pan-y", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
           >
             <div className="p-1">
               {allOptions.map((opt) => (
-                <button
+                <div
                   key={opt.id}
-                  type="button"
-                  onClick={() => {
-                    onChange(opt.id);
-                    setOpen(false);
-                  }}
-                  style={{ textAlign: isRTL ? 'right' : 'left' }}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => { onChange(opt.id); setOpen(false); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { onChange(opt.id); setOpen(false); } }}
                   className={cn(
-                    "relative block w-full cursor-default select-none whitespace-nowrap rounded-sm py-1.5 ps-8 pe-3 text-sm outline-none",
+                    "relative whitespace-nowrap rounded-sm py-1.5 ps-8 pe-3 text-sm cursor-pointer select-none",
+                    isRTL ? "text-right" : "text-left",
                     value === opt.id
                       ? "bg-primary text-white"
                       : "hover:bg-primary hover:text-white"
@@ -122,7 +121,7 @@ function CategoryDropdown({
                     </span>
                   )}
                   {opt.label}
-                </button>
+                </div>
               ))}
             </div>
           </div>
