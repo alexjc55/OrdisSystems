@@ -2,19 +2,17 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    // Clone response to avoid "Body has already been consumed" error
     const responseClone = res.clone();
+    let errorData: any = null;
     try {
-      const errorData = await res.json();
-      const error = new Error(errorData.message || res.statusText);
-      // Preserve error data for specific error handling
-      Object.assign(error, errorData);
-      throw error;
-    } catch (parseError) {
-      // Use cloned response to read as text if JSON parsing failed
+      errorData = await res.json();
+    } catch {
       const text = (await responseClone.text()) || res.statusText;
       throw new Error(`${res.status}: ${text}`);
     }
+    const error = new Error(errorData.message || res.statusText);
+    Object.assign(error, errorData);
+    throw error;
   }
 }
 
@@ -31,19 +29,17 @@ export async function apiRequest(
   });
 
   if (!res.ok) {
-    // Clone response to avoid "Body has already been consumed" error
     const responseClone = res.clone();
+    let errorData: any = null;
     try {
-      const errorData = await res.json();
-      const error = new Error(errorData.message || res.statusText);
-      // Preserve error data for specific error handling
-      Object.assign(error, errorData);
-      throw error;
-    } catch (parseError) {
-      // Use cloned response to read as text if JSON parsing failed
+      errorData = await res.json();
+    } catch {
       const text = (await responseClone.text()) || res.statusText;
       throw new Error(`${res.status}: ${text}`);
     }
+    const error = new Error(errorData.message || res.statusText);
+    Object.assign(error, errorData);
+    throw error;
   }
 
   // Check if response has content before trying to parse JSON

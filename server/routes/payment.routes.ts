@@ -149,7 +149,8 @@ async function initiatePayment(req: any, res: any) {
     return res.json({ redirectUrl: result.redirectUrl, token });
   } catch (error) {
     console.error("Payment initiate error:", error);
-    return res.status(500).json({ message: "Failed to initiate payment" });
+    const msg = error instanceof Error ? error.message : "Failed to initiate payment";
+    return res.status(400).json({ message: msg });
   }
 }
 
@@ -284,7 +285,8 @@ router.post("/payment/hyp/initiate", async (req: any, res) => {
     return initiatePayment(req, res);
   } catch (error) {
     console.error("HYP initiate error:", error);
-    return res.status(500).json({ message: "Failed to initiate payment" });
+    const msg = error instanceof Error ? error.message : "Failed to initiate payment";
+    return res.status(400).json({ message: msg });
   }
 });
 

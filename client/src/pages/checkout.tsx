@@ -1117,7 +1117,8 @@ export default function Checkout() {
       window.location.href = data.redirectUrl;
     },
     onError: (error: any) => {
-      toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
+      console.error("Payment initiation error:", error.message);
+      toast({ title: tShop('checkout.paymentFailed'), variant: "destructive" });
     },
   });
 
