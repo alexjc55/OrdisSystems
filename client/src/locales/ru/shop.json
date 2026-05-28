@@ -138,7 +138,7 @@
     "couponMinOrder": "Сумма заказа ниже минимальной для этого промокода",
     "couponError": "Ошибка при проверке промокода",
     "volumeDiscount": "Скидка за объём",
-    "volumeDiscountHint": "{{discount}} при покупке от {{amount}}",
+    "volumeDiscountHint": "скидка {{discount}} при покупке от {{amount}}",
     "giftAvailable": "Подарок к заказу!",
     "addGift": "Добавить подарок"
   },
