@@ -260,7 +260,8 @@ interface ThemeData {
   showSpecialOffers?: boolean;
   showCategoryMenu?: boolean;
   showWhatsAppChat?: boolean;
-  
+  guestPromoEnabled?: boolean;
+
   // WhatsApp settings
   whatsappPhone?: string;
   whatsappMessage?: string;
@@ -516,6 +517,7 @@ export default function ThemeManager() {
     showCategoryMenu: true,
     categoryDisplayStyle: 'default',
     showWhatsAppChat: true,
+    guestPromoEnabled: false,
     showCartBanner: false,
     showBottomBanners: false
   });
@@ -528,6 +530,7 @@ export default function ThemeManager() {
     showCategoryMenu: true,
     categoryDisplayStyle: 'default',
     showWhatsAppChat: true,
+    guestPromoEnabled: false,
     showCartBanner: false,
     showBottomBanners: false
   });
@@ -560,6 +563,7 @@ export default function ThemeManager() {
         showCategoryMenu: editingTheme.showCategoryMenu ?? true,
         categoryDisplayStyle: (editingTheme as any).categoryDisplayStyle || 'default',
         showWhatsAppChat: editingTheme.showWhatsAppChat ?? true,
+        guestPromoEnabled: (editingTheme as any).guestPromoEnabled ?? false,
         showCartBanner: editingTheme.showCartBanner ?? false,
         showBottomBanners: editingTheme.showBottomBanners ?? false
       });
@@ -995,6 +999,11 @@ export default function ThemeManager() {
       showCategoryMenu: formData.get("showCategoryMenu") === "true",
       categoryDisplayStyle: formData.get("categoryDisplayStyle") as string || "default",
       showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
+      guestPromoEnabled: formData.get("guestPromoEnabled") === "true",
+      guestPromoText: formData.get("guestPromoText") as string || "",
+      guestPromoText_en: formData.get("guestPromoText_en") as string || "",
+      guestPromoText_he: formData.get("guestPromoText_he") as string || "",
+      guestPromoText_ar: formData.get("guestPromoText_ar") as string || "",
       splashBgColor: formData.get("splashBgColor") as string,
       whiteColor: formData.get("whiteColor") as string,
       gray50Color: formData.get("gray50Color") as string,
@@ -1178,6 +1187,11 @@ export default function ThemeManager() {
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       categoryDisplayStyle: editVisualSettings.categoryDisplayStyle || "default",
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
+      guestPromoEnabled: editVisualSettings.guestPromoEnabled,
+      guestPromoText: formData.get("guestPromoText") as string || "",
+      guestPromoText_en: formData.get("guestPromoText_en") as string || "",
+      guestPromoText_he: formData.get("guestPromoText_he") as string || "",
+      guestPromoText_ar: formData.get("guestPromoText_ar") as string || "",
       whatsappPhone: formData.get("whatsappPhone") as string || "",
       ...createLanguageSpecificUpdate(formData, "whatsappMessage", currentLanguage),
       splashBgColor: convertColorToHsl(formData.get("splashBgColor") as string),
@@ -1750,7 +1764,40 @@ export default function ThemeManager() {
                         description={adminT("themes.whatsappChatDescription")}
                         fieldName="showWhatsAppChat"
                       />
+
+                      <VisualToggleButton 
+                        isEnabled={visualSettings.guestPromoEnabled}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, guestPromoEnabled: !prev.guestPromoEnabled }))}
+                        label={adminT("themes.guestPromoLabel")}
+                        description={adminT("themes.guestPromoDescription")}
+                        fieldName="guestPromoEnabled"
+                      />
                     </div>
+
+                    {/* Guest Promo Settings */}
+                    {visualSettings.guestPromoEnabled && (
+                      <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
+                        <h5 className="text-sm font-medium text-gray-800">{adminT("themes.guestPromoSettings")}</h5>
+                        <div className="space-y-3">
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇷🇺 Русский</Label>
+                            <textarea name="guestPromoText" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" placeholder="Оформляя заказ без регистрации, вы упускаете возможность..." />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇬🇧 English</Label>
+                            <textarea name="guestPromoText_en" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" placeholder="By placing an order without registering..." />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇮🇱 עברית</Label>
+                            <textarea name="guestPromoText_he" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" dir="rtl" placeholder="בהזמנה ללא הרשמה..." />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇦🇪 العربية</Label>
+                            <textarea name="guestPromoText_ar" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" dir="rtl" placeholder="بتقديم الطلب دون تسجيل..." />
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* WhatsApp Settings */}
                     {visualSettings.showWhatsAppChat && (
@@ -2665,7 +2712,40 @@ export default function ThemeManager() {
                         description={adminT('themes.whatsappChatDescription')}
                         fieldName="showWhatsAppChat"
                       />
+
+                      <VisualToggleButton 
+                        isEnabled={editVisualSettings.guestPromoEnabled}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, guestPromoEnabled: !prev.guestPromoEnabled }))}
+                        label={adminT('themes.guestPromoLabel')}
+                        description={adminT('themes.guestPromoDescription')}
+                        fieldName="guestPromoEnabled"
+                      />
                     </div>
+
+                    {/* Настройки гостевого промо-блока */}
+                    {editVisualSettings.guestPromoEnabled && (
+                      <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
+                        <h5 className="text-sm font-medium text-gray-800">{adminT('themes.guestPromoSettings')}</h5>
+                        <div className="space-y-3">
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇷🇺 Русский</Label>
+                            <textarea name="guestPromoText" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" defaultValue={(editingTheme as any)?.guestPromoText || ""} placeholder="Оформляя заказ без регистрации, вы упускаете возможность..." />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇬🇧 English</Label>
+                            <textarea name="guestPromoText_en" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" defaultValue={(editingTheme as any)?.guestPromoText_en || ""} placeholder="By placing an order without registering..." />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇮🇱 עברית</Label>
+                            <textarea name="guestPromoText_he" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" dir="rtl" defaultValue={(editingTheme as any)?.guestPromoText_he || ""} placeholder="בהזמנה ללא הרשמה..." />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-gray-500 mb-1 block">🇦🇪 العربية</Label>
+                            <textarea name="guestPromoText_ar" rows={3} className="w-full px-3 py-2 border rounded-md bg-white text-sm resize-none" dir="rtl" defaultValue={(editingTheme as any)?.guestPromoText_ar || ""} placeholder="بتقديم الطلب دون تسجيل..." />
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {/* WhatsApp настройки */}
                     {editVisualSettings.showWhatsAppChat && (

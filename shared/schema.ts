@@ -278,6 +278,11 @@ export const storeSettings = pgTable("store_settings", {
   cartBannerText: text("cart_banner_text"), // Banner text content
   cartBannerBgColor: varchar("cart_banner_bg_color", { length: 7 }).default("#f97316"), // Background color for text banner
   cartBannerTextColor: varchar("cart_banner_text_color", { length: 7 }).default("#ffffff"), // Text color for text banner
+  guestPromoEnabled: boolean("guest_promo_enabled").default(false), // Show custom text in guest checkout info block
+  guestPromoText: text("guest_promo_text"), // Custom guest promo text (RU)
+  guestPromoText_en: text("guest_promo_text_en"),
+  guestPromoText_he: text("guest_promo_text_he"),
+  guestPromoText_ar: text("guest_promo_text_ar"),
   workerPermissions: jsonb("worker_permissions").default({
     canManageProducts: true,
     canManageCategories: true,
@@ -1008,7 +1013,14 @@ export const insertThemeSchema = z.object({
   
   // WhatsApp settings
   whatsappPhone: z.string().nullable().transform(val => val || ""),
-  whatsappMessage: z.string().nullable().transform(val => val || "Здравствуйте! У меня есть вопрос по заказу.")
+  whatsappMessage: z.string().nullable().transform(val => val || "Здравствуйте! У меня есть вопрос по заказу."),
+
+  // Guest promo block settings
+  guestPromoEnabled: z.boolean().nullable().transform(val => val ?? false),
+  guestPromoText: z.string().nullable().transform(val => val || ""),
+  guestPromoText_en: z.string().nullable().transform(val => val || ""),
+  guestPromoText_he: z.string().nullable().transform(val => val || ""),
+  guestPromoText_ar: z.string().nullable().transform(val => val || "")
 });
 
 export const updateThemeSchema = baseThemeSchema.partial().omit({

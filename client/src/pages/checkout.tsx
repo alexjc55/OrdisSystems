@@ -2062,7 +2062,9 @@ export default function Checkout() {
                   <Alert className="border-amber-400 bg-amber-50 dark:bg-amber-950/30">
                     <Star className="h-4 w-4 text-amber-500" />
                     <AlertDescription className="text-amber-800 dark:text-amber-300 font-medium">
-                      {tShop('checkout.guestFirstPromo')}
+                      {(storeSettings as any)?.guestPromoEnabled
+                        ? (getLocalizedField(storeSettings as any, 'guestPromoText', currentLanguage as SupportedLanguage) || tShop('checkout.guestFirstPromo'))
+                        : tShop('checkout.guestFirstPromo')}
                     </AlertDescription>
                   </Alert>
 

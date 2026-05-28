@@ -195,6 +195,12 @@ router.put('/admin/themes/:id', isAuthenticated, async (req: any, res) => {
       if (themeData.whatsappMessageHe !== undefined) updateFields.push(`whatsapp_default_message_he = '${(themeData.whatsappMessageHe || '').replace(/'/g, "''")}'`);
       if (themeData.whatsappMessageAr !== undefined) updateFields.push(`whatsapp_default_message_ar = '${(themeData.whatsappMessageAr || '').replace(/'/g, "''")}'`);
 
+      if (themeData.guestPromoEnabled !== undefined) updateFields.push(`guest_promo_enabled = ${themeData.guestPromoEnabled}`);
+      if (themeData.guestPromoText !== undefined) updateFields.push(`guest_promo_text = '${(themeData.guestPromoText || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).guestPromoText_en !== undefined) updateFields.push(`guest_promo_text_en = '${((themeData as any).guestPromoText_en || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).guestPromoText_he !== undefined) updateFields.push(`guest_promo_text_he = '${((themeData as any).guestPromoText_he || '').replace(/'/g, "''")}'`);
+      if ((themeData as any).guestPromoText_ar !== undefined) updateFields.push(`guest_promo_text_ar = '${((themeData as any).guestPromoText_ar || '').replace(/'/g, "''")}'`);
+
       // Trigger slider update if ANY slider-related field was submitted from the form
       const hasSliderContent = () => {
         if (themeData.sliderAutoplay !== undefined) return true;
@@ -345,7 +351,12 @@ router.post('/admin/themes/:id/activate', isAuthenticated, async (req: any, res)
       `whatsapp_default_message = '${theme.whatsappMessage || 'Здравствуйте! У меня есть вопрос по заказу.'}'`,
       `whatsapp_default_message_en = '${theme.whatsappMessageEn || ''}'`,
       `whatsapp_default_message_he = '${theme.whatsappMessageHe || ''}'`,
-      `whatsapp_default_message_ar = '${theme.whatsappMessageAr || ''}'`
+      `whatsapp_default_message_ar = '${theme.whatsappMessageAr || ''}'`,
+      `guest_promo_enabled = ${theme.guestPromoEnabled ?? false}`,
+      `guest_promo_text = '${(theme.guestPromoText || '').replace(/'/g, "''")}'`,
+      `guest_promo_text_en = '${((theme as any).guestPromoText_en || '').replace(/'/g, "''")}'`,
+      `guest_promo_text_he = '${((theme as any).guestPromoText_he || '').replace(/'/g, "''")}'`,
+      `guest_promo_text_ar = '${((theme as any).guestPromoText_ar || '').replace(/'/g, "''")}'`
     ];
     await db.execute(sql.raw(`UPDATE store_settings SET ${visualFields.join(', ')} WHERE id = 1`));
 

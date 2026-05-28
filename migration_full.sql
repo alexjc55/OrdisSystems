@@ -705,6 +705,14 @@ ALTER TABLE themes
   ADD COLUMN IF NOT EXISTS slide5_image_ar VARCHAR(500);
 
 
+-- Guest promo block columns
+ALTER TABLE store_settings
+  ADD COLUMN IF NOT EXISTS guest_promo_enabled BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS guest_promo_text TEXT,
+  ADD COLUMN IF NOT EXISTS guest_promo_text_en TEXT,
+  ADD COLUMN IF NOT EXISTS guest_promo_text_he TEXT,
+  ADD COLUMN IF NOT EXISTS guest_promo_text_ar TEXT;
+
 -- ============================================================
 -- ГОТОВО
 -- ============================================================
