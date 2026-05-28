@@ -392,6 +392,11 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   growJ5Enabled: z.boolean().default(false),
   growMaxInstallments: z.number().default(1),
   growCreateInvoice: z.boolean().default(false),
+  allpayLogin: z.string().optional(),
+  allpayApiKey: z.string().optional(),
+  allpayJ5Enabled: z.boolean().default(false),
+  allpayMaxInstallments: z.number().default(1),
+  allpayCreateInvoice: z.boolean().default(false),
 });
 
 
@@ -8980,6 +8985,11 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [growJ5Enabled, setGrowJ5Enabled] = useState(false);
   const [growMaxInstallments, setGrowMaxInstallments] = useState(1);
   const [growCreateInvoice, setGrowCreateInvoice] = useState(false);
+  const [allpayLogin, setAllpayLogin] = useState('');
+  const [allpayApiKey, setAllpayApiKey] = useState('');
+  const [allpayJ5Enabled, setAllpayJ5Enabled] = useState(false);
+  const [allpayMaxInstallments, setAllpayMaxInstallments] = useState(1);
+  const [allpayCreateInvoice, setAllpayCreateInvoice] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -8989,7 +8999,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
-      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean } } | null;
+      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean }; allpay?: { login?: string; apiKey?: string; j5Enabled?: boolean; maxInstallments?: number; createInvoice?: boolean } } | null;
       setPaymentProvider(ppc?.active || 'none');
       setHypMasof(ppc?.hyp?.masof || '');
       setHypKey(ppc?.hyp?.key || '');
@@ -9004,6 +9014,11 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGrowJ5Enabled(ppc?.grow?.j5Enabled || false);
       setGrowMaxInstallments(ppc?.grow?.maxInstallments || 1);
       setGrowCreateInvoice(ppc?.grow?.createInvoice || false);
+      setAllpayLogin(ppc?.allpay?.login || '');
+      setAllpayApiKey(ppc?.allpay?.apiKey || '');
+      setAllpayJ5Enabled(ppc?.allpay?.j5Enabled || false);
+      setAllpayMaxInstallments(ppc?.allpay?.maxInstallments || 1);
+      setAllpayCreateInvoice(ppc?.allpay?.createInvoice || false);
     }
   }, [settings]);
 
@@ -11372,6 +11387,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       growJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.grow?.j5Enabled || false,
       growMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.grow?.maxInstallments || 1,
       growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
+      allpayLogin: (storeSettings as any)?.paymentProviderConfig?.allpay?.login || '',
+      allpayApiKey: (storeSettings as any)?.paymentProviderConfig?.allpay?.apiKey || '',
+      allpayJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5Enabled || false,
+      allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
+      allpayCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.allpay?.createInvoice || false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11567,6 +11587,11 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         growJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.grow?.j5Enabled || false,
         growMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.grow?.maxInstallments || 1,
         growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
+        allpayLogin: (storeSettings as any)?.paymentProviderConfig?.allpay?.login || '',
+        allpayApiKey: (storeSettings as any)?.paymentProviderConfig?.allpay?.apiKey || '',
+        allpayJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5Enabled || false,
+        allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
+        allpayCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.allpay?.createInvoice || false,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -11747,6 +11772,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 j5Enabled:       data.growJ5Enabled || false,
                 maxInstallments: data.growMaxInstallments || 1,
                 createInvoice:   data.growCreateInvoice || false,
+              }
+            } : {}),
+            ...(data.paymentProvider === 'allpay' ? {
+              allpay: {
+                login:           data.allpayLogin   || '',
+                apiKey:          data.allpayApiKey  || '',
+                j5Enabled:       data.allpayJ5Enabled || false,
+                maxInstallments: data.allpayMaxInstallments || 1,
+                createInvoice:   data.allpayCreateInvoice || false,
               }
             } : {}),
           },
@@ -13169,6 +13203,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <SelectItem value="none">{currentLanguage === 'ru' ? 'Отключено' : currentLanguage === 'he' ? 'מושבת' : currentLanguage === 'ar' ? 'معطل' : 'None'}</SelectItem>
                     <SelectItem value="hyp">HYP</SelectItem>
                     <SelectItem value="grow">Grow (Meshulam)</SelectItem>
+                    <SelectItem value="allpay">AllPay</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage className="text-xs" />
@@ -13722,6 +13757,192 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   )}
                 />
               </div>
+              </div>
+            </div>
+            </>
+          )}
+
+          {watchedPaymentProvider === 'allpay' && (
+            <>
+            <div className="border rounded-xl overflow-hidden shadow-sm">
+              {/* AllPay branded header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-500">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="https://allpay.to/favicon.ico"
+                    alt="AllPay"
+                    className="h-5 w-5 rounded"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  <span className="text-white font-bold text-base tracking-wide">AllPay</span>
+                  <span className="text-white/70 text-xs font-normal">by allpay.to</span>
+                </div>
+                <a
+                  href="https://app.allpay.to"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
+                  style={{ color: '#ffffff' }}
+                >
+                  {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
+                </a>
+              </div>
+
+              {/* Fields */}
+              <div className="space-y-4 p-4 bg-white">
+                <div className={`flex flex-col gap-2 ${isRTL ? 'items-end' : 'items-start'}`}>
+                  <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {currentLanguage === 'ru'
+                      ? 'Реквизиты находятся в личном кабинете AllPay: Настройки → Интеграции.'
+                      : currentLanguage === 'he'
+                      ? 'הפרטים נמצאים בחשבון AllPay: הגדרות → אינטגרציות.'
+                      : currentLanguage === 'ar'
+                      ? 'البيانات في حساب AllPay: الإعدادات ← التكاملات.'
+                      : 'Credentials are in your AllPay account: Settings → Integrations.'}
+                  </p>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="allpayLogin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru' ? 'API Логин' : currentLanguage === 'he' ? 'API Login' : currentLanguage === 'ar' ? 'رمز الدخول API' : 'API Login'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="pp1008795" className="text-sm" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru'
+                          ? 'Логин API из раздела Настройки → Интеграции вашего аккаунта AllPay.'
+                          : currentLanguage === 'he'
+                          ? 'לוגין API מהגדרות → אינטגרציות בחשבון AllPay שלך.'
+                          : currentLanguage === 'ar'
+                          ? 'رمز الدخول API من قسم الإعدادات ← التكاملات في حساب AllPay.'
+                          : 'API login from Settings → Integrations in your AllPay account.'}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="allpayApiKey"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru' ? 'Секретный ключ API' : currentLanguage === 'he' ? 'מפתח API סודי' : currentLanguage === 'ar' ? 'المفتاح السري API' : 'Secret API Key'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru'
+                          ? 'Приватный ключ для подписи запросов. Находится в настройках интеграции AllPay.'
+                          : currentLanguage === 'he'
+                          ? 'מפתח פרטי לחתימת בקשות. נמצא בהגדרות האינטגרציה של AllPay.'
+                          : currentLanguage === 'ar'
+                          ? 'مفتاح خاص لتوقيع الطلبات. موجود في إعدادات تكامل AllPay.'
+                          : 'Private key for signing requests. Found in AllPay integration settings.'}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="border-t border-blue-200 pt-4 space-y-4">
+                  <p className={`text-xs font-semibold text-blue-800 uppercase tracking-wide ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {currentLanguage === 'ru' ? 'Дополнительные опции' : currentLanguage === 'he' ? 'אפשרויות נוספות' : currentLanguage === 'ar' ? 'خيارات إضافية' : 'Additional Options'}
+                  </p>
+
+                  <FormField
+                    control={form.control}
+                    name="allpayJ5Enabled"
+                    render={({ field }) => (
+                      <FormItem className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                        <div className="flex items-center gap-3">
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                          <FormLabel className="text-sm font-medium cursor-pointer">
+                            {currentLanguage === 'ru' ? 'J5 — отложенное списание' : currentLanguage === 'he' ? 'J5 — עסקה נדחית' : currentLanguage === 'ar' ? 'J5 — معاملة مؤجلة' : 'J5 — Deferred transaction'}
+                          </FormLabel>
+                        </div>
+                        <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru'
+                            ? 'Резервирует сумму на карте без реального списания. Итоговая сумма уточняется и списывается позже. Нужно завершить в течение 7 дней.'
+                            : currentLanguage === 'he'
+                            ? 'מחזיק סכום בכרטיס ללא חיוב בפועל. הסכום הסופי מאושר ומחויב לאחר מכן. יש לסיים תוך 7 ימים.'
+                            : currentLanguage === 'ar'
+                            ? 'يحجز المبلغ على البطاقة دون خصم فعلي. يتم تأكيد المبلغ النهائي لاحقاً. يجب إتمامه خلال 7 أيام.'
+                            : 'Reserves the amount on the card without charging. The final amount is confirmed and charged later. Must be finalized within 7 days.'}
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="allpayMaxInstallments"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru' ? 'Максимальное число платежей (рассрочка)' : currentLanguage === 'he' ? 'מספר תשלומים מקסימלי (תשלומים)' : currentLanguage === 'ar' ? 'الحد الأقصى لعدد الدفعات (تقسيط)' : 'Max installments'}
+                        </FormLabel>
+                        <Select
+                          value={String(field.value || 1)}
+                          onValueChange={(v) => field.onChange(Number(v))}
+                        >
+                          <SelectTrigger className="text-sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">{currentLanguage === 'ru' ? '1 — единый платёж' : currentLanguage === 'he' ? '1 — תשלום יחיד' : currentLanguage === 'ar' ? '1 — دفعة واحدة' : '1 — Single payment'}</SelectItem>
+                            <SelectItem value="2">2</SelectItem>
+                            <SelectItem value="3">3</SelectItem>
+                            <SelectItem value="4">4</SelectItem>
+                            <SelectItem value="6">6</SelectItem>
+                            <SelectItem value="12">12</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru'
+                            ? 'Количество частей для оплаты. Для рассрочки нужно включить модуль в настройках AllPay.'
+                            : currentLanguage === 'he'
+                            ? 'מספר תשלומים לפריסה. לתשלומים יש להפעיל את המודול בהגדרות AllPay.'
+                            : currentLanguage === 'ar'
+                            ? 'عدد الأقساط. للتقسيط يجب تفعيل الوحدة في إعدادات AllPay.'
+                            : 'Number of installment payments. For installments, enable the module in AllPay settings.'}
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="allpayCreateInvoice"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center gap-3">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <div className={`flex flex-col gap-0.5 ${isRTL ? 'items-end' : 'items-start'}`}>
+                          <FormLabel className="text-sm font-normal cursor-pointer">
+                            {currentLanguage === 'ru' ? 'Авто-чек клиенту' : currentLanguage === 'he' ? 'קבלה אוטומטית ללקוח' : currentLanguage === 'ar' ? 'إيصال تلقائي للعميل' : 'Auto-receipt to customer'}
+                          </FormLabel>
+                          <span className="text-xs text-muted-foreground">
+                            {currentLanguage === 'ru' ? 'AllPay автоматически выдаст чек (doc_type 400) после оплаты' : currentLanguage === 'he' ? 'AllPay יוציא קבלה (doc_type 400) אוטומטית לאחר התשלום' : currentLanguage === 'ar' ? 'سيُصدر AllPay إيصالاً تلقائياً (doc_type 400) بعد الدفع' : 'AllPay automatically issues a receipt (doc_type 400) after payment'}
+                          </span>
+                        </div>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
             </>

@@ -2,8 +2,10 @@
 // Defines a common interface for online payment gateways.
 // Adding a new provider requires only a new class implementing IPaymentProvider.
 
+import crypto from 'crypto';
+
 export interface PaymentProviderConfig {
-  active: 'none' | 'hyp' | 'grow';
+  active: 'none' | 'hyp' | 'grow' | 'allpay';
   hyp?: {
     masof: string;
     passP: string;
@@ -20,6 +22,13 @@ export interface PaymentProviderConfig {
     j5Enabled?: boolean;       // Deferred transaction: reserves funds without charging
     maxInstallments?: number;  // 1 = single payment, 2–12 = installments
     createInvoice?: boolean;   // Auto-send invoice to customer after payment
+  };
+  allpay?: {
+    login: string;             // API login from AllPay Settings → Integrations
+    apiKey: string;            // Private API key used to sign requests
+    j5Enabled?: boolean;       // Pre-authorization: reserves funds without charging (7 days)
+    maxInstallments?: number;  // 1 = single payment, 2–12 = installments
+    createInvoice?: boolean;   // Auto-issue receipt/invoice after payment (doc_type 400)
   };
 }
 
@@ -238,6 +247,126 @@ export class GrowProvider implements IPaymentProvider {
   }
 }
 
+// ─── AllPay Provider ───────────────────────────────────────────────────────────
+// Docs: https://allpay.to/docs/api-reference.htm
+// Auth: SHA256 signature over sorted non-empty values + API key
+
+const ALLPAY_BASE = "https://allpay.to/app/?show=getpayment&mode=api12";
+
+/**
+ * Builds the SHA256 signature for AllPay requests.
+ * Algorithm: sort non-empty keys A-Z, join values with ':', append apiKey, SHA256.
+ */
+function buildAllPaySign(data: Record<string, any>, apiKey: string): string {
+  const filtered: Record<string, any> = {};
+  for (const [k, v] of Object.entries(data)) {
+    if (k !== 'sign' && v !== '' && v != null) {
+      filtered[k] = v;
+    }
+  }
+
+  const chunks: string[] = [];
+  for (const key of Object.keys(filtered).sort()) {
+    const val = filtered[key];
+    if (Array.isArray(val)) {
+      for (const item of val) {
+        for (const k of Object.keys(item as Record<string, any>).sort()) {
+          const iv = (item as Record<string, any>)[k];
+          if (iv !== '' && iv != null) chunks.push(String(iv));
+        }
+      }
+    } else {
+      chunks.push(String(val));
+    }
+  }
+  chunks.push(apiKey);
+
+  return crypto.createHash('sha256').update(chunks.join(':'), 'utf8').digest('hex');
+}
+
+export class AllPayProvider implements IPaymentProvider {
+  readonly name = 'allpay';
+
+  constructor(
+    private readonly login: string,
+    private readonly apiKey: string,
+    private readonly j5Enabled: boolean = false,
+    private readonly maxInstallments: number = 1,
+    private readonly createInvoice: boolean = false,
+  ) {}
+
+  async initiate(params: InitiateParams): Promise<InitiateResult> {
+    const amountILS = (params.amountInAgorot / 100).toFixed(2);
+
+    // Map our language codes to AllPay lang codes
+    const langMap: Record<string, string> = { he: 'HE', ar: 'AR', ru: 'RU', en: 'EN' };
+    const lang = langMap[params.language || ''] || 'AUTO';
+
+    const body: Record<string, any> = {
+      login:      this.login,
+      order_id:   params.token,             // unique per payment
+      items:      [{ name: 'Order', qty: '1', price: amountILS, vat: '1' }],
+      currency:   'ILS',
+      lang,
+      success_url:  params.successUrl,
+      backlink_url: params.errorUrl,
+      add_field_1:  params.token,           // echoed back in webhook unchanged
+    };
+
+    if (params.notifyUrl)       body.webhook_url    = params.notifyUrl;
+    if (params.customerName)    body.client_name    = params.customerName;
+    if (params.customerEmail)   body.client_email   = params.customerEmail;
+    if (params.customerPhone)   body.client_phone   = params.customerPhone;
+
+    // J5 pre-authorization (reserve without charging)
+    if (this.j5Enabled)         body.preauthorize   = true;
+
+    // Installments (1 = single payment)
+    if (this.maxInstallments > 1) body.inst = this.maxInstallments;
+
+    // Auto-invoice (doc_type 400 = Receipt)
+    if (this.createInvoice)     body.doc_type = 400;
+
+    body.sign = buildAllPaySign(body, this.apiKey);
+
+    const response = await fetch(ALLPAY_BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AllPay HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.error_code) {
+      throw new Error(`AllPay error ${data.error_code}: ${data.error_msg}`);
+    }
+    if (!data.payment_url) {
+      throw new Error(`AllPay: no payment_url in response: ${JSON.stringify(data)}`);
+    }
+
+    return { redirectUrl: data.payment_url };
+  }
+
+  parseCallback(query: Record<string, string>): CallbackResult {
+    // AllPay redirects to success_url — no status params in redirect, just order_id
+    // The real confirmation comes from the webhook
+    const token = query.order_id || query.add_field_1;
+    // Treat redirect to success_url as tentative success; webhook is authoritative
+    return { token, isSuccess: true, transactionId: query.order_id };
+  }
+
+  parseWebhook(body: Record<string, string>): WebhookResult {
+    // Our token is in add_field_1 (set during initiate)
+    const token = body.add_field_1 || body.order_id;
+    const isSuccess = String(body.status) === '1';
+    const transactionId = body.order_id;
+    return { token, isSuccess, transactionId };
+  }
+}
+
 // ─── Provider Factory ──────────────────────────────────────────────────────────
 
 /**
@@ -267,6 +396,15 @@ export function getProvider(settings: {
         config.grow.j5Enabled ?? false,
         config.grow.maxInstallments ?? 1,
         config.grow.createInvoice ?? false,
+      );
+    }
+    if (config.active === 'allpay' && config.allpay?.login && config.allpay?.apiKey) {
+      return new AllPayProvider(
+        config.allpay.login,
+        config.allpay.apiKey,
+        config.allpay.j5Enabled ?? false,
+        config.allpay.maxInstallments ?? 1,
+        config.allpay.createInvoice ?? false,
       );
     }
   }

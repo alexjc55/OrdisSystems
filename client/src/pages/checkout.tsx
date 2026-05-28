@@ -57,6 +57,24 @@ function PaymentBadges({ provider }: { provider: string }) {
           style={{ height: 20, filter: 'grayscale(1) opacity(0.45)', flexShrink: 0 }}
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
         />
+      ) : provider === 'allpay' ? (
+        /* AllPay: PCI DSS badge + card logos */
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, paddingRight: 8 }}>
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#9ca3af">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+            <span style={{ fontSize: 8, fontWeight: 800, color: '#9ca3af', lineHeight: 1.15, userSelect: 'none' }}>PCI<br/>DSS</span>
+          </div>
+          <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
+          <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 14, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>VISA</span>
+          <svg width="24" height="15" viewBox="0 0 38 24" aria-label="Mastercard" style={{ flexShrink: 0, marginRight: 6 }}>
+            <circle cx="14" cy="12" r="8" fill="#9ca3af" />
+            <circle cx="24" cy="12" r="8" fill="#6b7280" />
+            <path d="M19 5.5a8 8 0 0 1 0 13A8 8 0 0 1 19 5.5z" fill="#d1d5db" />
+          </svg>
+          <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 11, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>AMEX</span>
+        </>
       ) : (
         <>
           {/* HYP logo */}
@@ -1087,7 +1105,8 @@ export default function Checkout() {
   const activePaymentProvider: string = (storeSettings as any)?.paymentProviderConfig?.active || 'none';
   const isOnlinePaymentAvailable = Boolean(
     (activePaymentProvider === 'hyp' && (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
-    (activePaymentProvider === 'grow' && (storeSettings as any)?.paymentProviderConfig?.grow?.userId)
+    (activePaymentProvider === 'grow' && (storeSettings as any)?.paymentProviderConfig?.grow?.userId) ||
+    (activePaymentProvider === 'allpay' && (storeSettings as any)?.paymentProviderConfig?.allpay?.login)
   );
 
   if (items.length === 0) {
