@@ -535,7 +535,7 @@ export async function sendNewOrderEmail(
   }).join('') || '';
 
   // Pre-compute localized display values
-  const localizedPaymentMethodAdmin = getLocalizedPaymentMethod(orderDetails.paymentMethodNames, orderDetails.paymentMethod, language, opts?.languageOrder);
+  const localizedPaymentMethodAdmin = getLocalizedPaymentMethod(opts?.paymentMethodNames, orderDetails.paymentMethod, language, opts?.languageOrder);
   const displayDeliveryFeeAdmin = typeof orderDetails.deliveryFee === 'number' ? orderDetails.deliveryFee : (opts?.deliveryFee || 0);
   const displayVolumeDiscountAdmin = typeof orderDetails.volumeDiscount === 'number' ? orderDetails.volumeDiscount : (opts?.volumeDiscount || 0);
 
@@ -579,26 +579,6 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.deliveryTimeLabel}</td>
               <td style="padding: 10px 0; color: #666;">${deliveryTimeFormatted}</td>
             </tr>` : ''}
-            ${displayVolumeDiscountAdmin > 0 ? `<tr>
-              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).volumeDiscountLabel}</td>
-              <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${displayVolumeDiscountAdmin}₪</td>
-            </tr>` : ''}
-            ${orderDetails.couponDiscount ? `<tr>
-              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</td>
-              <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${orderDetails.couponDiscount}₪</td>
-            </tr>` : ''}
-            ${orderDetails.loyaltyDiscount ? `<tr>
-              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).loyaltyDiscountLabel}</td>
-              <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${orderDetails.loyaltyDiscount}₪</td>
-            </tr>` : ''}
-            ${displayDeliveryFeeAdmin > 0 ? `<tr>
-              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).deliveryFeeLabel}</td>
-              <td style="padding: 10px 0; color: #555;">+${displayDeliveryFeeAdmin}₪</td>
-            </tr>` : ''}
-            <tr>
-              <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
-              <td style="padding: 10px 0; color: ${themeColor}; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
-            </tr>
             ${localizedPaymentMethodAdmin ? `<tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.paymentLabel}</td>
               <td style="padding: 10px 0; color: #666;">${localizedPaymentMethodAdmin}</td>
@@ -622,7 +602,7 @@ export async function sendNewOrderEmail(
           </table>
         </div>
 
-        <!-- Order Items -->
+        <!-- Order Items + Discounts + Total -->
         ${itemsHtml ? `
         <div style="margin-bottom: 25px;">
           <h3 style="color: #333; margin-bottom: 15px;">${template.itemsLabel}</h3>
@@ -637,9 +617,34 @@ export async function sendNewOrderEmail(
             <tbody>
               ${itemsHtml}
             </tbody>
+            <tfoot>
+              ${displayVolumeDiscountAdmin > 0 ? `<tr style="background-color:#fff8f8;">
+                <td colspan="2" style="padding:8px 12px;color:#e53e3e;font-weight:bold;">${(template as any).volumeDiscountLabel}</td>
+                <td style="padding:8px 12px;text-align:right;color:#e53e3e;font-weight:bold;">-${displayVolumeDiscountAdmin}₪</td>
+              </tr>` : ''}
+              ${orderDetails.couponDiscount ? `<tr style="background-color:#fff8f8;">
+                <td colspan="2" style="padding:8px 12px;color:#e53e3e;font-weight:bold;">${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</td>
+                <td style="padding:8px 12px;text-align:right;color:#e53e3e;font-weight:bold;">-${orderDetails.couponDiscount}₪</td>
+              </tr>` : ''}
+              ${orderDetails.loyaltyDiscount ? `<tr style="background-color:#fff8f8;">
+                <td colspan="2" style="padding:8px 12px;color:#e53e3e;font-weight:bold;">${(template as any).loyaltyDiscountLabel}</td>
+                <td style="padding:8px 12px;text-align:right;color:#e53e3e;font-weight:bold;">-${orderDetails.loyaltyDiscount}₪</td>
+              </tr>` : ''}
+              ${displayDeliveryFeeAdmin > 0 ? `<tr style="background-color:#f8f9fa;">
+                <td colspan="2" style="padding:8px 12px;color:#555;">${(template as any).deliveryFeeLabel}</td>
+                <td style="padding:8px 12px;text-align:right;color:#555;">${displayDeliveryFeeAdmin}₪</td>
+              </tr>` : ''}
+              <tr style="background-color:#f8f9fa;border-top:2px solid #ddd;">
+                <td colspan="2" style="padding:12px;font-weight:bold;font-size:16px;color:#333;">${template.totalLabel}</td>
+                <td style="padding:12px;text-align:right;font-weight:bold;font-size:18px;color:${themeColor};">${totalAmount}₪</td>
+              </tr>
+            </tfoot>
           </table>
         </div>
-        ` : ''}
+        ` : `<div style="margin-bottom:25px;padding:12px;background:#f8f9fa;border-radius:6px;display:flex;justify-content:space-between;">
+          <strong>${template.totalLabel}</strong>
+          <strong style="color:${themeColor};font-size:18px;">${totalAmount}₪</strong>
+        </div>`}
 
         <!-- Action Button -->
         <div style="text-align: center; margin-top: 30px;">
@@ -956,11 +961,6 @@ export async function sendGuestOrderEmail(
         
         <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
           <h3 style="color: #495057; margin-top: 0;">📋 ${template.title} #${orderId}</h3>
-          ${displayVolumeDiscountGuest > 0 ? `<p><strong>${(template as any).volumeDiscountLabel}</strong> <span style="color:#e53e3e;">-₪${displayVolumeDiscountGuest}</span></p>` : ''}
-          ${orderDetails.couponDiscount ? `<p><strong>${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</strong> <span style="color:#e53e3e;">-₪${orderDetails.couponDiscount}</span></p>` : ''}
-          ${orderDetails.loyaltyDiscount ? `<p><strong>${(template as any).loyaltyDiscountLabel}</strong> <span style="color:#e53e3e;">-₪${orderDetails.loyaltyDiscount}</span></p>` : ''}
-          ${displayDeliveryFeeGuest > 0 ? `<p><strong>${(template as any).deliveryFeeLabel}</strong> +₪${displayDeliveryFeeGuest}</p>` : ''}
-          <p><strong>${template.totalLabel}</strong> ₪${totalAmount}</p>
           <p><strong>${template.statusLabel}</strong> ${template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status}</p>
           ${orderDetails.customerPhone ? `<p><strong>${template.phoneLabel}</strong> ${orderDetails.customerPhone}</p>` : ''}
           ${orderDetails.deliveryAddress ? `<p><strong>${template.addressLabel}</strong> ${orderDetails.deliveryAddress}</p>` : ''}
@@ -971,9 +971,43 @@ export async function sendGuestOrderEmail(
         ${itemsHtml ? `
         <div style="margin: 20px 0;">
           <h3 style="color: #495057;">${template.itemsLabel}</h3>
-          ${itemsHtml}
+          <table style="width:100%;border-collapse:collapse;border:1px solid #ddd;${isRTL ? 'direction:rtl;' : ''}">
+            <thead>
+              <tr style="background-color:#f8f9fa;">
+                <th style="padding:12px;text-align:${isRTL ? 'right' : 'left'};font-weight:bold;border-bottom:2px solid #ddd;">${template.productLabel}</th>
+                <th style="padding:12px;text-align:center;font-weight:bold;border-bottom:2px solid #ddd;">${template.quantityLabel}</th>
+                <th style="padding:12px;text-align:right;font-weight:bold;border-bottom:2px solid #ddd;">${template.amountLabel}</th>
+              </tr>
+            </thead>
+            <tbody>${itemsHtml}</tbody>
+            <tfoot>
+              ${displayVolumeDiscountGuest > 0 ? `<tr style="background-color:#fff8f8;">
+                <td colspan="2" style="padding:8px 12px;color:#e53e3e;font-weight:bold;">${(template as any).volumeDiscountLabel}</td>
+                <td style="padding:8px 12px;text-align:right;color:#e53e3e;font-weight:bold;">-${displayVolumeDiscountGuest}₪</td>
+              </tr>` : ''}
+              ${orderDetails.couponDiscount ? `<tr style="background-color:#fff8f8;">
+                <td colspan="2" style="padding:8px 12px;color:#e53e3e;font-weight:bold;">${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</td>
+                <td style="padding:8px 12px;text-align:right;color:#e53e3e;font-weight:bold;">-${orderDetails.couponDiscount}₪</td>
+              </tr>` : ''}
+              ${orderDetails.loyaltyDiscount ? `<tr style="background-color:#fff8f8;">
+                <td colspan="2" style="padding:8px 12px;color:#e53e3e;font-weight:bold;">${(template as any).loyaltyDiscountLabel}</td>
+                <td style="padding:8px 12px;text-align:right;color:#e53e3e;font-weight:bold;">-${orderDetails.loyaltyDiscount}₪</td>
+              </tr>` : ''}
+              ${displayDeliveryFeeGuest > 0 ? `<tr style="background-color:#f8f9fa;">
+                <td colspan="2" style="padding:8px 12px;color:#555;">${(template as any).deliveryFeeLabel}</td>
+                <td style="padding:8px 12px;text-align:right;color:#555;">${displayDeliveryFeeGuest}₪</td>
+              </tr>` : ''}
+              <tr style="background-color:#f8f9fa;border-top:2px solid #ddd;">
+                <td colspan="2" style="padding:12px;font-weight:bold;font-size:16px;color:#333;">${template.totalLabel}</td>
+                <td style="padding:12px;text-align:right;font-weight:bold;font-size:18px;color:${themeColor};">${totalAmount}₪</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-        ` : ''}
+        ` : `<div style="margin:20px 0;padding:12px;background:#f8f9fa;border-radius:6px;display:flex;justify-content:space-between;">
+          <strong>${template.totalLabel}</strong>
+          <strong style="color:${themeColor};font-size:18px;">${totalAmount}₪</strong>
+        </div>`}
         
         <div style="text-align: center; margin: 30px 0;">
           <p>${template.viewOrderText}</p>

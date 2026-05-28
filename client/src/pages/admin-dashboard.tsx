@@ -498,7 +498,8 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
   const { t: adminT } = useAdminTranslation();
   const { t: commonT } = useCommonTranslation();
   const { i18n } = useTranslation();
-  
+  const { storeSettings: cardStoreSettings } = useStoreSettings();
+
   const getStatusLabel = (status: string) => {
     console.log('OrderCard getStatusLabel called with status:', status);
     console.log('adminT function:', adminT);
@@ -720,7 +721,14 @@ const OrderCard = React.memo(function OrderCard({ order, onEdit, onStatusChange,
               {order.paymentMethod && (
                 <div className="flex items-center gap-1">
                   <CreditCard className="h-3 w-3" />
-                  <span>{order.paymentMethod}</span>
+                  <span>{(() => {
+                    const lang = localStorage.getItem('language') || 'ru';
+                    const methods: any[] = Array.isArray(cardStoreSettings?.paymentMethods) ? (cardStoreSettings.paymentMethods as any[]) : [];
+                    const found = methods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
+                    if (!found) return order.paymentMethod;
+                    const k = lang === 'en' ? 'name_en' : lang === 'he' ? 'name_he' : lang === 'ar' ? 'name_ar' : 'name';
+                    return found[k] || found.name || order.paymentMethod;
+                  })()}</span>
                 </div>
               )}
             </div>
@@ -2681,7 +2689,14 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
             {order.paymentMethod && (
               <div className="flex justify-between text-xs text-gray-500 pt-2 border-t">
                 <span>{adminT('orders.paymentMethod')}:</span>
-                <span>{order.paymentMethod}</span>
+                <span>{(() => {
+                  const lang = localStorage.getItem('language') || 'ru';
+                  const methods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
+                  const found = methods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
+                  if (!found) return order.paymentMethod;
+                  const k = lang === 'en' ? 'name_en' : lang === 'he' ? 'name_he' : lang === 'ar' ? 'name_ar' : 'name';
+                  return found[k] || found.name || order.paymentMethod;
+                })()}</span>
               </div>
             )}
             

@@ -339,7 +339,13 @@ export default function GuestOrderPage() {
                   <div className="flex items-center gap-3">
                     <CreditCard className="w-4 h-4 text-gray-400 flex-shrink-0" />
                     <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words">
-                      {order.paymentMethod}
+                      {(() => {
+                        const methods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
+                        const found = methods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
+                        if (!found) return order.paymentMethod;
+                        const langKey = currentLanguage === 'en' ? 'name_en' : currentLanguage === 'he' ? 'name_he' : currentLanguage === 'ar' ? 'name_ar' : 'name';
+                        return found[langKey] || found.name || order.paymentMethod;
+                      })()}
                     </span>
                   </div>
                 )}
@@ -369,8 +375,26 @@ export default function GuestOrderPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center text-base sm:text-lg font-semibold">
+                <div className="space-y-2 text-sm">
+                  {parseFloat(order.couponDiscount || '0') > 0 && (
+                    <div className="flex justify-between items-center text-red-600">
+                      <span>{order.couponCode ? `🏷️ ${order.couponCode}` : tShop('cart.couponDiscount')}</span>
+                      <span>-{formatCurrency(parseFloat(order.couponDiscount!))}</span>
+                    </div>
+                  )}
+                  {parseFloat(order.loyaltyDiscount || '0') > 0 && (
+                    <div className="flex justify-between items-center text-red-600">
+                      <span>⭐ {tShop('cart.loyaltyDiscount')}</span>
+                      <span>-{formatCurrency(parseFloat(order.loyaltyDiscount!))}</span>
+                    </div>
+                  )}
+                  {parseFloat(order.deliveryFee || '0') > 0 && (
+                    <div className="flex justify-between items-center text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1"><Truck className="w-3 h-3" />{t('order.deliveryFee')}</span>
+                      <span>{formatCurrency(parseFloat(order.deliveryFee!))}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center text-base sm:text-lg font-semibold border-t pt-2">
                     <span className="text-gray-900 dark:text-gray-100">{t('order.total')}</span>
                     <span className="text-gray-900 dark:text-gray-100">{formatCurrency(order.totalAmount)}</span>
                   </div>

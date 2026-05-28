@@ -1125,7 +1125,13 @@ export default function Profile() {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CreditCard className="h-4 w-4 text-green-400 flex-shrink-0" />
-                        {selectedOrder.paymentMethod === 'cash' ? t('profile.cash') : selectedOrder.paymentMethod === 'card' ? t('profile.card') : selectedOrder.paymentMethod}
+                        {(() => {
+                          const methods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
+                          const found = methods.find((m: any) => m.name === selectedOrder.paymentMethod || m.name_en === selectedOrder.paymentMethod || m.name_he === selectedOrder.paymentMethod || m.name_ar === selectedOrder.paymentMethod);
+                          if (!found) return selectedOrder.paymentMethod === 'cash' ? t('profile.cash') : selectedOrder.paymentMethod === 'card' ? t('profile.card') : (selectedOrder.paymentMethod || '');
+                          const langKey = currentLanguage === 'en' ? 'name_en' : currentLanguage === 'he' ? 'name_he' : currentLanguage === 'ar' ? 'name_ar' : 'name';
+                          return found[langKey] || found.name || selectedOrder.paymentMethod || '';
+                        })()}
                       </div>
                       {branchesEnabled && selectedOrder.branchId && (() => {
                         const orderBranch = branches.find(b => b.id === selectedOrder.branchId);
