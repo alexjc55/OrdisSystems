@@ -645,7 +645,10 @@ export class DatabaseStorage implements IStorage {
     
     if (status && status !== 'all') {
       if (status === 'with_discount') {
-        conditions.push(eq(products.isSpecialOffer, true));
+        conditions.push(or(
+          eq(products.isSpecialOffer, true),
+          sql`EXISTS (SELECT 1 FROM product_volume_discounts pvd WHERE pvd.product_id = ${products.id} AND pvd.is_active = true)`
+        ));
       } else if (branchId) {
         // Branch-aware status filtering: consider per-branch overrides, fallback to global
         if (status === 'available') {

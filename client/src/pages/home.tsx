@@ -408,6 +408,22 @@ export default function Home() {
     enabled: configLoaded,
   });
 
+  // Fetch volume discounts for all products to identify volume-discounted items
+  const allProductIds = useMemo(() => (allProducts || []).map(p => p.id).filter(Boolean), [allProducts]);
+  const { data: allVolumeDiscounts } = useQuery({
+    queryKey: [`/api/products/volume-discounts?productIds=${allProductIds.join(',')}`],
+    enabled: allProductIds.length > 0,
+    staleTime: 2 * 60 * 1000,
+  });
+  const volumeDiscountProductIds = useMemo(() => {
+    if (!allVolumeDiscounts) return new Set<number>();
+    return new Set<number>(
+      Object.entries(allVolumeDiscounts as Record<string, any[]>)
+        .filter(([, discounts]) => discounts.some((d: any) => d.isActive))
+        .map(([id]) => Number(id))
+    );
+  }, [allVolumeDiscounts]);
+
   // Get header style from store settings (accessible to all users)
   const headerStyle = storeSettings?.headerStyle || 'classic';
 
@@ -528,7 +544,7 @@ export default function Home() {
       
       // Prepare special offer products for sitelinks (use allProducts for home page)
       const specialProducts = (allProducts || [])
-        .filter((p: ProductWithCategories) => p.isSpecialOffer && p.availabilityStatus === 'available')
+        .filter((p: ProductWithCategories) => (p.isSpecialOffer || volumeDiscountProductIds.has(p.id)) && p.availabilityStatus === 'available')
         .slice(0, 6) // Show top 6 special offers
         .map((p: ProductWithCategories) => ({
           id: p.id,
@@ -548,7 +564,7 @@ export default function Home() {
         products: specialProducts.length > 0 ? specialProducts : undefined
       };
     }
-  }, [storeSettings, selectedCategory, selectedCategoryId, searchQuery, currentLanguage, t, categories, allProducts, products]);
+  }, [storeSettings, selectedCategory, selectedCategoryId, searchQuery, currentLanguage, t, categories, allProducts, products, volumeDiscountProductIds]);
 
   // Apply SEO data
   useSEO(seoData);
@@ -608,17 +624,17 @@ export default function Home() {
     }
   }, [navigate]);
 
-  // Get special offers (products marked as special offers from active categories only)
+  // Get special offers (products marked as special offers OR with active volume discounts, from active categories only)
   const specialOffers = useMemo(() => {
     if (!allProducts || !categories) return [];
     
     return allProducts.filter(product => {
       const hasActiveCategory = product.categories?.some(cat => cat.isActive);
       return product.isAvailable !== false && 
-             product.isSpecialOffer === true && 
+             (product.isSpecialOffer === true || volumeDiscountProductIds.has(product.id)) && 
              hasActiveCategory;
     });
-  }, [allProducts, categories]);
+  }, [allProducts, categories, volumeDiscountProductIds]);
 
   // Display products logic
   const displayProducts = useMemo(() => {
@@ -632,8 +648,10 @@ export default function Home() {
       productsToShow = allProducts
         .filter(product => product.categories?.some(cat => cat.id === categoryId))
         .sort((a, b) => {
-          if (a.isSpecialOffer && !b.isSpecialOffer) return -1;
-          if (!a.isSpecialOffer && b.isSpecialOffer) return 1;
+          const aIsOffer = a.isSpecialOffer || volumeDiscountProductIds.has(a.id);
+          const bIsOffer = b.isSpecialOffer || volumeDiscountProductIds.has(b.id);
+          if (aIsOffer && !bIsOffer) return -1;
+          if (!aIsOffer && bIsOffer) return 1;
           const aOrder = (a.sortOrder ?? 0) === 0 ? 999999 : (a.sortOrder ?? 0);
           const bOrder = (b.sortOrder ?? 0) === 0 ? 999999 : (b.sortOrder ?? 0);
           if (aOrder !== bOrder) return aOrder - bOrder;
@@ -642,14 +660,18 @@ export default function Home() {
     } else if (selectedCategoryId === 0) {
       // Show all products — special offers first
       productsToShow = [...allProducts].sort((a, b) => {
-        if (a.isSpecialOffer && !b.isSpecialOffer) return -1;
-        if (!a.isSpecialOffer && b.isSpecialOffer) return 1;
+        const aIsOffer = a.isSpecialOffer || volumeDiscountProductIds.has(a.id);
+        const bIsOffer = b.isSpecialOffer || volumeDiscountProductIds.has(b.id);
+        if (aIsOffer && !bIsOffer) return -1;
+        if (!aIsOffer && bIsOffer) return 1;
         return 0;
       });
     } else if (selectedCategoryId !== null && products) {
       productsToShow = [...products].sort((a, b) => {
-        if (a.isSpecialOffer && !b.isSpecialOffer) return -1;
-        if (!a.isSpecialOffer && b.isSpecialOffer) return 1;
+        const aIsOffer = a.isSpecialOffer || volumeDiscountProductIds.has(a.id);
+        const bIsOffer = b.isSpecialOffer || volumeDiscountProductIds.has(b.id);
+        if (aIsOffer && !bIsOffer) return -1;
+        if (!aIsOffer && bIsOffer) return 1;
         return 0;
       });
     } else {
@@ -658,11 +680,11 @@ export default function Home() {
 
     // Apply discount filter
     if (discountFilter === "discount") {
-      productsToShow = productsToShow.filter(product => product.isSpecialOffer);
+      productsToShow = productsToShow.filter(product => product.isSpecialOffer || volumeDiscountProductIds.has(product.id));
     }
 
     return productsToShow;
-  }, [searchQuery, searchResults, selectedCategoryId, allProducts, products, categoryFilter, discountFilter]);
+  }, [searchQuery, searchResults, selectedCategoryId, allProducts, products, categoryFilter, discountFilter, volumeDiscountProductIds]);
 
   // URL parameters handling
   useEffect(() => {
