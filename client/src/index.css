@@ -339,6 +339,17 @@ button:focus,
     text-align: right !important;
   }
   
+  /* Payment badges: always LTR regardless of page language */
+  .payment-badges-ltr,
+  html[lang="he"] .payment-badges-ltr,
+  html[lang="ar"] .payment-badges-ltr,
+  html[lang="he"] div.payment-badges-ltr,
+  html[lang="ar"] div.payment-badges-ltr {
+    direction: ltr !important;
+    flex-direction: row !important;
+    unicode-bidi: isolate !important;
+  }
+
   /* Header banner elements should remain centered on RTL languages */
   html[lang="he"] .header-banner,
   html[lang="ar"] .header-banner,

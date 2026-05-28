@@ -37,7 +37,7 @@ import { triggerPushRequestAfterAction } from "@/lib/prompt-utils";
 
 function PaymentBadges({ provider }: { provider: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'nowrap', gap: 0, marginTop: 10, direction: 'ltr' }}>
+    <div className="payment-badges-ltr" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'nowrap', gap: 0, marginTop: 10 }}>
       {/* SSL */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0, paddingRight: 8 }}>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2.5">
