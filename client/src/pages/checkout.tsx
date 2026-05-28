@@ -703,6 +703,8 @@ export default function Checkout() {
             clearTimeout(deadlineTimer);
             stopPolling();
             localStorage.removeItem(HYP_PENDING_KEY);
+            setIsCheckingHypPayment(false);
+            toast({ title: tShop('checkout.paymentFailed'), variant: 'destructive' });
           }
           // other network errors — keep trying until deadline
         }
