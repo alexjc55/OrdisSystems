@@ -399,7 +399,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
             const qty = (pu === '100g' || pu === '100ml')
               ? Math.round(parseFloat(best.minQuantity) * 100)
               : parseFloat(best.minQuantity);
-            const sfx = { '100g': t('units.g') || 'г', '100ml': t('units.ml') || 'мл', 'kg': t('units.kg') || 'кг', 'piece': t('units.piece') || 'шт', 'portion': t('units.portion') || 'порц.' }[pu] || '';
+            const sfx = { '100g': t('units.g') || 'г', '100ml': t('units.ml') || 'мл', 'kg': t('units.kg') || 'кг', 'piece': t('units.piece') || 'шт', 'portion': t('units.portionShort') || 'порц.' }[pu] || '';
             const discount = best.discountType === 'percentage'
               ? `${best.discountValue}%`
               : formatCurrency(parseFloat(best.discountValue));
