@@ -10735,7 +10735,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const categoryDefaultLang = (settings as any)?.defaultLanguage || 'ru';
   const languageOrder: string[] = (settings as any)?.languageOrder || enabledLanguages;
   const allCategoryTabs = [
-    { key: 'basic', label: 'Русский', icon: Info, langCode: 'ru' },
+    { key: 'basic', label: 'Русский', icon: Languages, langCode: 'ru' },
     { key: 'english', label: 'English', icon: Globe, langCode: 'en' },
     { key: 'hebrew', label: 'עברית', icon: Languages, langCode: 'he' },
     { key: 'arabic', label: 'العربية', icon: Type, langCode: 'ar' }
