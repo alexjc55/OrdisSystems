@@ -877,9 +877,9 @@ export default function Home() {
                               onClick={() => handleCategorySelect(category.id)}
                             >
                               {iconIsUrl ? (
-                                <img src={category.icon!} alt={name} className="w-8 h-8 object-cover rounded-lg flex-shrink-0 mt-0.5" />
+                                <img src={category.icon!} alt={name} className="w-10 h-10 object-cover rounded-xl flex-shrink-0" />
                               ) : (
-                                <span className="text-2xl flex-shrink-0 leading-none mt-0.5">{category.icon || '📦'}</span>
+                                <span className="text-[28px] flex-shrink-0 leading-none">{category.icon || '📦'}</span>
                               )}
                               <span className="text-xs font-medium leading-tight text-center w-full">{name}</span>
                             </UTMLink>
