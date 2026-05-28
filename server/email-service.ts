@@ -237,6 +237,68 @@ class EmailService {
 // Singleton instance
 export const emailService = new EmailService();
 
+// Helper: get localized product name with fallback chain (emailLang → languageOrder)
+function getLocalizedProductName(
+  product: any,
+  lang: string,
+  languageOrder: string[] = ['ru', 'en', 'he', 'ar']
+): string {
+  if (!product) return '';
+  function getVal(l: string): string {
+    if (l === 'ru') return product.name || '';
+    return product[`name_${l}`] || '';
+  }
+  const val = getVal(lang);
+  if (val) return val;
+  for (const l of languageOrder) {
+    if (l === lang) continue;
+    const v = getVal(l);
+    if (v) return v;
+  }
+  return '';
+}
+
+// Helper: get localized payment method name with fallback chain
+function getLocalizedPaymentMethod(
+  paymentMethodNames: Record<string, string> | undefined,
+  fallback: string | undefined,
+  lang: string,
+  languageOrder: string[] = ['ru', 'en', 'he', 'ar']
+): string {
+  if (paymentMethodNames) {
+    function getVal(l: string): string { return paymentMethodNames[l] || ''; }
+    const val = getVal(lang);
+    if (val) return val;
+    for (const l of languageOrder) {
+      if (l === lang) continue;
+      const v = getVal(l);
+      if (v) return v;
+    }
+  }
+  return fallback || '';
+}
+
+// Helper: get localized store name with fallback chain
+function getLocalizedStoreName(
+  storeName: string | undefined,
+  storeNameVariants: Record<string, string> | undefined,
+  lang: string,
+  languageOrder: string[] = ['ru', 'en', 'he', 'ar']
+): string {
+  function getVal(l: string): string {
+    if (l === 'ru') return storeName || '';
+    return storeNameVariants?.[l] || '';
+  }
+  const val = getVal(lang);
+  if (val) return val;
+  for (const l of languageOrder) {
+    if (l === lang) continue;
+    const v = getVal(l);
+    if (v) return v;
+  }
+  return 'Ordis';
+}
+
 // New order email notification function
 export async function sendNewOrderEmail(
   orderId: number,
@@ -249,7 +311,13 @@ export async function sendNewOrderEmail(
   language: string = 'ru',
   storeName?: string,
   baseUrl?: string,
-  primaryColor?: string
+  primaryColor?: string,
+  opts?: {
+    deliveryFee?: number;
+    volumeDiscount?: number;
+    paymentMethodNames?: Record<string, string>;
+    languageOrder?: string[];
+  }
 ): Promise<boolean> {
   const themeColor = hslToHex(primaryColor || '#f97316');
   
@@ -271,6 +339,8 @@ export async function sendNewOrderEmail(
       branchLabel: 'Филиал:',
       couponDiscountLabel: 'Скидка по купону:',
       loyaltyDiscountLabel: 'Скидка постоянного клиента:',
+      deliveryFeeLabel: 'Доставка:',
+      volumeDiscountLabel: 'Скидка за объём:',
       footer: 'Обработайте заказ в админ-панели',
       viewOrderButton: 'Посмотреть заказ',
       quantityLabel: 'Кол-во',
@@ -302,6 +372,8 @@ export async function sendNewOrderEmail(
       branchLabel: 'Branch:',
       couponDiscountLabel: 'Coupon discount:',
       loyaltyDiscountLabel: 'Loyalty discount:',
+      deliveryFeeLabel: 'Delivery:',
+      volumeDiscountLabel: 'Volume discount:',
       footer: 'Process the order in admin panel',
       viewOrderButton: 'View order',
       quantityLabel: 'Quantity',
@@ -333,6 +405,8 @@ export async function sendNewOrderEmail(
       branchLabel: 'סניף:',
       couponDiscountLabel: 'הנחת קופון:',
       loyaltyDiscountLabel: 'הנחת לקוח קבוע:',
+      deliveryFeeLabel: 'משלוח:',
+      volumeDiscountLabel: 'הנחת כמות:',
       footer: 'עבד על ההזמנה בפאנל הניהול',
       viewOrderButton: 'צפה בהזמנה',
       quantityLabel: 'כמות',
@@ -364,6 +438,8 @@ export async function sendNewOrderEmail(
       branchLabel: 'الفرع:',
       couponDiscountLabel: 'خصم القسيمة:',
       loyaltyDiscountLabel: 'خصم العميل الدائم:',
+      deliveryFeeLabel: 'التوصيل:',
+      volumeDiscountLabel: 'خصم الكمية:',
       footer: 'قم بمعالجة الطلب في لوحة الإدارة',
       viewOrderButton: 'عرض الطلب',
       quantityLabel: 'الكمية',
@@ -445,7 +521,7 @@ export async function sendNewOrderEmail(
     const formattedQuantity = formatQuantityWithUnit(item.quantity, originalUnit, language);
     const isGift = orderDetails.giftProductId && item.productId === orderDetails.giftProductId;
     const giftWord = language === 'ru' ? 'Подарок' : language === 'he' ? 'מתנה' : language === 'ar' ? 'هدية' : 'Gift';
-    const productName = (item.product?.name || template.productLabel) + (isGift ? ' 🎁' : '');
+    const productName = (getLocalizedProductName(item.product, language, opts?.languageOrder) || template.productLabel) + (isGift ? ' 🎁' : '');
     const priceCell = isGift
       ? `<span style="color:#16a34a;font-weight:bold;">${giftWord}</span>`
       : `${item.totalPrice}₪`;
@@ -457,6 +533,11 @@ export async function sendNewOrderEmail(
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">${priceCell}</td>
     </tr>`;
   }).join('') || '';
+
+  // Pre-compute localized display values
+  const localizedPaymentMethodAdmin = getLocalizedPaymentMethod(orderDetails.paymentMethodNames, orderDetails.paymentMethod, language, opts?.languageOrder);
+  const displayDeliveryFeeAdmin = typeof orderDetails.deliveryFee === 'number' ? orderDetails.deliveryFee : (opts?.deliveryFee || 0);
+  const displayVolumeDiscountAdmin = typeof orderDetails.volumeDiscount === 'number' ? orderDetails.volumeDiscount : (opts?.volumeDiscount || 0);
 
   // HTML email template with anti-spam measures
   const html = `
@@ -498,6 +579,10 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.deliveryTimeLabel}</td>
               <td style="padding: 10px 0; color: #666;">${deliveryTimeFormatted}</td>
             </tr>` : ''}
+            ${displayVolumeDiscountAdmin > 0 ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).volumeDiscountLabel}</td>
+              <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${displayVolumeDiscountAdmin}₪</td>
+            </tr>` : ''}
             ${orderDetails.couponDiscount ? `<tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</td>
               <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${orderDetails.couponDiscount}₪</td>
@@ -506,13 +591,17 @@ export async function sendNewOrderEmail(
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).loyaltyDiscountLabel}</td>
               <td style="padding: 10px 0; color: #e53e3e; font-weight: bold;">-${orderDetails.loyaltyDiscount}₪</td>
             </tr>` : ''}
+            ${displayDeliveryFeeAdmin > 0 ? `<tr>
+              <td style="padding: 10px 0; font-weight: bold; color: #333;">${(template as any).deliveryFeeLabel}</td>
+              <td style="padding: 10px 0; color: #555;">+${displayDeliveryFeeAdmin}₪</td>
+            </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.totalLabel}</td>
               <td style="padding: 10px 0; color: ${themeColor}; font-weight: bold; font-size: 18px;">${totalAmount}₪</td>
             </tr>
-            ${orderDetails.paymentMethod ? `<tr>
+            ${localizedPaymentMethodAdmin ? `<tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.paymentLabel}</td>
-              <td style="padding: 10px 0; color: #666;">${orderDetails.paymentMethod}</td>
+              <td style="padding: 10px 0; color: #666;">${localizedPaymentMethodAdmin}</td>
             </tr>` : ''}
             <tr>
               <td style="padding: 10px 0; font-weight: bold; color: #333;">${template.statusLabel}</td>
@@ -563,7 +652,7 @@ export async function sendNewOrderEmail(
         <!-- Footer -->
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 14px;">
           <p>${template.footer}</p>
-          <p style="margin: 5px 0 0 0;">${storeName || fromName || 'Ordis'} - ${language === 'ru' ? 'Система управления заказами' : language === 'en' ? 'Order Management System' : language === 'he' ? 'מערכת ניהול הזמנות' : 'نظام إدارة الطلبات'}</p>
+          <p style="margin: 5px 0 0 0;">${storeName || 'Ordis'} - ${language === 'ru' ? 'Система управления заказами' : language === 'en' ? 'Order Management System' : language === 'he' ? 'מערכת ניהול הזמנות' : 'نظام إدارة الطلبات'}</p>
         </div>
 
       </div>
@@ -612,10 +701,20 @@ export async function sendGuestOrderEmail(
   language: string = 'ru',
   storeName?: string,
   baseUrl?: string,
-  primaryColor?: string
+  primaryColor?: string,
+  opts?: {
+    deliveryFee?: number;
+    volumeDiscount?: number;
+    paymentMethodNames?: Record<string, string>;
+    languageOrder?: string[];
+    storeNameVariants?: Record<string, string>;
+  }
 ): Promise<boolean> {
   const themeColor = hslToHex(primaryColor || '#f97316');
-  
+
+  // Compute localized store name BEFORE templates so template footers can embed it
+  const localizedStoreNameGuest = getLocalizedStoreName(storeName, opts?.storeNameVariants, language, opts?.languageOrder);
+
   // Multilingual email templates for guest orders
   const templates = {
     ru: {
@@ -637,7 +736,9 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'Создайте аккаунт для удобства!',
       registrationText: 'Зарегистрируйтесь, чтобы легко отслеживать все ваши заказы, сохранить адрес доставки и получать персональные предложения.',
       registerButton: 'Зарегистрироваться и привязать заказ',
-      footer: `С уважением,<br>Команда ${storeName || 'Ordis'}`,
+      deliveryFeeLabel: 'Доставка:',
+      volumeDiscountLabel: 'Скидка за объём:',
+      footer: `С уважением,<br>Команда ${localizedStoreNameGuest}`,
       quantityLabel: 'Кол-во',
       amountLabel: 'Сумма',
       productLabel: 'Товар',
@@ -670,7 +771,9 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'Create an account for convenience!',
       registrationText: 'Register to easily track all your orders, save delivery address, and receive personalized offers.',
       registerButton: 'Register and link order',
-      footer: `Best regards,<br>Team ${storeName || 'Ordis'}`,
+      deliveryFeeLabel: 'Delivery:',
+      volumeDiscountLabel: 'Volume discount:',
+      footer: `Best regards,<br>Team ${localizedStoreNameGuest}`,
       quantityLabel: 'Quantity',
       amountLabel: 'Amount',
       productLabel: 'Product',
