@@ -886,12 +886,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
   const localizedPaymentMethod = (() => {
     if (!order.paymentMethod) return '';
-    const lang = localStorage.getItem('language') || 'ru';
+    const lang = i18n.language || localStorage.getItem('language') || 'ru';
     const pmethods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
     const pmFound = pmethods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
     if (!pmFound) return order.paymentMethod as string;
     const pk = lang === 'en' ? 'name_en' : lang === 'he' ? 'name_he' : lang === 'ar' ? 'name_ar' : 'name';
-    return (pmFound[pk] || pmFound.name || order.paymentMethod) as string;
+    return (pmFound[pk] || pmFound.name || pmFound.name_en || pmFound.name_he || pmFound.name_ar || order.paymentMethod) as string;
   })();
 
   const [showAddItem, setShowAddItem] = useState(false);
@@ -1454,7 +1454,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       const pmFound = pmethods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
       if (!pmFound) return order.paymentMethod;
       const pk = currentLang === 'en' ? 'name_en' : currentLang === 'he' ? 'name_he' : currentLang === 'ar' ? 'name_ar' : 'name';
-      return (pmFound[pk] || pmFound.name || order.paymentMethod) as string;
+      return (pmFound[pk] || pmFound.name || pmFound.name_en || pmFound.name_he || pmFound.name_ar || order.paymentMethod) as string;
     })();
 
     const allInfoRows = makeInfoRows([
