@@ -863,7 +863,9 @@ export default function Home() {
                           className={`${pillBase} ${pillSize} ${selectedCategoryId === null || selectedCategoryId === 0 ? pillActive : pillInactive}`}
                           style={pillStyle(t('allCategories'))}
                         >
-                          <LayoutGrid className="w-7 h-7 flex-shrink-0 mt-0.5" />
+                          <div className="h-10 flex items-center justify-center flex-shrink-0">
+                            <LayoutGrid className="w-7 h-7" />
+                          </div>
                           <span className="text-xs font-medium leading-tight text-center w-full">{t('allCategories')}</span>
                         </UTMLink>
                         {categories.map((category) => {
@@ -876,11 +878,13 @@ export default function Home() {
                               style={pillStyle(name)}
                               onClick={() => handleCategorySelect(category.id)}
                             >
-                              {iconIsUrl ? (
-                                <img src={category.icon!} alt={name} className="w-10 h-10 object-cover rounded-xl flex-shrink-0" />
-                              ) : (
-                                <span className="text-[28px] flex-shrink-0 leading-none">{category.icon || '📦'}</span>
-                              )}
+                              <div className="h-10 flex items-center justify-center flex-shrink-0">
+                                {iconIsUrl ? (
+                                  <img src={category.icon!} alt={name} className="w-10 h-10 object-cover rounded-xl" />
+                                ) : (
+                                  <span className="text-[28px] leading-none">{category.icon || '📦'}</span>
+                                )}
+                              </div>
                               <span className="text-xs font-medium leading-tight text-center w-full">{name}</span>
                             </UTMLink>
                           );
