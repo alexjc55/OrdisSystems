@@ -342,6 +342,9 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
     const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
     const activeTheme = await storage.getActiveTheme();
 
+    const resendPaymentMethodNames = resolvePaymentMethodNames(currentStoreSettings.paymentMethods, order.paymentMethod);
+    const resendDeliveryFee = parseFloat(String(order.deliveryFee || '0'));
+
     await sendGuestOrderEmail(
       order.id,
       order.guestName || 'Гость',
@@ -356,7 +359,11 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
         customerNotes: order.customerNotes,
         status: order.status,
         items: itemsWithProducts,
-        branchName: resendBranchName
+        branchName: resendBranchName,
+        couponCode: order.couponCode || null,
+        couponDiscount: order.couponDiscount ? parseFloat(String(order.couponDiscount)) : null,
+        loyaltyDiscount: order.loyaltyDiscount ? parseFloat(String(order.loyaltyDiscount)) : null,
+        giftProductId: order.giftProductId || null
       },
       order.guestAccessToken ?? '',
       order.guestClaimToken ?? '',
@@ -365,7 +372,11 @@ router.post('/orders/guest/:token/send-email', async (req, res) => {
       order.orderLanguage || 'ru',
       storeName,
       baseUrl,
-      activeTheme?.primaryColor
+      activeTheme?.primaryColor,
+      {
+        deliveryFee: resendDeliveryFee,
+        paymentMethodNames: resendPaymentMethodNames,
+      }
     );
 
     res.json({ success: true, message: "Email sent successfully" });
@@ -444,6 +455,7 @@ router.post('/orders/guest', async (req: any, res) => {
       ...(serverCouponCode ? { couponCode: serverCouponCode } : {}),
       ...(serverCouponDiscount > 0 ? { couponDiscount: serverCouponDiscount.toString() } : {}),
       ...(serverLoyaltyDiscount > 0 ? { loyaltyDiscount: serverLoyaltyDiscount.toString() } : {}),
+      ...(deliveryFee > 0 ? { deliveryFee: deliveryFee.toString() } : {}),
       ...(serverGiftProductId ? { giftProductId: serverGiftProductId } : {}),
       ...(Object.keys(serverDiscountDetails).length > 0 ? { discountDetails: serverDiscountDetails } : {}),
     };
