@@ -11184,6 +11184,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
 
   const [isTrackingCodeOpen, setIsTrackingCodeOpen] = useState(false);
   const [isAdvertisingFeedsOpen, setIsAdvertisingFeedsOpen] = useState(false);
+  const prevStoreSettingsRef = useRef<any>(null);
 
   const queryClient = useQueryClient();
 
@@ -11303,13 +11304,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
 
   const watchedPaymentProvider = useWatch({ control: form.control, name: 'paymentProvider' });
 
-  // Helper function to get payment method name for current language
+  // Helper function to get payment method name for current language (strict - no cross-language fallback)
   const getPaymentMethodName = (method: any, language: string) => {
     switch (language) {
-      case 'en': return method.name_en || method.name || '';
-      case 'he': return method.name_he || method.name || '';
-      case 'ar': return method.name_ar || method.name || '';
-      default: return method.name || '';
+      case 'en': return method.name_en ?? '';
+      case 'he': return method.name_he ?? '';
+      case 'ar': return method.name_ar ?? '';
+      default: return method.name ?? '';
     }
   };
 
@@ -11326,7 +11327,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
   // Reset form when storeSettings or language changes
   useEffect(() => {
     if (storeSettings) {
-      console.log('Updating form with paymentMethods:', storeSettings?.paymentMethods);
+      const isStoreSettingsChange = prevStoreSettingsRef.current !== storeSettings;
+      prevStoreSettingsRef.current = storeSettings;
       form.reset({
         storeName: getLocalizedFieldForAdmin(storeSettings, 'storeName', currentLanguage, storeSettings) || "",
         welcomeTitle: getLocalizedFieldForAdmin(storeSettings, 'welcomeTitle', currentLanguage, storeSettings) || "",
@@ -11363,7 +11365,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         checkoutGuestFirst: storeSettings?.checkoutGuestFirst || false,
         whatsappDefaultMessage: getLocalizedFieldForAdmin(storeSettings, 'whatsappDefaultMessage', currentLanguage, storeSettings) || "",
         cartBannerText: getLocalizedFieldForAdmin(storeSettings, 'cartBannerText', currentLanguage, storeSettings) || "",
-        paymentMethods: storeSettings?.paymentMethods || [],
+        paymentMethods: isStoreSettingsChange ? (storeSettings?.paymentMethods || []) : form.getValues('paymentMethods'),
         aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
         deliveryFee: storeSettings?.deliveryFee || "15.00",
         freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11547,14 +11549,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           );
           
           if (existingMethod) {
-            // Merge current language changes with existing multilingual data
+            // Use form values directly — each language field is independent
             return {
               ...existingMethod,
               ...method,
-              // Preserve other language data that might not be in current form
-              name_en: existingMethod.name_en || method.name_en || '',
-              name_he: existingMethod.name_he || method.name_he || '',
-              name_ar: existingMethod.name_ar || method.name_ar || ''
+              name:    method.name    ?? existingMethod.name    ?? '',
+              name_en: method.name_en ?? existingMethod.name_en ?? '',
+              name_he: method.name_he ?? existingMethod.name_he ?? '',
+              name_ar: method.name_ar ?? existingMethod.name_ar ?? '',
             };
           }
           
