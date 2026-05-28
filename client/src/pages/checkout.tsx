@@ -49,18 +49,8 @@ function PaymentBadges({ provider }: { provider: string }) {
 
       <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
 
-      {/* PCI DSS */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, paddingRight: 8 }}>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="#9ca3af">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-        </svg>
-        <span style={{ fontSize: 8, fontWeight: 800, color: '#9ca3af', lineHeight: 1.15, userSelect: 'none' }}>PCI<br/>DSS</span>
-      </div>
-
-      <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
-
       {provider === 'grow' ? (
-        /* Grow (Meshulam): combined PCI + cards badge from Meshulam CDN */
+        /* Grow (Meshulam): combined badge — already includes PCI DSS, Apple Pay, Google Pay, bit, MC, VISA */
         <img
           src="https://cdn.meshulam.co.il/_media/images/web_business/new_cc_with_pci_black.svg"
           alt="Meshulam secure payment"
