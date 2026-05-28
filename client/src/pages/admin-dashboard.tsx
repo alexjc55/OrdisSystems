@@ -6042,9 +6042,9 @@ export default function AdminDashboard() {
                                         const best = vd.reduce((a: any, b: any) => parseFloat(a.minQuantity) <= parseFloat(b.minQuantity) ? a : b);
                                         const pu = product.unit || '100g';
                                         const qty = (pu === '100g' || pu === '100ml') ? Math.round(parseFloat(best.minQuantity) * 100) : parseFloat(best.minQuantity);
-                                        const sfx = { '100g': 'г', '100ml': 'мл', 'kg': 'кг', 'piece': 'шт', 'portion': 'порц.' }[pu] || '';
+                                        const sfx = adminT(`products.volumeDiscount.unitSuffix.${pu}`) || '';
                                         const dlbl = best.discountType === 'percentage' ? `${best.discountValue}%` : formatCurrency(parseFloat(best.discountValue));
-                                        return <div className="mt-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded px-1.5 py-0.5 inline-block" dir="ltr">{dlbl} {adminT('products.volumeDiscount.fromLabel')} {qty}{sfx}</div>;
+                                        return <div className="mt-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded px-1.5 py-0.5 inline-block" dir="ltr">{adminT('products.volumeDiscount.discountWord')} {dlbl} {adminT('products.volumeDiscount.fromLabel')} {qty}{sfx}</div>;
                                       })()}
                                     </div>
                                   </TableCell>
@@ -6131,9 +6131,9 @@ export default function AdminDashboard() {
                                         const best = vd.reduce((a: any, b: any) => parseFloat(a.minQuantity) <= parseFloat(b.minQuantity) ? a : b);
                                         const pu = product.unit || '100g';
                                         const qty = (pu === '100g' || pu === '100ml') ? Math.round(parseFloat(best.minQuantity) * 100) : parseFloat(best.minQuantity);
-                                        const sfx = { '100g': 'г', '100ml': 'мл', 'kg': 'кг', 'piece': 'шт', 'portion': 'порц.' }[pu] || '';
+                                        const sfx = adminT(`products.volumeDiscount.unitSuffix.${pu}`) || '';
                                         const dlbl = best.discountType === 'percentage' ? `${best.discountValue}%` : formatCurrency(parseFloat(best.discountValue));
-                                        return <div className="mt-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded px-1.5 py-0.5 inline-block" dir="ltr">{dlbl} {adminT('products.volumeDiscount.fromLabel')} {qty}{sfx}</div>;
+                                        return <div className="mt-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded px-1.5 py-0.5 inline-block" dir="ltr">{adminT('products.volumeDiscount.discountWord')} {dlbl} {adminT('products.volumeDiscount.fromLabel')} {qty}{sfx}</div>;
                                       })()}
                                     </div>
                                   </TableCell>

@@ -873,6 +873,7 @@
       "empty": "אין הנחות נפח מוגדרות",
       "saveError": "שגיאה בשמירת הנחות הנפח",
       "fromLabel": "מ-",
+      "discountWord": "הנחה",
       "newProductNote": "ההנחות יישמרו עם יצירת המוצר",
       "unitSuffix": { "100g": "ג'", "100ml": "מ\"ל", "kg": "ק\"ג", "piece": "יח'", "portion": "מנה" }
     },

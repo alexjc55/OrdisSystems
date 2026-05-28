@@ -590,6 +590,7 @@
       "empty": "لا توجد خصومات كمية محددة",
       "saveError": "فشل في حفظ خصومات الكمية",
       "fromLabel": "من",
+      "discountWord": "خصم",
       "newProductNote": "سيتم حفظ الخصومات عند إنشاء المنتج",
       "unitSuffix": { "100g": "غ", "100ml": "مل", "kg": "كغ", "piece": "قطعة", "portion": "حصة" }
     }

@@ -263,6 +263,7 @@
       "empty": "No volume discounts configured",
       "saveError": "Failed to save volume discounts",
       "fromLabel": "from",
+      "discountWord": "discount",
       "newProductNote": "Discounts will be saved when the product is created",
       "unitSuffix": { "100g": "g", "100ml": "ml", "kg": "kg", "piece": "pcs", "portion": "ptn" }
     },
