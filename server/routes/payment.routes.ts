@@ -214,6 +214,8 @@ async function handleWebhook(req: any, res: any) {
       token = parsed.token;
       isSuccess = parsed.isSuccess;
       transactionId = parsed.transactionId;
+      // Grow embeds our token in the notifyUrl query param as fallback
+      if (!token && req.query?.token) token = req.query.token as string;
     } else {
       token = body.Order || body.token;
       isSuccess = body.CCode === "0" || body.Status === "000" || body.Status === "0";
@@ -232,6 +234,12 @@ async function handleWebhook(req: any, res: any) {
     if (isSuccess) {
       await finalizeOrder(pending, transactionId);
       await storage.updatePendingPaymentStatus(token, "completed", transactionId);
+      // Grow requires mandatory approveTransaction after confirming receipt
+      if (provider?.approveTransaction && transactionId) {
+        await provider.approveTransaction(transactionId).catch((e: any) =>
+          console.error("approveTransaction failed:", e)
+        );
+      }
     } else {
       await storage.updatePendingPaymentStatus(token, "failed", transactionId);
     }

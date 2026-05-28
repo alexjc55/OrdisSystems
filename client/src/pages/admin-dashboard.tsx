@@ -383,6 +383,10 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   hypPassP: z.string().optional(),
   hypKey: z.string().optional(),
   hypTestMode: z.boolean().default(true),
+  growUserId: z.string().optional(),
+  growApiKey: z.string().optional(),
+  growPageCode: z.string().optional(),
+  growTestMode: z.boolean().default(true),
 });
 
 
@@ -8956,12 +8960,16 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [giftProductSearch, setGiftProductSearch] = useState('');
   const [giftProductPickerOpen, setGiftProductPickerOpen] = useState(false);
 
-  // HYP online payment settings
+  // Online payment settings
   const [paymentProvider, setPaymentProvider] = useState('none');
   const [hypMasof, setHypMasof] = useState('');
   const [hypKey, setHypKey] = useState('');
   const [hypPassP, setHypPassP] = useState('');
   const [hypTestMode, setHypTestMode] = useState(true);
+  const [growUserId, setGrowUserId] = useState('');
+  const [growApiKey, setGrowApiKey] = useState('');
+  const [growPageCode, setGrowPageCode] = useState('');
+  const [growTestMode, setGrowTestMode] = useState(true);
 
   useEffect(() => {
     if (settings) {
@@ -8971,12 +8979,16 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
-      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean } } | null;
+      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean } } | null;
       setPaymentProvider(ppc?.active || 'none');
       setHypMasof(ppc?.hyp?.masof || '');
       setHypKey(ppc?.hyp?.key || '');
       setHypPassP(ppc?.hyp?.passP || '');
       setHypTestMode(ppc?.hyp?.testMode !== false);
+      setGrowUserId(ppc?.grow?.userId || '');
+      setGrowApiKey(ppc?.grow?.apiKey || '');
+      setGrowPageCode(ppc?.grow?.pageCode || '');
+      setGrowTestMode(ppc?.grow?.testMode !== false);
     }
   }, [settings]);
 
@@ -11336,6 +11348,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       hypKey: (storeSettings as any)?.paymentProviderConfig?.hyp?.key || '',
       hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
       hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
+      growUserId: (storeSettings as any)?.paymentProviderConfig?.grow?.userId || '',
+      growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
+      growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
+      growTestMode: (storeSettings as any)?.paymentProviderConfig?.grow?.testMode !== false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11522,6 +11538,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         hypKey: (storeSettings as any)?.paymentProviderConfig?.hyp?.key || '',
         hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
         hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
+        growUserId: (storeSettings as any)?.paymentProviderConfig?.grow?.userId || '',
+        growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
+        growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
+        growTestMode: (storeSettings as any)?.paymentProviderConfig?.grow?.testMode !== false,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -11689,6 +11709,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 passP: data.hypPassP || '',
                 key: data.hypKey || '',
                 testMode: data.hypTestMode !== false,
+              }
+            } : {}),
+            ...(data.paymentProvider === 'grow' ? {
+              grow: {
+                userId:   data.growUserId   || '',
+                apiKey:   data.growApiKey   || '',
+                pageCode: data.growPageCode || '',
+                testMode: data.growTestMode !== false,
               }
             } : {}),
           },
@@ -13110,6 +13138,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   <SelectContent>
                     <SelectItem value="none">{currentLanguage === 'ru' ? 'Отключено' : currentLanguage === 'he' ? 'מושבת' : currentLanguage === 'ar' ? 'معطل' : 'None'}</SelectItem>
                     <SelectItem value="hyp">HYP</SelectItem>
+                    <SelectItem value="grow">Grow (Meshulam)</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage className="text-xs" />
@@ -13377,6 +13406,120 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 )}
               />
               </div>
+            </div>
+            </>
+          )}
+
+          {watchedPaymentProvider === 'grow' && (
+            <>
+            <div className={`rounded-xl border border-green-200 bg-green-50/50 p-4 space-y-4`}>
+                <div className={`space-y-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <p className="text-sm font-semibold text-green-800">Grow (Meshulam)</p>
+                  <p className={`text-xs text-muted-foreground`}>
+                    {currentLanguage === 'ru'
+                      ? 'Реквизиты доступны в личном кабинете Grow на grow.business после регистрации.'
+                      : currentLanguage === 'he'
+                      ? 'הפרטים זמינים בחשבון Grow ב-grow.business לאחר הרשמה.'
+                      : currentLanguage === 'ar'
+                      ? 'البيانات متاحة في حساب Grow على grow.business بعد التسجيل.'
+                      : 'Credentials are available in your Grow account at grow.business after registration.'}
+                  </p>
+                  <a href="https://grow.business" target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200 border border-green-300 rounded-md px-3 py-1.5 transition-colors">
+                    🌐 grow.business
+                  </a>
+                </div>
+
+              <FormField
+                control={form.control}
+                name="growUserId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      User ID
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="123456" className="text-sm" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru'
+                        ? 'Идентификатор вашего бизнеса в системе Grow, выдаётся при регистрации.'
+                        : currentLanguage === 'he'
+                        ? 'מזהה העסק שלך במערכת Grow, ניתן בעת ההרשמה.'
+                        : currentLanguage === 'ar'
+                        ? 'معرّف نشاطك التجاري في نظام Grow، يُمنح عند التسجيل.'
+                        : 'Your business identifier in the Grow system, provided upon registration.'}
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="growApiKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      API Key
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="••••••••" type="password" autoComplete="new-password" className="text-sm" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru'
+                        ? 'API-ключ для авторизации запросов. Находится в настройках интеграции вашего аккаунта Grow.'
+                        : currentLanguage === 'he'
+                        ? 'מפתח API לאימות בקשות. נמצא בהגדרות האינטגרציה של חשבון Grow שלך.'
+                        : currentLanguage === 'ar'
+                        ? 'مفتاح API لمصادقة الطلبات. موجود في إعدادات التكامل لحساب Grow.'
+                        : 'API key for request authentication. Found in the integration settings of your Grow account.'}
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="growPageCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                      Page Code
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="abc123" className="text-sm" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {currentLanguage === 'ru'
+                        ? 'Уникальный код страницы оплаты, предоставленный Grow при настройке интеграции.'
+                        : currentLanguage === 'he'
+                        ? 'קוד דף התשלום הייחודי שניתן על ידי Grow בעת הגדרת האינטגרציה.'
+                        : currentLanguage === 'ar'
+                        ? 'كود صفحة الدفع الفريد المُقدَّم من Grow عند إعداد التكامل.'
+                        : 'Unique payment page code provided by Grow during integration setup.'}
+                    </FormDescription>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="growTestMode"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-3">
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                    <FormLabel className="text-sm font-normal cursor-pointer">
+                      {currentLanguage === 'ru' ? 'Тестовый режим (sandbox)' : currentLanguage === 'he' ? 'מצב בדיקה (sandbox)' : currentLanguage === 'ar' ? 'وضع الاختبار (sandbox)' : 'Test mode (sandbox)'}
+                    </FormLabel>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
             </div>
             </>
           )}

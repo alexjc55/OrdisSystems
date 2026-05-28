@@ -3,11 +3,17 @@
 // Adding a new provider requires only a new class implementing IPaymentProvider.
 
 export interface PaymentProviderConfig {
-  active: 'none' | 'hyp' | 'payme';
+  active: 'none' | 'hyp' | 'grow';
   hyp?: {
     masof: string;
     passP: string;
     key: string;
+    testMode?: boolean;
+  };
+  grow?: {
+    userId: string;
+    apiKey: string;
+    pageCode: string;
     testMode?: boolean;
   };
 }
@@ -45,6 +51,7 @@ export interface IPaymentProvider {
   initiate(params: InitiateParams): Promise<InitiateResult>;
   parseCallback(query: Record<string, string>): CallbackResult;
   parseWebhook(body: Record<string, string>): WebhookResult;
+  approveTransaction?(transactionId: string): Promise<void>;
 }
 
 // ─── HYP Provider ─────────────────────────────────────────────────────────────
@@ -115,6 +122,106 @@ export class HypProvider implements IPaymentProvider {
   }
 }
 
+// ─── Grow (Meshulam) Provider ─────────────────────────────────────────────────
+
+const GROW_SANDBOX_BASE = "https://sandbox.meshulam.co.il/api/light/server/1.0";
+const GROW_PROD_BASE    = "https://secure.meshulam.co.il/api/light/server/1.0";
+
+export class GrowProvider implements IPaymentProvider {
+  readonly name = 'grow';
+
+  constructor(
+    private readonly userId: string,
+    private readonly apiKey: string,
+    private readonly pageCode: string,
+    private readonly testMode: boolean = false,
+  ) {}
+
+  private get base() {
+    return this.testMode ? GROW_SANDBOX_BASE : GROW_PROD_BASE;
+  }
+
+  async initiate(params: InitiateParams): Promise<InitiateResult> {
+    const sum = (params.amountInAgorot / 100).toFixed(2);
+
+    // Embed our internal token in callback URLs so we can match responses to orders
+    const successUrl = `${params.successUrl}?token=${encodeURIComponent(params.token)}`;
+    const cancelUrl  = `${params.errorUrl}?token=${encodeURIComponent(params.token)}`;
+    const notifyUrl  = params.notifyUrl
+      ? `${params.notifyUrl}?token=${encodeURIComponent(params.token)}`
+      : undefined;
+
+    const form = new URLSearchParams();
+    form.append('userId',      this.userId);
+    form.append('apiKey',      this.apiKey);
+    form.append('pageCode',    this.pageCode);
+    form.append('sum',         sum);
+    form.append('paymentDesc', params.token); // echoed back in webhook body
+    form.append('successUrl',  successUrl);
+    form.append('cancelUrl',   cancelUrl);
+    if (params.customerName)  form.append('fullName',   params.customerName);
+    if (params.customerEmail) form.append('payerEmail', params.customerEmail);
+    if (params.customerPhone) form.append('payerPhone', params.customerPhone);
+    if (notifyUrl)            form.append('notifyUrl',  notifyUrl);
+
+    const response = await fetch(`${this.base}/createPaymentProcess`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: form.toString(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Grow createPaymentProcess HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (String(data.status) !== '1') {
+      throw new Error(`Grow error: ${data.err || JSON.stringify(data)}`);
+    }
+
+    return { redirectUrl: data.data.url };
+  }
+
+  parseCallback(query: Record<string, string>): CallbackResult {
+    // token was embedded in successUrl; transactionCode signals success
+    const token = query.token;
+    const transactionCode = query.transactionCode;
+    return { token, isSuccess: !!transactionCode, transactionId: transactionCode };
+  }
+
+  parseWebhook(body: Record<string, string>): WebhookResult {
+    // token is in body.paymentDesc (we set it during initiate)
+    // also returned via notifyUrl query param — handled in handleWebhook as fallback
+    const token = body.paymentDesc || undefined;
+    const transactionCode = body.transactionCode;
+    const isSuccess = !!transactionCode && !!body.paymentSum;
+    return { token, isSuccess, transactionId: transactionCode };
+  }
+
+  async approveTransaction(transactionId: string): Promise<void> {
+    const form = new URLSearchParams();
+    form.append('userId',          this.userId);
+    form.append('apiKey',          this.apiKey);
+    form.append('transactionCode', transactionId);
+
+    const response = await fetch(`${this.base}/approveTransaction`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: form.toString(),
+    });
+
+    if (!response.ok) {
+      console.error(`Grow approveTransaction HTTP ${response.status}`);
+      return;
+    }
+
+    const data = await response.json().catch(() => ({}));
+    if (String(data.status) !== '1') {
+      console.error(`Grow approveTransaction error:`, data);
+    }
+  }
+}
+
 // ─── Provider Factory ──────────────────────────────────────────────────────────
 
 /**
@@ -129,7 +236,9 @@ export function getProvider(settings: {
     if (config.active === 'hyp' && config.hyp?.masof && config.hyp?.passP && config.hyp?.key) {
       return new HypProvider(config.hyp.masof, config.hyp.passP, config.hyp.key);
     }
-    // Future providers: add cases here
+    if (config.active === 'grow' && config.grow?.userId && config.grow?.apiKey && config.grow?.pageCode) {
+      return new GrowProvider(config.grow.userId, config.grow.apiKey, config.grow.pageCode, config.grow.testMode ?? false);
+    }
   }
 
   return null;

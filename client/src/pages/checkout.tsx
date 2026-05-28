@@ -1083,8 +1083,10 @@ export default function Checkout() {
 
   // Check if online payment is available via paymentProviderConfig
   const isOnlinePaymentAvailable = Boolean(
-    (storeSettings as any)?.paymentProviderConfig?.active === 'hyp' &&
-    (storeSettings as any)?.paymentProviderConfig?.hyp?.masof
+    ((storeSettings as any)?.paymentProviderConfig?.active === 'hyp' &&
+     (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
+    ((storeSettings as any)?.paymentProviderConfig?.active === 'grow' &&
+     (storeSettings as any)?.paymentProviderConfig?.grow?.userId)
   );
 
   if (items.length === 0) {
