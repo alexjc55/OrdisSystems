@@ -184,6 +184,7 @@ export const orders = pgTable("orders", {
   deliveryTime: varchar("delivery_time", { length: 50 }), // Format: HH:MM - HH:MM
   requestedDeliveryTime: timestamp("requested_delivery_time"),
   paymentMethod: varchar("payment_method", { length: 50 }),
+  transactionId: varchar("transaction_id", { length: 255 }), // Payment gateway transaction ID (used for J5 capture/void)
   cancellationReason: text("cancellation_reason"),
   // Loyalty / discount fields
   couponCode: varchar("coupon_code", { length: 50 }),

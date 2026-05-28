@@ -39,6 +39,7 @@ async function finalizeOrder(
     userId: pending.userId || null,
     status: "pending",
     paymentMethod: "online",
+    transactionId: transactionId || null,
     ...extraFields,
   };
 
@@ -234,8 +235,11 @@ async function handleWebhook(req: any, res: any) {
     if (isSuccess) {
       await finalizeOrder(pending, transactionId);
       await storage.updatePendingPaymentStatus(token, "completed", transactionId);
-      // Grow requires mandatory approveTransaction after confirming receipt
-      if (provider?.approveTransaction && transactionId) {
+      // Grow requires approveTransaction — but only for non-J5 payments.
+      // For J5, the actual charge is deferred and triggered when order status → "ready".
+      const isGrowJ5 = provider?.name === 'grow' &&
+        (settings as any)?.paymentProviderConfig?.grow?.j5Enabled === true;
+      if (provider?.approveTransaction && transactionId && !isGrowJ5) {
         await provider.approveTransaction(transactionId).catch((e: any) =>
           console.error("approveTransaction failed:", e)
         );

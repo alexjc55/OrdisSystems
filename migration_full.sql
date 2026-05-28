@@ -713,6 +713,9 @@ ALTER TABLE store_settings
   ADD COLUMN IF NOT EXISTS guest_promo_text_he TEXT,
   ADD COLUMN IF NOT EXISTS guest_promo_text_ar TEXT;
 
+-- J5 payment capture: store transaction ID on orders for deferred capture/void
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS transaction_id VARCHAR(255);
+
 -- ============================================================
 -- ГОТОВО
 -- ============================================================

@@ -384,17 +384,20 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   hypKey: z.string().optional(),
   hypTestMode: z.boolean().default(true),
   hypJ5Enabled: z.boolean().default(false),
+  hypJ5BufferPercent: z.number().default(0),
   hypSendEmail: z.boolean().default(false),
   growUserId: z.string().optional(),
   growApiKey: z.string().optional(),
   growPageCode: z.string().optional(),
   growTestMode: z.boolean().default(true),
   growJ5Enabled: z.boolean().default(false),
+  growJ5BufferPercent: z.number().default(0),
   growMaxInstallments: z.number().default(1),
   growCreateInvoice: z.boolean().default(false),
   allpayLogin: z.string().optional(),
   allpayApiKey: z.string().optional(),
   allpayJ5Enabled: z.boolean().default(false),
+  allpayJ5BufferPercent: z.number().default(0),
   allpayMaxInstallments: z.number().default(1),
   allpayCreateInvoice: z.boolean().default(false),
 });
@@ -8977,17 +8980,20 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [hypPassP, setHypPassP] = useState('');
   const [hypTestMode, setHypTestMode] = useState(true);
   const [hypJ5Enabled, setHypJ5Enabled] = useState(false);
+  const [hypJ5BufferPercent, setHypJ5BufferPercent] = useState(0);
   const [hypSendEmail, setHypSendEmail] = useState(false);
   const [growUserId, setGrowUserId] = useState('');
   const [growApiKey, setGrowApiKey] = useState('');
   const [growPageCode, setGrowPageCode] = useState('');
   const [growTestMode, setGrowTestMode] = useState(true);
   const [growJ5Enabled, setGrowJ5Enabled] = useState(false);
+  const [growJ5BufferPercent, setGrowJ5BufferPercent] = useState(0);
   const [growMaxInstallments, setGrowMaxInstallments] = useState(1);
   const [growCreateInvoice, setGrowCreateInvoice] = useState(false);
   const [allpayLogin, setAllpayLogin] = useState('');
   const [allpayApiKey, setAllpayApiKey] = useState('');
   const [allpayJ5Enabled, setAllpayJ5Enabled] = useState(false);
+  const [allpayJ5BufferPercent, setAllpayJ5BufferPercent] = useState(0);
   const [allpayMaxInstallments, setAllpayMaxInstallments] = useState(1);
   const [allpayCreateInvoice, setAllpayCreateInvoice] = useState(false);
 
@@ -9006,17 +9012,20 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setHypPassP(ppc?.hyp?.passP || '');
       setHypTestMode(ppc?.hyp?.testMode !== false);
       setHypJ5Enabled(ppc?.hyp?.j5Enabled || false);
+      setHypJ5BufferPercent(ppc?.hyp?.j5BufferPercent || 0);
       setHypSendEmail(ppc?.hyp?.sendEmail || false);
       setGrowUserId(ppc?.grow?.userId || '');
       setGrowApiKey(ppc?.grow?.apiKey || '');
       setGrowPageCode(ppc?.grow?.pageCode || '');
       setGrowTestMode(ppc?.grow?.testMode !== false);
       setGrowJ5Enabled(ppc?.grow?.j5Enabled || false);
+      setGrowJ5BufferPercent(ppc?.grow?.j5BufferPercent || 0);
       setGrowMaxInstallments(ppc?.grow?.maxInstallments || 1);
       setGrowCreateInvoice(ppc?.grow?.createInvoice || false);
       setAllpayLogin(ppc?.allpay?.login || '');
       setAllpayApiKey(ppc?.allpay?.apiKey || '');
       setAllpayJ5Enabled(ppc?.allpay?.j5Enabled || false);
+      setAllpayJ5BufferPercent(ppc?.allpay?.j5BufferPercent || 0);
       setAllpayMaxInstallments(ppc?.allpay?.maxInstallments || 1);
       setAllpayCreateInvoice(ppc?.allpay?.createInvoice || false);
     }
@@ -11379,17 +11388,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
       hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
       hypJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.hyp?.j5Enabled || false,
+      hypJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.hyp?.j5BufferPercent || 0,
       hypSendEmail: (storeSettings as any)?.paymentProviderConfig?.hyp?.sendEmail || false,
       growUserId: (storeSettings as any)?.paymentProviderConfig?.grow?.userId || '',
       growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
       growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
       growTestMode: (storeSettings as any)?.paymentProviderConfig?.grow?.testMode !== false,
       growJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.grow?.j5Enabled || false,
+      growJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.grow?.j5BufferPercent || 0,
       growMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.grow?.maxInstallments || 1,
       growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
       allpayLogin: (storeSettings as any)?.paymentProviderConfig?.allpay?.login || '',
       allpayApiKey: (storeSettings as any)?.paymentProviderConfig?.allpay?.apiKey || '',
       allpayJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5Enabled || false,
+      allpayJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5BufferPercent || 0,
       allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
       allpayCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.allpay?.createInvoice || false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
@@ -11579,17 +11591,20 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
         hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
         hypJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.hyp?.j5Enabled || false,
+        hypJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.hyp?.j5BufferPercent || 0,
         hypSendEmail: (storeSettings as any)?.paymentProviderConfig?.hyp?.sendEmail || false,
         growUserId: (storeSettings as any)?.paymentProviderConfig?.grow?.userId || '',
         growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
         growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
         growTestMode: (storeSettings as any)?.paymentProviderConfig?.grow?.testMode !== false,
         growJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.grow?.j5Enabled || false,
+        growJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.grow?.j5BufferPercent || 0,
         growMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.grow?.maxInstallments || 1,
         growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
         allpayLogin: (storeSettings as any)?.paymentProviderConfig?.allpay?.login || '',
         allpayApiKey: (storeSettings as any)?.paymentProviderConfig?.allpay?.apiKey || '',
         allpayJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5Enabled || false,
+        allpayJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5BufferPercent || 0,
         allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
         allpayCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.allpay?.createInvoice || false,
       } as any);
@@ -11759,28 +11774,31 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 passP:     data.hypPassP || '',
                 key:       data.hypKey || '',
                 testMode:  data.hypTestMode !== false,
-                j5Enabled: data.hypJ5Enabled || false,
-                sendEmail: data.hypSendEmail || false,
+                j5Enabled:        data.hypJ5Enabled || false,
+                j5BufferPercent:  data.hypJ5BufferPercent || 0,
+                sendEmail:        data.hypSendEmail || false,
               }
             } : {}),
             ...(data.paymentProvider === 'grow' ? {
               grow: {
-                userId:          data.growUserId   || '',
-                apiKey:          data.growApiKey   || '',
-                pageCode:        data.growPageCode || '',
-                testMode:        data.growTestMode !== false,
-                j5Enabled:       data.growJ5Enabled || false,
-                maxInstallments: data.growMaxInstallments || 1,
-                createInvoice:   data.growCreateInvoice || false,
+                userId:           data.growUserId   || '',
+                apiKey:           data.growApiKey   || '',
+                pageCode:         data.growPageCode || '',
+                testMode:         data.growTestMode !== false,
+                j5Enabled:        data.growJ5Enabled || false,
+                j5BufferPercent:  data.growJ5BufferPercent || 0,
+                maxInstallments:  data.growMaxInstallments || 1,
+                createInvoice:    data.growCreateInvoice || false,
               }
             } : {}),
             ...(data.paymentProvider === 'allpay' ? {
               allpay: {
-                login:           data.allpayLogin   || '',
-                apiKey:          data.allpayApiKey  || '',
-                j5Enabled:       data.allpayJ5Enabled || false,
-                maxInstallments: data.allpayMaxInstallments || 1,
-                createInvoice:   data.allpayCreateInvoice || false,
+                login:            data.allpayLogin   || '',
+                apiKey:           data.allpayApiKey  || '',
+                j5Enabled:        data.allpayJ5Enabled || false,
+                j5BufferPercent:  data.allpayJ5BufferPercent || 0,
+                maxInstallments:  data.allpayMaxInstallments || 1,
+                createInvoice:    data.allpayCreateInvoice || false,
               }
             } : {}),
           },
@@ -13503,6 +13521,41 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   )}
                 />
 
+                {form.watch('hypJ5Enabled') && (
+                  <FormField
+                    control={form.control}
+                    name="hypJ5BufferPercent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru' ? 'Буфер заморозки (%)' : currentLanguage === 'he' ? 'חיץ הקפאה (%)' : currentLanguage === 'ar' ? 'نسبة التجميد الإضافية (%)' : 'Freeze buffer (%)'}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={30}
+                            className="w-32"
+                            {...field}
+                            value={field.value ?? 0}
+                            onChange={e => field.onChange(parseInt(e.target.value) || 0)}
+                          />
+                        </FormControl>
+                        <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru'
+                            ? 'Дополнительный % к сумме заморозки. Например, 10% → заказ 100₪ → замораживаем 110₪. Списывается фактическая сумма при статусе «Готов».'
+                            : currentLanguage === 'he'
+                            ? 'אחוז נוסף לסכום ההקפאה. למשל 10% → הזמנה 100₪ → מקפיאים 110₪. יחויב הסכום בפועל עם סטטוס "מוכן".'
+                            : currentLanguage === 'ar'
+                            ? 'نسبة إضافية لمبلغ التجميد. مثال: 10% → طلب 100₪ → نجمد 110₪. يُخصم المبلغ الفعلي عند حالة "جاهز".'
+                            : 'Extra % added to the freeze amount. E.g. 10% → order 100₪ → freeze 110₪. Actual amount is charged when status is "Ready".'}
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="hypSendEmail"
@@ -13698,6 +13751,41 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   )}
                 />
 
+                {form.watch('growJ5Enabled') && (
+                  <FormField
+                    control={form.control}
+                    name="growJ5BufferPercent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru' ? 'Буфер заморозки (%)' : currentLanguage === 'he' ? 'חיץ הקפאה (%)' : currentLanguage === 'ar' ? 'نسبة التجميد الإضافية (%)' : 'Freeze buffer (%)'}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={30}
+                            className="w-32"
+                            {...field}
+                            value={field.value ?? 0}
+                            onChange={e => field.onChange(parseInt(e.target.value) || 0)}
+                          />
+                        </FormControl>
+                        <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru'
+                            ? 'Дополнительный % к сумме заморозки. Например, 10% → заказ 100₪ → замораживаем 110₪. Списывается фактическая сумма при статусе «Готов».'
+                            : currentLanguage === 'he'
+                            ? 'אחוז נוסף לסכום ההקפאה. למשל 10% → הזמנה 100₪ → מקפיאים 110₪. יחויב הסכום בפועל עם סטטוס "מוכן".'
+                            : currentLanguage === 'ar'
+                            ? 'نسبة إضافية لمبلغ التجميد. مثال: 10% → طلب 100₪ → نجمد 110₪. يُخصم المبلغ الفعلي عند حالة "جاهز".'
+                            : 'Extra % added to the freeze amount. E.g. 10% → order 100₪ → freeze 110₪. Actual amount is charged when status is "Ready".'}
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="growMaxInstallments"
@@ -13883,6 +13971,41 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       </FormItem>
                     )}
                   />
+
+                  {form.watch('allpayJ5Enabled') && (
+                    <FormField
+                      control={form.control}
+                      name="allpayJ5BufferPercent"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {currentLanguage === 'ru' ? 'Буфер заморозки (%)' : currentLanguage === 'he' ? 'חיץ הקפאה (%)' : currentLanguage === 'ar' ? 'نسبة التجميد الإضافية (%)' : 'Freeze buffer (%)'}
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={0}
+                              max={30}
+                              className="w-32"
+                              {...field}
+                              value={field.value ?? 0}
+                              onChange={e => field.onChange(parseInt(e.target.value) || 0)}
+                            />
+                          </FormControl>
+                          <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {currentLanguage === 'ru'
+                              ? 'Дополнительный % к сумме заморозки. Например, 10% → заказ 100₪ → замораживаем 110₪. Списывается фактическая сумма при статусе «Готов».'
+                              : currentLanguage === 'he'
+                              ? 'אחוז נוסף לסכום ההקפאה. למשל 10% → הזמנה 100₪ → מקפיאים 110₪. יחויב הסכום בפועל עם סטטוס "מוכן".'
+                              : currentLanguage === 'ar'
+                              ? 'نسبة إضافية لمبلغ التجميد. مثال: 10% → طلب 100₪ → نجمد 110₪. يُخصم المبلغ الفعلي عند حالة "جاهز".'
+                              : 'Extra % added to the freeze amount. E.g. 10% → order 100₪ → freeze 110₪. Actual amount is charged when status is "Ready".'}
+                          </FormDescription>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   <FormField
                     control={form.control}

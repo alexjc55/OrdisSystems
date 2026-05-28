@@ -5,6 +5,7 @@ import { PushNotificationService } from "../../push-notifications";
 import { BRANCHES_ENABLED } from "../../config";
 import { getDB } from "../../db";
 import { sql } from "drizzle-orm";
+import { getProvider } from "../../lib/payment-providers/index";
 
 const router = Router();
 
@@ -121,11 +122,61 @@ router.put('/orders/:id/status', isAuthenticated, async (req: any, res) => {
     const id = parseInt(req.params.id);
     const { status, cancellationReason } = req.body;
 
+    // ── J5 capture: attempt BEFORE updating status so admin sees the error if it fails ──
+    if (status === 'ready') {
+      const currentOrder = await storage.getOrderById(id);
+      if (currentOrder?.paymentMethod === 'online' && currentOrder?.transactionId) {
+        try {
+          const settings = await storage.getStoreSettings();
+          const provider = settings ? getProvider(settings as any) : null;
+          const config = (settings as any)?.paymentProviderConfig;
+          const active = config?.active;
+          const isJ5 = active === 'allpay' ? !!config?.allpay?.j5Enabled
+                      : active === 'grow'   ? !!config?.grow?.j5Enabled
+                      : active === 'hyp'    ? !!config?.hyp?.j5Enabled
+                      : false;
+
+          if (isJ5 && provider?.captureJ5) {
+            const orderAmount = parseFloat(String(currentOrder.totalAmount));
+            await provider.captureJ5(currentOrder.transactionId, orderAmount);
+          }
+        } catch (captureError: any) {
+          const msg = captureError?.message || 'Payment capture failed';
+          return res.status(400).json({ message: msg, j5CaptureError: true });
+        }
+      }
+    }
+
     let order;
     if (status === 'cancelled' && cancellationReason) {
       order = await storage.updateOrder(id, { status, cancellationReason });
     } else {
       order = await storage.updateOrderStatus(id, status);
+    }
+
+    // ── J5 void: release reserved funds when order is cancelled ──
+    if (status === 'cancelled' && order?.paymentMethod === 'online' && order?.transactionId) {
+      try {
+        const settings = await storage.getStoreSettings();
+        const provider = settings ? getProvider(settings as any) : null;
+        const config = (settings as any)?.paymentProviderConfig;
+        const active = config?.active;
+        const isJ5 = active === 'allpay' ? !!config?.allpay?.j5Enabled
+                    : active === 'grow'   ? !!config?.grow?.j5Enabled
+                    : active === 'hyp'    ? !!config?.hyp?.j5Enabled
+                    : false;
+
+        if (isJ5 && provider?.voidJ5) {
+          const bufferPercent = active === 'allpay' ? (config?.allpay?.j5BufferPercent || 0)
+                              : active === 'grow'   ? (config?.grow?.j5BufferPercent || 0)
+                              : (config?.hyp?.j5BufferPercent || 0);
+          const orderAmount = parseFloat(String(order.totalAmount));
+          const reservedAmount = orderAmount * (1 + bufferPercent / 100);
+          await provider.voidJ5(order.transactionId, reservedAmount);
+        }
+      } catch (voidError: any) {
+        console.error('[J5] voidJ5 failed (funds may need manual release):', voidError?.message);
+      }
     }
 
     if (order && order.userId && order.userId !== 'guest') {

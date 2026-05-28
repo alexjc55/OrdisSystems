@@ -11,24 +11,27 @@ export interface PaymentProviderConfig {
     passP: string;
     key: string;
     testMode?: boolean;
-    j5Enabled?: boolean;   // Deferred transaction: reserves funds without charging
-    sendEmail?: boolean;   // Auto-send payment receipt to customer email
+    j5Enabled?: boolean;        // Deferred transaction: reserves funds without charging
+    j5BufferPercent?: number;   // Extra % added to reserved amount (e.g. 10 = +10% buffer)
+    sendEmail?: boolean;        // Auto-send payment receipt to customer email
   };
   grow?: {
     userId: string;
     apiKey: string;
     pageCode: string;
     testMode?: boolean;
-    j5Enabled?: boolean;       // Deferred transaction: reserves funds without charging
-    maxInstallments?: number;  // 1 = single payment, 2–12 = installments
-    createInvoice?: boolean;   // Auto-send invoice to customer after payment
+    j5Enabled?: boolean;        // Deferred transaction: reserves funds without charging
+    j5BufferPercent?: number;   // Extra % added to reserved amount (e.g. 10 = +10% buffer)
+    maxInstallments?: number;   // 1 = single payment, 2–12 = installments
+    createInvoice?: boolean;    // Auto-send invoice to customer after payment
   };
   allpay?: {
-    login: string;             // API login from AllPay Settings → Integrations
-    apiKey: string;            // Private API key used to sign requests
-    j5Enabled?: boolean;       // Pre-authorization: reserves funds without charging (7 days)
-    maxInstallments?: number;  // 1 = single payment, 2–12 = installments
-    createInvoice?: boolean;   // Auto-issue receipt/invoice after payment (doc_type 400)
+    login: string;              // API login from AllPay Settings → Integrations
+    apiKey: string;             // Private API key used to sign requests
+    j5Enabled?: boolean;        // Pre-authorization: reserves funds without charging (7 days)
+    j5BufferPercent?: number;   // Extra % added to reserved amount (e.g. 10 = +10% buffer)
+    maxInstallments?: number;   // 1 = single payment, 2–12 = installments
+    createInvoice?: boolean;    // Auto-issue receipt/invoice after payment (doc_type 400)
   };
 }
 
@@ -66,6 +69,10 @@ export interface IPaymentProvider {
   parseCallback(query: Record<string, string>): CallbackResult;
   parseWebhook(body: Record<string, string>): WebhookResult;
   approveTransaction?(transactionId: string): Promise<void>;
+  /** J5 capture: charge the final amount (≤ reserved). Called when order status → "ready". */
+  captureJ5?(orderId: string, amountILS: number): Promise<void>;
+  /** J5 void: release the reserved amount without charging. Called when order → "cancelled". */
+  voidJ5?(orderId: string, amountILS: number): Promise<void>;
 }
 
 // ─── HYP Provider ─────────────────────────────────────────────────────────────
@@ -80,10 +87,15 @@ export class HypProvider implements IPaymentProvider {
     private readonly passP: string,
     private readonly key: string,
     private readonly j5Enabled: boolean = false,
+    private readonly j5BufferPercent: number = 0,
     private readonly sendEmail: boolean = false,
   ) {}
 
   async initiate(params: InitiateParams): Promise<InitiateResult> {
+    const bufferedAgorot = this.j5Enabled && this.j5BufferPercent > 0
+      ? Math.round(params.amountInAgorot * (1 + this.j5BufferPercent / 100))
+      : params.amountInAgorot;
+
     const apiSignParams = new URLSearchParams({
       action: "APISign",
       What: "SIGN",
@@ -91,7 +103,7 @@ export class HypProvider implements IPaymentProvider {
       KEY: this.key,
       PassP: this.passP,
       Masof: this.masof,
-      Amount: String(params.amountInAgorot),
+      Amount: String(bufferedAgorot),
       Coin: "1",
       Order: params.token,
       Fild1: params.customerName || "",
@@ -136,6 +148,14 @@ export class HypProvider implements IPaymentProvider {
     const transactionId = body.Id || body.TransactionId;
     return { token, isSuccess, transactionId };
   }
+
+  async captureJ5(orderId: string, _amountILS: number): Promise<void> {
+    console.warn(`[HYP] captureJ5: manual capture required in HYP dashboard for order ${orderId}`);
+  }
+
+  async voidJ5(orderId: string, _amountILS: number): Promise<void> {
+    console.warn(`[HYP] voidJ5: manual void required in HYP dashboard for order ${orderId}`);
+  }
 }
 
 // ─── Grow (Meshulam) Provider ─────────────────────────────────────────────────
@@ -152,6 +172,7 @@ export class GrowProvider implements IPaymentProvider {
     private readonly pageCode: string,
     private readonly testMode: boolean = false,
     private readonly j5Enabled: boolean = false,
+    private readonly j5BufferPercent: number = 0,
     private readonly maxInstallments: number = 1,
     private readonly createInvoice: boolean = false,
   ) {}
@@ -161,7 +182,10 @@ export class GrowProvider implements IPaymentProvider {
   }
 
   async initiate(params: InitiateParams): Promise<InitiateResult> {
-    const sum = (params.amountInAgorot / 100).toFixed(2);
+    const bufferedAgorot = this.j5Enabled && this.j5BufferPercent > 0
+      ? Math.round(params.amountInAgorot * (1 + this.j5BufferPercent / 100))
+      : params.amountInAgorot;
+    const sum = (bufferedAgorot / 100).toFixed(2);
 
     // Embed our internal token in callback URLs so we can match responses to orders
     const successUrl = `${params.successUrl}?token=${encodeURIComponent(params.token)}`;
@@ -245,6 +269,16 @@ export class GrowProvider implements IPaymentProvider {
       console.error(`Grow approveTransaction error:`, data);
     }
   }
+
+  async captureJ5(orderId: string, _amountILS: number): Promise<void> {
+    // Grow J5 capture = approveTransaction (Meshulam charges the reserved amount)
+    await this.approveTransaction(orderId);
+  }
+
+  async voidJ5(orderId: string, _amountILS: number): Promise<void> {
+    // Meshulam void API is not publicly documented — reservation expires automatically after 72h
+    console.warn(`[Grow] voidJ5: reservation will expire automatically. Manual cancellation via Meshulam dashboard if needed. order=${orderId}`);
+  }
 }
 
 // ─── AllPay Provider ───────────────────────────────────────────────────────────
@@ -291,12 +325,16 @@ export class AllPayProvider implements IPaymentProvider {
     private readonly login: string,
     private readonly apiKey: string,
     private readonly j5Enabled: boolean = false,
+    private readonly j5BufferPercent: number = 0,
     private readonly maxInstallments: number = 1,
     private readonly createInvoice: boolean = false,
   ) {}
 
   async initiate(params: InitiateParams): Promise<InitiateResult> {
-    const amountILS = (params.amountInAgorot / 100).toFixed(2);
+    const bufferedAgorot = this.j5Enabled && this.j5BufferPercent > 0
+      ? Math.round(params.amountInAgorot * (1 + this.j5BufferPercent / 100))
+      : params.amountInAgorot;
+    const amountILS = (bufferedAgorot / 100).toFixed(2);
 
     // Map our language codes to AllPay lang codes
     const langMap: Record<string, string> = { he: 'HE', ar: 'AR', ru: 'RU', en: 'EN' };
@@ -365,6 +403,59 @@ export class AllPayProvider implements IPaymentProvider {
     const transactionId = body.order_id;
     return { token, isSuccess, transactionId };
   }
+
+  async captureJ5(orderId: string, amountILS: number): Promise<void> {
+    const amount = amountILS.toFixed(2);
+    const body: Record<string, any> = {
+      login:    this.login,
+      order_id: orderId,
+      amount,
+    };
+    body.sign = buildAllPaySign(body, this.apiKey);
+
+    const response = await fetch('https://allpay.to/app/?show=runauthorizedpayment&mode=api12', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AllPay captureJ5 HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (String(data.status) !== '1') {
+      const msg = data.error_msg || data.err || JSON.stringify(data);
+      throw new Error(`AllPay captureJ5 failed: ${msg}`);
+    }
+  }
+
+  async voidJ5(orderId: string, amountILS: number): Promise<void> {
+    // Refund without "items" field = void J5 reservation (releases frozen funds)
+    const amount = amountILS.toFixed(2);
+    const body: Record<string, any> = {
+      login:    this.login,
+      order_id: orderId,
+      amount,
+    };
+    body.sign = buildAllPaySign(body, this.apiKey);
+
+    const response = await fetch('https://allpay.to/app/?show=refund&mode=api12', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`AllPay voidJ5 HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    // status 3 = fully refunded, status 4 = partially refunded
+    if (String(data.status) !== '3' && String(data.status) !== '4') {
+      console.warn(`[AllPay] voidJ5 unexpected response for order ${orderId}:`, data);
+    }
+  }
 }
 
 // ─── Provider Factory ──────────────────────────────────────────────────────────
@@ -384,6 +475,7 @@ export function getProvider(settings: {
         config.hyp.passP,
         config.hyp.key,
         config.hyp.j5Enabled ?? false,
+        config.hyp.j5BufferPercent ?? 0,
         config.hyp.sendEmail ?? false,
       );
     }
@@ -394,6 +486,7 @@ export function getProvider(settings: {
         config.grow.pageCode,
         config.grow.testMode ?? false,
         config.grow.j5Enabled ?? false,
+        config.grow.j5BufferPercent ?? 0,
         config.grow.maxInstallments ?? 1,
         config.grow.createInvoice ?? false,
       );
@@ -403,6 +496,7 @@ export function getProvider(settings: {
         config.allpay.login,
         config.allpay.apiKey,
         config.allpay.j5Enabled ?? false,
+        config.allpay.j5BufferPercent ?? 0,
         config.allpay.maxInstallments ?? 1,
         config.allpay.createInvoice ?? false,
       );
