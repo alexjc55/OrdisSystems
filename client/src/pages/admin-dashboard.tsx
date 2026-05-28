@@ -13888,17 +13888,36 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       ? 'البيانات في حساب AllPay: الإعدادات ← التكاملات.'
                       : 'Credentials are in your AllPay account: Settings → Integrations.'}
                   </p>
-                  <div className={`flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
-                    <svg className="mt-0.5 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                    <p className="text-xs text-amber-800">
+                  <div className={`flex flex-col gap-2 rounded-md bg-blue-50 border border-blue-200 px-3 py-2 ${isRTL ? 'items-end text-right' : 'items-start text-left'}`}>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                      <p className="text-xs font-semibold text-blue-900">
+                        {currentLanguage === 'ru' ? 'Тестовый режим AllPay' : currentLanguage === 'he' ? 'מצב בדיקה של AllPay' : currentLanguage === 'ar' ? 'وضع الاختبار في AllPay' : 'AllPay Test Mode'}
+                      </p>
+                    </div>
+                    <p className="text-xs text-blue-800">
                       {currentLanguage === 'ru'
-                        ? 'AllPay не имеет тестового (sandbox) режима. Для проверки используйте тестовые карты, предоставленные поддержкой AllPay.'
+                        ? 'Включите тестовый режим в личном кабинете AllPay: Настройки → Тестовый режим. Затем используйте эти карты:'
                         : currentLanguage === 'he'
-                        ? 'ל-AllPay אין מצב סנדבוקס. לבדיקות, השתמש בכרטיסי אשראי לבדיקה שמספקת התמיכה של AllPay.'
+                        ? 'הפעל מצב בדיקה בחשבון AllPay: הגדרות → מצב בדיקה. לאחר מכן השתמש בכרטיסים אלה:'
                         : currentLanguage === 'ar'
-                        ? 'لا يوجد لـ AllPay وضع اختبار (Sandbox). للاختبار، استخدم بطاقات الاختبار التي يوفرها دعم AllPay.'
-                        : 'AllPay has no sandbox mode. For testing, use test card numbers provided by AllPay support.'}
+                        ? 'فعّل وضع الاختبار في حساب AllPay: الإعدادات ← وضع الاختبار. ثم استخدم هذه البطاقات:'
+                        : 'Enable test mode in your AllPay account: Settings → Test Mode. Then use these cards:'}
                     </p>
+                    <div className={`w-full text-xs text-blue-900 font-mono ${isRTL ? 'text-right' : 'text-left'}`}>
+                      <div className="flex flex-col gap-0.5">
+                        <span>Visa: <b>4557430402053431</b> ✓</span>
+                        <span>Mastercard: <b>5326105300985846</b> ✓</span>
+                        <span>Amex: <b>375516193000090</b> ✓</span>
+                        <span className="text-blue-600">
+                          {currentLanguage === 'ru' ? 'Ошибка: ' : currentLanguage === 'he' ? 'שגיאה: ' : currentLanguage === 'ar' ? 'خطأ: ' : 'Failure: '}
+                          <b>4000000000000002</b> ✗
+                        </span>
+                        <span className="text-blue-600 font-sans font-normal mt-0.5">
+                          {currentLanguage === 'ru' ? 'Срок: любая будущая дата · CVV: любые 3 цифры' : currentLanguage === 'he' ? 'תאריך תפוגה: כל תאריך עתידי · CVV: כל 3 ספרות' : currentLanguage === 'ar' ? 'تاريخ الانتهاء: أي تاريخ مستقبلي · CVV: أي 3 أرقام' : 'Expiry: any future date · CVV: any 3 digits'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
