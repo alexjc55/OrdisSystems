@@ -10709,14 +10709,25 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
   const { t: adminT } = useAdminTranslation();
   const { i18n } = useCommonTranslation();
   const isRTL = i18n.language === 'he' || i18n.language === 'ar';
-  const [activeTab, setActiveTab] = useState("basic");
+
+  // Map language code to tab key
+  const langToTabKey = (lang: string) => {
+    switch (lang) {
+      case 'en': return 'english';
+      case 'he': return 'hebrew';
+      case 'ar': return 'arabic';
+      default:   return 'basic';
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState(() => langToTabKey(i18n.language));
   
   // Get enabled languages from settings
   const { data: settings } = useQuery({
     queryKey: ['/api/settings'],
-    enabled: open, // Only fetch when dialog is open
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: open,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
   
   // Define available language tabs based on enabled languages and their order from settings
@@ -10733,12 +10744,14 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     .map(code => allCategoryTabs.find(tab => tab.langCode === code))
     .filter((tab): tab is NonNullable<typeof tab> => tab != null && enabledLanguages.includes(tab.langCode));
 
-  // Reset activeTab if current tab is not available
+  // When dialog opens — set active tab to current UI language (if available), else first tab
   useEffect(() => {
-    if (availableTabs.length > 0 && !availableTabs.some(tab => tab.key === activeTab)) {
-      setActiveTab(availableTabs[0].key);
+    if (open && availableTabs.length > 0) {
+      const preferred = langToTabKey(i18n.language);
+      const found = availableTabs.find(tab => tab.key === preferred);
+      setActiveTab(found ? found.key : availableTabs[0].key);
     }
-  }, [availableTabs, activeTab]);
+  }, [open]);
   
   const form = useForm({
     resolver: zodResolver(categorySchema),
