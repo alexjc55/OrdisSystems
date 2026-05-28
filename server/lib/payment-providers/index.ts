@@ -9,6 +9,8 @@ export interface PaymentProviderConfig {
     passP: string;
     key: string;
     testMode?: boolean;
+    j5Enabled?: boolean;   // Deferred transaction: reserves funds without charging
+    sendEmail?: boolean;   // Auto-send payment receipt to customer email
   };
   grow?: {
     userId: string;
@@ -68,6 +70,8 @@ export class HypProvider implements IPaymentProvider {
     private readonly masof: string,
     private readonly passP: string,
     private readonly key: string,
+    private readonly j5Enabled: boolean = false,
+    private readonly sendEmail: boolean = false,
   ) {}
 
   async initiate(params: InitiateParams): Promise<InitiateResult> {
@@ -87,8 +91,8 @@ export class HypProvider implements IPaymentProvider {
       SuccessUrl: params.successUrl,
       ErrorUrl: params.errorUrl,
       PageLang: (params.language === "he" || params.language === "ar") ? "HEB" : "ENG",
-      J5: "False",
-      sendemail: "False",
+      J5: this.j5Enabled ? "True" : "False",
+      sendemail: this.sendEmail ? "True" : "False",
     });
 
     if (params.notifyUrl) {
@@ -246,7 +250,13 @@ export function getProvider(settings: {
 
   if (config && config.active && config.active !== 'none') {
     if (config.active === 'hyp' && config.hyp?.masof && config.hyp?.passP && config.hyp?.key) {
-      return new HypProvider(config.hyp.masof, config.hyp.passP, config.hyp.key);
+      return new HypProvider(
+        config.hyp.masof,
+        config.hyp.passP,
+        config.hyp.key,
+        config.hyp.j5Enabled ?? false,
+        config.hyp.sendEmail ?? false,
+      );
     }
     if (config.active === 'grow' && config.grow?.userId && config.grow?.apiKey && config.grow?.pageCode) {
       return new GrowProvider(

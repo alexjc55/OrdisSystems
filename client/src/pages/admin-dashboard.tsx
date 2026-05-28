@@ -383,6 +383,8 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   hypPassP: z.string().optional(),
   hypKey: z.string().optional(),
   hypTestMode: z.boolean().default(true),
+  hypJ5Enabled: z.boolean().default(false),
+  hypSendEmail: z.boolean().default(false),
   growUserId: z.string().optional(),
   growApiKey: z.string().optional(),
   growPageCode: z.string().optional(),
@@ -8969,6 +8971,8 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [hypKey, setHypKey] = useState('');
   const [hypPassP, setHypPassP] = useState('');
   const [hypTestMode, setHypTestMode] = useState(true);
+  const [hypJ5Enabled, setHypJ5Enabled] = useState(false);
+  const [hypSendEmail, setHypSendEmail] = useState(false);
   const [growUserId, setGrowUserId] = useState('');
   const [growApiKey, setGrowApiKey] = useState('');
   const [growPageCode, setGrowPageCode] = useState('');
@@ -8991,6 +8995,8 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setHypKey(ppc?.hyp?.key || '');
       setHypPassP(ppc?.hyp?.passP || '');
       setHypTestMode(ppc?.hyp?.testMode !== false);
+      setHypJ5Enabled(ppc?.hyp?.j5Enabled || false);
+      setHypSendEmail(ppc?.hyp?.sendEmail || false);
       setGrowUserId(ppc?.grow?.userId || '');
       setGrowApiKey(ppc?.grow?.apiKey || '');
       setGrowPageCode(ppc?.grow?.pageCode || '');
@@ -11357,6 +11363,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       hypKey: (storeSettings as any)?.paymentProviderConfig?.hyp?.key || '',
       hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
       hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
+      hypJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.hyp?.j5Enabled || false,
+      hypSendEmail: (storeSettings as any)?.paymentProviderConfig?.hyp?.sendEmail || false,
       growUserId: (storeSettings as any)?.paymentProviderConfig?.grow?.userId || '',
       growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
       growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
@@ -11550,6 +11558,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         hypKey: (storeSettings as any)?.paymentProviderConfig?.hyp?.key || '',
         hypPassP: (storeSettings as any)?.paymentProviderConfig?.hyp?.passP || '',
         hypTestMode: (storeSettings as any)?.paymentProviderConfig?.hyp?.testMode !== false,
+        hypJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.hyp?.j5Enabled || false,
+        hypSendEmail: (storeSettings as any)?.paymentProviderConfig?.hyp?.sendEmail || false,
         growUserId: (storeSettings as any)?.paymentProviderConfig?.grow?.userId || '',
         growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
         growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
@@ -11720,10 +11730,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             active: data.paymentProvider || 'none',
             ...(data.paymentProvider === 'hyp' ? {
               hyp: {
-                masof: data.hypMasof || '',
-                passP: data.hypPassP || '',
-                key: data.hypKey || '',
-                testMode: data.hypTestMode !== false,
+                masof:     data.hypMasof || '',
+                passP:     data.hypPassP || '',
+                key:       data.hypKey || '',
+                testMode:  data.hypTestMode !== false,
+                j5Enabled: data.hypJ5Enabled || false,
+                sendEmail: data.hypSendEmail || false,
               }
             } : {}),
             ...(data.paymentProvider === 'grow' ? {
@@ -13423,6 +13435,60 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   </FormItem>
                 )}
               />
+
+              <div className="border-t border-violet-200 pt-4 space-y-4">
+                <p className={`text-xs font-semibold text-violet-800 uppercase tracking-wide ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {currentLanguage === 'ru' ? 'Дополнительные опции' : currentLanguage === 'he' ? 'אפשרויות נוספות' : currentLanguage === 'ar' ? 'خيارات إضافية' : 'Additional Options'}
+                </p>
+
+                <FormField
+                  control={form.control}
+                  name="hypJ5Enabled"
+                  render={({ field }) => (
+                    <FormItem className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                      <div className="flex items-center gap-3">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormLabel className="text-sm font-medium cursor-pointer">
+                          {currentLanguage === 'ru' ? 'J5 — отложенное списание' : currentLanguage === 'he' ? 'J5 — עסקה נדחית' : currentLanguage === 'ar' ? 'J5 — معاملة مؤجلة' : 'J5 — Deferred transaction'}
+                        </FormLabel>
+                      </div>
+                      <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru'
+                          ? 'Резервирует сумму на карте клиента без реального списания. Итоговая сумма уточняется и списывается позже (например, после взвешивания товара). Нужно завершить в течение 72 часов — иначе заказ автоматически отменяется.'
+                          : currentLanguage === 'he'
+                          ? 'מחזיק סכום בכרטיס האשראי של הלקוח ללא חיוב בפועל. הסכום הסופי מאושר ומחויב לאחר מכן (למשל, לאחר שקילת המוצר). יש לסיים תוך 72 שעות — אחרת ההזמנה תבוטל אוטומטית.'
+                          : currentLanguage === 'ar'
+                          ? 'يحجز المبلغ على بطاقة العميل دون خصم فعلي. يتم تأكيد المبلغ النهائي وخصمه لاحقاً (مثلاً بعد وزن المنتج). يجب إتمامه خلال 72 ساعة وإلا يُلغى الطلب تلقائياً.'
+                          : 'Reserves the amount on the customer\'s card without actual charging. The final amount is confirmed and charged later (e.g., after weighing the product). Must be finalized within 72 hours or the order is auto-cancelled.'}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="hypSendEmail"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-3">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className={`flex flex-col gap-0.5 ${isRTL ? 'items-end' : 'items-start'}`}>
+                        <FormLabel className="text-sm font-normal cursor-pointer">
+                          {currentLanguage === 'ru' ? 'Авто-инвойс клиенту' : currentLanguage === 'he' ? 'חשבונית אוטומטית ללקוח' : currentLanguage === 'ar' ? 'فاتورة تلقائية للعميل' : 'Auto-invoice to customer'}
+                        </FormLabel>
+                        <span className="text-xs text-muted-foreground">
+                          {currentLanguage === 'ru' ? 'HYP автоматически отправит чек на email покупателя после оплаты' : currentLanguage === 'he' ? 'HYP ישלח חשבונית אוטומטית לאימייל הקונה לאחר התשלום' : currentLanguage === 'ar' ? 'سيرسل HYP فاتورة تلقائية لبريد المشتري بعد الدفع' : 'HYP automatically sends a receipt to the customer\'s email after payment'}
+                        </span>
+                      </div>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
               </div>
             </div>
             </>
