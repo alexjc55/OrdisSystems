@@ -841,9 +841,19 @@ export default function Home() {
                   const pillBase = "flex flex-col items-center justify-start gap-1 rounded-2xl border transition-all duration-200";
                   const pillActive = "bg-primary text-white border-primary shadow-md";
                   const pillInactive = "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary";
-                  const pillSize = "grow shrink-0 basis-auto";
-                  const pillStyle = { minWidth: '80px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' };
+                  const pillSize = "flex-1";
                   const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
+                  // Compute minWidth from the longest word so the card always fits its text
+                  const cardMinWidth = (text: string) => {
+                    const longest = text.split(/\s+/).reduce((a, b) => a.length > b.length ? a : b, '');
+                    return Math.max(80, longest.length * 10 + 20);
+                  };
+                  const pillStyle = (text: string) => ({
+                    minWidth: cardMinWidth(text),
+                    minHeight: '84px',
+                    padding: '10px 8px',
+                    textDecoration: 'none',
+                  });
                   return (
                     <div id="categories" className="mb-8">
                       <CategoryCarousel isRTL={currentLanguage === 'he' || currentLanguage === 'ar'}>
@@ -851,10 +861,10 @@ export default function Home() {
                           href="/all-products"
                           onClick={() => handleCategorySelect(0)}
                           className={`${pillBase} ${pillSize} ${selectedCategoryId === null || selectedCategoryId === 0 ? pillActive : pillInactive}`}
-                          style={pillStyle}
+                          style={pillStyle(t('allCategories'))}
                         >
                           <LayoutGrid className="w-7 h-7 flex-shrink-0 mt-0.5" />
-                          <span className="text-xs font-medium leading-tight text-center" style={{ maxWidth: '96px', wordBreak: 'break-word' }}>{t('allCategories')}</span>
+                          <span className="text-xs font-medium leading-tight text-center w-full">{t('allCategories')}</span>
                         </UTMLink>
                         {categories.map((category) => {
                           const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
@@ -863,7 +873,7 @@ export default function Home() {
                           return (
                             <UTMLink key={category.id} href={`/category/${category.id}`}
                               className={`${pillBase} ${pillSize} ${isActive ? pillActive : pillInactive}`}
-                              style={pillStyle}
+                              style={pillStyle(name)}
                               onClick={() => handleCategorySelect(category.id)}
                             >
                               {iconIsUrl ? (
@@ -871,7 +881,7 @@ export default function Home() {
                               ) : (
                                 <span className="text-2xl flex-shrink-0 leading-none mt-0.5">{category.icon || '📦'}</span>
                               )}
-                              <span className="text-xs font-medium leading-tight text-center" style={{ maxWidth: '96px', wordBreak: 'break-word' }}>{name}</span>
+                              <span className="text-xs font-medium leading-tight text-center w-full">{name}</span>
                             </UTMLink>
                           );
                         })}
