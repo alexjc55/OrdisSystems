@@ -13778,7 +13778,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   <span className="text-white/70 text-xs font-normal">by allpay.to</span>
                 </div>
                 <a
-                  href="https://app.allpay.to"
+                  href="https://allpay.to/app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
