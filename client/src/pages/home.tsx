@@ -841,7 +841,8 @@ export default function Home() {
                   const pillBase = "flex flex-col items-center justify-start gap-1 rounded-2xl border transition-all duration-200";
                   const pillActive = "bg-primary text-white border-primary shadow-md";
                   const pillInactive = "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary";
-                  const pillSize = "flex-1 basis-[88px] min-w-[88px]";
+                  const pillSize = "flex-none";
+                  const pillStyle = { minWidth: '80px', maxWidth: '120px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' };
                   const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
                   return (
                     <div id="categories" className="mb-8">
@@ -850,10 +851,10 @@ export default function Home() {
                           href="/all-products"
                           onClick={() => handleCategorySelect(0)}
                           className={`${pillBase} ${pillSize} ${selectedCategoryId === null || selectedCategoryId === 0 ? pillActive : pillInactive}`}
-                          style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' }}
+                          style={pillStyle}
                         >
                           <LayoutGrid className="w-7 h-7 flex-shrink-0 mt-0.5" />
-                          <span className="text-xs font-medium leading-tight text-center w-full">{t('allCategories')}</span>
+                          <span className="text-xs font-medium leading-tight text-center">{t('allCategories')}</span>
                         </UTMLink>
                         {categories.map((category) => {
                           const name = getLocalizedField(category, 'name', currentLanguage as SupportedLanguage, 'ru');
@@ -862,7 +863,7 @@ export default function Home() {
                           return (
                             <UTMLink key={category.id} href={`/category/${category.id}`}
                               className={`${pillBase} ${pillSize} ${isActive ? pillActive : pillInactive}`}
-                              style={{ minWidth: '88px', minHeight: '84px', padding: '10px 8px', textDecoration: 'none' }}
+                              style={pillStyle}
                               onClick={() => handleCategorySelect(category.id)}
                             >
                               {iconIsUrl ? (
@@ -870,7 +871,7 @@ export default function Home() {
                               ) : (
                                 <span className="text-2xl flex-shrink-0 leading-none mt-0.5">{category.icon || '📦'}</span>
                               )}
-                              <span className="text-xs font-medium leading-tight text-center w-full">{name}</span>
+                              <span className="text-xs font-medium leading-tight text-center">{name}</span>
                             </UTMLink>
                           );
                         })}
