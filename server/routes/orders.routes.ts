@@ -11,6 +11,24 @@ import { randomBytes } from "crypto";
 
 const router = Router();
 
+// ─── Resolve localized payment method names from store settings ───────────────
+function resolvePaymentMethodNames(
+  paymentMethods: any,
+  paymentMethod: string | null | undefined
+): Record<string, string> | undefined {
+  if (!paymentMethod || !paymentMethods) return undefined;
+  let methods: any[] = [];
+  try {
+    methods = typeof paymentMethods === 'string' ? JSON.parse(paymentMethods) : (Array.isArray(paymentMethods) ? paymentMethods : []);
+  } catch { return undefined; }
+  const found = methods.find((m: any) =>
+    m.name === paymentMethod || m.name_en === paymentMethod ||
+    m.name_he === paymentMethod || m.name_ar === paymentMethod
+  );
+  if (!found) return undefined;
+  return { ru: found.name, en: found.name_en, he: found.name_he, ar: found.name_ar };
+}
+
 // ─── Server-side discount computation ────────────────────────────────────────
 // This ensures discount amounts are authoritative from DB, not from client input.
 async function computeServerDiscounts({
@@ -488,7 +506,7 @@ router.post('/orders/guest', async (req: any, res) => {
             quantity: parseInt(item.quantity),
             pricePerKg: parseFloat(item.pricePerKg),
             totalPrice: parseFloat(item.totalPrice),
-            product: product ? { name: product.name, unit: product.unit || 'кг' } : null
+            product: product ? { name: product.name, name_en: product.name_en, name_he: product.name_he, name_ar: product.name_ar, unit: product.unit || 'кг' } : null
           };
         });
 
@@ -497,6 +515,9 @@ router.post('/orders/guest', async (req: any, res) => {
           : undefined;
 
         const guestActiveTheme = await storage.getActiveTheme();
+        const guestPaymentMethodNames = resolvePaymentMethodNames(currentStoreSettings.paymentMethods, guestInfo.paymentMethod);
+        const guestLanguageOrder: string[] = Array.isArray(currentStoreSettings.languageOrder) ? currentStoreSettings.languageOrder : ['ru', 'he', 'en', 'ar'];
+        const guestStoreNameVariants = { en: currentStoreSettings.storeNameEn, he: currentStoreSettings.storeNameHe, ar: currentStoreSettings.storeNameAr };
 
         await sendNewOrderEmail(
           order.id,
@@ -519,17 +540,23 @@ router.post('/orders/guest', async (req: any, res) => {
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
-          currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
+          currentStoreSettings.orderNotificationFromName || 'Ordis Store',
           currentStoreSettings.defaultLanguage || 'ru',
-          currentStoreSettings.storeName || 'eDAHouse',
+          currentStoreSettings.storeName || 'Ordis',
           req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
-          guestActiveTheme?.primaryColor
+          guestActiveTheme?.primaryColor,
+          {
+            deliveryFee,
+            volumeDiscount: serverVolumeDiscount,
+            paymentMethodNames: guestPaymentMethodNames,
+            languageOrder: guestLanguageOrder
+          }
         );
 
         if (guestInfo.email && guestInfo.email.trim()) {
           const fromEmail = currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il';
-          const fromName = currentStoreSettings.orderNotificationFromName || 'eDAHouse Store';
-          const storeName = currentStoreSettings.storeName || 'eDAHouse';
+          const fromName = currentStoreSettings.orderNotificationFromName || 'Ordis Store';
+          const storeName = currentStoreSettings.storeName || 'Ordis';
           const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
 
           await sendGuestOrderEmail(
@@ -556,10 +583,17 @@ router.post('/orders/guest', async (req: any, res) => {
             guestClaimToken,
             fromEmail,
             fromName,
-            orderData.orderLanguage || 'ru',
+            orderData.orderLanguage || currentStoreSettings.defaultLanguage || 'ru',
             storeName,
             baseUrl,
-            guestActiveTheme?.primaryColor
+            guestActiveTheme?.primaryColor,
+            {
+              deliveryFee,
+              volumeDiscount: serverVolumeDiscount,
+              paymentMethodNames: guestPaymentMethodNames,
+              languageOrder: guestLanguageOrder,
+              storeNameVariants: guestStoreNameVariants
+            }
           );
         }
       }
@@ -750,7 +784,7 @@ router.post('/orders', async (req: any, res) => {
             quantity: parseInt(item.quantity),
             pricePerKg: parseFloat(item.pricePerKg),
             totalPrice: parseFloat(item.totalPrice),
-            product: product ? { name: product.name, unit: product.unit || 'кг' } : null
+            product: product ? { name: product.name, name_en: product.name_en, name_he: product.name_he, name_ar: product.name_ar, unit: product.unit || 'кг' } : null
           };
         });
 
@@ -760,6 +794,8 @@ router.post('/orders', async (req: any, res) => {
 
         const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
         const authActiveTheme = await storage.getActiveTheme();
+        const authPaymentMethodNames = resolvePaymentMethodNames(currentStoreSettings.paymentMethods, orderData.paymentMethod);
+        const authLanguageOrder: string[] = Array.isArray(currentStoreSettings.languageOrder) ? currentStoreSettings.languageOrder : ['ru', 'he', 'en', 'ar'];
         await sendNewOrderEmail(
           order.id,
           customerName,
@@ -781,11 +817,17 @@ router.post('/orders', async (req: any, res) => {
           },
           currentStoreSettings.orderNotificationEmail,
           currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
-          currentStoreSettings.orderNotificationFromName || 'eDAHouse Store',
+          currentStoreSettings.orderNotificationFromName || 'Ordis Store',
           currentStoreSettings.defaultLanguage || 'ru',
-          currentStoreSettings.storeName || 'eDAHouse',
+          currentStoreSettings.storeName || 'Ordis',
           req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
-          authActiveTheme?.primaryColor
+          authActiveTheme?.primaryColor,
+          {
+            deliveryFee: authDeliveryFee,
+            volumeDiscount: authSvrVolumeDiscount,
+            paymentMethodNames: authPaymentMethodNames,
+            languageOrder: authLanguageOrder
+          }
         );
       }
     } catch (emailError) {

@@ -809,8 +809,8 @@ export default function Checkout() {
       triggerPushRequestAfterAction('checkout');
       
       toast({
-        title: "Заказ оформлен!",
-        description: `Заказ №${order.orderId} принят в обработку. Мы свяжемся с вами для подтверждения.`,
+        title: tShop('checkout.orderPlaced'),
+        description: tShop('checkout.orderAcceptedForProcessing', { orderId: order.orderId }),
       });
       // Redirect to thanks page with guest order parameters
       const currentLang = localStorage.getItem('language') || 'ru';
@@ -823,7 +823,7 @@ export default function Checkout() {
         setAppliedCoupon(null);
         toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
       } else {
-        toast({ title: "Ошибка при оформлении заказа", description: error.message, variant: "destructive" });
+        toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
       }
     },
   });
@@ -941,7 +941,7 @@ export default function Checkout() {
       
       toast({
         title: tShop('checkout.registrationAndOrderCompleted'),
-        description: `Заказ №${order.id} принят в обработку`,
+        description: tShop('checkout.orderAcceptedForProcessing', { orderId: order.id }),
       });
       // Redirect to thanks page for registered user order
       const currentLang = localStorage.getItem('language') || 'ru';
@@ -955,7 +955,7 @@ export default function Checkout() {
       } else if (error?.message === 'HYP_REDIRECT') {
         // ignore — browser is redirecting to HYP payment page
       } else {
-        toast({ title: "Ошибка", description: error.message, variant: "destructive" });
+        toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
       }
     },
   });
@@ -1041,7 +1041,7 @@ export default function Checkout() {
       
       toast({
         title: tShop('checkout.orderPlaced'),
-        description: `Заказ №${order.id} принят в обработку`,
+        description: tShop('checkout.orderAcceptedForProcessing', { orderId: order.id }),
       });
       // Redirect to thanks page for authenticated user order
       const currentLang = localStorage.getItem('language') || 'ru';

@@ -215,7 +215,7 @@
     "registeringAndProcessing": "جاري التسجيل والمعالجة",
     "registrationBenefit": "فائدة التسجيل",
     "orderAccepted": "تم قبول الطلب",
-    "orderAcceptedForProcessing": "تم قبول الطلب للمعالجة",
+    "orderAcceptedForProcessing": "تم قبول طلبك للمعالجة. الرقم: {{orderId}}",
     "registrationAndOrderCompleted": "تم التسجيل والطلب بنجاح",
     "signInToUseData": "سجل الدخول لاستخدام البيانات",
     "welcomeMessage": "رسالة الترحيب",

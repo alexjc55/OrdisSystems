@@ -806,7 +806,9 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'צור חשבון לנוחות!',
       registrationText: 'הירשם כדי לעקוב בקלות אחר כל ההזמנות שלך, לשמור כתובת משלוח ולקבל הצעות אישיות.',
       registerButton: 'הירשם וקשר את ההזמנה',
-      footer: `בברכה,<br>צוות ${storeName || 'Ordis'}`,
+      deliveryFeeLabel: 'משלוח:',
+      volumeDiscountLabel: 'הנחת כמות:',
+      footer: `בברכה,<br>צוות ${localizedStoreNameGuest}`,
       quantityLabel: 'כמות',
       amountLabel: 'סכום',
       productLabel: 'מוצר',
@@ -839,7 +841,9 @@ export async function sendGuestOrderEmail(
       registrationTitle: 'أنشئ حساباً للراحة!',
       registrationText: 'سجل لتتبع جميع طلباتك بسهولة، واحفظ عنوان التسليم، واحصل على عروض شخصية.',
       registerButton: 'سجل وربط الطلب',
-      footer: `مع أطيب التحيات،<br>فريق ${storeName || 'Ordis'}`,
+      deliveryFeeLabel: 'رسوم التوصيل:',
+      volumeDiscountLabel: 'خصم الكمية:',
+      footer: `مع أطيب التحيات،<br>فريق ${localizedStoreNameGuest}`,
       quantityLabel: 'الكمية',
       amountLabel: 'المبلغ',
       productLabel: 'المنتج',
@@ -896,7 +900,7 @@ export async function sendGuestOrderEmail(
       const formattedQuantity = formatQuantityWithUnit(item.quantity, originalUnit, language);
       const isGift = orderDetails.giftProductId && item.productId === orderDetails.giftProductId;
       const giftWord = language === 'ru' ? 'Подарок' : language === 'he' ? 'מתנה' : language === 'ar' ? 'هدية' : 'Gift';
-      const productName = (item.product?.name || template.productLabel) + (isGift ? ' 🎁' : '');
+      const productName = (getLocalizedProductName(item.product, language, opts?.languageOrder) || template.productLabel) + (isGift ? ' 🎁' : '');
       const priceCell = isGift
         ? `<span style="color:#16a34a;font-weight:bold;">${giftWord}</span>`
         : `${item.totalPrice}₪`;
@@ -925,6 +929,11 @@ export async function sendGuestOrderEmail(
     `;
   }
 
+  // Pre-compute localized display values for guest email
+  const localizedPaymentMethodGuest = getLocalizedPaymentMethod(opts?.paymentMethodNames, orderDetails.paymentMethod, language, opts?.languageOrder);
+  const displayDeliveryFeeGuest = typeof orderDetails.deliveryFee === 'number' ? orderDetails.deliveryFee : (opts?.deliveryFee || 0);
+  const displayVolumeDiscountGuest = typeof orderDetails.volumeDiscount === 'number' ? orderDetails.volumeDiscount : (opts?.volumeDiscount || 0);
+
   // Construct the HTML email
   const html = `
     <!DOCTYPE html>
@@ -947,13 +956,15 @@ export async function sendGuestOrderEmail(
         
         <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;">
           <h3 style="color: #495057; margin-top: 0;">📋 ${template.title} #${orderId}</h3>
+          ${displayVolumeDiscountGuest > 0 ? `<p><strong>${(template as any).volumeDiscountLabel}</strong> <span style="color:#e53e3e;">-₪${displayVolumeDiscountGuest}</span></p>` : ''}
           ${orderDetails.couponDiscount ? `<p><strong>${(template as any).couponDiscountLabel}${orderDetails.couponCode ? ' (' + orderDetails.couponCode + ')' : ''}</strong> <span style="color:#e53e3e;">-₪${orderDetails.couponDiscount}</span></p>` : ''}
           ${orderDetails.loyaltyDiscount ? `<p><strong>${(template as any).loyaltyDiscountLabel}</strong> <span style="color:#e53e3e;">-₪${orderDetails.loyaltyDiscount}</span></p>` : ''}
+          ${displayDeliveryFeeGuest > 0 ? `<p><strong>${(template as any).deliveryFeeLabel}</strong> +₪${displayDeliveryFeeGuest}</p>` : ''}
           <p><strong>${template.totalLabel}</strong> ₪${totalAmount}</p>
           <p><strong>${template.statusLabel}</strong> ${template.statusTranslations[orderDetails.status as keyof typeof template.statusTranslations] || orderDetails.status}</p>
           ${orderDetails.customerPhone ? `<p><strong>${template.phoneLabel}</strong> ${orderDetails.customerPhone}</p>` : ''}
           ${orderDetails.deliveryAddress ? `<p><strong>${template.addressLabel}</strong> ${orderDetails.deliveryAddress}</p>` : ''}
-          ${orderDetails.paymentMethod ? `<p><strong>${template.paymentLabel}</strong> ${orderDetails.paymentMethod}</p>` : ''}
+          ${localizedPaymentMethodGuest ? `<p><strong>${template.paymentLabel}</strong> ${localizedPaymentMethodGuest}</p>` : ''}
           ${orderDetails.branchName ? `<p><strong>${(template as any).branchLabel}</strong> ${orderDetails.branchName}</p>` : ''}
         </div>
         
