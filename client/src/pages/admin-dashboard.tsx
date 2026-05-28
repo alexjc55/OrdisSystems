@@ -13430,10 +13430,40 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
 
           {watchedPaymentProvider === 'grow' && (
             <>
-            <div className={`rounded-xl border border-green-200 bg-green-50/50 p-4 space-y-4`}>
-                <div className={`space-y-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                  <p className="text-sm font-semibold text-green-800">Grow (Meshulam)</p>
-                  <p className={`text-xs text-muted-foreground`}>
+            <div className="border rounded-xl overflow-hidden shadow-sm">
+              {/* Grow branded header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-green-600 to-emerald-500">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="https://grow.business/wp-content/uploads/2023/06/grow-logo-white.svg"
+                    alt="Grow"
+                    className="h-7"
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      img.style.display = 'none';
+                      const span = document.createElement('span');
+                      span.className = 'text-white font-bold text-lg tracking-wide';
+                      span.textContent = 'GROW';
+                      img.parentNode?.insertBefore(span, img.nextSibling);
+                    }}
+                  />
+                  <span className="text-white/70 text-xs font-normal">by Meshulam</span>
+                </div>
+                <a
+                  href="https://grow.business/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
+                  style={{ color: '#ffffff' }}
+                >
+                  {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
+                </a>
+              </div>
+
+              {/* Fields */}
+              <div className="space-y-4 p-4 bg-white">
+                <div className={`flex flex-col gap-2 ${isRTL ? 'items-end' : 'items-start'}`}>
+                  <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
                     {currentLanguage === 'ru'
                       ? 'Реквизиты доступны в личном кабинете Grow на grow.business после регистрации.'
                       : currentLanguage === 'he'
@@ -13442,10 +13472,6 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       ? 'البيانات متاحة في حساب Grow على grow.business بعد التسجيل.'
                       : 'Credentials are available in your Grow account at grow.business after registration.'}
                   </p>
-                  <a href="https://grow.business" target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-100 hover:bg-green-200 border border-green-300 rounded-md px-3 py-1.5 transition-colors">
-                    🌐 grow.business
-                  </a>
                 </div>
 
               <FormField
@@ -13629,6 +13655,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     </FormItem>
                   )}
                 />
+              </div>
               </div>
             </div>
             </>
