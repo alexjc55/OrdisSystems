@@ -588,7 +588,10 @@
       "discountPct": "القيمة",
       "fixedLabel": "ثابت",
       "empty": "لا توجد خصومات كمية محددة",
-      "saveError": "فشل في حفظ خصومات الكمية"
+      "saveError": "فشل في حفظ خصومات الكمية",
+      "fromLabel": "من",
+      "newProductNote": "سيتم حفظ الخصومات عند إنشاء المنتج",
+      "unitSuffix": { "100g": "غ", "100ml": "مل", "kg": "كغ", "piece": "قطعة", "portion": "حصة" }
     }
   },
   "categories": {

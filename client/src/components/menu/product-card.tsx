@@ -81,6 +81,13 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const discountedPrice = getDiscountedPrice(price);
   const totalPrice = calculateTotal(discountedPrice, selectedQuantity || getDefaultQuantity(), unit);
 
+  const { data: productVolumeDiscountsData } = useQuery({
+    queryKey: [`/api/products/volume-discounts?productIds=${product.id}`],
+    staleTime: 5 * 60 * 1000,
+    enabled: !!product.id,
+  });
+  const activeVolumeDiscounts: any[] = ((productVolumeDiscountsData as any)?.[product.id] || []).filter((d: any) => d.isActive);
+
   const handleQuantityChange = (newQuantity: number | null) => {
     if (newQuantity === null) {
       setSelectedQuantity(null);
@@ -382,6 +389,26 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               </span>
             </div>
           </div>
+
+          {/* Volume Discount Hint */}
+          {activeVolumeDiscounts.length > 0 && (() => {
+            const best = activeVolumeDiscounts.reduce((a: any, b: any) =>
+              parseFloat(a.minQuantity) <= parseFloat(b.minQuantity) ? a : b
+            );
+            const pu = unit as string;
+            const qty = (pu === '100g' || pu === '100ml')
+              ? Math.round(parseFloat(best.minQuantity) * 100)
+              : parseFloat(best.minQuantity);
+            const sfx = { '100g': t('units.g') || 'г', '100ml': t('units.ml') || 'мл', 'kg': t('units.kg') || 'кг', 'piece': t('units.piece') || 'шт', 'portion': t('units.portion') || 'порц.' }[pu] || '';
+            const discount = best.discountType === 'percentage'
+              ? `${best.discountValue}%`
+              : formatCurrency(parseFloat(best.discountValue));
+            return (
+              <div className="text-xs text-blue-600 font-medium text-center py-1 px-2 bg-blue-50 border border-blue-100 rounded">
+                {t('cart.volumeDiscountHint', { discount, amount: `${qty}${sfx}` })}
+              </div>
+            );
+          })()}
 
           {/* Add to Cart Button */}
           {isOrderable() ? (

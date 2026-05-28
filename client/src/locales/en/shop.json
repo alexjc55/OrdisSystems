@@ -95,6 +95,7 @@
     "couponMinOrder": "Order amount is below the minimum for this promo code",
     "couponError": "Error validating promo code",
     "volumeDiscount": "Volume discount",
+    "volumeDiscountHint": "{{discount}} off from {{amount}}",
     "giftAvailable": "Free gift with your order!",
     "addGift": "Add gift",
     "giftAdded": "Gift",

@@ -5062,6 +5062,13 @@ export default function AdminDashboard() {
     }
   }
 
+  const _allProductIds = (productsData as any[] || []).map((p: any) => p.id).filter(Boolean);
+  const { data: listVolumeDiscounts } = useQuery({
+    queryKey: [`/api/products/volume-discounts?productIds=${_allProductIds.join(',')}`],
+    enabled: _allProductIds.length > 0,
+    staleTime: 2 * 60 * 1000,
+  });
+
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
       const matchesSearch = !searchQuery || 
@@ -5075,7 +5082,8 @@ export default function AdminDashboard() {
       if (selectedStatusFilter === "all") {
         matchesStatus = true;
       } else if (selectedStatusFilter === "with_discount") {
-        matchesStatus = product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0);
+        const hasVolumeDiscount = ((listVolumeDiscounts as any)?.[product.id] || []).some((d: any) => d.isActive);
+        matchesStatus = product.isSpecialOffer || (product.discountValue && parseFloat(product.discountValue) > 0) || hasVolumeDiscount;
       } else if (branchesEnabled && selectedProductBranchFilter !== 'all') {
         // Branch-aware status: check per-branch override, fallback to global
         const branchRecord = (product.branchAvailability || []).find((ba: any) => ba.branchId === parseInt(selectedProductBranchFilter));
@@ -6026,6 +6034,16 @@ export default function AdminDashboard() {
                                         <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
                                       )}
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
+                                      {(() => {
+                                        const vd = ((listVolumeDiscounts as any)?.[product.id] || []).filter((d: any) => d.isActive);
+                                        if (!vd.length) return null;
+                                        const best = vd.reduce((a: any, b: any) => parseFloat(a.minQuantity) <= parseFloat(b.minQuantity) ? a : b);
+                                        const pu = product.unit || '100g';
+                                        const qty = (pu === '100g' || pu === '100ml') ? Math.round(parseFloat(best.minQuantity) * 100) : parseFloat(best.minQuantity);
+                                        const sfx = { '100g': 'г', '100ml': 'мл', 'kg': 'кг', 'piece': 'шт', 'portion': 'порц.' }[pu] || '';
+                                        const dlbl = best.discountType === 'percentage' ? `${best.discountValue}%` : formatCurrency(parseFloat(best.discountValue));
+                                        return <div className="mt-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded px-1.5 py-0.5 inline-block" dir="ltr">{dlbl} {adminT('products.volumeDiscount.fromLabel')} {qty}{sfx}</div>;
+                                      })()}
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-right">
@@ -6105,6 +6123,16 @@ export default function AdminDashboard() {
                                         <div className="font-semibold text-gray-900" dir="ltr">{formatCurrency(product.price || product.pricePerKg)}</div>
                                       )}
                                       <div className="text-gray-500 text-xs mt-1">{getUnitDisplay(product.unit || "100g")}</div>
+                                      {(() => {
+                                        const vd = ((listVolumeDiscounts as any)?.[product.id] || []).filter((d: any) => d.isActive);
+                                        if (!vd.length) return null;
+                                        const best = vd.reduce((a: any, b: any) => parseFloat(a.minQuantity) <= parseFloat(b.minQuantity) ? a : b);
+                                        const pu = product.unit || '100g';
+                                        const qty = (pu === '100g' || pu === '100ml') ? Math.round(parseFloat(best.minQuantity) * 100) : parseFloat(best.minQuantity);
+                                        const sfx = { '100g': 'г', '100ml': 'мл', 'kg': 'кг', 'piece': 'шт', 'portion': 'порц.' }[pu] || '';
+                                        const dlbl = best.discountType === 'percentage' ? `${best.discountValue}%` : formatCurrency(parseFloat(best.discountValue));
+                                        return <div className="mt-1 text-xs bg-blue-50 border border-blue-200 text-blue-700 rounded px-1.5 py-0.5 inline-block" dir="ltr">{dlbl} {adminT('products.volumeDiscount.fromLabel')} {qty}{sfx}</div>;
+                                      })()}
                                     </div>
                                   </TableCell>
                                   <TableCell className="px-2 sm:px-4 py-2 text-center hidden sm:table-cell">
@@ -8632,7 +8660,7 @@ export default function AdminDashboard() {
         onSubmit={async (combinedData: any) => {
           console.log('Received combined data from form:', combinedData);
 
-          const { branchAvailability: bav, ...rest } = combinedData;
+          const { branchAvailability: bav, _volumeDiscounts, ...rest } = combinedData;
 
           // Set isAvailable based on availability status
           const productData = {
@@ -8650,6 +8678,13 @@ export default function AdminDashboard() {
           } else {
             try {
               const createdProduct = await createProductMutation.mutateAsync(productData);
+              if (_volumeDiscounts?.length > 0 && createdProduct?.id) {
+                try {
+                  await apiRequest('POST', `/api/admin/products/${createdProduct.id}/volume-discounts`, _volumeDiscounts);
+                } catch (vdErr) {
+                  console.error('Failed to save volume discounts for new product:', vdErr);
+                }
+              }
               if (branchesEnabled && bav !== undefined && createdProduct?.id) {
                 try {
                   await saveProductBranchAvailabilityMutation.mutateAsync({ id: createdProduct.id, branchAvailability: bav });
@@ -9792,6 +9827,23 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const [branchAvailability, setBranchAvailability] = useState<Record<number, string>>({});
   const [volumeDiscounts, setVolumeDiscounts] = useState<Array<{ minQuantity: string; discountType: 'percentage' | 'fixed'; discountValue: string }>>([]);
 
+  // Volume discount unit conversion helpers
+  const toDisplayQty = (storedQty: string, productUnit: string): string => {
+    const n = parseFloat(storedQty);
+    if (!storedQty || isNaN(n)) return storedQty;
+    if (productUnit === '100g' || productUnit === '100ml') return String(Math.round(n * 100));
+    return storedQty;
+  };
+  const toStoredQty = (displayQty: string, productUnit: string): string => {
+    const n = parseFloat(displayQty);
+    if (!displayQty || isNaN(n)) return displayQty;
+    if (productUnit === '100g' || productUnit === '100ml') return String(n / 100);
+    return displayQty;
+  };
+  const getVolumeUnitSuffix = (productUnit: string): string => {
+    return adminT(`products.volumeDiscount.unitSuffix.${productUnit}`) || '';
+  };
+
   // Fetch existing volume discounts when editing a product
   const { data: existingVolumeDiscounts } = useQuery({
     queryKey: ['/api/admin/products', product?.id, 'volume-discounts'],
@@ -9801,8 +9853,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
 
   useEffect(() => {
     if (existingVolumeDiscounts && Array.isArray(existingVolumeDiscounts)) {
+      const currentUnit = form.getValues('unit') || '100g';
       setVolumeDiscounts(existingVolumeDiscounts.map((d: any) => ({
-        minQuantity: String(d.minQuantity ?? d.min_quantity ?? ''),
+        minQuantity: toDisplayQty(String(d.minQuantity ?? d.min_quantity ?? ''), currentUnit),
         discountType: (d.discountType ?? d.discount_type ?? 'percentage') as 'percentage' | 'fixed',
         discountValue: String(d.discountValue ?? d.discount_value ?? ''),
       })));
@@ -9817,7 +9870,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
         volumeDiscounts
           .filter(d => d.minQuantity && d.discountValue)
           .map(d => ({
-            minQuantity: d.minQuantity,
+            minQuantity: toStoredQty(d.minQuantity, unit || '100g'),
             discountType: d.discountType,
             discountValue: d.discountValue,
             isActive: true,
@@ -10116,8 +10169,18 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     
     console.log('Submitting product data:', finalData);
     
+    // For new products include pre-converted volume discounts so parent can save after creation
+    if (!product?.id) {
+      finalData._volumeDiscounts = volumeDiscounts
+        .filter(d => d.minQuantity && d.discountValue)
+        .map(d => ({
+          minQuantity: toStoredQty(d.minQuantity, unit || '100g'),
+          discountType: d.discountType,
+          discountValue: d.discountValue,
+          isActive: true,
+        }));
+    }
     // Send to parent component, then save volume discounts for existing products
-    // Always save (even empty array) so deleting all tiers is persisted
     onSubmit(finalData);
     if (product?.id) {
       saveVolumeDiscountsMutation.mutate(product.id);
@@ -10580,70 +10643,79 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
               </div>
             )}
 
-            {/* Volume Discounts Section - only for existing products */}
-            {product?.id && (
-              <div className="space-y-2 border border-gray-200 rounded-lg p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Percent className="h-4 w-4 text-gray-500" />
-                    <p className="text-sm font-medium">{adminT('products.volumeDiscount.title')}</p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-xs"
-                    onClick={() => setVolumeDiscounts(prev => [...prev, { minQuantity: '', discountType: 'percentage', discountValue: '' }])}
-                  >
-                    + {adminT('products.volumeDiscount.addRow')}
-                  </Button>
+            {/* Volume Discounts Section */}
+            <div className="space-y-2 border border-gray-200 rounded-lg p-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Percent className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm font-medium">{adminT('products.volumeDiscount.title')}</p>
                 </div>
-                <p className="text-xs text-gray-500">{adminT('products.volumeDiscount.description')}</p>
-                {volumeDiscounts.length === 0 && (
-                  <p className="text-xs text-gray-400 italic">{adminT('products.volumeDiscount.empty')}</p>
-                )}
-                {volumeDiscounts.map((row, idx) => (
-                  <div key={idx} className="flex items-center gap-2 flex-wrap">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => setVolumeDiscounts(prev => [...prev, { minQuantity: '', discountType: 'percentage', discountValue: '' }])}
+                >
+                  + {adminT('products.volumeDiscount.addRow')}
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500">
+                {adminT('products.volumeDiscount.description')}
+                {' '}({adminT('products.volumeDiscount.fromLabel')} X {getVolumeUnitSuffix(unit || '100g')})
+              </p>
+              {!product?.id && volumeDiscounts.length > 0 && (
+                <p className="text-xs text-blue-600 italic">{adminT('products.volumeDiscount.newProductNote')}</p>
+              )}
+              {volumeDiscounts.length === 0 && (
+                <p className="text-xs text-gray-400 italic">{adminT('products.volumeDiscount.empty')}</p>
+              )}
+              {volumeDiscounts.map((row, idx) => (
+                <div key={idx} className="flex items-center gap-2 flex-wrap">
+                  <div className="relative flex items-center">
                     <Input
                       type="number"
                       min="0"
-                      step="0.1"
-                      placeholder={adminT('products.volumeDiscount.minQty')}
+                      step={unit === '100g' || unit === '100ml' ? '50' : '1'}
+                      placeholder={adminT('products.volumeDiscount.fromLabel')}
                       value={row.minQuantity}
                       onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, minQuantity: e.target.value } : d))}
-                      className="text-xs h-8 w-24"
+                      className="text-xs h-8 w-28 pr-7"
                     />
-                    <select
-                      value={row.discountType}
-                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountType: e.target.value as 'percentage' | 'fixed' } : d))}
-                      className="text-xs h-8 border border-input rounded-md px-2 bg-background"
-                    >
-                      <option value="percentage">%</option>
-                      <option value="fixed">{adminT('products.volumeDiscount.fixedLabel')}</option>
-                    </select>
-                    <Input
-                      type="number"
-                      min="0"
-                      max={row.discountType === 'percentage' ? "100" : undefined}
-                      step="0.1"
-                      placeholder={adminT('products.volumeDiscount.discountPct')}
-                      value={row.discountValue}
-                      onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountValue: e.target.value } : d))}
-                      className="text-xs h-8 w-24"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
-                      onClick={() => setVolumeDiscounts(prev => prev.filter((_, i) => i !== idx))}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                    <span className="absolute right-2 text-xs text-gray-400 pointer-events-none select-none">
+                      {getVolumeUnitSuffix(unit || '100g')}
+                    </span>
                   </div>
-                ))}
-              </div>
-            )}
+                  <select
+                    value={row.discountType}
+                    onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountType: e.target.value as 'percentage' | 'fixed' } : d))}
+                    className="text-xs h-8 border border-input rounded-md px-2 bg-background"
+                  >
+                    <option value="percentage">%</option>
+                    <option value="fixed">{adminT('products.volumeDiscount.fixedLabel')}</option>
+                  </select>
+                  <Input
+                    type="number"
+                    min="0"
+                    max={row.discountType === 'percentage' ? "100" : undefined}
+                    step="0.1"
+                    placeholder={adminT('products.volumeDiscount.discountPct')}
+                    value={row.discountValue}
+                    onChange={e => setVolumeDiscounts(prev => prev.map((d, i) => i === idx ? { ...d, discountValue: e.target.value } : d))}
+                    className="text-xs h-8 w-24"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 text-red-500 hover:text-red-700"
+                    onClick={() => setVolumeDiscounts(prev => prev.filter((_, i) => i !== idx))}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0 pt-4">
               {product ? (

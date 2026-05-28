@@ -96,6 +96,7 @@
     "couponMinOrder": "مبلغ الطلب أقل من الحد الأدنى لهذا الرمز",
     "couponError": "خطأ في التحقق من رمز الخصم",
     "volumeDiscount": "خصم الكمية",
+    "volumeDiscountHint": "خصم {{discount}} من {{amount}}",
     "giftAvailable": "هدية مجانية مع طلبك!",
     "addGift": "إضافة هدية",
     "giftAdded": "هدية",

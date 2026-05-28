@@ -134,6 +134,7 @@
     "couponMinOrder": "סכום ההזמנה נמוך מהמינימום לקוד קופון זה",
     "couponError": "שגיאה באימות קוד קופון",
     "volumeDiscount": "הנחת כמות",
+    "volumeDiscountHint": "{{discount}} הנחה מ-{{amount}}",
     "giftAvailable": "מתנה חינם עם הזמנתך!",
     "addGift": "הוסף מתנה"
   },

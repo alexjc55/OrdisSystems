@@ -871,7 +871,10 @@
       "discountPct": "ערך",
       "fixedLabel": "קבוע",
       "empty": "אין הנחות נפח מוגדרות",
-      "saveError": "שגיאה בשמירת הנחות הנפח"
+      "saveError": "שגיאה בשמירת הנחות הנפח",
+      "fromLabel": "מ-",
+      "newProductNote": "ההנחות יישמרו עם יצירת המוצר",
+      "unitSuffix": { "100g": "ג'", "100ml": "מ\"ל", "kg": "ק\"ג", "piece": "יח'", "portion": "מנה" }
     },
     "notifications": {
       "productCreated": "מוצר נוצר",
