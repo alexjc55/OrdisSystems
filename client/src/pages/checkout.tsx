@@ -35,7 +35,7 @@ import { ru, enUS, he } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { triggerPushRequestAfterAction } from "@/lib/prompt-utils";
 
-function HypPaymentBadges() {
+function PaymentBadges({ provider }: { provider: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'nowrap', gap: 0, marginTop: 10 }}>
       {/* SSL */}
@@ -59,20 +59,36 @@ function HypPaymentBadges() {
 
       <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
 
-      {/* HYP */}
-      <img
-        src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
-        alt="HYP"
-        style={{ height: 13, filter: 'grayscale(1) opacity(0.5)', flexShrink: 0, paddingRight: 8 }}
-        onError={(e) => {
-          const el = e.target as HTMLImageElement;
-          el.style.display = 'none';
-          const span = document.createElement('span');
-          span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;padding-right:8px;';
-          span.textContent = 'HYP';
-          el.parentNode?.insertBefore(span, el);
-        }}
-      />
+      {/* Provider logo */}
+      {provider === 'grow' ? (
+        <img
+          src="https://grow.business/wp-content/uploads/2023/06/grow-logo-white.svg"
+          alt="Grow"
+          style={{ height: 13, filter: 'grayscale(1) opacity(0.5)', flexShrink: 0, paddingRight: 8 }}
+          onError={(e) => {
+            const el = e.target as HTMLImageElement;
+            el.style.display = 'none';
+            const span = document.createElement('span');
+            span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;padding-right:8px;';
+            span.textContent = 'GROW';
+            el.parentNode?.insertBefore(span, el);
+          }}
+        />
+      ) : (
+        <img
+          src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
+          alt="HYP"
+          style={{ height: 13, filter: 'grayscale(1) opacity(0.5)', flexShrink: 0, paddingRight: 8 }}
+          onError={(e) => {
+            const el = e.target as HTMLImageElement;
+            el.style.display = 'none';
+            const span = document.createElement('span');
+            span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;padding-right:8px;';
+            span.textContent = 'HYP';
+            el.parentNode?.insertBefore(span, el);
+          }}
+        />
+      )}
 
       <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
 
@@ -89,10 +105,12 @@ function HypPaymentBadges() {
       {/* Amex */}
       <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 11, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>AMEX</span>
 
-      {/* PayPal */}
-      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 11, lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>
-        <span style={{ color: '#6b7280' }}>Pay</span><span style={{ color: '#9ca3af' }}>Pal</span>
-      </span>
+      {/* PayPal — only HYP */}
+      {provider !== 'grow' && (
+        <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 11, lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          <span style={{ color: '#6b7280' }}>Pay</span><span style={{ color: '#9ca3af' }}>Pal</span>
+        </span>
+      )}
     </div>
   );
 }
@@ -1082,11 +1100,10 @@ export default function Checkout() {
   const isOnlinePayment = (method: string) => method === "__online__";
 
   // Check if online payment is available via paymentProviderConfig
+  const activePaymentProvider: string = (storeSettings as any)?.paymentProviderConfig?.active || 'none';
   const isOnlinePaymentAvailable = Boolean(
-    ((storeSettings as any)?.paymentProviderConfig?.active === 'hyp' &&
-     (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
-    ((storeSettings as any)?.paymentProviderConfig?.active === 'grow' &&
-     (storeSettings as any)?.paymentProviderConfig?.grow?.userId)
+    (activePaymentProvider === 'hyp' && (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
+    (activePaymentProvider === 'grow' && (storeSettings as any)?.paymentProviderConfig?.grow?.userId)
   );
 
   if (items.length === 0) {
@@ -1767,7 +1784,7 @@ export default function Checkout() {
                         : (isOnlinePayment(selectedPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.placeOrder'))
                       }
                     </Button>
-                    {isOnlinePayment(selectedPaymentMethod) && <HypPaymentBadges />}
+                    {isOnlinePayment(selectedPaymentMethod) && <PaymentBadges provider={activePaymentProvider} />}
                   </div>
                 </form>
               </div>
@@ -2008,7 +2025,7 @@ export default function Checkout() {
                           : (isOnlinePayment(selectedRegisterPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.registerAndPlaceOrder'))
                         }
                       </Button>
-                      {isOnlinePayment(selectedRegisterPaymentMethod) && <HypPaymentBadges />}
+                      {isOnlinePayment(selectedRegisterPaymentMethod) && <PaymentBadges provider={activePaymentProvider} />}
                     </div>
                   </form>
                 </TabsContent>
@@ -2273,7 +2290,7 @@ export default function Checkout() {
                           : (isOnlinePayment(selectedGuestPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.placeOrderAsGuest'))
                         }
                       </Button>
-                      {isOnlinePayment(selectedGuestPaymentMethod) && <HypPaymentBadges />}
+                      {isOnlinePayment(selectedGuestPaymentMethod) && <PaymentBadges provider={activePaymentProvider} />}
                     </div>
                   </form>
                 </TabsContent>
