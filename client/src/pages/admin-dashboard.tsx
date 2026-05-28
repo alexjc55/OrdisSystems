@@ -5920,7 +5920,7 @@ export default function AdminDashboard() {
                           {filteredProducts.map((product: any) => {
                             const displaySpecialOffer = optimisticSpecialOffers.has(product.id) ? optimisticSpecialOffers.get(product.id)! : !!product.isSpecialOffer;
                             const hasActiveVolumeDiscount = ((listVolumeDiscounts as any)?.[product.id] || []).some((d: any) => d.isActive);
-                            const showStar = displaySpecialOffer || hasActiveVolumeDiscount;
+                            const showStar = displaySpecialOffer;
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
                             // All branch availability records for this product (for mixed status display)
