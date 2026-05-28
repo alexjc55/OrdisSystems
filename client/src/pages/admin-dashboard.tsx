@@ -26,7 +26,7 @@ import { getLocalizedField, type SupportedLanguage } from "@shared/localization"
 import { getLocalizedFieldForAdmin } from "@shared/multilingual-helpers";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { getMultilingualValue, createMultilingualUpdate } from "@/components/ui/multilingual-store-settings";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import Header from "@/components/layout/header";
 import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5919,6 +5919,8 @@ export default function AdminDashboard() {
                         <TableBody>
                           {filteredProducts.map((product: any) => {
                             const displaySpecialOffer = optimisticSpecialOffers.has(product.id) ? optimisticSpecialOffers.get(product.id)! : !!product.isSpecialOffer;
+                            const hasActiveVolumeDiscount = ((listVolumeDiscounts as any)?.[product.id] || []).some((d: any) => d.isActive);
+                            const showStar = displaySpecialOffer || hasActiveVolumeDiscount;
                             // Get localized product name for display
                             const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, 'ru');
                             // All branch availability records for this product (for mixed status display)
@@ -5979,12 +5981,12 @@ export default function AdminDashboard() {
                                       <button
                                         onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !displaySpecialOffer })}
                                         className={`h-8 w-8 p-0 rounded-lg text-xl leading-none transition-all duration-200 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-yellow-50 ${
-                                          displaySpecialOffer ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
+                                          showStar ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                         type="button"
                                       >
-                                        {displaySpecialOffer ? '★' : '☆'}
+                                        {showStar ? '★' : '☆'}
                                       </button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -6162,12 +6164,12 @@ export default function AdminDashboard() {
                                       <button
                                         onClick={() => toggleSpecialOfferMutation.mutate({ id: product.id, isSpecialOffer: !displaySpecialOffer })}
                                         className={`h-8 w-8 p-0 rounded-lg text-xl leading-none transition-all duration-200 border-0 bg-transparent cursor-pointer flex items-center justify-center hover:bg-yellow-50 ${
-                                          displaySpecialOffer ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
+                                          showStar ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'
                                         }`}
                                         title={adminT('products.productsWithDiscount')}
                                         type="button"
                                       >
-                                        {displaySpecialOffer ? '★' : '☆'}
+                                        {showStar ? '★' : '☆'}
                                       </button>
                                       {effectiveStatus === "out_of_stock_today" && (
                                         <div className="inline-block px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-md mt-1">
@@ -8681,6 +8683,9 @@ export default function AdminDashboard() {
               if (_volumeDiscounts?.length > 0 && createdProduct?.id) {
                 try {
                   await apiRequest('POST', `/api/admin/products/${createdProduct.id}/volume-discounts`, _volumeDiscounts);
+                  queryClient.invalidateQueries({
+                    predicate: (q) => String(q.queryKey[0]).includes('/api/products/volume-discounts'),
+                  });
                 } catch (vdErr) {
                   console.error('Failed to save volume discounts for new product:', vdErr);
                 }
@@ -9876,6 +9881,11 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
             isActive: true,
           }))
       ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (q) => String(q.queryKey[0]).includes('/api/products/volume-discounts'),
+      });
+    },
     onError: () => toast({ title: adminT('products.volumeDiscount.saveError'), variant: 'destructive' }),
   });
   
