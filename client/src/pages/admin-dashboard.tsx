@@ -387,6 +387,9 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   growApiKey: z.string().optional(),
   growPageCode: z.string().optional(),
   growTestMode: z.boolean().default(true),
+  growJ5Enabled: z.boolean().default(false),
+  growMaxInstallments: z.number().default(1),
+  growCreateInvoice: z.boolean().default(false),
 });
 
 
@@ -8970,6 +8973,9 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [growApiKey, setGrowApiKey] = useState('');
   const [growPageCode, setGrowPageCode] = useState('');
   const [growTestMode, setGrowTestMode] = useState(true);
+  const [growJ5Enabled, setGrowJ5Enabled] = useState(false);
+  const [growMaxInstallments, setGrowMaxInstallments] = useState(1);
+  const [growCreateInvoice, setGrowCreateInvoice] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -8989,6 +8995,9 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGrowApiKey(ppc?.grow?.apiKey || '');
       setGrowPageCode(ppc?.grow?.pageCode || '');
       setGrowTestMode(ppc?.grow?.testMode !== false);
+      setGrowJ5Enabled(ppc?.grow?.j5Enabled || false);
+      setGrowMaxInstallments(ppc?.grow?.maxInstallments || 1);
+      setGrowCreateInvoice(ppc?.grow?.createInvoice || false);
     }
   }, [settings]);
 
@@ -11352,6 +11361,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
       growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
       growTestMode: (storeSettings as any)?.paymentProviderConfig?.grow?.testMode !== false,
+      growJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.grow?.j5Enabled || false,
+      growMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.grow?.maxInstallments || 1,
+      growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11542,6 +11554,9 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         growApiKey: (storeSettings as any)?.paymentProviderConfig?.grow?.apiKey || '',
         growPageCode: (storeSettings as any)?.paymentProviderConfig?.grow?.pageCode || '',
         growTestMode: (storeSettings as any)?.paymentProviderConfig?.grow?.testMode !== false,
+        growJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.grow?.j5Enabled || false,
+        growMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.grow?.maxInstallments || 1,
+        growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -11713,10 +11728,13 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             } : {}),
             ...(data.paymentProvider === 'grow' ? {
               grow: {
-                userId:   data.growUserId   || '',
-                apiKey:   data.growApiKey   || '',
-                pageCode: data.growPageCode || '',
-                testMode: data.growTestMode !== false,
+                userId:          data.growUserId   || '',
+                apiKey:          data.growApiKey   || '',
+                pageCode:        data.growPageCode || '',
+                testMode:        data.growTestMode !== false,
+                j5Enabled:       data.growJ5Enabled || false,
+                maxInstallments: data.growMaxInstallments || 1,
+                createInvoice:   data.growCreateInvoice || false,
               }
             } : {}),
           },
@@ -13520,6 +13538,98 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   </FormItem>
                 )}
               />
+
+              <div className="border-t border-green-200 pt-4 space-y-4">
+                <p className={`text-xs font-semibold text-green-800 uppercase tracking-wide ${isRTL ? 'text-right' : 'text-left'}`}>
+                  {currentLanguage === 'ru' ? 'Дополнительные опции' : currentLanguage === 'he' ? 'אפשרויות נוספות' : currentLanguage === 'ar' ? 'خيارات إضافية' : 'Additional Options'}
+                </p>
+
+                <FormField
+                  control={form.control}
+                  name="growJ5Enabled"
+                  render={({ field }) => (
+                    <FormItem className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                      <div className="flex items-center gap-3">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormLabel className="text-sm font-medium cursor-pointer">
+                          {currentLanguage === 'ru' ? 'J5 — отложенное списание' : currentLanguage === 'he' ? 'J5 — עסקה נדחית' : currentLanguage === 'ar' ? 'J5 — معاملة مؤجلة' : 'J5 — Deferred transaction'}
+                        </FormLabel>
+                      </div>
+                      <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru'
+                          ? 'Резервирует сумму на карте клиента без реального списания. Итоговая сумма уточняется и списывается позже (например, после взвешивания товара). Нужно завершить в течение 72 часов — иначе заказ автоматически отменяется.'
+                          : currentLanguage === 'he'
+                          ? 'מחזיק סכום בכרטיס האשראי של הלקוח ללא חיוב בפועל. הסכום הסופי מאושר ומחויב לאחר מכן (למשל, לאחר שקילת המוצר). יש לסיים תוך 72 שעות — אחרת ההזמנה תבוטל אוטומטית.'
+                          : currentLanguage === 'ar'
+                          ? 'يحجز المبلغ على بطاقة العميل دون خصم فعلي. يتم تأكيد المبلغ النهائي وخصمه لاحقاً (مثلاً بعد وزن المنتج). يجب إتمامه خلال 72 ساعة وإلا يُلغى الطلب تلقائياً.'
+                          : 'Reserves the amount on the customer\'s card without actual charging. The final amount is confirmed and charged later (e.g., after weighing the product). Must be finalized within 72 hours or the order is auto-cancelled.'}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="growMaxInstallments"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru' ? 'Максимальное число платежей (рассрочка)' : currentLanguage === 'he' ? 'מספר תשלומים מקסימלי (תשלומים)' : currentLanguage === 'ar' ? 'الحد الأقصى لعدد الدفعات (تقسيط)' : 'Max installments'}
+                      </FormLabel>
+                      <Select
+                        value={String(field.value || 1)}
+                        onValueChange={(v) => field.onChange(Number(v))}
+                      >
+                        <SelectTrigger className="text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">{currentLanguage === 'ru' ? '1 — единый платёж' : currentLanguage === 'he' ? '1 — תשלום יחיד' : currentLanguage === 'ar' ? '1 — دفعة واحدة' : '1 — Single payment'}</SelectItem>
+                          <SelectItem value="2">2</SelectItem>
+                          <SelectItem value="3">3</SelectItem>
+                          <SelectItem value="4">4</SelectItem>
+                          <SelectItem value="6">6</SelectItem>
+                          <SelectItem value="12">12</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru'
+                          ? 'Количество частей для оплаты. Для рассрочки (J4/J5) нужен отдельный pageCode от Grow — обратитесь в поддержку Grow.'
+                          : currentLanguage === 'he'
+                          ? 'מספר תשלומים לפריסה. לתשלומים (J4/J5) דרוש pageCode נפרד מ-Grow — פנה לתמיכת Grow.'
+                          : currentLanguage === 'ar'
+                          ? 'عدد الأقساط. للتقسيط (J4/J5) يلزم pageCode منفصل من Grow — تواصل مع دعم Grow.'
+                          : 'Number of installment payments. For installments (J4/J5) a separate pageCode from Grow is required — contact Grow support.'}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="growCreateInvoice"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-3">
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className={`flex flex-col gap-0.5 ${isRTL ? 'items-end' : 'items-start'}`}>
+                        <FormLabel className="text-sm font-normal cursor-pointer">
+                          {currentLanguage === 'ru' ? 'Авто-инвойс клиенту' : currentLanguage === 'he' ? 'חשבונית אוטומטית ללקוח' : currentLanguage === 'ar' ? 'فاتورة تلقائية للعميل' : 'Auto-invoice to customer'}
+                        </FormLabel>
+                        <span className="text-xs text-muted-foreground">
+                          {currentLanguage === 'ru' ? 'Grow автоматически отправит чек на email покупателя после оплаты' : currentLanguage === 'he' ? 'Grow ישלח חשבונית אוטומטית לאימייל הקונה לאחר התשלום' : currentLanguage === 'ar' ? 'سيرسل Grow فاتورة تلقائية لبريد المشتري بعد الدفع' : 'Grow automatically sends a receipt to the customer\'s email after payment'}
+                        </span>
+                      </div>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             </>
           )}

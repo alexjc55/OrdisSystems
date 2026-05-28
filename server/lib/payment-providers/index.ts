@@ -15,6 +15,9 @@ export interface PaymentProviderConfig {
     apiKey: string;
     pageCode: string;
     testMode?: boolean;
+    j5Enabled?: boolean;       // Deferred transaction: reserves funds without charging
+    maxInstallments?: number;  // 1 = single payment, 2–12 = installments
+    createInvoice?: boolean;   // Auto-send invoice to customer after payment
   };
 }
 
@@ -135,6 +138,9 @@ export class GrowProvider implements IPaymentProvider {
     private readonly apiKey: string,
     private readonly pageCode: string,
     private readonly testMode: boolean = false,
+    private readonly j5Enabled: boolean = false,
+    private readonly maxInstallments: number = 1,
+    private readonly createInvoice: boolean = false,
   ) {}
 
   private get base() {
@@ -163,6 +169,12 @@ export class GrowProvider implements IPaymentProvider {
     if (params.customerEmail) form.append('payerEmail', params.customerEmail);
     if (params.customerPhone) form.append('payerPhone', params.customerPhone);
     if (notifyUrl)            form.append('notifyUrl',  notifyUrl);
+    // J5: deferred transaction — reserves funds without charging
+    if (this.j5Enabled)       form.append('J5', 'True');
+    // Installments: number of payments (1 = single, 2-12 = installments)
+    if (this.maxInstallments > 1) form.append('paymentNum', String(this.maxInstallments));
+    // Auto-generate and send invoice to customer
+    if (this.createInvoice)   form.append('createInvoice', '1');
 
     const response = await fetch(`${this.base}/createPaymentProcess`, {
       method: 'POST',
@@ -237,7 +249,15 @@ export function getProvider(settings: {
       return new HypProvider(config.hyp.masof, config.hyp.passP, config.hyp.key);
     }
     if (config.active === 'grow' && config.grow?.userId && config.grow?.apiKey && config.grow?.pageCode) {
-      return new GrowProvider(config.grow.userId, config.grow.apiKey, config.grow.pageCode, config.grow.testMode ?? false);
+      return new GrowProvider(
+        config.grow.userId,
+        config.grow.apiKey,
+        config.grow.pageCode,
+        config.grow.testMode ?? false,
+        config.grow.j5Enabled ?? false,
+        config.grow.maxInstallments ?? 1,
+        config.grow.createInvoice ?? false,
+      );
     }
   }
 
