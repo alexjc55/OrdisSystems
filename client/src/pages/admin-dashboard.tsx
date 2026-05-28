@@ -10803,7 +10803,6 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     }
   }, [open, category, form]);
 
-  const langToTabKey: Record<string, string> = { ru: 'basic', en: 'english', he: 'hebrew', ar: 'arabic' };
   const langToField: Record<string, string> = { ru: 'name', en: 'name_en', he: 'name_he', ar: 'name_ar' };
 
   const handleCategorySubmit = (data: any) => {
