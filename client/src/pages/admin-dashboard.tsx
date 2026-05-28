@@ -12927,7 +12927,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 {(field.value || []).map((method: any, index: number) => (
                   <div key={method.id || index} className="flex items-center gap-2 p-3 border rounded-lg">
                     <Input
-                      placeholder={adminT('storeSettings.paymentMethodPlaceholder')}
+                      placeholder={(() => {
+                        const defLang = storeSettings?.defaultLanguage || 'ru';
+                        if (currentLanguage === defLang) return adminT('storeSettings.paymentMethodPlaceholder');
+                        const defVal = getPaymentMethodName(method, defLang);
+                        return defVal ? defVal : adminT('storeSettings.paymentMethodPlaceholder');
+                      })()}
                       value={getPaymentMethodName(method, currentLanguage)}
                       onChange={(e) => {
                         const updatedMethods = [...(field.value || [])];
