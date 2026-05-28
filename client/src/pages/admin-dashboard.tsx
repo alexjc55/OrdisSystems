@@ -396,6 +396,7 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   growCreateInvoice: z.boolean().default(false),
   allpayLogin: z.string().optional(),
   allpayApiKey: z.string().optional(),
+  allpayTestMode: z.boolean().default(false),
   allpayJ5Enabled: z.boolean().default(false),
   allpayJ5BufferPercent: z.number().default(0),
   allpayMaxInstallments: z.number().default(1),
@@ -8992,6 +8993,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [growCreateInvoice, setGrowCreateInvoice] = useState(false);
   const [allpayLogin, setAllpayLogin] = useState('');
   const [allpayApiKey, setAllpayApiKey] = useState('');
+  const [allpayTestMode, setAllpayTestMode] = useState(false);
   const [allpayJ5Enabled, setAllpayJ5Enabled] = useState(false);
   const [allpayJ5BufferPercent, setAllpayJ5BufferPercent] = useState(0);
   const [allpayMaxInstallments, setAllpayMaxInstallments] = useState(1);
@@ -9024,6 +9026,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGrowCreateInvoice(ppc?.grow?.createInvoice || false);
       setAllpayLogin(ppc?.allpay?.login || '');
       setAllpayApiKey(ppc?.allpay?.apiKey || '');
+      setAllpayTestMode(ppc?.allpay?.testMode === true);
       setAllpayJ5Enabled(ppc?.allpay?.j5Enabled || false);
       setAllpayJ5BufferPercent(ppc?.allpay?.j5BufferPercent || 0);
       setAllpayMaxInstallments(ppc?.allpay?.maxInstallments || 1);
@@ -11400,6 +11403,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
       allpayLogin: (storeSettings as any)?.paymentProviderConfig?.allpay?.login || '',
       allpayApiKey: (storeSettings as any)?.paymentProviderConfig?.allpay?.apiKey || '',
+      allpayTestMode: (storeSettings as any)?.paymentProviderConfig?.allpay?.testMode === true,
       allpayJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5Enabled || false,
       allpayJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5BufferPercent || 0,
       allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
@@ -11603,6 +11607,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         growCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.grow?.createInvoice || false,
         allpayLogin: (storeSettings as any)?.paymentProviderConfig?.allpay?.login || '',
         allpayApiKey: (storeSettings as any)?.paymentProviderConfig?.allpay?.apiKey || '',
+        allpayTestMode: (storeSettings as any)?.paymentProviderConfig?.allpay?.testMode === true,
         allpayJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5Enabled || false,
         allpayJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5BufferPercent || 0,
         allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
@@ -11795,6 +11800,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
               allpay: {
                 login:            data.allpayLogin   || '',
                 apiKey:           data.allpayApiKey  || '',
+                testMode:         data.allpayTestMode || false,
                 j5Enabled:        data.allpayJ5Enabled || false,
                 j5BufferPercent:  data.allpayJ5BufferPercent || 0,
                 maxInstallments:  data.allpayMaxInstallments || 1,
@@ -13888,37 +13894,55 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       ? 'البيانات في حساب AllPay: الإعدادات ← التكاملات.'
                       : 'Credentials are in your AllPay account: Settings → Integrations.'}
                   </p>
-                  <div className={`flex flex-col gap-2 rounded-md bg-blue-50 border border-blue-200 px-3 py-2 ${isRTL ? 'items-end text-right' : 'items-start text-left'}`}>
-                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                      <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                      <p className="text-xs font-semibold text-blue-900">
-                        {currentLanguage === 'ru' ? 'Тестовый режим AllPay' : currentLanguage === 'he' ? 'מצב בדיקה של AllPay' : currentLanguage === 'ar' ? 'وضع الاختبار في AllPay' : 'AllPay Test Mode'}
+                  <FormField
+                    control={form.control}
+                    name="allpayTestMode"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center gap-3">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormLabel className="text-sm font-normal cursor-pointer">
+                          {currentLanguage === 'ru' ? 'Тестовый режим (sandbox)' : currentLanguage === 'he' ? 'מצב בדיקה (sandbox)' : currentLanguage === 'ar' ? 'وضع الاختبار (sandbox)' : 'Test mode (sandbox)'}
+                        </FormLabel>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {form.watch('allpayTestMode') && (
+                    <div className={`flex flex-col gap-2 rounded-md bg-blue-50 border border-blue-200 px-3 py-2 ${isRTL ? 'items-end text-right' : 'items-start text-left'}`}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p className="text-xs font-semibold text-blue-900">
+                          {currentLanguage === 'ru' ? 'Тестовые карты AllPay' : currentLanguage === 'he' ? 'כרטיסי בדיקה של AllPay' : currentLanguage === 'ar' ? 'بطاقات اختبار AllPay' : 'AllPay Test Cards'}
+                        </p>
+                      </div>
+                      <p className="text-xs text-blue-800">
+                        {currentLanguage === 'ru'
+                          ? 'Включите тестовый режим в личном кабинете AllPay: Настройки → Тестовый режим. Затем используйте эти карты:'
+                          : currentLanguage === 'he'
+                          ? 'הפעל מצב בדיקה בחשבון AllPay: הגדרות → מצב בדיקה. לאחר מכן השתמש בכרטיסים אלה:'
+                          : currentLanguage === 'ar'
+                          ? 'فعّل وضع الاختبار في حساب AllPay: الإعدادات ← وضع الاختبار. ثم استخدم هذه البطاقات:'
+                          : 'Enable test mode in your AllPay account: Settings → Test Mode. Then use these cards:'}
                       </p>
-                    </div>
-                    <p className="text-xs text-blue-800">
-                      {currentLanguage === 'ru'
-                        ? 'Включите тестовый режим в личном кабинете AllPay: Настройки → Тестовый режим. Затем используйте эти карты:'
-                        : currentLanguage === 'he'
-                        ? 'הפעל מצב בדיקה בחשבון AllPay: הגדרות → מצב בדיקה. לאחר מכן השתמש בכרטיסים אלה:'
-                        : currentLanguage === 'ar'
-                        ? 'فعّل وضع الاختبار في حساب AllPay: الإعدادات ← وضع الاختبار. ثم استخدم هذه البطاقات:'
-                        : 'Enable test mode in your AllPay account: Settings → Test Mode. Then use these cards:'}
-                    </p>
-                    <div className={`w-full text-xs text-blue-900 font-mono ${isRTL ? 'text-right' : 'text-left'}`}>
-                      <div className="flex flex-col gap-0.5">
-                        <span>Visa: <b>4557430402053431</b> ✓</span>
-                        <span>Mastercard: <b>5326105300985846</b> ✓</span>
-                        <span>Amex: <b>375516193000090</b> ✓</span>
-                        <span className="text-blue-600">
-                          {currentLanguage === 'ru' ? 'Ошибка: ' : currentLanguage === 'he' ? 'שגיאה: ' : currentLanguage === 'ar' ? 'خطأ: ' : 'Failure: '}
-                          <b>4000000000000002</b> ✗
-                        </span>
-                        <span className="text-blue-600 font-sans font-normal mt-0.5">
-                          {currentLanguage === 'ru' ? 'Срок: любая будущая дата · CVV: любые 3 цифры' : currentLanguage === 'he' ? 'תאריך תפוגה: כל תאריך עתידי · CVV: כל 3 ספרות' : currentLanguage === 'ar' ? 'تاريخ الانتهاء: أي تاريخ مستقبلي · CVV: أي 3 أرقام' : 'Expiry: any future date · CVV: any 3 digits'}
-                        </span>
+                      <div className={`w-full text-xs text-blue-900 font-mono ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <div className="flex flex-col gap-0.5">
+                          <span>Visa: <b>4557430402053431</b> ✓</span>
+                          <span>Mastercard: <b>5326105300985846</b> ✓</span>
+                          <span>Amex: <b>375516193000090</b> ✓</span>
+                          <span className="text-blue-600">
+                            {currentLanguage === 'ru' ? 'Ошибка: ' : currentLanguage === 'he' ? 'שגיאה: ' : currentLanguage === 'ar' ? 'خطأ: ' : 'Failure: '}
+                            <b>4000000000000002</b> ✗
+                          </span>
+                          <span className="text-blue-600 font-sans font-normal mt-0.5">
+                            {currentLanguage === 'ru' ? 'Срок: любая будущая дата · CVV: любые 3 цифры' : currentLanguage === 'he' ? 'תאריך תפוגה: כל תאריך עתידי · CVV: כל 3 ספרות' : currentLanguage === 'ar' ? 'تاريخ الانتهاء: أي تاريخ مستقبلي · CVV: أي 3 أرقام' : 'Expiry: any future date · CVV: any 3 digits'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <FormField
