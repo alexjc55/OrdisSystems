@@ -59,57 +59,51 @@ function PaymentBadges({ provider }: { provider: string }) {
 
       <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
 
-      {/* Provider logo */}
       {provider === 'grow' ? (
+        /* Grow (Meshulam): combined PCI + cards badge from Meshulam CDN */
         <img
-          src="https://grow.business/wp-content/uploads/2023/06/grow-logo-white.svg"
-          alt="Grow"
-          style={{ height: 13, filter: 'grayscale(1) opacity(0.5)', flexShrink: 0, paddingRight: 8 }}
-          onError={(e) => {
-            const el = e.target as HTMLImageElement;
-            el.style.display = 'none';
-            const span = document.createElement('span');
-            span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;padding-right:8px;';
-            span.textContent = 'GROW';
-            el.parentNode?.insertBefore(span, el);
-          }}
+          src="https://cdn.meshulam.co.il/_media/images/web_business/new_cc_with_pci_black.svg"
+          alt="Meshulam secure payment"
+          style={{ height: 20, filter: 'grayscale(1) opacity(0.45)', flexShrink: 0 }}
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
         />
       ) : (
-        <img
-          src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
-          alt="HYP"
-          style={{ height: 13, filter: 'grayscale(1) opacity(0.5)', flexShrink: 0, paddingRight: 8 }}
-          onError={(e) => {
-            const el = e.target as HTMLImageElement;
-            el.style.display = 'none';
-            const span = document.createElement('span');
-            span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;padding-right:8px;';
-            span.textContent = 'HYP';
-            el.parentNode?.insertBefore(span, el);
-          }}
-        />
-      )}
+        <>
+          {/* HYP logo */}
+          <img
+            src="https://pay.hyp.co.il/yaadpay/7.0/Images/paybyqr/logo_hyp_large.svg"
+            alt="HYP"
+            style={{ height: 13, filter: 'grayscale(1) opacity(0.5)', flexShrink: 0, paddingRight: 8 }}
+            onError={(e) => {
+              const el = e.target as HTMLImageElement;
+              el.style.display = 'none';
+              const span = document.createElement('span');
+              span.style.cssText = 'font-size:10px;font-weight:800;color:#9ca3af;letter-spacing:1px;padding-right:8px;';
+              span.textContent = 'HYP';
+              el.parentNode?.insertBefore(span, el);
+            }}
+          />
 
-      <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
+          <span style={{ color: '#e5e7eb', fontSize: 12, flexShrink: 0, paddingRight: 8 }}>|</span>
 
-      {/* VISA */}
-      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 14, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>VISA</span>
+          {/* VISA */}
+          <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontStyle: 'italic', fontSize: 14, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>VISA</span>
 
-      {/* Mastercard */}
-      <svg width="24" height="15" viewBox="0 0 38 24" aria-label="Mastercard" style={{ flexShrink: 0, marginRight: 6 }}>
-        <circle cx="14" cy="12" r="8" fill="#9ca3af" />
-        <circle cx="24" cy="12" r="8" fill="#6b7280" />
-        <path d="M19 5.5a8 8 0 0 1 0 13A8 8 0 0 1 19 5.5z" fill="#d1d5db" />
-      </svg>
+          {/* Mastercard */}
+          <svg width="24" height="15" viewBox="0 0 38 24" aria-label="Mastercard" style={{ flexShrink: 0, marginRight: 6 }}>
+            <circle cx="14" cy="12" r="8" fill="#9ca3af" />
+            <circle cx="24" cy="12" r="8" fill="#6b7280" />
+            <path d="M19 5.5a8 8 0 0 1 0 13A8 8 0 0 1 19 5.5z" fill="#d1d5db" />
+          </svg>
 
-      {/* Amex */}
-      <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 11, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>AMEX</span>
+          {/* Amex */}
+          <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 11, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 6 }}>AMEX</span>
 
-      {/* PayPal — only HYP */}
-      {provider !== 'grow' && (
-        <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 11, lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>
-          <span style={{ color: '#6b7280' }}>Pay</span><span style={{ color: '#9ca3af' }}>Pal</span>
-        </span>
+          {/* PayPal */}
+          <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 900, fontSize: 11, lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap' }}>
+            <span style={{ color: '#6b7280' }}>Pay</span><span style={{ color: '#9ca3af' }}>Pal</span>
+          </span>
+        </>
       )}
     </div>
   );
