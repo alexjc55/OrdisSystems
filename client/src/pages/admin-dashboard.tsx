@@ -883,6 +883,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     return timeSlots;
   };
   const storeSettings = storeSettingsData;
+
+  const localizedPaymentMethod = (() => {
+    if (!order.paymentMethod) return '';
+    const lang = localStorage.getItem('language') || 'ru';
+    const pmethods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
+    const pmFound = pmethods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
+    if (!pmFound) return order.paymentMethod as string;
+    const pk = lang === 'en' ? 'name_en' : lang === 'he' ? 'name_he' : lang === 'ar' ? 'name_ar' : 'name';
+    return (pmFound[pk] || pmFound.name || order.paymentMethod) as string;
+  })();
+
   const [showAddItem, setShowAddItem] = useState(false);
   const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
   const [editedOrderItems, setEditedOrderItems] = useState(order.items || []);
@@ -1437,13 +1448,22 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       ? (getLocalizedField(printBranch, 'name', currentLang) || printBranch.name || '')
       : '';
 
+    const localizedPaymentForPrint = (() => {
+      if (!order.paymentMethod) return '';
+      const pmethods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
+      const pmFound = pmethods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
+      if (!pmFound) return order.paymentMethod;
+      const pk = currentLang === 'en' ? 'name_en' : currentLang === 'he' ? 'name_he' : currentLang === 'ar' ? 'name_ar' : 'name';
+      return (pmFound[pk] || pmFound.name || order.paymentMethod) as string;
+    })();
+
     const allInfoRows = makeInfoRows([
       [l('customer'),     customerName],
       [l('phone'),        editedOrder.customerPhone || order.guestPhone || ''],
       [l('address'),      editedOrder.deliveryAddress || ''],
       [l('deliveryDate'), editedOrder.deliveryDate || ''],
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
-      [l('payment'),      order.paymentMethod || ''],
+      [l('payment'),      localizedPaymentForPrint],
       [l('status'),       getStatusLabel(editedOrder.status)],
       [l('branch'),       printBranchName],
     ]);
@@ -1455,7 +1475,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       [l('address'),      editedOrder.deliveryAddress || ''],
       [l('deliveryDate'), editedOrder.deliveryDate || ''],
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
-      [l('payment'),      order.paymentMethod || ''],
+      [l('payment'),      localizedPaymentForPrint],
       [l('status'),       getStatusLabel(editedOrder.status)],
       [l('branch'),       printBranchName],
     ].filter(([, v]) => v);
@@ -1580,7 +1600,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       [l('address'),      editedOrder.deliveryAddress || ''],
       [l('deliveryDate'), editedOrder.deliveryDate || ''],
       [l('deliveryTime'), editedOrder.deliveryTime ? formatDeliveryTimeRange(editedOrder.deliveryTime, tCommon) : ''],
-      [l('payment'),      order.paymentMethod || ''],
+      [l('payment'),      localizedPaymentForPrint],
       [l('status'),       getStatusLabel(editedOrder.status)],
       [l('branch'),       printBranchName],
     ].filter(([, v]) => v);
@@ -2226,6 +2246,17 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
       </div>
 
+      {/* Payment Method */}
+      {order.paymentMethod && localizedPaymentMethod && (
+        <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex items-center justify-between shadow-sm">
+          <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
+            <CreditCard className="h-4 w-4 text-gray-400" />
+            {adminT('orders.paymentMethod')}
+          </span>
+          <span className="text-sm font-semibold text-gray-900">{localizedPaymentMethod}</span>
+        </div>
+      )}
+
       {/* Order Items - Important section with visual accent */}
       <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border-2 border-green-200 p-4 shadow-sm">
         <div className={`flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-3 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
@@ -2686,17 +2717,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
               )}
             </div>
             
-            {order.paymentMethod && (
+            {localizedPaymentMethod && (
               <div className="flex justify-between text-xs text-gray-500 pt-2 border-t">
                 <span>{adminT('orders.paymentMethod')}:</span>
-                <span>{(() => {
-                  const lang = localStorage.getItem('language') || 'ru';
-                  const methods: any[] = Array.isArray(storeSettings?.paymentMethods) ? (storeSettings.paymentMethods as any[]) : [];
-                  const found = methods.find((m: any) => m.name === order.paymentMethod || m.name_en === order.paymentMethod || m.name_he === order.paymentMethod || m.name_ar === order.paymentMethod);
-                  if (!found) return order.paymentMethod;
-                  const k = lang === 'en' ? 'name_en' : lang === 'he' ? 'name_he' : lang === 'ar' ? 'name_ar' : 'name';
-                  return found[k] || found.name || order.paymentMethod;
-                })()}</span>
+                <span>{localizedPaymentMethod}</span>
               </div>
             )}
             

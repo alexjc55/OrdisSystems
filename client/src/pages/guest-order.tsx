@@ -390,7 +390,7 @@ export default function GuestOrderPage() {
                   )}
                   {parseFloat(order.deliveryFee || '0') > 0 && (
                     <div className="flex justify-between items-center text-gray-600 dark:text-gray-400">
-                      <span className="flex items-center gap-1"><Truck className="w-3 h-3" />{t('order.deliveryFee')}</span>
+                      <span className="flex items-center gap-1"><Truck className="w-3 h-3" />{t('cart.deliveryFee')}</span>
                       <span>{formatCurrency(parseFloat(order.deliveryFee!))}</span>
                     </div>
                   )}

@@ -918,20 +918,7 @@ export async function sendGuestOrderEmail(
       </tr>`;
     }).join('');
     
-    itemsHtml = `
-      <table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd; ${isRTL ? 'direction: rtl;' : ''}">
-        <thead>
-          <tr style="background-color: #f8f9fa;">
-            <th style="padding: 12px; text-align: ${isRTL ? 'right' : 'left'}; font-weight: bold; border-bottom: 2px solid #ddd;">${template.productLabel}</th>
-            <th style="padding: 12px; text-align: center; font-weight: bold; border-bottom: 2px solid #ddd;">${template.quantityLabel}</th>
-            <th style="padding: 12px; text-align: right; font-weight: bold; border-bottom: 2px solid #ddd;">${template.amountLabel}</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${itemRows}
-        </tbody>
-      </table>
-    `;
+    itemsHtml = itemRows;
   }
 
   // Pre-compute localized display values for guest email
