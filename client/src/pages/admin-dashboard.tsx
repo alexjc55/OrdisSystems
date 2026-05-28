@@ -13888,6 +13888,18 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       ? 'البيانات في حساب AllPay: الإعدادات ← التكاملات.'
                       : 'Credentials are in your AllPay account: Settings → Integrations.'}
                   </p>
+                  <div className={`flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
+                    <svg className="mt-0.5 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    <p className="text-xs text-amber-800">
+                      {currentLanguage === 'ru'
+                        ? 'AllPay не имеет тестового (sandbox) режима. Для проверки используйте тестовые карты, предоставленные поддержкой AllPay.'
+                        : currentLanguage === 'he'
+                        ? 'ל-AllPay אין מצב סנדבוקס. לבדיקות, השתמש בכרטיסי אשראי לבדיקה שמספקת התמיכה של AllPay.'
+                        : currentLanguage === 'ar'
+                        ? 'لا يوجد لـ AllPay وضع اختبار (Sandbox). للاختبار، استخدم بطاقات الاختبار التي يوفرها دعم AllPay.'
+                        : 'AllPay has no sandbox mode. For testing, use test card numbers provided by AllPay support.'}
+                    </p>
+                  </div>
                 </div>
 
                 <FormField
