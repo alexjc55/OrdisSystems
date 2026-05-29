@@ -13916,12 +13916,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 <div className={`flex flex-col gap-2 ${isRTL ? 'items-end' : 'items-start'}`}>
                   <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
                     {currentLanguage === 'ru'
-                      ? 'Ключ seller_payme_id (MPL) находится в вашем аккаунте PayMe.'
+                      ? 'Ключ MPL находится в личном кабинете PayMe: левое меню → Settings (הגדרות) → вверху страницы «API Key (Production)».'
                       : currentLanguage === 'he'
-                      ? 'מפתח seller_payme_id (MPL) נמצא בחשבון PayMe שלך.'
+                      ? 'מפתח ה-MPL נמצא בדשבורד של PayMe: תפריט שמאלי → הגדרות → בראש העמוד «API Key (Production)».'
                       : currentLanguage === 'ar'
-                      ? 'مفتاح seller_payme_id (MPL) موجود في حساب PayMe.'
-                      : 'The seller_payme_id (MPL key) is found in your PayMe account.'}
+                      ? 'مفتاح MPL موجود في لوحة PayMe: القائمة اليسرى ← الإعدادات ← في أعلى الصفحة «API Key (Production)».'
+                      : 'MPL key is in your PayMe dashboard: left menu → Settings → at the top of the page "API Key (Production)".'}
                   </p>
 
                   <FormField
@@ -13988,12 +13988,12 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                       </FormControl>
                       <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
                         {currentLanguage === 'ru'
-                          ? 'Приватный ключ продавца в системе PayMe (формат MPL...).'
+                          ? 'Скопируйте ключ из раздела Settings → API Key (Production). Начинается с MPL.'
                           : currentLanguage === 'he'
-                          ? 'המפתח הפרטי של המוכר במערכת PayMe (פורמט MPL...).'
+                          ? 'העתק את המפתח מהגדרות → API Key (Production). מתחיל ב-MPL.'
                           : currentLanguage === 'ar'
-                          ? 'المفتاح الخاص للبائع في نظام PayMe (صيغة MPL...).'
-                          : 'Your private seller key in the PayMe system (MPL... format).'}
+                          ? 'انسخ المفتاح من الإعدادات ← API Key (Production). يبدأ بـ MPL.'
+                          : 'Copy the key from Settings → API Key (Production). Starts with MPL.'}
                       </FormDescription>
                       <FormMessage className="text-xs" />
                     </FormItem>

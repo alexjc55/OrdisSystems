@@ -58,7 +58,7 @@ function PaymentBadges({ provider }: { provider: string }) {
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
         />
       ) : provider === 'payme' ? (
-        /* PayMe: PCI DSS + VISA, MC, AMEX, Apple Pay, Google Pay, bit */
+        /* PayMe: PCI DSS + VISA, MC, AMEX, PayPal, Apple Pay, bit */
         <>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2, flexShrink: 0, paddingRight: 8 }}>
             <svg width="11" height="11" viewBox="0 0 24 24" fill="#9ca3af">
@@ -74,12 +74,24 @@ function PaymentBadges({ provider }: { provider: string }) {
             <path d="M19 5.5a8 8 0 0 1 0 13A8 8 0 0 1 19 5.5z" fill="#d1d5db" />
           </svg>
           <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 10, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', paddingRight: 5 }}>AMEX</span>
+          {/* PayPal */}
+          <span style={{ display: 'flex', alignItems: 'center', flexShrink: 0, paddingRight: 5 }}>
+            <svg width="24" height="14" viewBox="0 0 124 33" fill="none" aria-label="PayPal" style={{ opacity: 0.45 }}>
+              <path d="M46.2 5.8c-1.2-1.4-3.3-2.1-6.2-2.1h-8.3c-.6 0-1.1.4-1.2 1L27 27.2c-.1.4.2.8.6.8h4l1-6.4v.2c.1-.6.6-1 1.2-1h2.5c5 0 8.9-2 10-7.9v-.5c-.1 0-.1 0 0 0 .4-2.7-.1-4.6-1.1-5.6zm-1 5.8c-.5 3.2-2.9 4.7-6.5 4.7H37l1.2-7.6h1.8c2 0 3.3.4 3.9 1.2.5.7.6 1.7.3 1.7z" fill="#9ca3af"/>
+              <path d="M66.6 11.5h-4c-.3 0-.6.2-.7.5l-.2 1.2-.3-.4c-.9-1.3-2.9-1.7-4.9-1.7-4.6 0-8.5 3.5-9.3 8.4-.4 2.4.2 4.7 1.5 6.4 1.3 1.5 3.1 2.1 5.2 2.1 3.7 0 5.8-2.4 5.8-2.4l-.2 1.2c-.1.4.2.8.6.8h3.6c.6 0 1.1-.4 1.2-1l2.1-13.5c.2-.4-.1-.6-.4-.6zm-5.6 8.1c-.4 2.4-2.3 4-4.7 4-1.2 0-2.2-.4-2.8-1.1-.6-.7-.8-1.8-.6-3 .4-2.4 2.4-4 4.7-4 1.2 0 2.1.4 2.8 1.1.7.8.9 1.8.6 3z" fill="#9ca3af"/>
+              <path d="M87.5 11.5h-4.1c-.4 0-.7.2-.9.5l-5.3 7.8-2.2-7.5c-.1-.5-.6-.8-1.1-.8H70c-.5 0-.8.5-.6.9l4.2 12.3-3.9 5.5c-.3.5 0 1.1.6 1.1h4.1c.4 0 .7-.2.9-.5l12.8-18.4c.3-.4 0-1-.6-.9z" fill="#9ca3af"/>
+              <path d="M101.8 5.8c-1.2-1.4-3.3-2.1-6.2-2.1h-8.3c-.6 0-1.1.4-1.2 1l-3.5 22.5c-.1.4.2.8.6.8h4.3c.4 0 .8-.3.9-.7l1-6.3v.2c.1-.6.6-1 1.2-1h2.5c5 0 8.9-2 10-7.9v-.5c0 0 0 0 0 0 .4-2.7-.1-4.6-1.3-6zm-1 5.8c-.5 3.2-2.9 4.7-6.5 4.7h-1.7l1.2-7.6h1.8c2 0 3.3.4 3.9 1.2.5.8.7 1.7.3 1.7z" fill="#6b7280"/>
+              <path d="M121.9 11.5h-4c-.3 0-.6.2-.7.5l-.2 1.2-.3-.4c-.9-1.3-2.9-1.7-4.9-1.7-4.6 0-8.5 3.5-9.3 8.4-.4 2.4.2 4.7 1.5 6.4 1.3 1.5 3.1 2.1 5.2 2.1 3.7 0 5.8-2.4 5.8-2.4l-.2 1.2c-.1.4.2.8.6.8h3.6c.6 0 1.1-.4 1.2-1l2.1-13.5c.2-.4-.2-.6-.4-.6zm-5.6 8.1c-.4 2.4-2.3 4-4.7 4-1.2 0-2.2-.4-2.8-1.1-.6-.7-.8-1.8-.6-3 .4-2.4 2.4-4 4.7-4 1.2 0 2.1.4 2.8 1.1.6.8.9 1.8.6 3z" fill="#6b7280"/>
+            </svg>
+          </span>
+          {/* Apple Pay */}
           <span style={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0, paddingRight: 5 }}>
             <svg width="10" height="12" viewBox="0 0 814 1000" fill="#9ca3af">
               <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-42.7-150.5-112.5C138.5 752.5 106 637.8 106 528.2 106 323.1 233.8 213.6 359.2 213.6c65.4 0 120 43.1 161.3 43.1 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/>
             </svg>
             <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 600, fontSize: 10, color: '#9ca3af', lineHeight: 1, userSelect: 'none' }}>Pay</span>
           </span>
+          {/* bit */}
           <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 800, fontSize: 11, color: '#9ca3af', lineHeight: 1, userSelect: 'none', flexShrink: 0, whiteSpace: 'nowrap', letterSpacing: '-0.3px' }}>bit</span>
         </>
       ) : provider === 'allpay' ? (
