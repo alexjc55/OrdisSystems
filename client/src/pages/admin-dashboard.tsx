@@ -13889,16 +13889,15 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             <>
             <div className="border rounded-xl overflow-hidden shadow-sm">
               {/* PayMe branded header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-orange-500 to-rose-500">
+              <div className="flex items-center justify-between px-4 py-3" style={{ background: '#2e3562' }}>
                 <div className="flex items-center gap-2">
-                  <img
-                    src="https://ng.paymeservice.com/favicon.ico"
-                    alt="PayMe"
-                    className="h-5 w-5 rounded"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  <span className="text-white font-bold text-base tracking-wide">PayMe</span>
-                  <span className="text-white/70 text-xs font-normal">by payme.io</span>
+                  {/* PayMe diamond logo mark */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-label="PayMe">
+                    <polygon points="12,2 22,10 12,22 2,10" fill="white" opacity="0.9"/>
+                    <polygon points="12,6 18,10 12,18 6,10" fill="#2e3562"/>
+                  </svg>
+                  <span className="font-bold text-base tracking-wide" style={{ color: '#ffffff' }}>PayMe</span>
+                  <span className="text-xs font-normal" style={{ color: 'rgba(255,255,255,0.6)' }}>by payme.io</span>
                 </div>
                 <a
                   href="https://ng.paymeservice.com/"
@@ -13941,14 +13940,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   />
 
                   {form.watch('paymeTestMode') && (
-                    <div className={`flex flex-col gap-2 rounded-md bg-orange-50 border border-orange-200 px-3 py-2 ${isRTL ? 'items-end text-right' : 'items-start text-left'}`}>
+                    <div className={`flex flex-col gap-2 rounded-md px-3 py-2 ${isRTL ? 'items-end text-right' : 'items-start text-left'}`} style={{ background: '#eef0f8', border: '1px solid #c5c9e0' }}>
                       <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                        <p className="text-xs font-semibold text-orange-900">
+                        <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2e3562" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p className="text-xs font-semibold" style={{ color: '#2e3562' }}>
                           {currentLanguage === 'ru' ? 'Тестовые карты PayMe' : currentLanguage === 'he' ? 'כרטיסי בדיקה של PayMe' : currentLanguage === 'ar' ? 'بطاقات اختبار PayMe' : 'PayMe Test Cards'}
                         </p>
                       </div>
-                      <p className="text-xs text-orange-800">
+                      <p className="text-xs" style={{ color: '#3d4875' }}>
                         {currentLanguage === 'ru'
                           ? 'Используйте эти карты только в sandbox-окружении PayMe:'
                           : currentLanguage === 'he'
@@ -13957,16 +13956,16 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                           ? 'استخدم هذه البطاقات فقط في بيئة sandbox الخاصة بـ PayMe:'
                           : 'Use these cards only in the PayMe sandbox environment:'}
                       </p>
-                      <div className={`w-full text-xs text-orange-900 font-mono ${isRTL ? 'text-right' : 'text-left'}`}>
+                      <div className={`w-full text-xs font-mono ${isRTL ? 'text-right' : 'text-left'}`} style={{ color: '#2e3562' }}>
                         <div className="flex flex-col gap-0.5">
                           <span>Visa: <b>4557430402053431</b> · 12/30 · CVV 200 ✓</span>
                           <span>Mastercard: <b>5326105300985846</b> · 12/30 · CVV 658 ✓</span>
                           <span>Amex: <b>375516193000090</b> · 12/30 · CVV 0957 ✓</span>
-                          <span className="text-orange-600">
+                          <span style={{ color: '#6b75b0' }}>
                             {currentLanguage === 'ru' ? 'Ошибка: ' : currentLanguage === 'he' ? 'שגיאה: ' : currentLanguage === 'ar' ? 'خطأ: ' : 'Failure: '}
                             <b>4000000000000002</b> ✗
                           </span>
-                          <span className="text-orange-600 font-sans font-normal mt-0.5">
+                          <span className="font-sans font-normal mt-0.5" style={{ color: '#6b75b0' }}>
                             {currentLanguage === 'ru' ? 'Social ID для всех карт: 008336174' : currentLanguage === 'he' ? 'Social ID לכל הכרטיסים: 008336174' : currentLanguage === 'ar' ? 'Social ID لجميع البطاقات: 008336174' : 'Social ID for all cards: 008336174'}
                           </span>
                         </div>
@@ -14000,8 +13999,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   )}
                 />
 
-                <div className="border-t border-orange-200 pt-4 space-y-4">
-                  <p className={`text-xs font-semibold text-orange-800 uppercase tracking-wide ${isRTL ? 'text-right' : 'text-left'}`}>
+                <div className="border-t pt-4 space-y-4" style={{ borderColor: '#c5c9e0' }}>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${isRTL ? 'text-right' : 'text-left'}`} style={{ color: '#2e3562' }}>
                     {currentLanguage === 'ru' ? 'Дополнительные опции' : currentLanguage === 'he' ? 'אפשרויות נוספות' : currentLanguage === 'ar' ? 'خيارات إضافية' : 'Additional Options'}
                   </p>
 
