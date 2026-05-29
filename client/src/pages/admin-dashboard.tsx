@@ -401,6 +401,10 @@ const storeSettingsSchema = insertStoreSettingsSchema.extend({
   allpayJ5BufferPercent: z.number().default(0),
   allpayMaxInstallments: z.number().default(1),
   allpayCreateInvoice: z.boolean().default(false),
+  paymeSellerPaymeId: z.string().optional(),
+  paymeTestMode: z.boolean().default(true),
+  paymeJ5Enabled: z.boolean().default(false),
+  paymeJ5BufferPercent: z.number().default(0),
 });
 
 
@@ -8998,6 +9002,10 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
   const [allpayJ5BufferPercent, setAllpayJ5BufferPercent] = useState(0);
   const [allpayMaxInstallments, setAllpayMaxInstallments] = useState(1);
   const [allpayCreateInvoice, setAllpayCreateInvoice] = useState(false);
+  const [paymeSellerPaymeId, setPaymeSellerPaymeId] = useState('');
+  const [paymeTestMode, setPaymeTestMode] = useState(true);
+  const [paymeJ5Enabled, setPaymeJ5Enabled] = useState(false);
+  const [paymeJ5BufferPercent, setPaymeJ5BufferPercent] = useState(0);
 
   useEffect(() => {
     if (settings) {
@@ -9007,7 +9015,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
-      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean }; allpay?: { login?: string; apiKey?: string; j5Enabled?: boolean; maxInstallments?: number; createInvoice?: boolean } } | null;
+      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean }; allpay?: { login?: string; apiKey?: string; j5Enabled?: boolean; maxInstallments?: number; createInvoice?: boolean }; payme?: { sellerPaymeId?: string; testMode?: boolean; j5Enabled?: boolean; j5BufferPercent?: number } } | null;
       setPaymentProvider(ppc?.active || 'none');
       setHypMasof(ppc?.hyp?.masof || '');
       setHypKey(ppc?.hyp?.key || '');
@@ -9031,6 +9039,10 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setAllpayJ5BufferPercent(ppc?.allpay?.j5BufferPercent || 0);
       setAllpayMaxInstallments(ppc?.allpay?.maxInstallments || 1);
       setAllpayCreateInvoice(ppc?.allpay?.createInvoice || false);
+      setPaymeSellerPaymeId(ppc?.payme?.sellerPaymeId || '');
+      setPaymeTestMode(ppc?.payme?.testMode !== false);
+      setPaymeJ5Enabled(ppc?.payme?.j5Enabled || false);
+      setPaymeJ5BufferPercent(ppc?.payme?.j5BufferPercent || 0);
     }
   }, [settings]);
 
@@ -11408,6 +11420,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
       allpayJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5BufferPercent || 0,
       allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
       allpayCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.allpay?.createInvoice || false,
+      paymeSellerPaymeId: (storeSettings as any)?.paymentProviderConfig?.payme?.sellerPaymeId || '',
+      paymeTestMode: (storeSettings as any)?.paymentProviderConfig?.payme?.testMode !== false,
+      paymeJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.payme?.j5Enabled || false,
+      paymeJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.payme?.j5BufferPercent || 0,
       aboutUsPhotos: storeSettings?.aboutUsPhotos || [],
       deliveryFee: storeSettings?.deliveryFee || "15.00",
       freeDeliveryFrom: storeSettings?.freeDeliveryFrom || "",
@@ -11612,6 +11628,10 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         allpayJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.allpay?.j5BufferPercent || 0,
         allpayMaxInstallments: (storeSettings as any)?.paymentProviderConfig?.allpay?.maxInstallments || 1,
         allpayCreateInvoice: (storeSettings as any)?.paymentProviderConfig?.allpay?.createInvoice || false,
+        paymeSellerPaymeId: (storeSettings as any)?.paymentProviderConfig?.payme?.sellerPaymeId || '',
+        paymeTestMode: (storeSettings as any)?.paymentProviderConfig?.payme?.testMode !== false,
+        paymeJ5Enabled: (storeSettings as any)?.paymentProviderConfig?.payme?.j5Enabled || false,
+        paymeJ5BufferPercent: (storeSettings as any)?.paymentProviderConfig?.payme?.j5BufferPercent || 0,
       } as any);
     }
   }, [storeSettings, currentLanguage, form]);
@@ -11805,6 +11825,14 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 j5BufferPercent:  data.allpayJ5BufferPercent || 0,
                 maxInstallments:  data.allpayMaxInstallments || 1,
                 createInvoice:    data.allpayCreateInvoice || false,
+              }
+            } : {}),
+            ...(data.paymentProvider === 'payme' ? {
+              payme: {
+                sellerPaymeId:   data.paymeSellerPaymeId || '',
+                testMode:        data.paymeTestMode !== false,
+                j5Enabled:       data.paymeJ5Enabled || false,
+                j5BufferPercent: data.paymeJ5BufferPercent || 0,
               }
             } : {}),
           },
@@ -13228,6 +13256,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                     <SelectItem value="hyp">HYP</SelectItem>
                     <SelectItem value="grow">Grow (Meshulam)</SelectItem>
                     <SelectItem value="allpay">AllPay</SelectItem>
+                    <SelectItem value="payme">PayMe</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage className="text-xs" />
@@ -13851,6 +13880,193 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                   )}
                 />
               </div>
+              </div>
+            </div>
+            </>
+          )}
+
+          {watchedPaymentProvider === 'payme' && (
+            <>
+            <div className="border rounded-xl overflow-hidden shadow-sm">
+              {/* PayMe branded header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-orange-500 to-rose-500">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="https://ng.paymeservice.com/favicon.ico"
+                    alt="PayMe"
+                    className="h-5 w-5 rounded"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  <span className="text-white font-bold text-base tracking-wide">PayMe</span>
+                  <span className="text-white/70 text-xs font-normal">by payme.io</span>
+                </div>
+                <a
+                  href="https://ng.paymeservice.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs underline underline-offset-2 transition-opacity hover:opacity-100 opacity-80"
+                  style={{ color: '#ffffff' }}
+                >
+                  {currentLanguage === 'ru' ? 'Личный кабинет →' : currentLanguage === 'he' ? 'כניסה לחשבון ←' : currentLanguage === 'ar' ? 'الدخول للحساب ←' : 'Merchant login →'}
+                </a>
+              </div>
+
+              {/* Fields */}
+              <div className="space-y-4 p-4 bg-white">
+                <div className={`flex flex-col gap-2 ${isRTL ? 'items-end' : 'items-start'}`}>
+                  <p className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {currentLanguage === 'ru'
+                      ? 'Ключ seller_payme_id (MPL) находится в вашем аккаунте PayMe.'
+                      : currentLanguage === 'he'
+                      ? 'מפתח seller_payme_id (MPL) נמצא בחשבון PayMe שלך.'
+                      : currentLanguage === 'ar'
+                      ? 'مفتاح seller_payme_id (MPL) موجود في حساب PayMe.'
+                      : 'The seller_payme_id (MPL key) is found in your PayMe account.'}
+                  </p>
+
+                  <FormField
+                    control={form.control}
+                    name="paymeTestMode"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center gap-3">
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                        <FormLabel className="text-sm font-normal cursor-pointer">
+                          {currentLanguage === 'ru' ? 'Тестовый режим (sandbox)' : currentLanguage === 'he' ? 'מצב בדיקה (sandbox)' : currentLanguage === 'ar' ? 'وضع الاختبار (sandbox)' : 'Test mode (sandbox)'}
+                        </FormLabel>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {form.watch('paymeTestMode') && (
+                    <div className={`flex flex-col gap-2 rounded-md bg-orange-50 border border-orange-200 px-3 py-2 ${isRTL ? 'items-end text-right' : 'items-start text-left'}`}>
+                      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ea580c" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p className="text-xs font-semibold text-orange-900">
+                          {currentLanguage === 'ru' ? 'Тестовые карты PayMe' : currentLanguage === 'he' ? 'כרטיסי בדיקה של PayMe' : currentLanguage === 'ar' ? 'بطاقات اختبار PayMe' : 'PayMe Test Cards'}
+                        </p>
+                      </div>
+                      <p className="text-xs text-orange-800">
+                        {currentLanguage === 'ru'
+                          ? 'Используйте эти карты только в sandbox-окружении PayMe:'
+                          : currentLanguage === 'he'
+                          ? 'השתמש בכרטיסים אלה רק בסביבת sandbox של PayMe:'
+                          : currentLanguage === 'ar'
+                          ? 'استخدم هذه البطاقات فقط في بيئة sandbox الخاصة بـ PayMe:'
+                          : 'Use these cards only in the PayMe sandbox environment:'}
+                      </p>
+                      <div className={`w-full text-xs text-orange-900 font-mono ${isRTL ? 'text-right' : 'text-left'}`}>
+                        <div className="flex flex-col gap-0.5">
+                          <span>Visa: <b>4557430402053431</b> · 12/30 · CVV 200 ✓</span>
+                          <span>Mastercard: <b>5326105300985846</b> · 12/30 · CVV 658 ✓</span>
+                          <span>Amex: <b>375516193000090</b> · 12/30 · CVV 0957 ✓</span>
+                          <span className="text-orange-600">
+                            {currentLanguage === 'ru' ? 'Ошибка: ' : currentLanguage === 'he' ? 'שגיאה: ' : currentLanguage === 'ar' ? 'خطأ: ' : 'Failure: '}
+                            <b>4000000000000002</b> ✗
+                          </span>
+                          <span className="text-orange-600 font-sans font-normal mt-0.5">
+                            {currentLanguage === 'ru' ? 'Social ID для всех карт: 008336174' : currentLanguage === 'he' ? 'Social ID לכל הכרטיסים: 008336174' : currentLanguage === 'ar' ? 'Social ID لجميع البطاقات: 008336174' : 'Social ID for all cards: 008336174'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="paymeSellerPaymeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru' ? 'Seller PayMe ID (MPL ключ)' : currentLanguage === 'he' ? 'Seller PayMe ID (מפתח MPL)' : currentLanguage === 'ar' ? 'Seller PayMe ID (مفتاح MPL)' : 'Seller PayMe ID (MPL key)'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="MPLDEMO-MPLDEMO-MPLDEMO-1234567" type="password" autoComplete="new-password" className="text-sm font-mono" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormDescription className={`text-xs ${isRTL ? 'text-right' : 'text-left'}`}>
+                        {currentLanguage === 'ru'
+                          ? 'Приватный ключ продавца в системе PayMe (формат MPL...).'
+                          : currentLanguage === 'he'
+                          ? 'המפתח הפרטי של המוכר במערכת PayMe (פורמט MPL...).'
+                          : currentLanguage === 'ar'
+                          ? 'المفتاح الخاص للبائع في نظام PayMe (صيغة MPL...).'
+                          : 'Your private seller key in the PayMe system (MPL... format).'}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="border-t border-orange-200 pt-4 space-y-4">
+                  <p className={`text-xs font-semibold text-orange-800 uppercase tracking-wide ${isRTL ? 'text-right' : 'text-left'}`}>
+                    {currentLanguage === 'ru' ? 'Дополнительные опции' : currentLanguage === 'he' ? 'אפשרויות נוספות' : currentLanguage === 'ar' ? 'خيارات إضافية' : 'Additional Options'}
+                  </p>
+
+                  <FormField
+                    control={form.control}
+                    name="paymeJ5Enabled"
+                    render={({ field }) => (
+                      <FormItem className={`flex flex-col gap-1 ${isRTL ? 'items-end' : 'items-start'}`}>
+                        <div className="flex items-center gap-3">
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                          <FormLabel className="text-sm font-medium cursor-pointer">
+                            {currentLanguage === 'ru' ? 'J5 — отложенное списание' : currentLanguage === 'he' ? 'J5 — עסקה נדחית' : currentLanguage === 'ar' ? 'J5 — معاملة مؤجلة' : 'J5 — Deferred transaction'}
+                          </FormLabel>
+                        </div>
+                        <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                          {currentLanguage === 'ru'
+                            ? 'Резервирует сумму на карте без реального списания. Итоговая сумма уточняется и списывается позже через API PayMe. Нужно завершить в течение 7 дней.'
+                            : currentLanguage === 'he'
+                            ? 'מחזיק סכום בכרטיס ללא חיוב בפועל. הסכום הסופי מאושר ומחויב לאחר מכן דרך API של PayMe. יש לסיים תוך 7 ימים.'
+                            : currentLanguage === 'ar'
+                            ? 'يحجز المبلغ على البطاقة دون خصم فعلي. يتم تأكيد المبلغ النهائي لاحقاً عبر API PayMe. يجب إتمامه خلال 7 أيام.'
+                            : 'Reserves the amount on the card without charging. The final amount is confirmed and charged later via PayMe API. Must be finalized within 7 days.'}
+                        </FormDescription>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {form.watch('paymeJ5Enabled') && (
+                    <FormField
+                      control={form.control}
+                      name="paymeJ5BufferPercent"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {currentLanguage === 'ru' ? 'Буфер заморозки (%)' : currentLanguage === 'he' ? 'חיץ הקפאה (%)' : currentLanguage === 'ar' ? 'نسبة التجميد الإضافية (%)' : 'Freeze buffer (%)'}
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={0}
+                              max={30}
+                              className="w-32"
+                              {...field}
+                              value={field.value ?? 0}
+                              onChange={e => field.onChange(parseInt(e.target.value) || 0)}
+                            />
+                          </FormControl>
+                          <FormDescription className={`text-xs text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                            {currentLanguage === 'ru'
+                              ? 'Дополнительный % к сумме заморозки. Например, 10% → заказ 100₪ → замораживаем 110₪. Списывается фактическая сумма при статусе «Готов».'
+                              : currentLanguage === 'he'
+                              ? 'אחוז נוסף לסכום ההקפאה. למשל 10% → הזמנה 100₪ → מקפיאים 110₪. יחויב הסכום בפועל עם סטטוס "מוכן".'
+                              : currentLanguage === 'ar'
+                              ? 'نسبة إضافية لمبلغ التجميد. مثال: 10% → طلب 100₪ → نجمد 110₪. يُخصم المبلغ الفعلي عند حالة "جاهز".'
+                              : 'Extra % added to the freeze amount. E.g. 10% → order 100₪ → freeze 110₪. Actual amount is charged when status is "Ready".'}
+                          </FormDescription>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                </div>
               </div>
             </div>
             </>

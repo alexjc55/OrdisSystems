@@ -5,7 +5,7 @@
 import crypto from 'crypto';
 
 export interface PaymentProviderConfig {
-  active: 'none' | 'hyp' | 'grow' | 'allpay';
+  active: 'none' | 'hyp' | 'grow' | 'allpay' | 'payme';
   hyp?: {
     masof: string;
     passP: string;
@@ -32,6 +32,12 @@ export interface PaymentProviderConfig {
     j5BufferPercent?: number;   // Extra % added to reserved amount (e.g. 10 = +10% buffer)
     maxInstallments?: number;   // 1 = single payment, 2–12 = installments
     createInvoice?: boolean;    // Auto-issue receipt/invoice after payment (doc_type 400)
+  };
+  payme?: {
+    sellerPaymeId: string;      // MPL key from PayMe account (MPLDEMO-MPLDEMO-MPLDEMO-1234567)
+    testMode?: boolean;         // true → sandbox.payme.io, false → live.payme.io
+    j5Enabled?: boolean;        // Pre-authorization: reserves funds without charging (7 days)
+    j5BufferPercent?: number;   // Extra % added to reserved amount (e.g. 10 = +10% buffer)
   };
 }
 
@@ -458,6 +464,138 @@ export class AllPayProvider implements IPaymentProvider {
   }
 }
 
+// ─── PayMe (payme.io) Provider ────────────────────────────────────────────────
+// Docs: https://payme.stoplight.io/docs/payments/86407fa137745-hosted-payment-page
+// Auth: seller_payme_id (MPL key)
+
+const PAYME_SANDBOX_BASE = "https://sandbox.payme.io/api";
+const PAYME_PROD_BASE    = "https://live.payme.io/api";
+
+export class PaymeProvider implements IPaymentProvider {
+  readonly name = 'payme';
+
+  constructor(
+    private readonly sellerPaymeId: string,
+    private readonly testMode: boolean = true,
+    private readonly j5Enabled: boolean = false,
+    private readonly j5BufferPercent: number = 0,
+  ) {}
+
+  private get base() {
+    return this.testMode ? PAYME_SANDBOX_BASE : PAYME_PROD_BASE;
+  }
+
+  async initiate(params: InitiateParams): Promise<InitiateResult> {
+    const bufferedAgorot = this.j5Enabled && this.j5BufferPercent > 0
+      ? Math.round(params.amountInAgorot * (1 + this.j5BufferPercent / 100))
+      : params.amountInAgorot;
+
+    // Embed token in return URL so callback can identify the payment even without Payme echo
+    const returnUrl = `${params.successUrl}?transaction_id=${encodeURIComponent(params.token)}`;
+
+    const body: Record<string, any> = {
+      seller_payme_id:     this.sellerPaymeId,
+      sale_price:          bufferedAgorot,
+      currency:            'ILS',
+      product_name:        'Order',
+      transaction_id:      params.token,
+      installments:        '1',
+      sale_type:           this.j5Enabled ? 'authorize' : 'sale',
+      sale_return_url:     returnUrl,
+      sale_payment_method: 'multi',
+      language:            (params.language === 'he' || params.language === 'ar') ? 'he' : 'en',
+    };
+
+    if (params.notifyUrl)     body.sale_callback_url = params.notifyUrl;
+    if (params.customerName)  body.sale_name         = params.customerName;
+    if (params.customerEmail) body.sale_email        = params.customerEmail;
+    if (params.customerPhone) body.sale_mobile       = params.customerPhone;
+
+    const response = await fetch(`${this.base}/generate-sale`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Payme HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.sale_url) {
+      return { redirectUrl: data.sale_url };
+    }
+    const errMsg = data.status_error_details || data.status_error_code || JSON.stringify(data);
+    throw new Error(`Payme error: ${errMsg}`);
+  }
+
+  parseCallback(query: Record<string, string>): CallbackResult {
+    // Payme redirects to sale_return_url (we embedded token there as transaction_id)
+    const token = query.transaction_id;
+    const paymeSaleId = query.payme_sale_id;
+    // Treat browser redirect as tentative success; webhook is authoritative
+    return { token, isSuccess: true, transactionId: paymeSaleId || token };
+  }
+
+  parseWebhook(body: Record<string, string>): WebhookResult {
+    const token = body.transaction_id;           // our token
+    const paymeSaleId = body.payme_sale_id;      // Payme's ID (used for capture/void)
+    const notifyType = body.notify_type;
+    // 'sale-complete' = J4 success; 'sale-authorized' = J5 authorization success
+    const isSuccess = (notifyType === 'sale-complete' || notifyType === 'sale-authorized')
+      && String(body.status_code) === '0';
+    return { token, isSuccess, transactionId: paymeSaleId };
+  }
+
+  async captureJ5(paymeSaleId: string, amountILS: number): Promise<void> {
+    const body = {
+      seller_payme_id: this.sellerPaymeId,
+      payme_sale_id:   paymeSaleId,
+      sale_price:      Math.round(amountILS * 100),
+      currency:        'ILS',
+      installments:    1,
+    };
+
+    const response = await fetch(`${this.base}/capture-sale`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Payme captureJ5 HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (String(data.status_code) !== '0') {
+      const errMsg = data.status_error_details || data.status_error_code || JSON.stringify(data);
+      throw new Error(`Payme captureJ5 failed: ${errMsg}`);
+    }
+  }
+
+  async voidJ5(paymeSaleId: string, _amountILS: number): Promise<void> {
+    const body = {
+      seller_payme_id: this.sellerPaymeId,
+      payme_sale_id:   paymeSaleId,
+    };
+
+    const response = await fetch(`${this.base}/refund-sale`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Payme voidJ5 HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (String(data.status_code) !== '0') {
+      console.warn(`[Payme] voidJ5 unexpected response for ${paymeSaleId}:`, data);
+    }
+  }
+}
+
 // ─── Provider Factory ──────────────────────────────────────────────────────────
 
 /**
@@ -499,6 +637,14 @@ export function getProvider(settings: {
         config.allpay.j5BufferPercent ?? 0,
         config.allpay.maxInstallments ?? 1,
         config.allpay.createInvoice ?? false,
+      );
+    }
+    if (config.active === 'payme' && config.payme?.sellerPaymeId) {
+      return new PaymeProvider(
+        config.payme.sellerPaymeId,
+        config.payme.testMode ?? true,
+        config.payme.j5Enabled ?? false,
+        config.payme.j5BufferPercent ?? 0,
       );
     }
   }
