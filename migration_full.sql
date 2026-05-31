@@ -328,6 +328,8 @@ ALTER TABLE store_settings
   ADD COLUMN IF NOT EXISTS header_style VARCHAR DEFAULT 'classic',
   ADD COLUMN IF NOT EXISTS logo_text_mode VARCHAR(20) DEFAULT 'storeName',
   ADD COLUMN IF NOT EXISTS category_display_style VARCHAR(20) DEFAULT 'default',
+  ADD COLUMN IF NOT EXISTS product_image_aspect VARCHAR(20) DEFAULT 'horizontal',
+  ADD COLUMN IF NOT EXISTS product_image_click_modal BOOLEAN DEFAULT false,
   ADD COLUMN IF NOT EXISTS preorder_button_style VARCHAR(20) DEFAULT 'tomorrow',
   -- Баннер кнопка
   ADD COLUMN IF NOT EXISTS banner_button_text VARCHAR(100) DEFAULT 'Смотреть каталог',
@@ -632,6 +634,8 @@ ALTER TABLE themes
   ADD COLUMN IF NOT EXISTS payment_delivery_icon_color VARCHAR(20) DEFAULT 'hsl(262, 83%, 58%)',
   ADD COLUMN IF NOT EXISTS header_style VARCHAR(20) DEFAULT 'classic',
   ADD COLUMN IF NOT EXISTS category_display_style VARCHAR(20) DEFAULT 'default',
+  ADD COLUMN IF NOT EXISTS product_image_aspect VARCHAR(20) DEFAULT 'horizontal',
+  ADD COLUMN IF NOT EXISTS product_image_click_modal BOOLEAN DEFAULT false,
   ADD COLUMN IF NOT EXISTS banner_button_text VARCHAR(100) DEFAULT 'Смотреть каталог',
   ADD COLUMN IF NOT EXISTS banner_button_text_en VARCHAR(100),
   ADD COLUMN IF NOT EXISTS banner_button_text_he VARCHAR(100),

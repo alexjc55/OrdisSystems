@@ -269,6 +269,8 @@ export const storeSettings = pgTable("store_settings", {
   headerStyle: varchar("header_style", { enum: ["classic", "modern", "minimal", "slider"] }).default("classic"), // Header design style
   logoTextMode: varchar("logo_text_mode", { length: 20 }).default("storeName"), // "storeName", "welcomeTitle", "none"
   categoryDisplayStyle: varchar("category_display_style", { length: 20 }).default("default"), // "default", "carousel", "photo_grid"
+  productImageAspect: varchar("product_image_aspect", { length: 20 }).default("horizontal"), // "horizontal", "square"
+  productImageClickModal: boolean("product_image_click_modal").default(false),
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Banner button text
   bannerButtonLink: varchar("banner_button_link", { length: 500 }).default("#categories"), // Banner button link
   bannerImageUrl: varchar("banner_image_url", { length: 500 }), // Main banner image URL
@@ -595,6 +597,10 @@ export const themes = pgTable("themes", {
 
   // Category section display style
   categoryDisplayStyle: varchar("category_display_style", { length: 20 }).default("default"), // "default", "carousel", "photo_grid"
+
+  // Product card image display settings
+  productImageAspect: varchar("product_image_aspect", { length: 20 }).default("horizontal"), // "horizontal", "square"
+  productImageClickModal: boolean("product_image_click_modal").default(false),
   
   // Banner button settings (for minimal header style)
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Russian (base)
@@ -969,6 +975,8 @@ export const insertThemeSchema = z.object({
   paymentDeliveryIconColor: z.string().nullable().transform(val => val || "hsl(262, 83%, 58%)"),
   headerStyle: z.string().nullable().transform(val => val || "classic"),
   categoryDisplayStyle: z.string().nullable().transform(val => val || "default"),
+  productImageAspect: z.string().nullable().transform(val => val || "horizontal"),
+  productImageClickModal: z.boolean().nullable().transform(val => val ?? false),
   splashBgColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   whiteColor: z.string().nullable().transform(val => val || "hsl(0, 0%, 100%)"),
   gray50Color: z.string().nullable().transform(val => val || "hsl(210, 40%, 98%)"),

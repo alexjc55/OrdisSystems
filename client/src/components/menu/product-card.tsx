@@ -8,7 +8,7 @@ import { FormattedText } from "@/lib/format-text";
 import { useCartStore } from "@/lib/cart";
 import { useToast } from "@/hooks/use-toast";
 import { formatCurrency, formatWeight, calculateTotal, getUnitLabel, formatQuantity, type ProductUnit } from "@/lib/currency";
-import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle, Info } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Eye, Star, Clock, CheckCircle2, XCircle, AlertCircle, Info, ZoomIn } from "lucide-react";
 import type { ProductWithCategories } from "@shared/schema";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useShopTranslation, useLanguage } from "@/hooks/use-language";
@@ -26,21 +26,27 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const { storeSettings } = useStoreSettings();
   const { t } = useShopTranslation();
   const { currentLanguage } = useLanguage();
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   
-  // Load store settings for default language
+  // Load store settings for default language and theme settings
   const { data: storeSettingsData } = useQuery({
     queryKey: ['/api/settings'],
     staleTime: 5 * 60 * 1000,
   });
+
+  // Theme-driven image display settings
+  const productImageAspect: string = (storeSettingsData as any)?.productImageAspect || 'horizontal';
+  const productImageClickModal: boolean = (storeSettingsData as any)?.productImageClickModal ?? false;
+
+  // Image CSS class based on aspect ratio setting
+  const imageClass = productImageAspect === 'square'
+    ? "w-full aspect-square object-cover"
+    : "w-full h-48 object-cover";
   
   // Get localized product fields
   const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any);
   const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, storeSettingsData as any);
   const localizedIngredients = getLocalizedField(product, 'ingredients', currentLanguage as SupportedLanguage, storeSettingsData as any);
-  
-
-  
-
   
   // Set default quantity based on unit type
   const getDefaultQuantity = () => {
@@ -178,18 +184,43 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
     return product.isAvailable && product.availabilityStatus !== 'completely_unavailable';
   };
 
+  const productImageUrl = product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
+
+  // The image element (reused in card and modal)
+  const productImg = (
+    <img
+      src={productImageUrl}
+      alt={localizedName}
+      className={imageClass}
+      onError={(e) => {
+        const target = e.target as HTMLImageElement;
+        target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
+      }}
+    />
+  );
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
       <div className="relative">
-        <img
-          src={product.imageUrl || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
-          alt={localizedName}
-          className="w-full h-48 object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
-          }}
-        />
+        {/* Image: clickable if modal enabled, plain otherwise */}
+        {productImageClickModal ? (
+          <button
+            type="button"
+            className="block w-full text-left focus:outline-none group relative"
+            onClick={() => setImageModalOpen(true)}
+            aria-label={localizedName}
+          >
+            {productImg}
+            {/* Zoom hint overlay */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-full p-1.5">
+                <ZoomIn className="h-4 w-4 text-white" />
+              </div>
+            </div>
+          </button>
+        ) : (
+          productImg
+        )}
         
         {/* Out of stock overlay bar */}
         {product.availabilityStatus === 'out_of_stock_today' && (
@@ -208,6 +239,27 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
           </div>
         )}
       </div>
+
+      {/* Full-size image modal */}
+      {productImageClickModal && (
+        <Dialog open={imageModalOpen} onOpenChange={setImageModalOpen}>
+          <DialogContent className="max-w-[calc(100vw-32px)] sm:max-w-2xl mx-auto p-2 sm:p-4">
+            <DialogHeader className="sr-only">
+              <DialogTitle>{localizedName}</DialogTitle>
+            </DialogHeader>
+            <img
+              src={productImageUrl}
+              alt={localizedName}
+              className="w-full h-auto rounded-lg object-contain max-h-[80vh]"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop';
+              }}
+            />
+            <p className="text-center text-sm font-medium text-gray-700 mt-2">{localizedName}</p>
+          </DialogContent>
+        </Dialog>
+      )}
       
       <CardContent className="p-4 flex-1 flex flex-col">
         <div className="flex-1 min-h-[200px] flex flex-col">

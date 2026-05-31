@@ -516,6 +516,8 @@ export default function ThemeManager() {
     showSpecialOffers: true,
     showCategoryMenu: true,
     categoryDisplayStyle: 'default',
+    productImageAspect: 'horizontal',
+    productImageClickModal: false,
     showWhatsAppChat: true,
     guestPromoEnabled: false,
     showCartBanner: false,
@@ -529,6 +531,8 @@ export default function ThemeManager() {
     showSpecialOffers: true,
     showCategoryMenu: true,
     categoryDisplayStyle: 'default',
+    productImageAspect: 'horizontal',
+    productImageClickModal: false,
     showWhatsAppChat: true,
     guestPromoEnabled: false,
     showCartBanner: false,
@@ -562,6 +566,8 @@ export default function ThemeManager() {
         showSpecialOffers: editingTheme.showSpecialOffers ?? true,
         showCategoryMenu: editingTheme.showCategoryMenu ?? true,
         categoryDisplayStyle: (editingTheme as any).categoryDisplayStyle || 'default',
+        productImageAspect: (editingTheme as any).productImageAspect || 'horizontal',
+        productImageClickModal: (editingTheme as any).productImageClickModal ?? false,
         showWhatsAppChat: editingTheme.showWhatsAppChat ?? true,
         guestPromoEnabled: (editingTheme as any).guestPromoEnabled ?? false,
         showCartBanner: editingTheme.showCartBanner ?? false,
@@ -998,6 +1004,8 @@ export default function ThemeManager() {
       showSpecialOffers: formData.get("showSpecialOffers") === "true",
       showCategoryMenu: formData.get("showCategoryMenu") === "true",
       categoryDisplayStyle: formData.get("categoryDisplayStyle") as string || "default",
+      productImageAspect: visualSettings.productImageAspect || "horizontal",
+      productImageClickModal: visualSettings.productImageClickModal,
       showWhatsAppChat: formData.get("showWhatsAppChat") === "true",
       guestPromoEnabled: formData.get("guestPromoEnabled") === "true",
       guestPromoText: formData.get("guestPromoText") as string || "",
@@ -1186,6 +1194,8 @@ export default function ThemeManager() {
       showSpecialOffers: editVisualSettings.showSpecialOffers,
       showCategoryMenu: editVisualSettings.showCategoryMenu,
       categoryDisplayStyle: editVisualSettings.categoryDisplayStyle || "default",
+      productImageAspect: editVisualSettings.productImageAspect || "horizontal",
+      productImageClickModal: editVisualSettings.productImageClickModal,
       showWhatsAppChat: editVisualSettings.showWhatsAppChat,
       guestPromoEnabled: editVisualSettings.guestPromoEnabled,
       guestPromoText: formData.get("guestPromoText") as string || "",
@@ -1725,6 +1735,41 @@ export default function ThemeManager() {
                       {visualSettings.categoryDisplayStyle === 'photo_grid' && (
                         <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT("themes.categoryPhotoHint")}</p>
                       )}
+                    </div>
+
+                    {/* Product Image Aspect Ratio */}
+                    <div className="mt-4 space-y-2">
+                      <Label className="text-sm font-medium">{adminT("themes.productImageAspect")}</Label>
+                      <p className="text-xs text-gray-500">{adminT("themes.productImageAspectDescription")}</p>
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setVisualSettings(prev => ({ ...prev, productImageAspect: 'horizontal' }))}
+                          className={`flex-1 flex flex-col items-center gap-1.5 p-3 border-2 rounded-lg transition-colors ${visualSettings.productImageAspect === 'horizontal' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}
+                        >
+                          <div className="w-16 h-9 bg-gray-300 rounded" />
+                          <span className="text-xs font-medium">{adminT("themes.productImageAspectHorizontal")}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setVisualSettings(prev => ({ ...prev, productImageAspect: 'square' }))}
+                          className={`flex-1 flex flex-col items-center gap-1.5 p-3 border-2 rounded-lg transition-colors ${visualSettings.productImageAspect === 'square' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}
+                        >
+                          <div className="w-10 h-10 bg-gray-300 rounded" />
+                          <span className="text-xs font-medium">{adminT("themes.productImageAspectSquare")}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Product Image Click Modal */}
+                    <div className="mt-3">
+                      <VisualToggleButton
+                        isEnabled={visualSettings.productImageClickModal}
+                        onToggle={() => setVisualSettings(prev => ({ ...prev, productImageClickModal: !prev.productImageClickModal }))}
+                        label={adminT("themes.productImageClickModal")}
+                        description={adminT("themes.productImageClickModalDescription")}
+                        fieldName="productImageClickModal"
+                      />
                     </div>
 
                     {/* Info Blocks Position - shows only if info blocks are enabled */}
@@ -2674,7 +2719,42 @@ export default function ThemeManager() {
                         <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-md">{adminT('themes.categoryPhotoHint')}</p>
                       )}
                     </div>
-                    
+
+                    {/* Product Image Aspect Ratio */}
+                    <div className="mt-4 space-y-2">
+                      <Label className="text-sm font-medium">{adminT('themes.productImageAspect')}</Label>
+                      <p className="text-xs text-gray-500">{adminT('themes.productImageAspectDescription')}</p>
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setEditVisualSettings(prev => ({ ...prev, productImageAspect: 'horizontal' }))}
+                          className={`flex-1 flex flex-col items-center gap-1.5 p-3 border-2 rounded-lg transition-colors ${editVisualSettings.productImageAspect === 'horizontal' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}
+                        >
+                          <div className="w-16 h-9 bg-gray-300 rounded" />
+                          <span className="text-xs font-medium">{adminT('themes.productImageAspectHorizontal')}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditVisualSettings(prev => ({ ...prev, productImageAspect: 'square' }))}
+                          className={`flex-1 flex flex-col items-center gap-1.5 p-3 border-2 rounded-lg transition-colors ${editVisualSettings.productImageAspect === 'square' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}
+                        >
+                          <div className="w-10 h-10 bg-gray-300 rounded" />
+                          <span className="text-xs font-medium">{adminT('themes.productImageAspectSquare')}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Product Image Click Modal */}
+                    <div className="mt-3">
+                      <VisualToggleButton
+                        isEnabled={editVisualSettings.productImageClickModal}
+                        onToggle={() => setEditVisualSettings(prev => ({ ...prev, productImageClickModal: !prev.productImageClickModal }))}
+                        label={adminT('themes.productImageClickModal')}
+                        description={adminT('themes.productImageClickModalDescription')}
+                        fieldName="productImageClickModal"
+                      />
+                    </div>
+
                     {/* Позиция информационных блоков - показывается только если включены инфо блоки */}
                     {editVisualSettings.showInfoBlocks && (
                       <div className="mt-4 space-y-2">
