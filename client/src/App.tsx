@@ -28,6 +28,15 @@ import { getLangPrefix, stripLangPrefix } from "@/hooks/use-lang-prefix";
 import { useLanguage } from "@/hooks/use-language";
 import { Helmet } from "react-helmet-async";
 
+// Scrolls the window to the top on every route change.
+function ScrollToTop() {
+  const [location] = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+  return null;
+}
+
 // Loads the active theme from the server and applies all saved colors to CSS variables.
 // This ensures that admin-configured colors persist across page refreshes.
 function ActiveThemeApplier() {
@@ -508,6 +517,7 @@ function App() {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <WouterRouter base={langPrefix}>
+          <ScrollToTop />
           <ActiveThemeApplier />
           <AuthProvider>
             <BranchProvider>
