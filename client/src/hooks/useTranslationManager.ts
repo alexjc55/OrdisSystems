@@ -24,21 +24,24 @@ export function useTranslationManager({
   }, [defaultLanguage]);
 
   const getFieldValue = useCallback((formData: any, field: string) => {
-    const fieldName = getFieldName(field, currentLanguage, defaultLanguage);
+    // DB column mapping is fixed by schema: 'name' = Russian, 'name_he/en/ar' = others.
+    // defaultLanguage does NOT affect which column is used — avoid getFieldName() here.
+    const fieldName = currentLanguage === 'ru' ? field : `${field}_${currentLanguage}`;
     return formData[fieldName] || '';
-  }, [currentLanguage, defaultLanguage]);
+  }, [currentLanguage]);
 
   const setFieldValue = useCallback((
     field: string, 
     value: string, 
     setFormData: (updater: (prev: any) => any) => void
   ) => {
-    const fieldName = getFieldName(field, currentLanguage, defaultLanguage);
+    // DB column mapping: 'name' = Russian, 'name_he/en/ar' = others (fixed by schema).
+    const fieldName = currentLanguage === 'ru' ? field : `${field}_${currentLanguage}`;
     setFormData((prev: any) => ({
       ...prev,
       [fieldName]: value
     }));
-  }, [currentLanguage, defaultLanguage]);
+  }, [currentLanguage]);
 
   const copyAllFields = useCallback((
     formData: any,

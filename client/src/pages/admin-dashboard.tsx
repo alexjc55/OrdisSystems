@@ -10067,9 +10067,9 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
   const handleFieldChange = (fieldName: string, value: any, isMultilingual = false) => {
     if (isMultilingual) {
       const currentLang = translationManager.currentLanguage;
-      const defaultLang = translationManager.defaultLanguage;
-      
-      if (currentLang === defaultLang) {
+      // DB column mapping is fixed by schema: 'name' = Russian, 'name_he/en/ar' = others.
+      // defaultLanguage setting does NOT affect which column is used.
+      if (currentLang === 'ru') {
         setFormData((prev: any) => ({ ...prev, [fieldName]: value }));
       } else {
         const localizedField = `${fieldName}_${currentLang}`;
@@ -10202,7 +10202,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     const updatedFormData = { ...formData };
     
     // Save current name and description to formData
-    if (currentLang === defaultLang) {
+    // DB column mapping: 'name' = Russian, 'name_he/en/ar' = others (fixed by schema).
+    if (currentLang === 'ru') {
       updatedFormData.name = data.name;
       updatedFormData.description = data.description;
     } else {
@@ -10211,7 +10212,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     }
     
     // Save imageUrl if it's a multilingual field
-    if (currentLang === defaultLang) {
+    if (currentLang === 'ru') {
       updatedFormData.imageUrl = data.imageUrl;
     } else {
       updatedFormData[`imageUrl_${currentLang}`] = data.imageUrl;

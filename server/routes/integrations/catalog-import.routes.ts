@@ -271,6 +271,9 @@ router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, re
     }
 
     const lang = (targetLanguage && ['ru', 'en', 'he', 'ar'].includes(targetLanguage)) ? targetLanguage : 'ru';
+
+    // DB column mapping: 'name' is always Russian, 'name_he'/'name_en'/'name_ar' for others.
+    // This is fixed by schema — defaultLanguage setting does NOT affect which column is used.
     const nameField = lang === 'ru' ? 'name' : `name_${lang}`;
     const descField = lang === 'ru' ? 'description' : `description_${lang}`;
 
