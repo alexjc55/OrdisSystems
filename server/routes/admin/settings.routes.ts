@@ -284,14 +284,16 @@ router.post("/test-email", isAuthenticated, async (req: any, res) => {
     } else {
       res.status(500).json({
         success: false,
-        message: "Ошибка при отправке тестового письма"
+        message: "Ошибка при отправке тестового письма",
+        detail: "sendEmail вернул false — проверьте SMTP-настройки"
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Test email error:', error);
     res.status(500).json({
       success: false,
-      message: "Ошибка при отправке тестового письма"
+      message: "Ошибка при отправке тестового письма",
+      detail: error?.message || String(error)
     });
   }
 });

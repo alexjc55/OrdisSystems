@@ -4659,7 +4659,9 @@ export default function AdminDashboard() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Не удалось отправить тестовое письмо");
+        const msg = error.message || "Не удалось отправить тестовое письмо";
+        const detail = error.detail ? `\n${error.detail}` : "";
+        throw new Error(msg + detail);
       }
 
       return response.json();
