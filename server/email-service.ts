@@ -217,7 +217,7 @@ class EmailService {
       return true;
     } catch (error: any) {
       console.error('❌ Nodemailer email error:', error?.message);
-      return false;
+      throw error;
     }
   }
 
