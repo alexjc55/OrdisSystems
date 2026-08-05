@@ -10587,61 +10587,59 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                 )}
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="minOrderQuantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.minOrderQuantityLabel')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step={unit === 'kg' ? '0.1' : '1'}
-                          min="0"
-                          placeholder="—"
-                          className="text-sm"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e.target.value);
-                            handleFieldChange('minOrderQuantity', e.target.value, false);
-                          }}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs text-gray-500">
-                        {adminT('products.dialog.minOrderQuantityDescription')}
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="maxOrderQuantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm">{adminT('products.dialog.maxOrderQuantityLabel')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step={unit === 'kg' ? '0.1' : '1'}
-                          min="0"
-                          placeholder="—"
-                          className="text-sm"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e.target.value);
-                            handleFieldChange('maxOrderQuantity', e.target.value, false);
-                          }}
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs text-gray-500">
-                        {adminT('products.dialog.maxOrderQuantityDescription')}
-                      </FormDescription>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700">{adminT('products.dialog.orderQuantityLimitsLabel')}</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="minOrderQuantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs text-gray-500">{adminT('products.dialog.minOrderQuantityLabel')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step={unit === 'kg' ? '0.1' : '1'}
+                            min="0"
+                            placeholder="—"
+                            className="text-sm"
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleFieldChange('minOrderQuantity', e.target.value, false);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="maxOrderQuantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs text-gray-500">{adminT('products.dialog.maxOrderQuantityLabel')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step={unit === 'kg' ? '0.1' : '1'}
+                            min="0"
+                            placeholder="—"
+                            className="text-sm"
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              handleFieldChange('maxOrderQuantity', e.target.value, false);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <p className="text-xs text-gray-400">{adminT('products.dialog.orderQuantityLimitsNote')}</p>
               </div>
 
               {barcodeConfig?.enabled && (
