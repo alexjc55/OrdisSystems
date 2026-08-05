@@ -154,7 +154,9 @@
     "weight": "Вес (кг)",
     "quantity": "Количество",
     "grams": "Вес (г)",
-    "total": "Итого"
+    "total": "Итого",
+    "minOrderHint": "от {{amount}}",
+    "maxOrderHint": "до {{amount}}"
   },
   "units": {
     "piece": "шт",

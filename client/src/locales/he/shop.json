@@ -150,7 +150,9 @@
     "weight": "משקל (ק\"ג)",
     "quantity": "כמות",
     "grams": "משקל (גר׳)",
-    "total": "סה\"כ"
+    "total": "סה\"כ",
+    "minOrderHint": "מינ׳ {{amount}}",
+    "maxOrderHint": "מקס׳ {{amount}}"
   },
   "checkout": {
     "orderCreated": "הזמנה נוצרה",

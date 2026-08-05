@@ -507,7 +507,9 @@
     "piece": "قطعة",
     "weight": "الوزن",
     "quantity": "الكمية",
-    "grams": "الوزن (جرام)"
+    "grams": "الوزن (جرام)",
+    "minOrderHint": "الحد الأدنى {{amount}}",
+    "maxOrderHint": "الحد الأقصى {{amount}}"
   },
   "auth": {
     "welcome": "مرحباً",

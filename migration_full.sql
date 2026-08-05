@@ -242,7 +242,9 @@ ALTER TABLE products
   ADD COLUMN IF NOT EXISTS discount_value DECIMAL(10,2),
   ADD COLUMN IF NOT EXISTS barcode VARCHAR(50),
   ADD COLUMN IF NOT EXISTS external_id VARCHAR(255),
-  ADD COLUMN IF NOT EXISTS external_source VARCHAR(50);
+  ADD COLUMN IF NOT EXISTS external_source VARCHAR(50),
+  ADD COLUMN IF NOT EXISTS min_order_quantity DECIMAL(10,3),
+  ADD COLUMN IF NOT EXISTS max_order_quantity DECIMAL(10,3);
 
 -- price: если колонки ещё нет — добавляем и копируем из price_per_kg
 DO $$ BEGIN

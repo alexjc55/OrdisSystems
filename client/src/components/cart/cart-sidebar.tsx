@@ -188,20 +188,77 @@ export default function CartSidebar() {
     }
   }, [isOpen]);
 
-  const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit) => {
-    if (newQuantity <= 0) {
-      removeItem(productId);
-    } else {
-      let adjustedQuantity = newQuantity;
-      if (unit === "piece" || unit === "portion") {
-        adjustedQuantity = Math.round(newQuantity);
-      } else if (unit === "kg") {
-        adjustedQuantity = Number(newQuantity.toFixed(1));
-      } else {
-        adjustedQuantity = Number(newQuantity.toFixed(1));
-      }
-      updateQuantity(productId, adjustedQuantity);
+  // Get the effective min quantity for a cart item in display units
+  const getItemMinQuantity = (item: any): number => {
+    const unit = (item.product?.unit || "100g") as ProductUnit;
+    const minRaw = item.product?.minOrderQuantity
+      ? parseFloat(item.product.minOrderQuantity as string)
+      : null;
+    if (minRaw === null || minRaw <= 0) return 0;
+    switch (unit) {
+      case "piece":
+      case "portion":
+        return Math.ceil(minRaw);
+      case "kg":
+        return Number(minRaw.toFixed(1));
+      case "100g":
+      case "100ml":
+        return Math.ceil(minRaw * 100);
+      default:
+        return minRaw;
     }
+  };
+
+  // Get the effective max quantity for a cart item in display units
+  const getItemMaxQuantity = (item: any): number | null => {
+    const unit = (item.product?.unit || "100g") as ProductUnit;
+    const maxRaw = item.product?.maxOrderQuantity
+      ? parseFloat(item.product.maxOrderQuantity as string)
+      : null;
+    if (maxRaw === null || maxRaw <= 0) return null;
+    switch (unit) {
+      case "piece":
+      case "portion":
+        return Math.floor(maxRaw);
+      case "kg":
+        return Number(maxRaw.toFixed(1));
+      case "100g":
+      case "100ml":
+        return Math.floor(maxRaw * 100);
+      default:
+        return maxRaw;
+    }
+  };
+
+  const handleQuantityChange = (productId: number, newQuantity: number, unit: ProductUnit, item?: any) => {
+    const minQty = item ? getItemMinQuantity(item) : 0;
+    const maxQty = item ? getItemMaxQuantity(item) : null;
+
+    if (newQuantity <= 0 || (minQty > 0 && newQuantity < minQty)) {
+      // If decreasing below min, snap to min (unless already at min, then remove)
+      if (minQty > 0 && newQuantity < minQty && newQuantity > 0) {
+        updateQuantity(productId, minQty);
+      } else {
+        removeItem(productId);
+      }
+      return;
+    }
+
+    let adjustedQuantity = newQuantity;
+    if (unit === "piece" || unit === "portion") {
+      adjustedQuantity = Math.round(newQuantity);
+    } else if (unit === "kg") {
+      adjustedQuantity = Number(newQuantity.toFixed(1));
+    } else {
+      adjustedQuantity = Number(newQuantity.toFixed(1));
+    }
+
+    // Clamp to max if set
+    if (maxQty !== null && adjustedQuantity > maxQty) {
+      adjustedQuantity = maxQty;
+    }
+
+    updateQuantity(productId, adjustedQuantity);
   };
 
   const getIncrementValue = (unit: ProductUnit) => {
@@ -223,12 +280,12 @@ export default function CartSidebar() {
     setEditingQuantity(prev => ({ ...prev, [productId]: value }));
   };
 
-  const handleQuantityBlur = (productId: number, unit: ProductUnit) => {
+  const handleQuantityBlur = (productId: number, unit: ProductUnit, item?: any) => {
     const value = editingQuantity[productId];
     if (value !== undefined) {
       const numValue = parseFloat(value);
       if (!isNaN(numValue) && numValue > 0) {
-        handleQuantityChange(productId, numValue, unit);
+        handleQuantityChange(productId, numValue, unit, item);
       }
       setEditingQuantity(prev => {
         const newState = { ...prev };
@@ -238,9 +295,9 @@ export default function CartSidebar() {
     }
   };
 
-  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: ProductUnit) => {
+  const handleQuantityKeyPress = (e: React.KeyboardEvent, productId: number, unit: ProductUnit, item?: any) => {
     if (e.key === 'Enter') {
-      handleQuantityBlur(productId, unit);
+      handleQuantityBlur(productId, unit, item);
     }
   };
 
@@ -369,8 +426,10 @@ export default function CartSidebar() {
                                   onClick={() => handleQuantityChange(
                                     item.product?.id || 0, 
                                     item.quantity - getIncrementValue((item.product?.unit || "100g") as ProductUnit),
-                                    (item.product?.unit || "100g") as ProductUnit
+                                    (item.product?.unit || "100g") as ProductUnit,
+                                    item
                                   )}
+                                  disabled={getItemMinQuantity(item) > 0 && item.quantity <= getItemMinQuantity(item)}
                                   className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
                                   <Minus className="h-3 w-3" />
@@ -379,8 +438,8 @@ export default function CartSidebar() {
                                   type="text"
                                   value={getDisplayQuantity(item)}
                                   onChange={(e) => handleManualQuantityChange(item.product?.id || 0, e.target.value, (item.product?.unit || "100g") as ProductUnit)}
-                                  onBlur={() => handleQuantityBlur(item.product?.id || 0, (item.product?.unit || "100g") as ProductUnit)}
-                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.product?.id || 0, (item.product?.unit || "100g") as ProductUnit)}
+                                  onBlur={() => handleQuantityBlur(item.product?.id || 0, (item.product?.unit || "100g") as ProductUnit, item)}
+                                  onKeyPress={(e) => handleQuantityKeyPress(e, item.product?.id || 0, (item.product?.unit || "100g") as ProductUnit, item)}
                                   className="w-16 h-8 text-center text-sm font-bold border-gray-200 focus:border-primary"
                                 />
                                 <Button
@@ -389,8 +448,10 @@ export default function CartSidebar() {
                                   onClick={() => handleQuantityChange(
                                     item.product?.id || 0, 
                                     item.quantity + getIncrementValue((item.product?.unit || "100g") as ProductUnit),
-                                    (item.product?.unit || "100g") as ProductUnit
+                                    (item.product?.unit || "100g") as ProductUnit,
+                                    item
                                   )}
+                                  disabled={getItemMaxQuantity(item) !== null && item.quantity >= (getItemMaxQuantity(item) as number)}
                                   className="h-8 w-8 p-0 rounded-full bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary-light"
                                 >
                                   <Plus className="h-3 w-3" />

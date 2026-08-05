@@ -109,6 +109,8 @@ export const products = pgTable("products", {
   barcode: varchar("barcode", { length: 50 }), // Barcode for the product (not required)
   externalId: varchar("external_id", { length: 255 }),   // External platform item ID (Wolt/10bis)
   externalSource: varchar("external_source", { length: 50 }), // Platform: 'wolt' | '10bis'
+  minOrderQuantity: decimal("min_order_quantity", { precision: 10, scale: 3 }), // Min quantity per order (in kg for 100g/100ml, in units for piece/portion/kg)
+  maxOrderQuantity: decimal("max_order_quantity", { precision: 10, scale: 3 }), // Max quantity per order
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

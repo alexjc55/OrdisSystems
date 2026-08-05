@@ -342,6 +342,18 @@ const productSchema = z.object({
   discountType: z.string().optional(),
   discountValue: z.string().optional(),
   sortOrder: z.number().default(0),
+  minOrderQuantity: z.string().optional(),
+  maxOrderQuantity: z.string().optional(),
+}).refine((data) => {
+  const min = data.minOrderQuantity ? parseFloat(data.minOrderQuantity) : null;
+  const max = data.maxOrderQuantity ? parseFloat(data.maxOrderQuantity) : null;
+  if (min !== null && max !== null && !isNaN(min) && !isNaN(max) && min > 0 && max > 0) {
+    return max >= min;
+  }
+  return true;
+}, {
+  message: "Макс. кол-во должно быть ≥ мин. кол-ву",
+  path: ["maxOrderQuantity"],
 });
 
 const categorySchema = z.object({
@@ -9972,6 +9984,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       discountType: "",
       discountValue: "",
       sortOrder: 0,
+      minOrderQuantity: "",
+      maxOrderQuantity: "",
     },
   });
 
@@ -10037,6 +10051,12 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           discountType: initialData.discountType || "",
           discountValue: initialData.discountValue,
           sortOrder: initialData.sortOrder ?? 0,
+          minOrderQuantity: initialData.minOrderQuantity
+            ? toDisplayQty(String(initialData.minOrderQuantity), initialData.unit || '100g')
+            : "",
+          maxOrderQuantity: initialData.maxOrderQuantity
+            ? toDisplayQty(String(initialData.maxOrderQuantity), initialData.unit || '100g')
+            : "",
         });
       } else {
         // New product - reset everything including branch availability
@@ -10058,6 +10078,8 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
           discountType: "",
           discountValue: "",
           sortOrder: 0,
+          minOrderQuantity: "",
+          maxOrderQuantity: "",
         });
       }
     }
@@ -10244,6 +10266,19 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       }
     }
     
+    // Convert min/max order quantity from display units to stored units (kg for 100g/100ml)
+    const submitUnit = finalData.unit || '100g';
+    if (finalData.minOrderQuantity !== undefined && finalData.minOrderQuantity !== "") {
+      finalData.minOrderQuantity = toStoredQty(String(finalData.minOrderQuantity), submitUnit) || null;
+    } else {
+      finalData.minOrderQuantity = null;
+    }
+    if (finalData.maxOrderQuantity !== undefined && finalData.maxOrderQuantity !== "") {
+      finalData.maxOrderQuantity = toStoredQty(String(finalData.maxOrderQuantity), submitUnit) || null;
+    } else {
+      finalData.maxOrderQuantity = null;
+    }
+
     console.log('Submitting product data:', finalData);
     
     // For new products include pre-converted volume discounts so parent can save after creation
@@ -10551,6 +10586,63 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
                   </FormItem>
                 )}
               />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="minOrderQuantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.minOrderQuantityLabel')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step={unit === 'kg' ? '0.1' : '1'}
+                          min="0"
+                          placeholder="—"
+                          className="text-sm"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleFieldChange('minOrderQuantity', e.target.value, false);
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        {adminT('products.dialog.minOrderQuantityDescription')}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="maxOrderQuantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm">{adminT('products.dialog.maxOrderQuantityLabel')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step={unit === 'kg' ? '0.1' : '1'}
+                          min="0"
+                          placeholder="—"
+                          className="text-sm"
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                            handleFieldChange('maxOrderQuantity', e.target.value, false);
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription className="text-xs text-gray-500">
+                        {adminT('products.dialog.maxOrderQuantityDescription')}
+                      </FormDescription>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               {barcodeConfig?.enabled && (
                 <FormField

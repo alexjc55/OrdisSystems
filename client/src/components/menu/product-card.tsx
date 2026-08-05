@@ -47,16 +47,51 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const localizedName = getLocalizedField(product, 'name', currentLanguage as SupportedLanguage, storeSettingsData as any);
   const localizedDescription = getLocalizedField(product, 'description', currentLanguage as SupportedLanguage, storeSettingsData as any);
   const localizedIngredients = getLocalizedField(product, 'ingredients', currentLanguage as SupportedLanguage, storeSettingsData as any);
-  
-  // Set default quantity based on unit type
-  const getDefaultQuantity = () => {
+
+  // Compute effective min/max quantity in display units
+  // DB stores: for 100g/100ml → kg (e.g. 0.4 = 400 g); for kg/piece/portion → as-is
+  const getEffectiveLimits = () => {
+    const minRaw = product.minOrderQuantity ? parseFloat(product.minOrderQuantity as string) : null;
+    const maxRaw = product.maxOrderQuantity ? parseFloat(product.maxOrderQuantity as string) : null;
     switch (unit) {
-      case "piece": return 1;
-      case "portion": return 1;
-      case "kg": return 1.0;
+      case "piece":
+      case "portion":
+        return {
+          min: minRaw !== null && minRaw > 0 ? Math.ceil(minRaw) : 1,
+          max: maxRaw !== null && maxRaw > 0 ? Math.floor(maxRaw) : 99,
+        };
+      case "kg":
+        return {
+          min: minRaw !== null && minRaw > 0 ? Number(minRaw.toFixed(1)) : 0.1,
+          max: maxRaw !== null && maxRaw > 0 ? Number(maxRaw.toFixed(1)) : 99,
+        };
       case "100g":
-      case "100ml": return 100; // 100 grams by default
-      default: return 1.0;
+      case "100ml":
+        return {
+          min: minRaw !== null && minRaw > 0 ? Math.ceil(minRaw * 100) : 1,
+          max: maxRaw !== null && maxRaw > 0 ? Math.floor(maxRaw * 100) : 9999,
+        };
+      default:
+        return { min: 1, max: 99 };
+    }
+  };
+
+  const limits = getEffectiveLimits();
+
+  // Set default quantity based on unit type, clamped to [min, max]
+  const getDefaultQuantity = () => {
+    const clamp = (val: number) => Math.min(limits.max, Math.max(limits.min, val));
+    switch (unit) {
+      case "piece":
+      case "portion":
+        return clamp(1);
+      case "kg":
+        return clamp(1.0);
+      case "100g":
+      case "100ml":
+        return clamp(100);
+      default:
+        return clamp(1);
     }
   };
   
@@ -100,38 +135,31 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
       return;
     }
     
-    let minValue, maxValue, processedQuantity;
-    
+    let processedQuantity;
     switch (unit) {
       case "piece":
-        minValue = 1;
-        maxValue = 99;
+      case "portion":
         processedQuantity = Math.round(newQuantity);
         break;
       case "kg":
-        minValue = 0.1;
-        maxValue = 99;
         processedQuantity = Number(newQuantity.toFixed(1));
         break;
       case "100g":
       case "100ml":
-        minValue = 1; // 1 gram minimum
-        maxValue = 9999; // up to 9999 grams
         processedQuantity = Math.round(newQuantity);
         break;
       default:
-        minValue = 0.1;
-        maxValue = 99;
         processedQuantity = Number(newQuantity.toFixed(1));
     }
     
-    if (newQuantity >= minValue && newQuantity <= maxValue) {
+    if (processedQuantity >= limits.min && processedQuantity <= limits.max) {
       setSelectedQuantity(processedQuantity);
     }
   };
 
   const handleAddToCart = () => {
-    const finalQuantity = selectedQuantity || getDefaultQuantity();
+    const rawQty = selectedQuantity || getDefaultQuantity();
+    const finalQuantity = Math.min(limits.max, Math.max(limits.min, rawQty));
     addItem(product, finalQuantity);
     
     // Format quantity with proper unit display
@@ -198,6 +226,24 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
       }}
     />
   );
+
+  // Unit suffix for min/max hint display
+  const getUnitSuffix = () => {
+    switch (unit) {
+      case '100g': return t('units.g') || 'г';
+      case '100ml': return t('units.ml') || 'мл';
+      case 'kg': return t('units.kg') || 'кг';
+      case 'piece': return t('units.piece') || 'шт';
+      case 'portion': return t('units.portionShort') || 'порц.';
+      default: return '';
+    }
+  };
+
+  const hasMinLimit = product.minOrderQuantity && parseFloat(product.minOrderQuantity as string) > 0;
+  const hasMaxLimit = product.maxOrderQuantity && parseFloat(product.maxOrderQuantity as string) > 0;
+
+  // Step size for plus/minus buttons
+  const step = unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : 50;
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col">
@@ -390,11 +436,10 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 variant="outline"
                 className="h-10 w-10 md:h-8 md:w-8 p-0 border-gray-300"
                 onClick={() => {
-                  const step = unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : unit === "100g" || unit === "100ml" ? 50 : 50;
                   const currentQuantity = selectedQuantity || getDefaultQuantity();
                   handleQuantityChange(currentQuantity - step);
                 }}
-                disabled={(selectedQuantity || getDefaultQuantity()) <= (unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : unit === "100g" || unit === "100ml" ? 50 : 50)}
+                disabled={(selectedQuantity || getDefaultQuantity()) - step < limits.min}
               >
                 <Minus className="h-2 w-2" />
               </Button>
@@ -421,11 +466,10 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
                 variant="outline"
                 className="h-10 w-10 md:h-8 md:w-8 p-0 border-gray-300"
                 onClick={() => {
-                  const step = unit === "piece" || unit === "portion" ? 1 : unit === "kg" ? 0.1 : unit === "100g" || unit === "100ml" ? 50 : 50;
                   const currentQuantity = selectedQuantity || getDefaultQuantity();
                   handleQuantityChange(currentQuantity + step);
                 }}
-                disabled={(selectedQuantity || getDefaultQuantity()) >= (unit === "100g" || unit === "100ml" ? 9999 : 99)}
+                disabled={(selectedQuantity || getDefaultQuantity()) >= limits.max}
               >
                 <Plus className="h-2 w-2" />
               </Button>
@@ -441,6 +485,19 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
               </span>
             </div>
           </div>
+
+          {/* Min/Max order quantity hint */}
+          {(hasMinLimit || hasMaxLimit) && (
+            <div className="text-xs text-gray-500 font-medium text-center py-1 px-2 bg-gray-50 border border-gray-100 rounded flex items-center justify-center gap-2">
+              {hasMinLimit && (
+                <span>{t('product.minOrderHint', { amount: `${limits.min}${getUnitSuffix()}` })}</span>
+              )}
+              {hasMinLimit && hasMaxLimit && <span>·</span>}
+              {hasMaxLimit && (
+                <span>{t('product.maxOrderHint', { amount: `${limits.max}${getUnitSuffix()}` })}</span>
+              )}
+            </div>
+          )}
 
           {/* Volume Discount Hint */}
           {activeVolumeDiscounts.length > 0 && (() => {

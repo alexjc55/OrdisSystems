@@ -155,7 +155,9 @@
   "product": {
     "grams": "Weight (g)",
     "quantity": "Quantity",
-    "weight": "Weight"
+    "weight": "Weight",
+    "minOrderHint": "min {{amount}}",
+    "maxOrderHint": "max {{amount}}"
   },
   "outOfStockToday": "Out of stock today",
   "orderForTomorrow": "Order for tomorrow",
