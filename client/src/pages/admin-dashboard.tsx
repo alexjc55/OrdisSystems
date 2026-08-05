@@ -10268,16 +10268,14 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
     
     // Convert min/max order quantity from display units to stored units (kg for 100g/100ml)
     const submitUnit = finalData.unit || '100g';
-    if (finalData.minOrderQuantity !== undefined && finalData.minOrderQuantity !== "") {
-      finalData.minOrderQuantity = toStoredQty(String(finalData.minOrderQuantity), submitUnit) || null;
-    } else {
-      finalData.minOrderQuantity = null;
-    }
-    if (finalData.maxOrderQuantity !== undefined && finalData.maxOrderQuantity !== "") {
-      finalData.maxOrderQuantity = toStoredQty(String(finalData.maxOrderQuantity), submitUnit) || null;
-    } else {
-      finalData.maxOrderQuantity = null;
-    }
+    const toStoredOrNull = (val: any) => {
+      if (val === null || val === undefined || val === "" || val === "null") return null;
+      const stored = toStoredQty(String(val), submitUnit);
+      const n = parseFloat(stored);
+      return isNaN(n) ? null : stored;
+    };
+    finalData.minOrderQuantity = toStoredOrNull(finalData.minOrderQuantity);
+    finalData.maxOrderQuantity = toStoredOrNull(finalData.maxOrderQuantity);
 
     console.log('Submitting product data:', finalData);
     
