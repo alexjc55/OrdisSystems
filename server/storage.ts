@@ -474,6 +474,8 @@ export class DatabaseStorage implements IStorage {
             isSpecialOffer: row.isSpecialOffer,
             discountType: row.discountType,
             discountValue: row.discountValue,
+            minOrderQuantity: row.minOrderQuantity ?? null,
+            maxOrderQuantity: row.maxOrderQuantity ?? null,
             categories: []
           });
         }
@@ -597,6 +599,8 @@ export class DatabaseStorage implements IStorage {
             isSpecialOffer: row.isSpecialOffer,
             discountType: row.discountType,
             discountValue: row.discountValue,
+            minOrderQuantity: row.minOrderQuantity ?? null,
+            maxOrderQuantity: row.maxOrderQuantity ?? null,
             categories: []
           });
         }
