@@ -92,17 +92,14 @@ class EmailService {
         port: port,
         // HELO name must be proper FQDN to avoid HELO_NO_DOMAIN
         name: heloName,
-        // Port 587 with secure=true is incorrect - use STARTTLS instead
-        secure: port === 465 ? true : false, // Only use secure=true for port 465 (implicit SSL)
+        // Port 465 — implicit SSL; port 587 — STARTTLS; everything else — plain
+        secure: port === 465,
         auth: customSettings?.smtpUser && customSettings?.smtpPassword ? {
           user: customSettings.smtpUser,
           pass: customSettings.smtpPassword
         } : undefined,
-        requireTLS: port === 587, // Use STARTTLS for port 587
         tls: {
-          rejectUnauthorized: false,
-          ciphers: 'SSLv3',
-          secureProtocol: 'TLSv1_2_method'
+          rejectUnauthorized: false
         }
       };
 
