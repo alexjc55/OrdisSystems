@@ -1,0 +1,1 @@
+- [PDF share on mobile (WhatsApp)](pdf-share-mobile.md) — hidden 794px iframe pre-generates blob; synchronous access preserves iOS navigator.share user gesture.
