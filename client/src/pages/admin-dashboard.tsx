@@ -1597,13 +1597,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     document.body.appendChild(overlay);
 
-    // Preload html2pdf.js in the background so it's ready when the user taps WhatsApp
-    if (!(window as any).html2pdf) {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-      document.head.appendChild(s);
-    }
-
     // Push a history entry so the Android/iOS back button closes the overlay
     // instead of navigating away from the admin page
     window.history.pushState({ printOverlay: true }, '', window.location.href);
@@ -1707,6 +1700,10 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 <body>
   <div id="prt-bar">
     <button onclick="window.close()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;cursor:pointer;font-size:13px;color:#fff;font-family:Arial,sans-serif;">← ${l('backToOrder')}</button>
+    <button id="prt-wa-btn" onclick="shareAsPdf()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:#25d366;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#fff;font-family:Arial,sans-serif;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.104.549 4.076 1.509 5.789L0 24l6.386-1.675A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.008-1.373l-.36-.214-3.732.978.996-3.642-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
+      ${l('shareWhatsApp')}
+    </button>
     <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 18px;background:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#f97316;font-family:Arial,sans-serif;">🖨 ${l('printOrder')}</button>
     <span style="font-size:13px;color:#fff;opacity:0.9;">${l('order')} #${order.id} — ${storeName}</span>
   </div>
@@ -1751,6 +1748,36 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   </div>
   </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+async function shareAsPdf() {
+  var btn = document.getElementById('prt-wa-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+  try {
+    var el = document.querySelector('.prt-content');
+    var opt = {
+      margin: [10, 10, 10, 10],
+      filename: '${orderFileName}',
+      image: { type: 'jpeg', quality: 0.97 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    var blob = await html2pdf().set(opt).from(el).output('blob');
+    var file = new File([blob], '${orderFileName}', { type: 'application/pdf' });
+    if (navigator.share && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: '${l('order')} #${order.id}' });
+    } else {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = '${orderFileName}'; a.click();
+      setTimeout(function() { URL.revokeObjectURL(url); }, 3000);
+    }
+  } catch(e) {
+    alert('Error: ' + (e.message || e));
+  }
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+}
+</script>
 </html>`;
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
@@ -1779,67 +1806,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       closeOverlay();
     });
 
+    // WhatsApp button on the overlay: open the print window (same content, same viewport).
+    // PDF is generated inside the print window from a live DOM element — this is the only
+    // approach that works correctly on mobile (viewport is full-width in the new window).
     const waBtnEl = document.getElementById('print-wa-btn');
-    if (waBtnEl) waBtnEl.addEventListener('click', async () => {
-      const btn = waBtnEl as HTMLButtonElement;
-      btn.disabled = true;
-      btn.style.opacity = '0.6';
-      try {
-        const h2p = (window as any).html2pdf;
-        if (!h2p) throw new Error('PDF library not loaded — please try again in a moment');
-
-        // Extract CSS (strip @media print rules) and inner content of .prt-content
-        const styleMatch = printDocHtml.match(/<style>([\s\S]*?)<\/style>/i);
-        const rawCss = styleMatch
-          ? styleMatch[1].replace(/@media\s+print\s*\{[\s\S]*?\}/g, '')
-          : '';
-        // Greedy match — captures full content up to last </div> before </body>
-        const contentMatch = printDocHtml.match(/<div class="prt-content">([\s\S]*)<\/div>\s*<\/body>/i);
-        const innerContent = contentMatch ? contentMatch[1] : '';
-        if (!innerContent) throw new Error('Print content not found');
-
-        // Clipper hides the wrapper visually but doesn't constrain its layout.
-        // Wrapper is 794px wide — same as what the print window renders at.
-        // html2canvas captures the element at its CSS width (794px), not viewport width.
-        const clipper = document.createElement('div');
-        clipper.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;overflow:hidden;z-index:-1;';
-
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'position:absolute;top:0;left:0;width:794px;background:#fff;font-family:Arial,sans-serif;font-size:13px;color:#333;';
-        wrapper.innerHTML = `<style>*{box-sizing:border-box;}${rawCss}</style><div class="prt-content" style="padding:16px;">${innerContent}</div>`;
-
-        clipper.appendChild(wrapper);
-        document.body.appendChild(clipper);
-
-        const blob: Blob = await h2p()
-          .set({
-            margin: [8, 8, 8, 8],
-            filename: orderFileName,
-            image: { type: 'jpeg', quality: 0.97 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          })
-          .from(wrapper)
-          .output('blob');
-
-        document.body.removeChild(clipper);
-
-        const file = new File([blob], orderFileName, { type: 'application/pdf' });
-        const nav = navigator as any;
-        if (nav.share && nav.canShare?.({ files: [file] })) {
-          await nav.share({ files: [file], title: `${l('order')} #${order.id}` });
-        } else {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = orderFileName; a.click();
-          setTimeout(() => URL.revokeObjectURL(url), 3000);
-        }
-      } catch (e: any) {
-        console.error('WhatsApp PDF share error:', e);
-        alert(e?.message || 'Не удалось создать PDF');
+    if (waBtnEl) waBtnEl.addEventListener('click', () => {
+      const printWin = window.open('', '_blank');
+      if (printWin) {
+        printWin.document.open();
+        printWin.document.write(printDocHtml);
+        printWin.document.close();
+        printWin.focus();
       }
-      btn.disabled = false;
-      btn.style.opacity = '1';
+      closeOverlay();
     });
   };
 
