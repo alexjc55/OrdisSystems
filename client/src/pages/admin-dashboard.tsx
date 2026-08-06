@@ -1795,13 +1795,12 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
         const contentEl = parsedDoc.querySelector('.prt-content');
         if (!contentEl) throw new Error('Content not found');
 
-        // Build a wrapper that's in the DOM but visually hidden via opacity
-        // (position:absolute+top:0 so html2canvas can capture it)
+        // Place wrapper far below visible area — html2canvas captures it
+        // regardless of scroll position, but the user never sees it
         const wrapper = document.createElement('div');
         wrapper.style.cssText = [
-          'position:absolute', 'top:0', 'left:0',
-          'width:794px', 'background:#fff',
-          'opacity:0', 'pointer-events:none', 'z-index:-1'
+          'position:absolute', 'top:99999px', 'left:0',
+          'width:794px', 'background:#fff', 'pointer-events:none'
         ].join(';');
 
         // Inject the print CSS so table borders/colours render correctly
