@@ -1788,45 +1788,41 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
         const h2p = (window as any).html2pdf;
         if (!h2p) throw new Error('PDF library not loaded — please try again in a moment');
 
-        // Extract CSS (strip @media print) and .prt-content from the print HTML string
+        // Extract CSS (strip @media print rules) and inner content of .prt-content
         const styleMatch = printDocHtml.match(/<style>([\s\S]*?)<\/style>/i);
         const rawCss = styleMatch
           ? styleMatch[1].replace(/@media\s+print\s*\{[\s\S]*?\}/g, '')
           : '';
-        // Grab everything inside <div class="prt-content">...</div>
-        const contentMatch = printDocHtml.match(/<div class="prt-content">([\s\S]*?)<\/div>\s*<\/body>/i);
+        // Greedy match — captures full content up to last </div> before </body>
+        const contentMatch = printDocHtml.match(/<div class="prt-content">([\s\S]*)<\/div>\s*<\/body>/i);
         const innerContent = contentMatch ? contentMatch[1] : '';
         if (!innerContent) throw new Error('Print content not found');
 
-        // Wrap in a fixed-width outer div so html2canvas always renders at 794px
-        // regardless of the mobile viewport width (~390px on iPhone)
-        const htmlForPdf = `
-<style>
-* { box-sizing: border-box; }
-${rawCss}
-</style>
-<div style="width:794px;background:#fff;font-family:Arial,sans-serif;font-size:13px;color:#333;">
-  <div class="prt-content" style="padding:16px;">${innerContent}</div>
-</div>`;
+        // Clipper hides the wrapper visually but doesn't constrain its layout.
+        // Wrapper is 794px wide — same as what the print window renders at.
+        // html2canvas captures the element at its CSS width (794px), not viewport width.
+        const clipper = document.createElement('div');
+        clipper.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;overflow:hidden;z-index:-1;';
+
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'position:absolute;top:0;left:0;width:794px;background:#fff;font-family:Arial,sans-serif;font-size:13px;color:#333;';
+        wrapper.innerHTML = `<style>*{box-sizing:border-box;}${rawCss}</style><div class="prt-content" style="padding:16px;">${innerContent}</div>`;
+
+        clipper.appendChild(wrapper);
+        document.body.appendChild(clipper);
 
         const blob: Blob = await h2p()
           .set({
             margin: [8, 8, 8, 8],
             filename: orderFileName,
             image: { type: 'jpeg', quality: 0.97 },
-            html2canvas: {
-              scale: 1,
-              useCORS: true,
-              logging: false,
-              windowWidth: 794,
-              width: 794,
-              scrollX: 0,
-              scrollY: 0
-            },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           })
-          .from(htmlForPdf, 'string')
+          .from(wrapper)
           .output('blob');
+
+        document.body.removeChild(clipper);
 
         const file = new File([blob], orderFileName, { type: 'application/pdf' });
         const nav = navigator as any;
