@@ -1788,29 +1788,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
         const h2p = (window as any).html2pdf;
         if (!h2p) throw new Error('PDF library not loaded — please try again in a moment');
 
-        // Parse printDocHtml to get styles + content
-        const parser = new DOMParser();
-        const parsedDoc = parser.parseFromString(printDocHtml, 'text/html');
-        const styleEl = parsedDoc.querySelector('style');
-        const contentEl = parsedDoc.querySelector('.prt-content');
-        if (!contentEl) throw new Error('Content not found');
+        // Extract CSS (strip @media print) and .prt-content from the print HTML string
+        const styleMatch = printDocHtml.match(/<style>([\s\S]*?)<\/style>/i);
+        const rawCss = styleMatch
+          ? styleMatch[1].replace(/@media\s+print\s*\{[\s\S]*?\}/g, '')
+          : '';
+        // Grab everything inside <div class="prt-content">...</div>
+        const contentMatch = printDocHtml.match(/<div class="prt-content">([\s\S]*?)<\/div>\s*<\/body>/i);
+        const innerContent = contentMatch ? contentMatch[1] : '';
+        if (!innerContent) throw new Error('Print content not found');
 
-        // Place wrapper far below visible area — html2canvas captures it
-        // regardless of scroll position, but the user never sees it
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = [
-          'position:absolute', 'top:99999px', 'left:0',
-          'width:794px', 'background:#fff', 'pointer-events:none'
-        ].join(';');
-
-        // Inject the print CSS so table borders/colours render correctly
-        if (styleEl) {
-          const s = document.createElement('style');
-          s.textContent = (styleEl.textContent || '').replace(/@media\s+print[\s\S]*?\}/g, '');
-          wrapper.appendChild(s);
-        }
-        wrapper.appendChild(contentEl);
-        document.body.appendChild(wrapper);
+        // Build self-contained HTML string — html2pdf.from(str,'string') creates
+        // its own full-viewport container so html2canvas renders it properly
+        const htmlForPdf = `<style>${rawCss}</style><div class="prt-content" style="padding:16px;background:#fff;font-family:Arial,sans-serif;font-size:13px;color:#333;">${innerContent}</div>`;
 
         const blob: Blob = await h2p()
           .set({
@@ -1820,10 +1810,8 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
             html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 794 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           })
-          .from(wrapper)
+          .from(htmlForPdf, 'string')
           .output('blob');
-
-        document.body.removeChild(wrapper);
 
         const file = new File([blob], orderFileName, { type: 'application/pdf' });
         const nav = navigator as any;
