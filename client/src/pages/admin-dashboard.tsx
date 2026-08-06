@@ -1785,40 +1785,52 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       btn.disabled = true;
       btn.style.opacity = '0.6';
       try {
-        // Parse printDocHtml to extract the .prt-content node
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(printDocHtml, 'text/html');
-        const content = doc.querySelector('.prt-content');
-        if (!content) throw new Error('prt-content not found');
-
-        // Mount in a hidden off-screen container so html2pdf can render it
-        const container = document.createElement('div');
-        container.style.cssText = 'position:fixed;left:-9999px;top:0;width:190mm;background:#fff;font-family:Arial,sans-serif;font-size:12px;color:#333;padding:10mm;';
-        container.appendChild(content);
-        document.body.appendChild(container);
-
         const h2p = (window as any).html2pdf;
-        if (!h2p) throw new Error('html2pdf not loaded yet — please try again');
+        if (!h2p) throw new Error('PDF library not loaded — please try again in a moment');
+
+        // Parse printDocHtml to get styles + content
+        const parser = new DOMParser();
+        const parsedDoc = parser.parseFromString(printDocHtml, 'text/html');
+        const styleEl = parsedDoc.querySelector('style');
+        const contentEl = parsedDoc.querySelector('.prt-content');
+        if (!contentEl) throw new Error('Content not found');
+
+        // Build a wrapper that's in the DOM but visually hidden via opacity
+        // (position:absolute+top:0 so html2canvas can capture it)
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = [
+          'position:absolute', 'top:0', 'left:0',
+          'width:794px', 'background:#fff',
+          'opacity:0', 'pointer-events:none', 'z-index:-1'
+        ].join(';');
+
+        // Inject the print CSS so table borders/colours render correctly
+        if (styleEl) {
+          const s = document.createElement('style');
+          s.textContent = (styleEl.textContent || '').replace(/@media\s+print[\s\S]*?\}/g, '');
+          wrapper.appendChild(s);
+        }
+        wrapper.appendChild(contentEl);
+        document.body.appendChild(wrapper);
 
         const blob: Blob = await h2p()
           .set({
-            margin: [10, 10, 10, 10],
+            margin: [8, 8, 8, 8],
             filename: orderFileName,
             image: { type: 'jpeg', quality: 0.97 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
+            html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 794 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           })
-          .from(container)
+          .from(wrapper)
           .output('blob');
 
-        document.body.removeChild(container);
+        document.body.removeChild(wrapper);
 
         const file = new File([blob], orderFileName, { type: 'application/pdf' });
         const nav = navigator as any;
         if (nav.share && nav.canShare?.({ files: [file] })) {
           await nav.share({ files: [file], title: `${l('order')} #${order.id}` });
         } else {
-          // Fallback: download PDF
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url; a.download = orderFileName; a.click();
