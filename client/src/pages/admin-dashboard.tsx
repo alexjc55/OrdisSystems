@@ -1798,16 +1798,31 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
         const innerContent = contentMatch ? contentMatch[1] : '';
         if (!innerContent) throw new Error('Print content not found');
 
-        // Build self-contained HTML string — html2pdf.from(str,'string') creates
-        // its own full-viewport container so html2canvas renders it properly
-        const htmlForPdf = `<style>${rawCss}</style><div class="prt-content" style="padding:16px;background:#fff;font-family:Arial,sans-serif;font-size:13px;color:#333;">${innerContent}</div>`;
+        // Wrap in a fixed-width outer div so html2canvas always renders at 794px
+        // regardless of the mobile viewport width (~390px on iPhone)
+        const htmlForPdf = `
+<style>
+* { box-sizing: border-box; }
+${rawCss}
+</style>
+<div style="width:794px;background:#fff;font-family:Arial,sans-serif;font-size:13px;color:#333;">
+  <div class="prt-content" style="padding:16px;">${innerContent}</div>
+</div>`;
 
         const blob: Blob = await h2p()
           .set({
             margin: [8, 8, 8, 8],
             filename: orderFileName,
             image: { type: 'jpeg', quality: 0.97 },
-            html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 794 },
+            html2canvas: {
+              scale: 1,
+              useCORS: true,
+              logging: false,
+              windowWidth: 794,
+              width: 794,
+              scrollX: 0,
+              scrollY: 0
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
           })
           .from(htmlForPdf, 'string')
