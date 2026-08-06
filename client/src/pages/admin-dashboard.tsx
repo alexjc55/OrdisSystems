@@ -1620,12 +1620,19 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
     // Store handler reference on the element for cleanup if handlePrint is called again
     (overlay as any)._popStateHandler = onPopState;
 
+    // Hidden 794px iframe — html2pdf runs inside it (794px viewport = correct A4 width).
+    // Positioned off-screen so the user never sees it; iframe's internal viewport is 794px.
+    const pdfFrame = document.createElement('iframe');
+    pdfFrame.style.cssText = 'position:fixed;top:0;left:-800px;width:794px;height:1123px;border:none;';
+    document.body.appendChild(pdfFrame);
+
     const closeOverlay = () => {
       // "← Back to Order" button clicked: remove listener first so the
       // upcoming history.back() doesn't re-trigger onPopState
       document.getElementById('order-print-style')?.remove();
       window.removeEventListener('popstate', onPopState);
       overlay.remove();
+      if (document.body.contains(pdfFrame)) document.body.removeChild(pdfFrame);
       // Pop the extra history entry we pushed when the overlay opened
       suppressedHistoryBack();
       dispatchReopen();
@@ -1700,10 +1707,6 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 <body>
   <div id="prt-bar">
     <button onclick="window.close()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);border-radius:8px;cursor:pointer;font-size:13px;color:#fff;font-family:Arial,sans-serif;">← ${l('backToOrder')}</button>
-    <button id="prt-wa-btn" onclick="shareAsPdf()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 16px;background:#25d366;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#fff;font-family:Arial,sans-serif;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.104.549 4.076 1.509 5.789L0 24l6.386-1.675A11.932 11.932 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.008-1.373l-.36-.214-3.732.978.996-3.642-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
-      ${l('shareWhatsApp')}
-    </button>
     <button onclick="window.print()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 18px;background:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:#f97316;font-family:Arial,sans-serif;">🖨 ${l('printOrder')}</button>
     <span style="font-size:13px;color:#fff;opacity:0.9;">${l('order')} #${order.id} — ${storeName}</span>
   </div>
@@ -1748,37 +1751,38 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   </div>
   </div>
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-async function shareAsPdf() {
-  var btn = document.getElementById('prt-wa-btn');
-  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
-  try {
-    var el = document.querySelector('.prt-content');
-    var opt = {
-      margin: [10, 10, 10, 10],
-      filename: '${orderFileName}',
-      image: { type: 'jpeg', quality: 0.97 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    var blob = await html2pdf().set(opt).from(el).output('blob');
-    var file = new File([blob], '${orderFileName}', { type: 'application/pdf' });
-    if (navigator.share && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: '${l('order')} #${order.id}' });
-    } else {
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url; a.download = '${orderFileName}'; a.click();
-      setTimeout(function() { URL.revokeObjectURL(url); }, 3000);
-    }
-  } catch(e) {
-    alert('Error: ' + (e.message || e));
-  }
-  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-}
-</script>
 </html>`;
+
+    // Write print content into the hidden iframe + attach html2pdf.js.
+    // The iframe viewport is exactly 794px wide, so html2canvas inside it
+    // sees the full-A4 layout — no mobile-viewport clipping.
+    // Auto-generation starts immediately; blob is ready before user taps WhatsApp.
+    const pdfDocHtml = printDocHtml.replace(
+      '</body>',
+      `<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
+<script>
+(function(){
+  var bar=document.getElementById('prt-bar');
+  if(bar){bar.style.display='none';}
+  document.body.style.paddingTop='0';
+  function tryGenerate(){
+    if(typeof html2pdf==='undefined'){setTimeout(tryGenerate,100);return;}
+    var el=document.querySelector('.prt-content');
+    if(!el){window.pdfError='No content';return;}
+    html2pdf().set({
+      margin:[10,10,10,10],
+      image:{type:'jpeg',quality:0.97},
+      html2canvas:{scale:2,useCORS:true,logging:false},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+    }).from(el).output('blob').then(function(b){window.pdfBlobReady=b;}).catch(function(e){window.pdfError=String(e);});
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',tryGenerate);}else{tryGenerate();}
+})();
+<\/script></body>`
+    );
+    pdfFrame.contentDocument?.open();
+    pdfFrame.contentDocument?.write(pdfDocHtml);
+    pdfFrame.contentDocument?.close();
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
@@ -1806,19 +1810,58 @@ async function shareAsPdf() {
       closeOverlay();
     });
 
-    // WhatsApp button on the overlay: open the print window (same content, same viewport).
-    // PDF is generated inside the print window from a live DOM element — this is the only
-    // approach that works correctly on mobile (viewport is full-width in the new window).
+    // WhatsApp button: use the blob pre-generated in the hidden iframe.
+    // If the blob is already ready (iframe finished rendering), navigator.share is
+    // called synchronously inside the click handler — user gesture is preserved.
+    // If still rendering, show a brief spinner and retry.
     const waBtnEl = document.getElementById('print-wa-btn');
-    if (waBtnEl) waBtnEl.addEventListener('click', () => {
-      const printWin = window.open('', '_blank');
-      if (printWin) {
-        printWin.document.open();
-        printWin.document.write(printDocHtml);
-        printWin.document.close();
-        printWin.focus();
+    if (waBtnEl) waBtnEl.addEventListener('click', async () => {
+      const btn = waBtnEl as HTMLButtonElement;
+
+      const doShare = async (blob: Blob) => {
+        const file = new File([blob], orderFileName, { type: 'application/pdf' });
+        const nav = navigator as any;
+        if (nav.share && nav.canShare?.({ files: [file] })) {
+          await nav.share({ files: [file], title: `${l('order')} #${order.id}` });
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = orderFileName; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 3000);
+        }
+      };
+
+      const fw = pdfFrame.contentWindow as any;
+      if (fw?.pdfBlobReady) {
+        // Blob ready — share immediately (gesture preserved)
+        try { await doShare(fw.pdfBlobReady); } catch (e: any) { alert(e?.message || String(e)); }
+      } else if (fw?.pdfError) {
+        alert('PDF error: ' + fw.pdfError);
+      } else {
+        // Still generating — show spinner, wait up to 15s
+        btn.disabled = true;
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="animation:spin 1s linear infinite"><path d="M12 2a10 10 0 1 0 10 10"/></svg>';
+        const waited = await new Promise<Blob | null>(resolve => {
+          const start = Date.now();
+          const poll = setInterval(() => {
+            const b = (pdfFrame.contentWindow as any)?.pdfBlobReady;
+            if (b) { clearInterval(poll); resolve(b); return; }
+            if (Date.now() - start > 15000) { clearInterval(poll); resolve(null); }
+          }, 200);
+        });
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        if (waited) {
+          // Gesture chain is broken after polling — fall back to download
+          const url = URL.createObjectURL(waited);
+          const a = document.createElement('a');
+          a.href = url; a.download = orderFileName; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 3000);
+        } else {
+          alert('PDF generation timed out. Please try again.');
+        }
       }
-      closeOverlay();
     });
   };
 
