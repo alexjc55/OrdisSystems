@@ -1786,28 +1786,15 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
 
     if (closeBtnEl) closeBtnEl.addEventListener('click', closeOverlay);
     if (printBtnEl) printBtnEl.addEventListener('click', () => {
-      // Open the prepared print document in a new window so that on iOS Safari
-      // window.print() only sees the order HTML — not the admin page behind it.
-      const printWin = window.open('', '_blank');
-      if (printWin) {
-        printWin.document.open();
-        printWin.document.write(printDocHtml);
-        printWin.document.close();
-        let printed = false;
-        const doPrint = () => {
-          if (printed) return;
-          printed = true;
-          printWin.focus();
-          printWin.print();
-        };
-        // Primary: wait for full load then print
-        printWin.onload = doPrint;
-        // Fallback for iOS Safari where onload may not fire on document.write
-        setTimeout(doPrint, 900);
+      // Print directly from the already-loaded hidden iframe.
+      // On iOS Safari, iframe.contentWindow.print() prints only the iframe
+      // content — no second window needed. The overlay stays open so the
+      // user can return to it after the print dialog.
+      const fw = pdfFrame.contentWindow;
+      if (fw) {
+        fw.focus();
+        fw.print();
       }
-      // Close the main-page overlay immediately — the new window is the only UI now.
-      // This avoids a double-preview situation where the user must dismiss two screens.
-      closeOverlay();
     });
 
     // WhatsApp button: use the blob pre-generated in the hidden iframe.
