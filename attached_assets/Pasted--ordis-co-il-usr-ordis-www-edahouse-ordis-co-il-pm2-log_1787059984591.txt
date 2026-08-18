@@ -1,0 +1,63 @@
+
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ pm2 logs edahouse --lines 1000 --nostream 2>&1 | grep -E "orders|POST|Error|500|Failed|error" | tail -60
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.netrc%A0'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.npmrc%A0'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.gitlab-ci.yml%A0'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.env.travis%A0'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.pgpass%A0'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.env.production%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.env.staging%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.env.test%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.gcloud/credentials.json%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.htaccess%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.env.template%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.htpasswd%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.netrc%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.npmrc%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.gitlab-ci.yml%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.env.travis%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | URIError: Failed to decode param '/.pgpass%85'
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/serve-static/index.js:121:7)
+0|edahouse |     at SendStream.error (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/send/index.js:270:17)
+0|edahouse | 4:08:48 PM [express] GET /api/admin/orders 200 in 23ms :: {"data":[],"total":0,"page":1,"limit":25,"…
+0|edahouse | 4:09:25 PM [express] POST /api/login 200 in 987ms :: {"id":"admin","username":"admin","email":"admin…
+0|edahouse | 4:09:32 PM [express] GET /api/admin/analytics/summary 200 in 34ms :: {"ordersByStatus":{},"totalOrde…
+0|edahouse | 4:09:32 PM [express] GET /api/admin/analytics/active-orders 200 in 24ms :: {"ordersByStatus":{},"tot…
+0|edahouse | 4:09:32 PM [express] GET /api/admin/analytics/summary 200 in 34ms :: {"ordersByStatus":{"cancelled":…
+0|edahouse | 4:09:39 PM [express] GET /api/admin/analytics/summary 200 in 11ms :: {"ordersByStatus":{},"totalOrde…
+0|edahouse | 4:09:48 PM [express] GET /api/admin/orders 200 in 24ms :: {"data":[],"total":0,"page":1,"limit":25,"…
+0|edahouse | 4:09:55 PM [express] GET /api/admin/orders 200 in 75ms :: {"data":[{"id":545,"userId":"manual_178567…
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$
