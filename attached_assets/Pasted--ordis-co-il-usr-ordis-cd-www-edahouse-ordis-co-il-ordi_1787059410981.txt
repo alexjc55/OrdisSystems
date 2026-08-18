@@ -1,0 +1,64 @@
+
+ordis_co_il_usr@ordis:~$ cd ~/www/edahouse.ordis.co.il/
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ # Если используется pm2:
+pm2 logs --lines 500 --nostream 2>&1 | grep -E "Error creating|orders.*500|500.*orders|Failed to create|ZodError|duplicate|constraint|violat|null.*toString|cannot read|TypeError" | tail -50
+
+# Если systemd (journalctl):
+journalctl -u your-app-name --since "7 days ago" --no-pager 2>&1 | grep -E "Error creating|orders.*500|Failed to create|ZodError|duplicate|constraint|violat|TypeError" | tail -50
+
+# Если просто нода в фоне / логи в файл:
+grep -E "Error creating|Failed to create|ZodError|constraint|TypeError|null.*toString" /path/to/your/app.log 2>/dev/null | tail -50
+
+# Или если логи в stdout через docker:
+docker logs your-container-name 2>&1 | grep -E "Error creating|Failed to create|ZodError|constraint|TypeError" | tail -50
+4|dvizh    | error: there is no unique or exclusion constraint matching the ON CONFLICT specification
+4|dvizh    | error: there is no unique or exclusion constraint matching the ON CONFLICT specification
+4|dvizh    | error: there is no unique or exclusion constraint matching the ON CONFLICT specification
+4|dvizh    | error: there is no unique or exclusion constraint matching the ON CONFLICT specification
+4|dvizh    |   constraint: undefined,
+4|dvizh    |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+1|api.clin |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+3|dk       |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     |   constraint: undefined,
+2|demo     | Error creating coupon: TypeError: value.toISOString is not a function
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$
