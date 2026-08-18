@@ -784,7 +784,7 @@ export default function Checkout() {
       z.literal('')
     ]),
     phone: z.string().min(10, tCommon('validation.phoneMinLength')),
-    address: z.string().min(10, tCommon('validation.addressMinLength')),
+    address: z.string().min(2, tCommon('validation.addressMinLength')),
   });
 
   const registrationSchema = guestOrderSchema.extend({
@@ -801,7 +801,7 @@ export default function Checkout() {
   });
 
   const authenticatedOrderSchema = z.object({
-    address: z.string().min(10, tCommon('validation.addressMinLength')),
+    address: z.string().min(2, tCommon('validation.addressMinLength')),
     phone: z.string().min(10, tCommon('validation.phoneMinLength')),
     deliveryDate: z.string().min(1, tCommon('validation.deliveryDateRequired')),
     deliveryTime: z.string().min(1, tCommon('validation.deliveryTimeRequired')),
