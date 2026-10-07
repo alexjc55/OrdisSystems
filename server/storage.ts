@@ -96,7 +96,7 @@ export interface IStorage {
   updatePassword(userId: string, hashedPassword: string, conditions?: PasswordUpdateConditions): Promise<User>;
   createPasswordResetToken(email: string): Promise<{ token: string; userId: string }>;
   validatePasswordResetToken(token: string): Promise<{ userId: string; isValid: boolean }>;
-  clearPasswordResetToken(userId: string): Promise<void>;
+  clearPasswordResetToken(userId: string, expectedToken?: string): Promise<void>;
   
   // Admin user management
   createUser(user: Omit<UpsertUser, 'id'> & { password?: string }): Promise<User>;
@@ -1835,7 +1835,7 @@ export class DatabaseStorage implements IStorage {
     return { userId: user.id, isValid: true };
   }
 
-  async clearPasswordResetToken(userId: string): Promise<void> {
+  async clearPasswordResetToken(userId: string, expectedToken?: string): Promise<void> {
     const db = await this.getDatabase();
     await db
       .update(users)
@@ -1844,7 +1844,8 @@ export class DatabaseStorage implements IStorage {
         passwordResetExpires: null,
         updatedAt: new Date()
       })
-      .where(eq(users.id, userId));
+      .where(expectedToken === undefined ? eq(users.id, userId)
+        : and(eq(users.id, userId), eq(users.passwordResetToken, expectedToken)));
   }
 
   // Theme management methods

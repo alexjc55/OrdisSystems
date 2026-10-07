@@ -4,6 +4,8 @@ import { isAuthenticated, requireAdmin } from "../middleware/auth-guard";
 import { hashPassword, comparePasswords } from "../password-hash";
 import { PasswordUpdateConflict } from "../session-credentials";
 import { toPublicUser } from "@shared/user-dto";
+import { emailService } from "../email-service";
+import { passwordResetEmail, passwordResetOrigin } from "../password-reset-email";
 
 const router = Router();
 
@@ -90,6 +92,8 @@ router.post('/auth/change-password', isAuthenticated, async (req: any, res) => {
 });
 
 router.post('/auth/forgot-password', async (req, res) => {
+  const message = "Если пользователь с таким email существует, инструкции отправлены на почту";
+  let pendingReset: { token: string; userId: string } | undefined;
   try {
     const { email } = req.body;
 
@@ -99,15 +103,44 @@ router.post('/auth/forgot-password', async (req, res) => {
 
     const user = await storage.getUserByEmail(email);
     if (!user) {
-      return res.json({ message: "Если пользователь с таким email существует, инструкции отправлены на почту" });
+      return res.json({ message });
     }
 
-    await storage.createPasswordResetToken(email);
+    const settings = await storage.getStoreSettings();
+    if (!settings?.orderNotificationFromEmail ||
+        !/^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/.test(settings.orderNotificationFromEmail.trim())) {
+      throw new Error("Store email sender is not configured");
+    }
+    const origin = passwordResetOrigin();
+    // Account recovery is transactional mail, independent of order-notification toggles.
+    await emailService.updateSettings({
+      useSendgrid: settings.useSendgrid || false,
+      sendgridApiKey: settings.sendgridApiKey || process.env.SENDGRID_API_KEY,
+      smtpHost: settings.smtpHost || undefined,
+      smtpPort: settings.smtpPort || undefined,
+      smtpSecure: settings.smtpSecure || undefined,
+      smtpUser: settings.smtpUser || undefined,
+      smtpPassword: settings.smtpPassword || undefined,
+    });
+    pendingReset = await storage.createPasswordResetToken(user.email!);
+    const delivered = await emailService.sendEmail(
+      passwordResetEmail(settings, user.email!, pendingReset.token, origin),
+    );
+    if (!delivered) throw new Error("Password recovery mail was not accepted");
 
-    res.json({ message: "Если пользователь с таким email существует, инструкции отправлены на почту" });
+    res.json({ message });
   } catch (error) {
-    console.error("Error requesting password reset:", error);
-    res.status(500).json({ message: "Ошибка при запросе сброса пароля" });
+    // Provider errors may contain the email body / reset URL. Never log them.
+    console.error("Password recovery request could not be delivered");
+    if (pendingReset) {
+      try {
+        await storage.clearPasswordResetToken(pendingReset.userId, pendingReset.token);
+      } catch {
+        console.error("Failed to clear an undelivered password recovery token");
+      }
+    }
+    // Mail and configuration failures must not reveal whether an account exists.
+    res.json({ message });
   }
 });
 

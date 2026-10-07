@@ -40,6 +40,8 @@ interface EmailParams {
   subject: string;
   text?: string;
   html?: string;
+  // Credential emails must not expose their contents in provider diagnostics.
+  sensitive?: boolean;
 }
 
 interface EmailSettings {
@@ -138,7 +140,7 @@ class EmailService {
   async sendEmail(params: EmailParams): Promise<boolean> {
     const { to, from, fromName, subject, text, html } = params;
 
-    console.log('📧 Sending email:', {
+    if (!params.sensitive) console.log('📧 Sending email:', {
       to,
       from: `${fromName} <${from}>`,
       subject,
@@ -167,14 +169,20 @@ class EmailService {
         html: params.html || '',
         customArgs: {
           'entity_ref': `order-${Date.now()}`,
-        }
+        },
+        ...(params.sensitive ? {
+          trackingSettings: {
+            clickTracking: { enable: false, enableText: false },
+            openTracking: { enable: false },
+          },
+        } : {}),
       };
 
       await sgMail.send(msg);
-      console.log('✅ Email sent successfully via SendGrid:', params.subject);
+      if (!params.sensitive) console.log('✅ Email sent successfully via SendGrid:', params.subject);
       return true;
     } catch (error: any) {
-      console.error('❌ SendGrid email error:', error?.message);
+      console.error('❌ SendGrid email error:', params.sensitive ? 'Credential email delivery failed' : error?.message);
       // Fallback to Nodemailer if SendGrid fails
       console.log('🔄 Falling back to Nodemailer...');
       return await this.sendViaNodemailer(params);
@@ -201,11 +209,16 @@ class EmailService {
         },
         // Fix BASE64_LENGTH_79_INF - use quoted-printable encoding
         encoding: 'utf8',
-        textEncoding: 'quoted-printable',
+        textEncoding: 'quoted-printable' as const,
         htmlEncoding: 'quoted-printable'
       };
 
       const info = await this.nodemailerTransporter.sendMail(msg);
+      if (params.sensitive) {
+        // A resolved SMTP call is not proof of recipient acceptance.
+        return Array.isArray(info.accepted) && info.accepted.length > 0 &&
+          (!Array.isArray(info.rejected) || info.rejected.length === 0);
+      }
       console.log('✅ Email sent successfully via Nodemailer:', params.subject);
       console.log('📧 Message ID:', info.messageId);
       console.log('📧 Response:', info.response);
@@ -213,7 +226,7 @@ class EmailService {
       console.log('📧 Rejected:', info.rejected);
       return true;
     } catch (error: any) {
-      console.error('❌ Nodemailer email error:', error?.message);
+      console.error('❌ Nodemailer email error:', params.sensitive ? 'Credential email delivery failed' : error?.message);
       throw error;
     }
   }

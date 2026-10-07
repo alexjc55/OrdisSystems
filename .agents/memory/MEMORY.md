@@ -5,3 +5,4 @@
 - [Safe merge setup](safe-merge-setup.md) — code merges must not automatically push schema changes; interactive migration prompts can hang or risk store data.
 - [Session rotation scope](session-rotation-scope.md) — password fixes must preserve existing stores and credentials; rollout is not permission for global session deletion.
 - [Registration accessibility](registration-accessibility.md) — many shoppers are older; prefer unobtrusive anti-abuse checks over visible CAPTCHA.
+- [Existing store mail settings](store-email-scope.md) — owner says customer/admin order mail already works in every store; reuse it for new transactional emails.

@@ -36,6 +36,7 @@ Migration file sync (CRITICAL): Whenever shared/schema.ts is modified (new table
 - **API**: RESTful API with structured error handling.
 - **Route Structure**: Modularized routes for system, authentication, user profiles, catalog, orders, administration (users, orders, settings, themes, analytics, push), and integrations (feeds, translations, barcode).
 - **Security**: Rate limiting on critical endpoints and secure cookie configuration.
+- **Password recovery email**: Uses the existing store SMTP/SendGrid settings and configured sender, independent of the order-alert toggle. Credential links use `REPLIT_APP_URL` or the first HTTPS `ALLOWED_ORIGINS` entry; Replit development can use its runtime dev domain. Never use request headers or a fallback shop domain for reset links. Missing trusted-origin configuration fails privately and logs a redacted delivery error.
 
 ### Key Features
 - **Authentication & Authorization**: Role-based access control (admin, worker, customer).

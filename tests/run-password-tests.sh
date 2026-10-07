@@ -19,3 +19,4 @@ export PASSWORD_TEST_CLUSTER=isolated NODE_ENV=test SESSION_SECRET=isolated-pass
 unset SUPER_ADMIN_LOGIN SUPER_ADMIN_PASSWORD
 ./node_modules/.bin/drizzle-kit push --force >/dev/null
 node --import tsx --test tests/password-security.test.ts
+node --import tsx --test tests/password-reset-delivery.test.ts
