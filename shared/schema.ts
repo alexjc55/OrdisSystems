@@ -828,6 +828,8 @@ export const pendingPayments = pgTable("pending_payments", {
   status: varchar("status", { enum: ["pending", "completed", "failed", "expired"] }).default("pending").notNull(),
   transactionId: varchar("transaction_id", { length: 255 }), // Transaction ID returned by payment gateway
   orderId: integer("order_id").references(() => orders.id, { onDelete: "set null" }).unique(),
+  providerApprovalRequired: boolean("provider_approval_required"), // null for legacy payments; snapshot non-J5 Grow at initiation
+  providerApprovedAt: timestamp("provider_approved_at"), // independent of order creation
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at").notNull(), // Auto-expire after 3 hours
 });

@@ -40,3 +40,8 @@ WHERE p.status = 'completed'
   AND (SELECT COUNT(*) FROM orders WHERE transaction_id = p.transaction_id AND payment_method = 'online') = 1
   AND (SELECT COUNT(*) FROM pending_payments WHERE transaction_id = p.transaction_id) = 1
   AND NOT EXISTS (SELECT 1 FROM pending_payments WHERE order_id = o.id);
+
+-- Grow confirmation is independent of order creation (additive, no backfill).
+ALTER TABLE pending_payments
+  ADD COLUMN IF NOT EXISTS provider_approval_required boolean,
+  ADD COLUMN IF NOT EXISTS provider_approved_at timestamp;

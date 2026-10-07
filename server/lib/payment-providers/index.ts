@@ -263,16 +263,17 @@ export class GrowProvider implements IPaymentProvider {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: form.toString(),
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {
-      console.error(`Grow approveTransaction HTTP ${response.status}`);
-      return;
+      throw new Error(`Grow approveTransaction HTTP ${response.status}`);
     }
 
-    const data = await response.json().catch(() => ({}));
+    const data = await response.json();
     if (String(data.status) !== '1') {
-      console.error(`Grow approveTransaction error:`, data);
+      // Do not include the gateway payload (which can contain sensitive data).
+      throw new Error("Grow approveTransaction rejected");
     }
   }
 

@@ -6,6 +6,7 @@ import { randomUUID } from "node:crypto";
 import express from "express";
 import type { Server } from "node:http";
 import type { StoreSettings } from "../shared/schema";
+import { GrowProvider } from "../server/lib/payment-providers";
 
 if (process.env.PAYMENT_TEST_CLUSTER !== "isolated" ||
     !process.env.PGHOST?.startsWith("/tmp/payment-tests.")) {
@@ -41,6 +42,10 @@ before(async () => {
   const outboxMigration = await readFile("migrations/0008_payment_email_outbox.sql", "utf8");
   await pool.query(outboxMigration);
   await pool.query(outboxMigration);
+  await pool.query("ALTER TABLE pending_payments DROP COLUMN provider_approval_required, DROP COLUMN provider_approved_at");
+  const approvalMigration = await readFile("migrations/0009_payment_provider_approval.sql", "utf8");
+  await pool.query(approvalMigration);
+  await pool.query(approvalMigration);
   const product = await pool.query(
     "INSERT INTO products (name, price, price_per_kg) VALUES ('Тестовый продукт', 10, 10) RETURNING id",
   );
@@ -238,6 +243,246 @@ test("unknown payment token fails explicitly without creating orders", async () 
   const initial = await counts();
   await assert.rejects(storage.finalizePendingPayment(randomUUID()), /Pending payment not found/);
   assert.deepEqual(await counts(), initial);
+});
+
+async function withGrow(
+  approve: (transactionId: string) => Promise<void>,
+  run: () => Promise<void>,
+  j5Enabled = false,
+) {
+  const originalSettings = storage.getStoreSettings;
+  const originalApprove = GrowProvider.prototype.approveTransaction;
+  const settings = await originalSettings.call(storage);
+  storage.getStoreSettings = async () => ({
+    ...settings,
+    paymentProviderConfig: {
+      active: "grow",
+      grow: { userId: "test-user", apiKey: "test-key", pageCode: "test-page", j5Enabled },
+    },
+  } as StoreSettings);
+  GrowProvider.prototype.approveTransaction = approve;
+  try { await run(); } finally {
+    storage.getStoreSettings = originalSettings;
+    GrowProvider.prototype.approveTransaction = originalApprove;
+  }
+}
+
+function growCallback(token: string, transactionId = token) {
+  return fetch(`${baseUrl}/api/payment/callback?token=${token}&transactionCode=${transactionId}`,
+    { redirect: "manual" });
+}
+
+function growWebhook(token: string, transactionId = token, success = true) {
+  return fetch(`${baseUrl}/api/payment/webhook?token=${token}`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    // Exercise the token fallback in notifyUrl too.
+    body: JSON.stringify({ transactionCode: transactionId, paymentSum: success ? "10" : "" }),
+  });
+}
+
+test("Grow callback-first and webhook-first approve exactly once with one order and email pair", async () => {
+  for (const browserFirst of [true, false]) {
+    const approved: string[] = [];
+    await withGrow(async id => { approved.push(id); }, async () => {
+      const pending = await makePayment();
+      const initial = await counts();
+      const mailStart = mail.length;
+      if (browserFirst) {
+        assert.equal((await growCallback(pending.token)).status, 302);
+        assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, null);
+      }
+      assert.equal((await growWebhook(pending.token)).status, 200);
+      assert.ok((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt);
+      const orderId = (await storage.getPendingPaymentByToken(pending.token))?.orderId;
+      for (let i = 0; i < 3; i++) {
+        assert.equal((await growCallback(pending.token)).headers.get("location"),
+          `/thanks?payment=success&orderId=${orderId}`);
+        assert.equal((await growWebhook(pending.token)).status, 200);
+      }
+      assert.deepEqual(approved, [pending.token]);
+      assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
+      await drainMail();
+      assert.equal(mail.length, mailStart + 2);
+      assert.equal((await growWebhook(pending.token, "late-failure", false)).status, 200);
+      assert.equal((await storage.getPendingPaymentByToken(pending.token))?.status, "completed");
+    });
+  }
+});
+
+test("Grow concurrent callback and webhooks across independent storage instances serialize approval", async () => {
+  let calls = 0;
+  let entered!: () => void;
+  let release!: () => void;
+  const started = new Promise<void>(resolve => { entered = resolve; });
+  const wait = new Promise<void>(resolve => { release = resolve; });
+  const approve = async () => { calls++; entered(); await wait; };
+  await withGrow(approve, async () => {
+    const pending = await makePayment();
+    const initial = await counts();
+    const mailStart = mail.length;
+    const requests = Promise.all([
+      growCallback(pending.token),
+      ...Array.from({ length: 5 }, () => growWebhook(pending.token)),
+    ]);
+    await started;
+    const competing = secondStorage.approvePendingPayment(pending.token, pending.token, approve, true);
+    release();
+    await competing;
+    assert.ok((await requests).every(response => response.status < 400));
+    assert.equal(calls, 1);
+    await drainMail();
+    assert.equal(mail.length, mailStart + 2);
+    assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
+  });
+});
+
+test("Grow approval failure returns 500 and a repeat retries without duplicate orders or emails", async () => {
+  let calls = 0;
+  await withGrow(async () => {
+    if (++calls === 1) throw new Error("Simulated approval rejection");
+  }, async () => {
+    const pending = await makePayment();
+    const initial = await counts();
+    const mailStart = mail.length;
+    assert.equal((await growWebhook(pending.token)).status, 500);
+    const saved = await storage.getPendingPaymentByToken(pending.token);
+    assert.equal(saved?.status, "completed");
+    assert.equal(saved?.providerApprovedAt, null);
+    await drainMail();
+    assert.equal(mail.length, mailStart + 2);
+    assert.equal((await growWebhook(pending.token)).status, 200);
+    assert.ok((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt);
+    assert.equal((await growWebhook(pending.token)).status, 200);
+    assert.equal(calls, 2);
+    await drainMail();
+    assert.equal(mail.length, mailStart + 2);
+    assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
+  });
+});
+
+test("Grow J5 never approves on webhook; saved mode survives configuration changes", async () => {
+  let calls = 0;
+  const approve = async () => { calls++; };
+  for (const storedRequired of [null, false, true]) {
+    await withGrow(approve, async () => {
+      const pending = await makePayment();
+      if (storedRequired !== null) {
+        await pool.query("UPDATE pending_payments SET provider_approval_required = $1 WHERE token = $2",
+          [storedRequired, pending.token]);
+      }
+      assert.equal((await growCallback(pending.token)).status, 302);
+      assert.equal((await growWebhook(pending.token)).status, 200);
+      assert.equal((await growWebhook(pending.token)).status, 200);
+      assert.equal(!!(await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, storedRequired === true);
+    }, true);
+  }
+  assert.equal(calls, 1, "only the payment initiated as non-J5 is approved despite current J5 settings");
+  await withGrow(approve, async () => {
+    const pending = await makePayment();
+    await pool.query("UPDATE pending_payments SET provider_approval_required = false WHERE token = $1", [pending.token]);
+    assert.equal((await growWebhook(pending.token)).status, 200);
+  });
+  assert.equal(calls, 1, "a saved J5 payment is not charged after J5 is disabled");
+});
+
+test("payment initiation persists Grow approval mode and webhook fills an absent transaction ID", async () => {
+  const originalInitiate = GrowProvider.prototype.initiate;
+  GrowProvider.prototype.initiate = async () => ({ redirectUrl: "https://gateway.example.test/pay" });
+  let calls = 0;
+  try {
+    for (const j5 of [true, false]) {
+      await withGrow(async () => { calls++; }, async () => {
+        const response = await fetch(`${baseUrl}/api/payment/initiate`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: [{ productId, quantity: "1", pricePerKg: "10", totalPrice: "10" }],
+            totalAmount: "10",
+            orderData: { totalAmount: "10", guestName: "Buyer", guestEmail: "guest@example.test" },
+          }),
+        });
+        assert.equal(response.status, 200);
+        const { token } = await response.json();
+        assert.equal((await storage.getPendingPaymentByToken(token))?.providerApprovalRequired, !j5);
+        // Older callbacks may have finalized without saving a transaction code.
+        await storage.finalizePendingPayment(token);
+        assert.equal((await growWebhook(token, "approved-" + token)).status, 200);
+        if (!j5) {
+          const saved = await storage.getPendingPaymentByToken(token);
+          assert.equal(saved?.transactionId, "approved-" + token);
+          assert.equal((await storage.getOrderById(saved!.orderId!))?.transactionId, "approved-" + token);
+        }
+      }, j5);
+    }
+  } finally { GrowProvider.prototype.initiate = originalInitiate; }
+  assert.equal(calls, 1);
+});
+
+test("Grow never approves a conflicting transaction; a legacy completed row can be approved without recreation", async () => {
+  const approved: string[] = [];
+  await withGrow(async id => { approved.push(id); }, async () => {
+    const pending = await makePayment();
+    await growCallback(pending.token);
+    assert.equal((await growWebhook(pending.token, "other-transaction")).status, 500);
+    assert.deepEqual(approved, []);
+    assert.equal((await growWebhook(pending.token)).status, 200);
+    assert.deepEqual(approved, [pending.token]);
+    const legacy = await makePayment();
+    await pool.query("UPDATE pending_payments SET status = 'completed' WHERE token = $1", [legacy.token]);
+    const initial = await counts();
+    const mailStart = mail.length;
+    assert.equal((await growWebhook(legacy.token)).status, 200);
+    assert.equal((await growWebhook(legacy.token)).status, 200);
+    assert.deepEqual(await counts(), initial);
+    assert.equal(mail.length, mailStart);
+    assert.equal((await storage.getPendingPaymentByToken(legacy.token))?.orderId, null);
+    assert.deepEqual(approved, [pending.token, legacy.token]);
+  });
+});
+
+test("Grow durable approval survives process restart; death while holding lock leaves approval retryable", async () => {
+  const pending = await makePayment();
+  await storage.finalizePendingPayment(pending.token, pending.token);
+  const childCode = (approve: string) => `
+    const { storage } = await import("./server/storage.ts");
+    await storage.approvePendingPayment(${JSON.stringify(pending.token)}, ${JSON.stringify(pending.token)}, ${approve}, true);
+    process.exit(0);
+  `;
+  const crash = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e",
+    childCode("async () => process.exit(0)")], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(crash.status, 0, crash.stderr);
+  assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, null);
+  const recovery = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e",
+    childCode("async () => {}")], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(recovery.status, 0, recovery.stderr);
+  assert.ok((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt);
+  await secondStorage.approvePendingPayment(pending.token, pending.token,
+    async () => assert.fail("persisted approval must not be repeated"), true);
+});
+
+test("Grow approval contract rejects HTTP, API, malformed JSON and network errors; only status 1 succeeds", async () => {
+  const provider = new GrowProvider("test-user", "test-key", "test-page", true);
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const response of [
+      new Response("unavailable", { status: 503 }),
+      new Response(JSON.stringify({ status: 0 })),
+      new Response(JSON.stringify({})),
+      new Response("not JSON"),
+    ]) {
+      globalThis.fetch = async () => response;
+      await assert.rejects(provider.approveTransaction("txn"));
+    }
+    globalThis.fetch = async () => { throw new Error("network interrupted"); };
+    await assert.rejects(provider.approveTransaction("txn"), /network interrupted/);
+    globalThis.fetch = async (url, init) => {
+      assert.ok(String(url).endsWith("/approveTransaction"));
+      assert.ok(String(init?.body).includes("transactionCode=txn"));
+      assert.ok(init?.signal, "approval has a bounded timeout");
+      return new Response(JSON.stringify({ status: "1" }));
+    };
+    await provider.approveTransaction("txn");
+    await provider.captureJ5("txn", 10);
+  } finally { globalThis.fetch = originalFetch; }
 });
 
 test("death immediately after order commit is recovered by a new process, not a repeated callback", async () => {

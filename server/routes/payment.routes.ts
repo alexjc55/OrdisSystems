@@ -60,6 +60,8 @@ async function initiatePayment(req: any, res: any) {
       userId: userId || null,
       status: "pending",
       expiresAt,
+      providerApprovalRequired: provider.name === "grow" &&
+        (settings as any).paymentProviderConfig?.grow?.j5Enabled !== true,
     });
 
     const baseUrl = `${req.protocol}://${req.get("host")}`;
@@ -171,19 +173,18 @@ async function handleWebhook(req: any, res: any) {
     const pending = await storage.getPendingPaymentByToken(token);
     if (!pending) return res.status(404).send("Not found");
 
-    if (pending.status === "completed") {
-      return res.send("OK"); // idempotent
-    }
-
     if (isSuccess) {
-      const result = await finalizeOrder(token, transactionId);
+      await finalizeOrder(token, transactionId);
       // Grow requires approveTransaction — but only for non-J5 payments.
       // For J5, the actual charge is deferred and triggered when order status → "ready".
       const isGrowJ5 = provider?.name === 'grow' &&
         (settings as any)?.paymentProviderConfig?.grow?.j5Enabled === true;
-      if (result.created && provider?.approveTransaction && transactionId && !isGrowJ5) {
-        await provider.approveTransaction(transactionId).catch((e: any) =>
-          console.error("approveTransaction failed:", e)
+      if (provider?.name === "grow" && provider.approveTransaction) {
+        await storage.approvePendingPayment(
+          token,
+          transactionId,
+          id => provider.approveTransaction!(id),
+          !isGrowJ5,
         );
       }
     } else {

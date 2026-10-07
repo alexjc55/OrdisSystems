@@ -51,7 +51,7 @@ import {
 } from "@shared/schema";
 import type { ProductWithCategories, OrderWithItems } from "@shared/catalog-dto";
 import { getDB } from "./db";
-import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
+import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, isNull, gt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import { randomBytes } from "node:crypto";
 import { SESSION_TABLE_NAME, PasswordUpdateConflict } from "./session-credentials";
@@ -208,6 +208,7 @@ export interface IStorage {
   createPendingPayment(data: InsertPendingPayment): Promise<PendingPayment>;
   getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined>;
   finalizePendingPayment(token: string, transactionId?: string): Promise<PaymentFinalizationResult>;
+  approvePendingPayment(token: string, transactionId: string | undefined, approve: (transactionId: string) => Promise<void>, legacyRequired: boolean): Promise<void>;
   updatePendingPaymentStatus(token: string, status: "pending" | "failed" | "expired", transactionId?: string): Promise<PendingPayment | undefined>;
   deleteExpiredPendingPayments(): Promise<void>;
 }
@@ -2392,6 +2393,40 @@ export class DatabaseStorage implements IStorage {
         await tx.insert(paymentEmailOutbox).values(notifications);
       }
       return { orderId: order.id, created: true };
+    });
+  }
+
+  async approvePendingPayment(
+    token: string,
+    transactionId: string | undefined,
+    approve: (transactionId: string) => Promise<void>,
+    legacyRequired: boolean,
+  ): Promise<void> {
+    const db = await this.getDatabase();
+    await db.transaction(async (tx) => {
+      // Serialize across server processes, including duplicate webhooks.
+      // A failed call rolls back; the next webhook can retry independently
+      // of finalization, which has already committed its order/email intents.
+      const [pending] = await tx.select().from(pendingPayments)
+        .where(eq(pendingPayments.token, token)).for("update");
+      if (!pending) throw new Error("Pending payment not found");
+      if (!(pending.providerApprovalRequired ?? legacyRequired) || pending.providerApprovedAt) return;
+      if (pending.status !== "completed") throw new Error("Payment is not finalized");
+      if (pending.transactionId && transactionId && pending.transactionId !== transactionId) {
+        throw new Error("Payment transaction mismatch");
+      }
+      const savedTransactionId = pending.transactionId || transactionId;
+      if (!savedTransactionId) throw new Error("Missing approval transaction ID");
+      await approve(savedTransactionId);
+      await tx.update(pendingPayments).set({
+        providerApprovedAt: new Date(),
+        transactionId: savedTransactionId,
+      }).where(eq(pendingPayments.id, pending.id));
+      // A browser callback can finalize without a transaction ID.
+      if (pending.orderId) {
+        await tx.update(orders).set({ transactionId: savedTransactionId })
+          .where(and(eq(orders.id, pending.orderId), isNull(orders.transactionId)));
+      }
     });
   }
 
