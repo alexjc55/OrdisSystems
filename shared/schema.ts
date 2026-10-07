@@ -827,6 +827,7 @@ export const pendingPayments = pgTable("pending_payments", {
   userId: varchar("user_id").references(() => users.id), // null for guests
   status: varchar("status", { enum: ["pending", "completed", "failed", "expired"] }).default("pending").notNull(),
   transactionId: varchar("transaction_id", { length: 255 }), // Transaction ID returned by payment gateway
+  verification: jsonb("verification").$type<import("./payment-verification").PaymentVerificationContext>(),
   orderId: integer("order_id").references(() => orders.id, { onDelete: "set null" }).unique(),
   providerApprovalRequired: boolean("provider_approval_required"), // null for legacy payments; snapshot non-J5 Grow at initiation
   providerApprovedAt: timestamp("provider_approved_at"), // independent of order creation
@@ -1117,7 +1118,13 @@ export const insertProductBranchAvailabilitySchema = createInsertSchema(productB
   updatedAt: true,
 });
 
-export const insertPendingPaymentSchema = createInsertSchema(pendingPayments).omit({
+export const insertPendingPaymentSchema = createInsertSchema(pendingPayments, {
+  verification: z.object({
+    provider: z.string(), merchant: z.string(), amountInAgorot: z.number().int().positive(),
+    j5: z.boolean(), notifySecret: z.string(),
+    processId: z.string().optional(), processToken: z.string().optional(), saleId: z.string().optional(),
+  }).nullable().optional(),
+}).omit({
   id: true,
   createdAt: true,
   orderId: true,

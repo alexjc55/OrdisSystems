@@ -53,6 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await apiRequest("POST", "/api/login", credentials);
     },
     onSuccess: (user: SelectUser) => {
+      // Settings have role-dependent payment credentials; never reuse a
+      // visitor's cached projection for an administrator after sign-in.
+      queryClient.removeQueries({ queryKey: ["/api/settings"] });
       queryClient.setQueryData(["/api/auth/user"], user);
       toast({
         title: t('auth.loginSuccess'),
@@ -73,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await apiRequest("POST", "/api/register", credentials);
     },
     onSuccess: (user: SelectUser) => {
+      queryClient.removeQueries({ queryKey: ["/api/settings"] });
       queryClient.setQueryData(["/api/auth/user"], user);
       toast({
         title: t('auth.registerSuccess'),
@@ -93,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["/api/settings"] });
       queryClient.setQueryData(["/api/auth/user"], null);
       toast({
         title: t('auth.logoutSuccess'),

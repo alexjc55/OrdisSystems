@@ -3,7 +3,9 @@ import { storage } from "../storage";
 import { randomBytes as rb } from "crypto";
 import { type InsertOrder } from "@shared/schema";
 import { BRANCHES_ENABLED } from "../config";
-import { getProvider } from "../lib/payment-providers/index";
+import { getProvider, type PaymentProviderConfig } from "../lib/payment-providers/index";
+import { checkoutVerification, merchantFingerprint, money, PaymentVerificationError } from "../lib/payment-providers/verification";
+import { passwordResetOrigin } from "../password-reset-email";
 
 const router = Router();
 
@@ -36,6 +38,19 @@ async function initiatePayment(req: any, res: any) {
     if (!clientOrderData) {
       return res.status(400).json({ message: "Order data is required" });
     }
+    const amountInAgorot = money(totalAmount);
+    if (money(clientOrderData.totalAmount) !== amountInAgorot) {
+      return res.status(400).json({ message: "Payment and order amounts differ" });
+    }
+    // Notify URLs carry a private authentication capability. Never derive their
+    // destination (or customer returns) from Host/Origin/forwarded headers.
+    let baseUrl: string;
+    try {
+      baseUrl = passwordResetOrigin();
+    } catch {
+      return res.status(400).json({ message: "A trusted HTTPS store origin is required for payments" });
+    }
+    const verification = checkoutVerification(settings.paymentProviderConfig as PaymentProviderConfig, provider.name, amountInAgorot);
 
     const token = rb(32).toString("hex");
     const expiresAt = new Date();
@@ -60,12 +75,10 @@ async function initiatePayment(req: any, res: any) {
       userId: userId || null,
       status: "pending",
       expiresAt,
+      verification,
       providerApprovalRequired: provider.name === "grow" &&
         (settings as any).paymentProviderConfig?.grow?.j5Enabled !== true,
     });
-
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    const amountInAgorot = Math.round(parseFloat(String(totalAmount)) * 100);
 
     const customerName =
       clientOrderData.guestName ||
@@ -84,8 +97,11 @@ async function initiatePayment(req: any, res: any) {
       customerPhone,
       successUrl: `${baseUrl}/api/payment/callback`,
       errorUrl: `${baseUrl}/api/payment/callback?status=error`,
-      notifyUrl: `${baseUrl}/api/payment/webhook`,
+      notifyUrl: `${baseUrl}/api/payment/webhook?proof=${verification.notifySecret}`,
       language,
+    });
+    await storage.setPendingPaymentVerification(token, {
+      ...verification, processId: result.processId, processToken: result.processToken, saleId: result.saleId,
     });
 
     return res.json({ redirectUrl: result.redirectUrl, token });
@@ -96,27 +112,21 @@ async function initiatePayment(req: any, res: any) {
   }
 }
 
+function paymentProvider(settings: any, pending: Awaited<ReturnType<typeof storage.getPendingPaymentByToken>>, legacyHyp: boolean) {
+  const config = settings?.paymentProviderConfig as PaymentProviderConfig | undefined;
+  if (!config || !pending) throw new PaymentVerificationError();
+  const name = pending.verification?.provider || (legacyHyp ? "hyp" : config.active);
+  const provider = getProvider({ paymentProviderConfig: { ...config, active: name } });
+  if (!provider || (pending.verification &&
+      pending.verification.merchant !== merchantFingerprint(config, name))) throw new PaymentVerificationError();
+  return provider;
+}
+
 // ─── Helper: handle callback (browser redirect from gateway) ─────────────────
 async function handleCallback(req: any, res: any) {
   const q = req.query as Record<string, string>;
   const settings = await storage.getStoreSettings().catch(() => null);
-  const provider = settings ? getProvider(settings as any) : null;
-
-  let token: string | undefined;
-  let isSuccess = false;
-  let transactionId: string | undefined;
-
-  if (provider) {
-    const parsed = provider.parseCallback(q);
-    token = parsed.token;
-    isSuccess = parsed.isSuccess;
-    transactionId = parsed.transactionId;
-  } else {
-    // Fallback: try to parse as HYP (for already-in-flight sessions)
-    token = q.Order || q.token;
-    isSuccess = q.CCode === "0" || (q.status === "success" && !q.CCode);
-    transactionId = q.Id || q.TransactionId;
-  }
+  const token = q.Order || q.token || q.order_id || q.add_field_1 || q.transaction_id;
 
   if (!token) {
     return res.redirect("/?payment=error");
@@ -125,22 +135,32 @@ async function handleCallback(req: any, res: any) {
   try {
     const pending = await storage.getPendingPaymentByToken(token);
     if (!pending) {
-      return res.redirect(`/thanks?payment=${isSuccess ? "success" : "failed"}`);
+      return res.redirect("/checkout?payment=failed");
     }
+    const verifier = paymentProvider(settings, pending, req.path.includes("/hyp/"));
+    const { isSuccess } = verifier.parseCallback(q);
     if (pending.status === "completed" && !isSuccess) {
       return res.redirect(`/thanks?payment=success${pending.orderId ? `&orderId=${pending.orderId}` : ""}`);
     }
 
     if (isSuccess) {
-      const { orderId } = await finalizeOrder(token, transactionId);
+      // A browser redirect is not evidence. PayMe's authenticated notification
+      // completes the order; a return before it arrives leaves checkout pending.
+      if (verifier.name === "payme" || (verifier.name === "grow" &&
+          !pending.verification?.processId && !q.transactionToken)) {
+        if (pending.status === "completed") return res.redirect(`/thanks?payment=success${pending.orderId ? `&orderId=${pending.orderId}` : ""}`);
+        return res.redirect("/checkout?payment=pending");
+      }
+      const verifiedTransaction = await verifier.verifyPayment({ pending, payload: q, source: "callback" });
+      const { orderId } = await finalizeOrder(token, verifiedTransaction);
       return res.redirect(`/thanks?payment=success${orderId ? `&orderId=${orderId}` : ""}`);
     } else {
-      await storage.updatePendingPaymentStatus(token, "failed");
+      // An unauthenticated failure redirect must not poison a payable checkout.
       return res.redirect("/checkout?payment=failed");
     }
   } catch (error) {
-    console.error("Payment callback error:", error);
-    return res.redirect("/checkout?payment=failed");
+    console.error("Payment callback verification/finalization failed");
+    return res.redirect("/checkout?payment=pending");
   }
 }
 
@@ -149,52 +169,42 @@ async function handleWebhook(req: any, res: any) {
   try {
     const body = req.body as Record<string, string>;
     const settings = await storage.getStoreSettings().catch(() => null);
-    const provider = settings ? getProvider(settings as any) : null;
+    const data = (body as any)?.data || body;
+    const token = data?.Order || data?.token || data?.order_id || data?.add_field_1 ||
+      data?.transaction_id || data?.paymentDesc || data?.customFields?.cField1 || req.query?.token;
 
-    let token: string | undefined;
-    let isSuccess = false;
-    let transactionId: string | undefined;
-
-    if (provider) {
-      const parsed = provider.parseWebhook(body);
-      token = parsed.token;
-      isSuccess = parsed.isSuccess;
-      transactionId = parsed.transactionId;
-      // Grow embeds our token in the notifyUrl query param as fallback
-      if (!token && req.query?.token) token = req.query.token as string;
-    } else {
-      token = body.Order || body.token;
-      isSuccess = body.CCode === "0" || body.Status === "000" || body.Status === "0";
-      transactionId = body.Id || body.TransactionId;
-    }
-
-    if (!token) return res.status(400).send("Missing token");
+    if (typeof token !== "string" || !token) return res.status(400).send("Missing token");
 
     const pending = await storage.getPendingPaymentByToken(token);
     if (!pending) return res.status(404).send("Not found");
+    const verifier = paymentProvider(settings, pending, req.path.includes("/hyp/"));
+    const { isSuccess } = verifier.parseWebhook(body);
 
     if (isSuccess) {
+      const transactionId = await verifier.verifyPayment({
+        pending, payload: body, source: "webhook", notifySecret: req.query?.proof,
+      });
       await finalizeOrder(token, transactionId);
       // Grow requires approveTransaction — but only for non-J5 payments.
       // For J5, the actual charge is deferred and triggered when order status → "ready".
-      const isGrowJ5 = provider?.name === 'grow' &&
-        (settings as any)?.paymentProviderConfig?.grow?.j5Enabled === true;
-      if (provider?.name === "grow" && provider.approveTransaction) {
+      const isGrowJ5 = pending.verification?.j5 ??
+        (verifier.name === 'grow' && (settings as any)?.paymentProviderConfig?.grow?.j5Enabled === true);
+      if (verifier.name === "grow" && verifier.approveTransaction && !isGrowJ5) {
         await storage.approvePendingPayment(
           token,
           transactionId,
-          id => provider.approveTransaction!(id),
+          id => verifier.approveTransaction!(id),
           !isGrowJ5,
         );
       }
     } else {
-      await storage.updatePendingPaymentStatus(token, "failed", transactionId);
+      // Ignore unverified failures. Gateways allow retries on the same page.
     }
 
     return res.send("OK");
   } catch (error) {
-    console.error("Payment webhook error:", error);
-    return res.status(500).send("Error");
+    console.error("Payment webhook verification/finalization failed");
+    return res.status(error instanceof PaymentVerificationError ? 400 : 500).send("Payment not verified");
   }
 }
 
@@ -237,10 +247,14 @@ router.post("/payment/hyp/webhook", handleWebhook);
 
 // ─── GET /api/payment/pending/:token ─────────────────────────────────────────
 router.get("/payment/pending/:token", async (req: any, res) => {
-  const { token } = req.params;
-  const pending = await storage.getPendingPaymentByToken(token);
-  if (!pending) return res.status(404).json({ message: "Not found" });
-  return res.json({ status: pending.status });
+  try {
+    const pending = await storage.getPendingPaymentByToken(req.params.token);
+    if (!pending) return res.status(404).json({ message: "Not found" });
+    return res.json({ status: pending.status });
+  } catch {
+    console.error("Payment status temporarily unavailable");
+    return res.status(503).json({ message: "Payment status unavailable" });
+  }
 });
 
 // ─── Cleanup expired pending payments (called on startup) ─────────────────────

@@ -7,6 +7,7 @@ import { sql } from "drizzle-orm";
 import { insertStoreSettingsSchema, storeSettings, closedDates, insertClosedDateSchema } from "@shared/schema";
 import { z } from "zod";
 import { deleteUploadFiles } from "../../utils/delete-upload-file";
+import { publicPaymentConfig } from "../../lib/payment-providers/public-config";
 
 const router = Router();
 
@@ -18,7 +19,13 @@ router.get('/settings', async (req, res) => {
       const feedToken = randomUUID();
       settings = await storage.updateStoreSettings({ ...settings, feedToken }) as typeof settings;
     }
-    res.json(settings);
+    const user = (req as any).isAuthenticated?.() && (req as any).user?.id
+      ? await storage.getUser((req as any).user.id) : undefined;
+    res.setHeader("Cache-Control", "private, no-store");
+    res.json(settings && user?.role !== "admin" ? {
+      ...settings,
+      paymentProviderConfig: publicPaymentConfig(settings.paymentProviderConfig as any),
+    } : settings);
   } catch (error) {
     console.error("Error fetching store settings:", error);
     res.status(500).json({ message: "Failed to fetch store settings" });

@@ -862,7 +862,7 @@ export default function Checkout() {
         giftAccepted?: boolean;
       } = {
         items: orderPayloadItems,
-        totalAmount: total.toString(),
+        totalAmount: total.toFixed(2),
         guestInfo: {
           ...data,
           deliveryDate,
@@ -972,7 +972,7 @@ export default function Checkout() {
           pricePerKg: item.product.pricePerKg || item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: total.toString(),
+        totalAmount: total.toFixed(2),
         userId: newUser.id,
         deliveryAddress: data.address,
         deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
@@ -1099,7 +1099,7 @@ export default function Checkout() {
           pricePerKg: item.product.pricePerKg || item.product.price,
           totalPrice: item.totalPrice.toString()
         })),
-        totalAmount: total.toString(),
+        totalAmount: total.toFixed(2),
         deliveryAddress: formData.address,
         customerPhone: formData.phone,
         deliveryDate,
@@ -1166,6 +1166,7 @@ export default function Checkout() {
   // Check if online payment is available via paymentProviderConfig
   const activePaymentProvider: string = (storeSettings as any)?.paymentProviderConfig?.active || 'none';
   const isOnlinePaymentAvailable = Boolean(
+    (storeSettings as any)?.paymentProviderConfig?.configured ||
     (activePaymentProvider === 'hyp' && (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
     (activePaymentProvider === 'grow' && (storeSettings as any)?.paymentProviderConfig?.grow?.userId) ||
     (activePaymentProvider === 'allpay' && (storeSettings as any)?.paymentProviderConfig?.allpay?.login) ||
@@ -1688,7 +1689,7 @@ export default function Checkout() {
                         pricePerKg: item.product.pricePerKg || item.product.price,
                         totalPrice: item.totalPrice.toString()
                       })),
-                      totalAmount: total.toString(),
+                      totalAmount: total.toFixed(2),
                       orderData: {
                         userId: user?.id,
                         deliveryAddress: address,
@@ -2171,7 +2172,7 @@ export default function Checkout() {
                           pricePerKg: item.product.pricePerKg || item.product.price,
                           totalPrice: item.totalPrice.toString()
                         })),
-                        totalAmount: total.toString(),
+                        totalAmount: total.toFixed(2),
                         orderData: {
                           guestName: `${data.firstName} ${data.lastName}`,
                           guestEmail: data.email,

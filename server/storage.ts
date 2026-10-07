@@ -207,6 +207,7 @@ export interface IStorage {
 
   // Pending payments (online payment temp orders)
   createPendingPayment(data: InsertPendingPayment): Promise<PendingPayment>;
+  setPendingPaymentVerification(token: string, verification: NonNullable<PendingPayment["verification"]>): Promise<void>;
   getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined>;
   finalizePendingPayment(token: string, transactionId?: string): Promise<PaymentFinalizationResult>;
   approvePendingPayment(token: string, transactionId: string | undefined, approve: (transactionId: string) => Promise<void>, legacyRequired: boolean): Promise<void>;
@@ -2331,6 +2332,11 @@ export class DatabaseStorage implements IStorage {
     return record;
   }
 
+  async setPendingPaymentVerification(token: string, verification: NonNullable<PendingPayment["verification"]>): Promise<void> {
+    const db = await this.getDatabase();
+    await db.update(pendingPayments).set({ verification }).where(eq(pendingPayments.token, token));
+  }
+
   async getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined> {
     const db = await this.getDatabase();
     const [record] = await db
@@ -2363,6 +2369,9 @@ export class DatabaseStorage implements IStorage {
       const [pending] = await tx.select().from(pendingPayments)
         .where(eq(pendingPayments.token, token)).for("update");
       if (!pending) throw new Error("Pending payment not found");
+      if (pending.transactionId && transactionId && pending.transactionId !== transactionId) {
+        throw new Error("Payment transaction mismatch");
+      }
       if (pending.status === "completed") {
         // Never recreate legacy completed payments lacking an order link.
         return { orderId: pending.orderId, created: false };

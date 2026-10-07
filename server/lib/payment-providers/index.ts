@@ -55,6 +55,9 @@ export interface InitiateParams {
 
 export interface InitiateResult {
   redirectUrl: string;
+  processId?: string;
+  processToken?: string;
+  saleId?: string;
 }
 
 export interface CallbackResult {
@@ -74,6 +77,7 @@ export interface IPaymentProvider {
   initiate(params: InitiateParams): Promise<InitiateResult>;
   parseCallback(query: Record<string, string>): CallbackResult;
   parseWebhook(body: Record<string, string>): WebhookResult;
+  verifyPayment(input: import("./verification").VerificationInput): Promise<string>;
   approveTransaction?(transactionId: string): Promise<void>;
   /** J5 capture: charge the final amount (≤ reserved). Called when order status → "ready". */
   captureJ5?(orderId: string, amountILS: number): Promise<void>;
@@ -87,6 +91,12 @@ const HYP_BASE = "https://pay.hyp.co.il/p/";
 
 export class HypProvider implements IPaymentProvider {
   readonly name = 'hyp';
+
+  async verifyPayment(input: import("./verification").VerificationInput): Promise<string> {
+    const { verifyHyp } = await import("./verification");
+    return verifyHyp({ ...input, legacyJ5: this.j5Enabled, legacyBufferPercent: this.j5BufferPercent },
+      { masof: this.masof, passP: this.passP, key: this.key });
+  }
 
   constructor(
     private readonly masof: string,
@@ -109,7 +119,7 @@ export class HypProvider implements IPaymentProvider {
       KEY: this.key,
       PassP: this.passP,
       Masof: this.masof,
-      Amount: String(bufferedAgorot),
+      Amount: (bufferedAgorot / 100).toFixed(2),
       Coin: "1",
       Order: params.token,
       Fild1: params.customerName || "",
@@ -172,6 +182,11 @@ const GROW_PROD_BASE    = "https://secure.meshulam.co.il/api/light/server/1.0";
 export class GrowProvider implements IPaymentProvider {
   readonly name = 'grow';
 
+  async verifyPayment(input: import("./verification").VerificationInput): Promise<string> {
+    const { verifyGrow } = await import("./verification");
+    return verifyGrow({ ...input, legacyJ5: this.j5Enabled, legacyBufferPercent: this.j5BufferPercent }, this.base, this.pageCode);
+  }
+
   constructor(
     private readonly userId: string,
     private readonly apiKey: string,
@@ -194,11 +209,14 @@ export class GrowProvider implements IPaymentProvider {
     const sum = (bufferedAgorot / 100).toFixed(2);
 
     // Embed our internal token in callback URLs so we can match responses to orders
-    const successUrl = `${params.successUrl}?token=${encodeURIComponent(params.token)}`;
-    const cancelUrl  = `${params.errorUrl}?token=${encodeURIComponent(params.token)}`;
+    const successUrl = new URL(params.successUrl);
+    successUrl.searchParams.set("token", params.token);
+    const cancelUrl = new URL(params.errorUrl);
+    cancelUrl.searchParams.set("token", params.token);
     const notifyUrl  = params.notifyUrl
-      ? `${params.notifyUrl}?token=${encodeURIComponent(params.token)}`
+      ? new URL(params.notifyUrl)
       : undefined;
+    notifyUrl?.searchParams.set("token", params.token);
 
     const form = new URLSearchParams();
     form.append('userId',      this.userId);
@@ -206,12 +224,14 @@ export class GrowProvider implements IPaymentProvider {
     form.append('pageCode',    this.pageCode);
     form.append('sum',         sum);
     form.append('paymentDesc', params.token); // echoed back in webhook body
-    form.append('successUrl',  successUrl);
-    form.append('cancelUrl',   cancelUrl);
+    form.append('description', params.token); // current Light API correlation
+    form.append('cField1', params.token);
+    form.append('successUrl',  successUrl.toString());
+    form.append('cancelUrl',   cancelUrl.toString());
     if (params.customerName)  form.append('fullName',   params.customerName);
     if (params.customerEmail) form.append('payerEmail', params.customerEmail);
     if (params.customerPhone) form.append('payerPhone', params.customerPhone);
-    if (notifyUrl)            form.append('notifyUrl',  notifyUrl);
+    if (notifyUrl)            form.append('notifyUrl',  notifyUrl.toString());
     // J5: deferred transaction — reserves funds without charging
     if (this.j5Enabled)       form.append('J5', 'True');
     // Installments: number of payments (1 = single, 2-12 = installments)
@@ -234,22 +254,25 @@ export class GrowProvider implements IPaymentProvider {
       throw new Error(`Grow error: ${data.err || JSON.stringify(data)}`);
     }
 
-    return { redirectUrl: data.data.url };
+    return { redirectUrl: data.data.url,
+      processId: data.data.processId ? String(data.data.processId) : undefined,
+      processToken: data.data.processToken };
   }
 
   parseCallback(query: Record<string, string>): CallbackResult {
     // token was embedded in successUrl; transactionCode signals success
     const token = query.token;
-    const transactionCode = query.transactionCode;
+    const transactionCode = query.transactionCode || query.transactionId;
     return { token, isSuccess: !!transactionCode, transactionId: transactionCode };
   }
 
   parseWebhook(body: Record<string, string>): WebhookResult {
     // token is in body.paymentDesc (we set it during initiate)
     // also returned via notifyUrl query param — handled in handleWebhook as fallback
-    const token = body.paymentDesc || undefined;
-    const transactionCode = body.transactionCode;
-    const isSuccess = !!transactionCode && !!body.paymentSum;
+    const data = (body as any).data || body;
+    const token = data.paymentDesc || data.customFields?.cField1 || undefined;
+    const transactionCode = data.transactionCode || data.transactionId;
+    const isSuccess = !!transactionCode;
     return { token, isSuccess, transactionId: transactionCode };
   }
 
@@ -330,6 +353,12 @@ function buildAllPaySign(data: Record<string, any>, apiKey: string): string {
 export class AllPayProvider implements IPaymentProvider {
   readonly name = 'allpay';
 
+  async verifyPayment(input: import("./verification").VerificationInput): Promise<string> {
+    const { verifyAllPay } = await import("./verification");
+    return verifyAllPay({ ...input, legacyJ5: this.j5Enabled, legacyBufferPercent: this.j5BufferPercent },
+      this.login, this.apiKey, buildAllPaySign);
+  }
+
   constructor(
     private readonly login: string,
     private readonly apiKey: string,
@@ -349,13 +378,15 @@ export class AllPayProvider implements IPaymentProvider {
     const langMap: Record<string, string> = { he: 'HE', ar: 'AR', ru: 'RU', en: 'EN' };
     const lang = langMap[params.language || ''] || 'AUTO';
 
+    const successUrl = new URL(params.successUrl);
+    successUrl.searchParams.set("order_id", params.token);
     const body: Record<string, any> = {
       login:      this.login,
       order_id:   params.token,             // unique per payment
       items:      [{ name: 'Order', qty: '1', price: amountILS, vat: '1' }],
       currency:   'ILS',
       lang,
-      success_url:  params.successUrl,
+      success_url:  successUrl.toString(),
       backlink_url: params.errorUrl,
       add_field_1:  params.token,           // echoed back in webhook unchanged
     };
@@ -477,6 +508,11 @@ const PAYME_PROD_BASE    = "https://live.payme.io/api";
 export class PaymeProvider implements IPaymentProvider {
   readonly name = 'payme';
 
+  async verifyPayment(input: import("./verification").VerificationInput): Promise<string> {
+    const { verifyPayme } = await import("./verification");
+    return verifyPayme(input);
+  }
+
   constructor(
     private readonly sellerPaymeId: string,
     private readonly testMode: boolean = true,
@@ -494,7 +530,8 @@ export class PaymeProvider implements IPaymentProvider {
       : params.amountInAgorot;
 
     // Embed token in return URL so callback can identify the payment even without Payme echo
-    const returnUrl = `${params.successUrl}?transaction_id=${encodeURIComponent(params.token)}`;
+    const returnUrl = new URL(params.successUrl);
+    returnUrl.searchParams.set("transaction_id", params.token);
 
     const body: Record<string, any> = {
       seller_payme_id:     this.sellerPaymeId,
@@ -504,7 +541,7 @@ export class PaymeProvider implements IPaymentProvider {
       transaction_id:      params.token,
       installments:        '1',
       sale_type:           this.j5Enabled ? 'authorize' : 'sale',
-      sale_return_url:     returnUrl,
+      sale_return_url:     returnUrl.toString(),
       sale_payment_method: 'multi',
       language:            (params.language === 'he' || params.language === 'ar') ? 'he' : 'en',
     };
@@ -526,7 +563,7 @@ export class PaymeProvider implements IPaymentProvider {
 
     const data = await response.json();
     if (data.sale_url) {
-      return { redirectUrl: data.sale_url };
+      return { redirectUrl: data.sale_url, saleId: data.payme_sale_id };
     }
     const errMsg = data.status_error_details || data.status_error_code || JSON.stringify(data);
     throw new Error(`Payme error: ${errMsg}`);

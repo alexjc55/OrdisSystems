@@ -2,11 +2,12 @@ import assert from "node:assert/strict";
 import { after, before, beforeEach, test } from "node:test";
 import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHmac, createHash } from "node:crypto";
 import express from "express";
 import type { Server } from "node:http";
 import type { StoreSettings } from "../shared/schema";
-import { GrowProvider } from "../server/lib/payment-providers";
+import { HypProvider, GrowProvider, AllPayProvider, PaymeProvider, type InitiateParams } from "../server/lib/payment-providers";
+import { checkoutVerification } from "../server/lib/payment-providers/verification";
 
 if (process.env.PAYMENT_TEST_CLUSTER !== "isolated" ||
     !process.env.PGHOST?.startsWith("/tmp/payment-tests.")) {
@@ -21,6 +22,12 @@ let baseUrl: string;
 let productId: number;
 const mail: { to: string; html?: string }[] = [];
 let processNext: typeof import("../server/payment-email-outbox").processNextPaymentEmail;
+const originalFetch = globalThis.fetch;
+const growEvidence = new Map<string, Record<string, any>>();
+const hypConfig = { active: "hyp" as const, hyp: { masof: "test-terminal", passP: "test-password", key: "test-key" } };
+function hypSign(token: string, id: string, amount = "10.00") {
+  return createHmac("sha256", "test-gateway-only-signing-key").update(`${token}:${id}:${amount}:0`).digest("hex");
+}
 
 async function drainMail() {
   while (await processNext()) { /* drain committed delivery intents */ }
@@ -56,6 +63,9 @@ before(async () => {
     VALUES ($1, '{}', '[]', 'completed', NOW(), true)`, [historical]);
   const reconciliationMigration = await readFile("migrations/0011_payment_approval_reconciliation.sql", "utf8");
   await pool.query(reconciliationMigration);
+  const verificationMigration = await readFile("migrations/0012_payment_verification.sql", "utf8");
+  await pool.query(verificationMigration);
+  await pool.query(verificationMigration);
   await pool.query(reconciliationMigration);
   const migrated = await storage.getPendingPaymentByToken(historical);
   assert.ok(migrated?.providerApprovalAttemptedAt);
@@ -70,12 +80,38 @@ before(async () => {
   const settings = {
     emailNotificationsEnabled: true, orderNotificationEmail: "admin@example.test",
     orderNotificationFromEmail: "shop@example.test", orderNotificationFromName: "Shop",
-    storeName: "Shop", defaultLanguage: "ru", paymentProviderConfig: { active: "none" },
+    storeName: "Shop", defaultLanguage: "ru", paymentProviderConfig: hypConfig, feedToken: "test-feed-token",
   } as StoreSettings;
   await storage.updateStoreSettings(settings);
   // Keep real database finalization, item joins, routes and mail templates;
   // replace only store config and the external mail transport.
   storage.getStoreSettings = async () => settings;
+  // Only external gateway calls are replaced. Routes run their real verification.
+  globalThis.fetch = async (url, options) => {
+    const u = new URL(String(url));
+    if (u.hostname === "pay.hyp.co.il" && u.searchParams.get("What") === "VERIFY") {
+      const p = u.searchParams;
+      const valid = p.get("Masof") === "test-terminal" && p.get("KEY") === "test-key" &&
+        p.get("PassP") === "test-password" && p.get("Sign") ===
+        hypSign(p.get("Order")!, p.get("Id")!, p.get("Amount")!);
+      return new Response(valid ? "CCode=0" : "CCode=200");
+    }
+    if (u.pathname.endsWith("/getPaymentProcessInfo")) {
+      const p = new URLSearchParams(String(options?.body));
+      const pending = await storage.getPendingPaymentByToken(p.get("processId")!);
+      const context = pending?.verification;
+      if (!context || context.processToken !== p.get("processToken") || p.get("pageCode") !== "test-page")
+        return Response.json({ status: 0 });
+      return Response.json({ status: 1, data: {
+        processId: context.processId, processToken: context.processToken, transactions: [{
+          transactionId: pending!.token, statusCode: context.j5 ? 11 : 2,
+          sum: context.amountInAgorot / 100,
+          ...growEvidence.get(pending!.token),
+        }],
+      } });
+    }
+    return originalFetch(url, options);
+  };
   const { emailService } = await import("../server/email-service");
   emailService.updateSettings = async () => {};
   emailService.sendEmail = async params => { mail.push(params); return true; };
@@ -96,6 +132,8 @@ before(async () => {
   app.use("/api", outboxRoutes);
   const { default: orderRoutes } = await import("../server/routes/orders.routes");
   app.use("/api", orderRoutes);
+  const { default: settingsRoutes } = await import("../server/routes/admin/settings.routes");
+  app.use("/api", settingsRoutes);
   await new Promise<void>(resolve => { server = app.listen(0, "127.0.0.1", resolve); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
@@ -105,6 +143,7 @@ before(async () => {
 beforeEach(drainMail);
 
 after(async () => {
+  globalThis.fetch = originalFetch;
   if (server) await new Promise<void>((resolve, reject) => {
     server.close(error => error ? reject(error) : resolve());
     server.closeAllConnections();
@@ -113,8 +152,15 @@ after(async () => {
 });
 
 async function makePayment(userId: string | null = null, invalidItem = false) {
+  const token = randomUUID();
+  const config = (await storage.getStoreSettings())!.paymentProviderConfig as any;
+  const verification = checkoutVerification(config, config.active, 1000);
+  if (config.active === "grow") {
+    verification.processId = token;
+    verification.processToken = "private-process-" + token;
+  }
   return storage.createPendingPayment({
-    token: randomUUID(), userId, status: "pending",
+    token, userId, status: "pending", verification,
     providerApprovalRequired: true,
     expiresAt: new Date(Date.now() + 3600000),
     orderData: {
@@ -129,14 +175,15 @@ async function makePayment(userId: string | null = null, invalidItem = false) {
 }
 
 function callback(token: string, transactionId = token, legacy = false) {
-  return fetch(`${baseUrl}/api/payment/${legacy ? "hyp/" : ""}callback?Order=${token}&CCode=0&Id=${transactionId}`,
+  return fetch(`${baseUrl}/api/payment/${legacy ? "hyp/" : ""}callback?Order=${token}&CCode=0&Id=${transactionId}&Amount=10.00&Sign=${hypSign(token, transactionId)}`,
     { redirect: "manual" });
 }
 
 function webhook(token: string, transactionId = token, success = true, legacy = false) {
   return fetch(`${baseUrl}/api/payment/${legacy ? "hyp/" : ""}webhook`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ Order: token, CCode: success ? "0" : "1", Id: transactionId }),
+    body: JSON.stringify({ Order: token, CCode: success ? "0" : "1", Id: transactionId,
+      Amount: "10.00", Sign: hypSign(token, transactionId) }),
   });
 }
 
@@ -434,9 +481,9 @@ test("parallel browser callback/webhook commit one order and send one pair of em
     assert.equal(order?.items[0].productId, productId);
     assert.equal(order?.items[0].totalPrice, "10.00");
     for (let n = 0; n < 3; n++) {
-      const repeated = await callback(pending.token, "different-txn", legacy);
+      const repeated = await callback(pending.token, "txn-" + pending.token, legacy);
       assert.equal(repeated.headers.get("location"), responses[0].headers.get("location"));
-      assert.equal(await (await webhook(pending.token, "different-txn", true, legacy)).text(), "OK");
+      assert.equal(await (await webhook(pending.token, "txn-" + pending.token, true, legacy)).text(), "OK");
     }
     await drainMail();
     assert.equal(mail.length, mailStart + 2);
@@ -548,11 +595,12 @@ function growCallback(token: string, transactionId = token) {
     { redirect: "manual" });
 }
 
-function growWebhook(token: string, transactionId = token, success = true) {
-  return fetch(`${baseUrl}/api/payment/webhook?token=${token}`, {
+async function growWebhook(token: string, transactionId = token, success = true) {
+  const pending = await storage.getPendingPaymentByToken(token);
+  return fetch(`${baseUrl}/api/payment/webhook?token=${token}&proof=${pending?.verification?.notifySecret || ""}`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     // Exercise the token fallback in notifyUrl too.
-    body: JSON.stringify({ transactionCode: transactionId, paymentSum: success ? "10" : "" }),
+    body: JSON.stringify(success ? { transactionCode: transactionId, paymentSum: "10" } : {}),
   });
 }
 
@@ -651,16 +699,16 @@ test("Grow J5 never approves on webhook; saved mode survives configuration chang
       assert.equal((await growCallback(pending.token)).status, 302);
       assert.equal((await growWebhook(pending.token)).status, 200);
       assert.equal((await growWebhook(pending.token)).status, 200);
-      assert.equal(!!(await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, storedRequired === true);
+      assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, null);
     }, true);
   }
-  assert.equal(calls, 1, "only the payment initiated as non-J5 is approved despite current J5 settings");
+  assert.equal(calls, 0, "a verified J5 reservation must never be acknowledged as a normal charge");
   await withGrow(approve, async () => {
     const pending = await makePayment();
     await pool.query("UPDATE pending_payments SET provider_approval_required = false WHERE token = $1", [pending.token]);
     assert.equal((await growWebhook(pending.token)).status, 200);
   });
-  assert.equal(calls, 1, "a saved J5 payment is not charged after J5 is disabled");
+  assert.equal(calls, 0, "a saved J5 payment is not charged after J5 is disabled");
 });
 
 test("payment initiation persists Grow approval mode and webhook fills an absent transaction ID", async () => {
@@ -700,7 +748,7 @@ test("Grow rejects conflicting transactions; legacy completed payments require v
   await withGrow(async id => { approved.push(id); }, async () => {
     const pending = await makePayment();
     await growCallback(pending.token);
-    assert.equal((await growWebhook(pending.token, "other-transaction")).status, 500);
+    assert.equal((await growWebhook(pending.token, "other-transaction")).status, 400);
     assert.deepEqual(approved, []);
     assert.equal((await growWebhook(pending.token)).status, 200);
     assert.deepEqual(approved, [pending.token]);
@@ -842,6 +890,241 @@ test("Grow reconciliation validates one completed non-J5 transaction and preserv
   { encoding: "utf8", timeout: 20_000 });
   assert.equal(missingConsent.status, 1);
   assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovalReference, "GROW-CASE-VALID");
+});
+
+test("forged HYP success with a known token, mismatched amount/store and transaction never creates orders or emails", async () => {
+  const pending = await makePayment();
+  const initial = await counts();
+  const mailStart = mail.length;
+  const good = { Order: pending.token, CCode: "0", Id: pending.token, Amount: "10.00", Sign: hypSign(pending.token, pending.token) };
+  for (const change of [
+    { Sign: undefined }, { Sign: "forged" }, { Amount: "1.00" }, { Masof: "another-store" },
+    { Coin: "2" }, { Id: "another-transaction" },
+  ]) {
+    const payload: Record<string, any> = { ...good, ...change };
+    const q = new URLSearchParams(Object.entries(payload).filter(([, value]) => value !== undefined) as [string, string][]);
+    const response = await fetch(`${baseUrl}/api/payment/callback?${q}`, { redirect: "manual" });
+    assert.equal(response.headers.get("location"), "/checkout?payment=pending");
+    assert.equal((await fetch(`${baseUrl}/api/payment/hyp/webhook`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    })).status, 400);
+  }
+  assert.deepEqual(await counts(), initial);
+  assert.equal((await storage.getPendingPaymentByToken(pending.token))?.status, "pending");
+  assert.equal(mail.length, mailStart);
+  assert.equal((await webhook(pending.token)).status, 200);
+  assert.equal((await webhook(pending.token, "other-transaction")).status, 400);
+  await drainMail();
+  assert.equal(mail.length, mailStart + 2);
+});
+
+test("known Grow token and claimed success cannot override unpaid status, wrong amount or merchant; approval follows verification", async () => {
+  let approvals = 0;
+  await withGrow(async () => { approvals++; }, async () => {
+    const pending = await makePayment();
+    const initial = await counts();
+    const mailStart = mail.length;
+    for (const evidence of [{ statusCode: 0 }, { sum: 1 }, { transactionId: "other-id" }]) {
+      growEvidence.set(pending.token, evidence);
+      assert.equal((await growCallback(pending.token)).headers.get("location"), "/checkout?payment=pending");
+      assert.equal((await growWebhook(pending.token)).status, 400);
+    }
+    growEvidence.delete(pending.token);
+    const settings = storage.getStoreSettings;
+    storage.getStoreSettings = async () => {
+      const s = await settings();
+      return { ...s, paymentProviderConfig: { active: "grow", grow: {
+        userId: "different-user", apiKey: "test-key", pageCode: "test-page",
+      } } } as StoreSettings;
+    };
+    try { assert.equal((await growWebhook(pending.token)).status, 400); }
+    finally { storage.getStoreSettings = settings; }
+    assert.equal(approvals, 0);
+    assert.deepEqual(await counts(), initial);
+    assert.equal(mail.length, mailStart);
+    const saved = await storage.getPendingPaymentByToken(pending.token);
+    assert.equal(saved?.status, "pending");
+    assert.equal(saved?.providerApprovalAttemptedAt, null);
+    assert.equal((await growWebhook(pending.token)).status, 200);
+    assert.equal(approvals, 1);
+    assert.equal((await growWebhook(pending.token)).status, 200);
+    assert.equal(approvals, 1);
+  });
+});
+
+test("newer payments remain verifiable after changing active provider; signed legacy HYP payments need no new metadata", async () => {
+  const pending = await makePayment();
+  const original = storage.getStoreSettings;
+  storage.getStoreSettings = async () => ({ ...await original(), paymentProviderConfig: { ...hypConfig, active: "none" } } as StoreSettings);
+  try { assert.equal((await webhook(pending.token)).status, 200); }
+  finally { storage.getStoreSettings = original; }
+  const legacy = await makePayment();
+  await pool.query("UPDATE pending_payments SET verification = NULL WHERE token = $1", [legacy.token]);
+  assert.equal((await webhook(legacy.token, legacy.token, true, true)).status, 200);
+  assert.equal((await callback(legacy.token, legacy.token, true)).headers.get("location"),
+    `/thanks?payment=success&orderId=${(await storage.getPendingPaymentByToken(legacy.token))?.orderId}`);
+});
+
+test("public settings hide all payment credentials without hiding online-payment availability", async () => {
+  const response = await fetch(`${baseUrl}/api/settings`);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
+  assert.deepEqual((await response.json()).paymentProviderConfig, { active: "hyp", configured: true });
+  const original = storage.getUser;
+  storage.getUser = async () => ({ id: "admin-id", role: "admin" } as any);
+  try {
+    const admin = await fetch(`${baseUrl}/api/settings`, { headers: { "x-test-role": "admin", "x-test-user": "admin-id" } });
+    assert.deepEqual((await admin.json()).paymentProviderConfig, hypConfig);
+  } finally { storage.getUser = original; }
+});
+
+test("payment polling survives a database failure without exposing query details or crashing the server", async () => {
+  const original = storage.getPendingPaymentByToken;
+  storage.getPendingPaymentByToken = async () => { throw new Error("private database error"); };
+  try {
+    const response = await fetch(`${baseUrl}/api/payment/pending/known-token`);
+    assert.equal(response.status, 503);
+    assert.deepEqual(await response.json(), { message: "Payment status unavailable" });
+  } finally { storage.getPendingPaymentByToken = original; }
+  assert.equal((await fetch(`${baseUrl}/api/payment/pending/unknown-token`)).status, 404);
+});
+
+test("forged Host and forwarded headers cannot redirect provider-only notification secrets (all providers and legacy HYP)", async () => {
+  const originalSettings = storage.getStoreSettings;
+  const settings = await originalSettings();
+  const payload = {
+    items: [{ productId, quantity: "1", pricePerKg: "10", totalPrice: "10" }],
+    totalAmount: "10", orderData: { totalAmount: "10", guestName: "Buyer", guestEmail: "guest@example.test" },
+  };
+  const configs = [
+    { active: "hyp", hyp: hypConfig.hyp },
+    { active: "grow", grow: { userId: "test-user", apiKey: "test-key", pageCode: "test-page" } },
+    { active: "allpay", allpay: { login: "merchant", apiKey: "private-signing-key" } },
+    { active: "payme", payme: { sellerPaymeId: "private-mpl" } },
+  ];
+  const classes = [HypProvider, GrowProvider, AllPayProvider, PaymeProvider];
+  const canonical = process.env.REPLIT_APP_URL;
+  process.env.REPLIT_APP_URL = "https://shop.example.test";
+  try {
+    for (const [n, config] of configs.entries()) {
+      storage.getStoreSettings = async () => ({ ...settings, paymentProviderConfig: config } as StoreSettings);
+      const prototype = classes[n].prototype;
+      const originalInitiate = prototype.initiate;
+      const destinations: InitiateParams[] = [];
+      prototype.initiate = async params => {
+        destinations.push(params);
+        return { redirectUrl: "https://gateway.example.test/payment", saleId: "provider-sale" };
+      };
+      try {
+        for (const route of n === 0 ? ["/api/payment/initiate", "/api/payment/hyp/initiate"] : ["/api/payment/initiate"]) {
+          const response = await fetch(baseUrl + route, {
+            method: "POST", headers: {
+              "Content-Type": "application/json", Host: "attacker.example.test",
+              Origin: "https://attacker.example.test", "X-Forwarded-Host": "attacker.example.test",
+              "X-Forwarded-Proto": "http",
+            }, body: JSON.stringify(payload),
+          });
+          assert.equal(response.status, 200);
+          const body = await response.json();
+          const sent = destinations.at(-1)!;
+          const pending = await storage.getPendingPaymentByToken(body.token);
+          for (const url of [sent.successUrl, sent.errorUrl, sent.notifyUrl!]) {
+            assert.equal(new URL(url).origin, "https://shop.example.test");
+            assert.ok(!url.includes("attacker"));
+          }
+          assert.equal(new URL(sent.notifyUrl!).searchParams.get("proof"), pending?.verification?.notifySecret);
+          assert.ok(!sent.successUrl.includes("proof") && !sent.errorUrl.includes("proof"));
+          assert.ok(!JSON.stringify(body).includes(pending!.verification!.notifySecret));
+          assert.deepEqual(Object.keys(body).sort(), ["redirectUrl", "token"]);
+        }
+      } finally { prototype.initiate = originalInitiate; }
+    }
+  } finally {
+    storage.getStoreSettings = originalSettings;
+    if (canonical === undefined) delete process.env.REPLIT_APP_URL;
+    else process.env.REPLIT_APP_URL = canonical;
+  }
+});
+
+test("invalid or missing trusted payment origin fails before saving a session or contacting a provider", async () => {
+  const originalInitiate = HypProvider.prototype.initiate;
+  const previous = { app: process.env.REPLIT_APP_URL, allowed: process.env.ALLOWED_ORIGINS,
+    domain: process.env.REPLIT_DEV_DOMAIN };
+  let calls = 0;
+  HypProvider.prototype.initiate = async () => { calls++; return { redirectUrl: "https://gateway.test/payment" }; };
+  const count = async () => Number((await pool.query("SELECT COUNT(*) FROM pending_payments")).rows[0].count);
+  const initial = await count();
+  try {
+    delete process.env.ALLOWED_ORIGINS;
+    delete process.env.REPLIT_DEV_DOMAIN;
+    for (const configured of [undefined, "http://shop.test", "https://user:password@shop.test",
+      "https://shop.test/path", "https://shop.test/?redirect=attacker.test", "https://shop.test/#fragment"]) {
+      if (configured === undefined) delete process.env.REPLIT_APP_URL;
+      else process.env.REPLIT_APP_URL = configured;
+      const response = await fetch(`${baseUrl}/api/payment/initiate`, {
+        method: "POST", headers: { "Content-Type": "application/json", Host: "attacker.example.test" },
+        body: JSON.stringify({
+          items: [{ productId, quantity: "1", pricePerKg: "10", totalPrice: "10" }],
+          totalAmount: "10", orderData: { totalAmount: "10", guestName: "Buyer" },
+        }),
+      });
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), { message: "A trusted HTTPS store origin is required for payments" });
+    }
+    assert.equal(calls, 0);
+    assert.equal(await count(), initial);
+  } finally {
+    HypProvider.prototype.initiate = originalInitiate;
+    for (const [key, value] of [["REPLIT_APP_URL", previous.app], ["ALLOWED_ORIGINS", previous.allowed],
+      ["REPLIT_DEV_DOMAIN", previous.domain]] as const) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  }
+});
+
+test("AllPay and PayMe routes reject forged known-token notifications and accept authenticated notifications once", async () => {
+  const original = storage.getStoreSettings;
+  const baseSettings = await original();
+  try {
+    for (const name of ["allpay", "payme"] as const) {
+      const config = name === "allpay"
+        ? { active: name, allpay: { login: "merchant", apiKey: "private-signing-key" } }
+        : { active: name, payme: { sellerPaymeId: "private-mpl" } };
+      storage.getStoreSettings = async () => ({ ...baseSettings, paymentProviderConfig: config } as StoreSettings);
+      const pending = await makePayment();
+      const context = pending.verification!;
+      context.saleId = "trusted-sale-" + pending.token;
+      await storage.setPendingPaymentVerification(pending.token, context);
+      const allPayPayload = { order_id: pending.token, add_field_1: pending.token, status: 1, amount: 10, currency: "ILS" };
+      const authenticated = (p: Record<string, any>) => {
+        const values = Object.keys(p).filter(k => k !== "sign" && p[k] !== "" && p[k] != null).sort().map(k => String(p[k]));
+        return { ...p, sign: createHash("sha256").update([...values, "private-signing-key"].join(":")).digest("hex") };
+      };
+      const good = name === "allpay" ? authenticated(allPayPayload) : {
+        transaction_id: pending.token, payme_sale_id: context.saleId, status_code: 0,
+        notify_type: "sale-complete", price: 1000, currency: "ILS",
+      };
+      const send = (body: any, proof?: string) => fetch(`${baseUrl}/api/payment/webhook${proof ? `?proof=${proof}` : ""}`, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+      });
+      const initial = await counts();
+      const mailStart = mail.length;
+      assert.equal((await send(name === "allpay" ? allPayPayload : good)).status, 400);
+      assert.equal((await send(name === "allpay" ? authenticated({ ...allPayPayload, amount: 1 }) :
+        { ...good, price: 1 }, context.notifySecret)).status, 400);
+      assert.deepEqual(await counts(), initial);
+      assert.equal(mail.length, mailStart);
+      if (name === "payme") {
+        const returned = await fetch(`${baseUrl}/api/payment/callback?transaction_id=${pending.token}&payme_sale_id=${context.saleId}`, { redirect: "manual" });
+        assert.equal(returned.headers.get("location"), "/checkout?payment=pending");
+      }
+      assert.equal((await send(good, context.notifySecret)).status, 200);
+      assert.equal((await send(good, context.notifySecret)).status, 200);
+      assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
+      await drainMail();
+      assert.equal(mail.length, mailStart + 2);
+    }
+  } finally { storage.getStoreSettings = original; }
 });
 
 test("Grow unverified already-approved reply is unknown, not successful or automatically repeated", async () => {
@@ -991,7 +1274,7 @@ test("failed-email API is admin-only, validates IDs and never exposes transport 
   const pending = await makePayment();
   const result = await storage.finalizePendingPayment(pending.token);
   const rows = await pool.query(
-    "UPDATE payment_email_outbox SET status = 'failed', attempts = 8, last_error = 'smtp password SECRET guestAccessToken=PRIVATE' WHERE order_id = $1 RETURNING id",
+    "UPDATE payment_email_outbox SET status = 'failed', attempts = 8, last_error = 'smtp password SECRET guestAccessToken=PRIVATE' WHERE order_id = $1 RETURNING id, audience",
     [result.orderId],
   );
   const id = rows.rows[0].id;
@@ -1011,7 +1294,7 @@ test("failed-email API is admin-only, validates IDs and never exposes transport 
   assert.equal(response.status, 200);
   const body = await response.json();
   const item = body.items.find((row: any) => row.id === id);
-  assert.deepEqual(item, { id, orderId: result.orderId, audience: "admin", attempts: 8, diagnostic: "delivery_failed" });
+  assert.deepEqual(item, { id, orderId: result.orderId, audience: rows.rows[0].audience, attempts: 8, diagnostic: "delivery_failed" });
   assert.ok(!JSON.stringify(body).includes("SECRET"));
   assert.ok(!JSON.stringify(body).includes("PRIVATE"));
   assert.ok(!JSON.stringify(body).includes("example.test"));
