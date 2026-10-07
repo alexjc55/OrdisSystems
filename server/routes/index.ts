@@ -5,6 +5,7 @@ import path from "path";
 import { setupAuth } from "../auth";
 import rateLimit from "express-rate-limit";
 import { requireAdminForUserWrites } from "../middleware/user-security";
+import { mountAuthRateLimits } from "../middleware/auth-rate-limits";
 
 import systemRoutes from "./system.routes";
 import authRoutes from "./auth.routes";
@@ -65,15 +66,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
+  // Auth registers terminal route handlers, so protections must precede it.
+  mountAuthRateLimits(app);
   await setupAuth(app);
-
-  const loginLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 10,
-    message: { message: "Too many requests" },
-    standardHeaders: true,
-    legacyHeaders: false
-  });
 
   const forgotPasswordLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
@@ -91,7 +86,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     legacyHeaders: false
   });
 
-  app.post('/api/login', loginLimiter);
   app.post('/api/auth/forgot-password', forgotPasswordLimiter);
   app.post('/api/orders/guest', guestOrderLimiter);
 

@@ -4,3 +4,4 @@
 - [PostgreSQL test encoding](postgresql-test-encoding.md) — disposable clusters need explicit UTF-8 or multilingual fixtures can fail before testing application behavior.
 - [Safe merge setup](safe-merge-setup.md) — code merges must not automatically push schema changes; interactive migration prompts can hang or risk store data.
 - [Session rotation scope](session-rotation-scope.md) — password fixes must preserve existing stores and credentials; rollout is not permission for global session deletion.
+- [Registration accessibility](registration-accessibility.md) — many shoppers are older; prefer unobtrusive anti-abuse checks over visible CAPTCHA.

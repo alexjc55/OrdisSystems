@@ -8,7 +8,7 @@
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
-    "test:security": "node --import tsx --test tests/user-security.test.ts",
+    "test:security": "node --import tsx --test tests/user-security.test.ts tests/auth-rate-limits.test.ts",
     "test:passwords": "bash tests/run-password-tests.sh",
     "bootstrap:admin": "bash scripts/bootstrap-admin.sh",
     "test:bootstrap": "bash tests/run-bootstrap-tests.sh",
