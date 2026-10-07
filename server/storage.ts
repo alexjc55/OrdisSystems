@@ -63,6 +63,12 @@ export interface PasswordUpdateConditions {
   resetToken?: string;
 }
 
+export interface PaymentFinalizationResult {
+  // Historical completed payments (or deleted orders) may have no saved link.
+  orderId: number | null;
+  created: boolean;
+}
+
 // Pagination types
 export interface PaginationParams {
   page: number;
@@ -200,7 +206,8 @@ export interface IStorage {
   // Pending payments (online payment temp orders)
   createPendingPayment(data: InsertPendingPayment): Promise<PendingPayment>;
   getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined>;
-  updatePendingPaymentStatus(token: string, status: "pending" | "completed" | "failed" | "expired", transactionId?: string): Promise<PendingPayment>;
+  finalizePendingPayment(token: string, transactionId?: string): Promise<PaymentFinalizationResult>;
+  updatePendingPaymentStatus(token: string, status: "pending" | "failed" | "expired", transactionId?: string): Promise<PendingPayment | undefined>;
   deleteExpiredPendingPayments(): Promise<void>;
 }
 
@@ -2314,16 +2321,65 @@ export class DatabaseStorage implements IStorage {
 
   async updatePendingPaymentStatus(
     token: string,
-    status: "pending" | "completed" | "failed" | "expired",
+    status: "pending" | "failed" | "expired",
     transactionId?: string
-  ): Promise<PendingPayment> {
+  ): Promise<PendingPayment | undefined> {
     const db = await this.getDatabase();
     const [record] = await db
       .update(pendingPayments)
       .set({ status, ...(transactionId ? { transactionId } : {}) })
-      .where(eq(pendingPayments.token, token))
+      .where(and(eq(pendingPayments.token, token), ne(pendingPayments.status, "completed")))
       .returning();
     return record;
+  }
+
+  async finalizePendingPayment(token: string, transactionId?: string): Promise<PaymentFinalizationResult> {
+    const db = await this.getDatabase();
+    return db.transaction(async (tx) => {
+      // Cross-process serialization: the waiter sees the committed result, not
+      // the snapshot that the HTTP handler read before entering this transaction.
+      const [pending] = await tx.select().from(pendingPayments)
+        .where(eq(pendingPayments.token, token)).for("update");
+      if (!pending) throw new Error("Pending payment not found");
+      if (pending.status === "completed") {
+        // Never recreate legacy completed payments lacking an order link.
+        return { orderId: pending.orderId, created: false };
+      }
+
+      const guestFields: Partial<InsertOrder> = {};
+      if (!pending.userId) {
+        guestFields.guestAccessToken = randomBytes(32).toString("hex");
+        guestFields.guestClaimToken = randomBytes(32).toString("hex");
+        guestFields.guestAccessTokenExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      }
+      const [order] = await tx.insert(orders).values({
+        ...(pending.orderData as InsertOrder),
+        userId: pending.userId || null,
+        status: "pending",
+        paymentMethod: "online",
+        transactionId: transactionId || pending.transactionId || null,
+        ...guestFields,
+      }).returning();
+      const items = pending.orderItems as Array<{
+        productId: number | string;
+        quantity: number | string;
+        pricePerKg: number | string;
+        totalPrice: number | string;
+      }>;
+      await tx.insert(orderItems).values(items.map(item => ({
+        orderId: order.id,
+        productId: Number(item.productId),
+        quantity: String(item.quantity),
+        pricePerKg: String(item.pricePerKg),
+        totalPrice: String(item.totalPrice),
+      })));
+      await tx.update(pendingPayments).set({
+        status: "completed",
+        orderId: order.id,
+        transactionId: order.transactionId,
+      }).where(eq(pendingPayments.id, pending.id));
+      return { orderId: order.id, created: true };
+    });
   }
 
   async deleteExpiredPendingPayments(): Promise<void> {

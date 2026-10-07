@@ -7,3 +7,4 @@
 - [Registration accessibility](registration-accessibility.md) — many shoppers are older; prefer unobtrusive anti-abuse checks over visible CAPTCHA.
 - [Existing store mail settings](store-email-scope.md) — owner says customer/admin order mail already works in every store; reuse it for new transactional emails.
 - [API type contracts](api-type-contracts.md) — type cleanup preserves response shapes; represent joined-query subsets with DTOs rather than exposing extra database fields.
+- [Historical paid orders](historical-paid-orders.md) — preserve completed payments even when their old order association cannot be recovered safely.

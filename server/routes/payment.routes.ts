@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { storage } from "../storage";
 import { randomBytes as rb } from "crypto";
-import { type InsertOrder, type InsertOrderItem } from "@shared/schema";
+import { type InsertOrder } from "@shared/schema";
 import { sendPaidOrderEmails } from "../payment-order-email";
 import { BRANCHES_ENABLED } from "../config";
 import { getProvider } from "../lib/payment-providers/index";
@@ -10,61 +10,16 @@ const router = Router();
 
 // ─── Helper: create real order from pending payment ───────────────────────────
 async function finalizeOrder(
-  pending: Awaited<ReturnType<typeof storage.getPendingPaymentByToken>>,
+  token: string,
   transactionId?: string
-): Promise<number> {
-  if (!pending) throw new Error("Pending payment not found");
-
-  const orderData = pending.orderData as InsertOrder & {
-    guestName?: string;
-    guestEmail?: string;
-    guestPhone?: string;
-    firstName?: string;
-    lastName?: string;
-  };
-
-  const isGuest = !pending.userId;
-  let extraFields: Partial<InsertOrder> = {};
-
-  if (isGuest) {
-    const guestAccessToken = rb(32).toString("hex");
-    const guestClaimToken = rb(32).toString("hex");
-    const guestAccessTokenExpires = new Date();
-    guestAccessTokenExpires.setDate(guestAccessTokenExpires.getDate() + 30);
-    extraFields = { guestAccessToken, guestClaimToken, guestAccessTokenExpires };
-  }
-
-  const insertOrder: InsertOrder = {
-    ...orderData,
-    userId: pending.userId || null,
-    status: "pending",
-    paymentMethod: "online",
-    transactionId: transactionId || null,
-    ...extraFields,
-  };
-
-  const itemsRaw = pending.orderItems as Array<{
-    productId: number | string;
-    quantity: number | string;
-    pricePerKg: number | string;
-    totalPrice: number | string;
-    orderId?: number;
-  }>;
-
-  const insertItems: InsertOrderItem[] = itemsRaw.map((item) => ({
-    productId: Number(item.productId),
-    quantity: String(item.quantity),
-    pricePerKg: String(item.pricePerKg),
-    totalPrice: String(item.totalPrice),
-    orderId: 0,
-  }));
-
-  const newOrder = await storage.createOrder(insertOrder, insertItems);
+) {
+  const result = await storage.finalizePendingPayment(token, transactionId);
+  if (!result.created || result.orderId === null) return result;
 
   try {
     const settings = await storage.getStoreSettings();
     if (settings?.emailNotificationsEnabled && settings.orderNotificationEmail) {
-      const orderWithItems = await storage.getOrderById(newOrder.id);
+      const orderWithItems = await storage.getOrderById(result.orderId);
       if (!orderWithItems) throw new Error("Created payment order not found");
       await sendPaidOrderEmails(orderWithItems, settings);
     }
@@ -72,7 +27,7 @@ async function finalizeOrder(
     console.error("Payment order email error:", emailErr);
   }
 
-  return newOrder.id;
+  return result;
 }
 
 // ─── Helper: build pending payment + call provider initiate ──────────────────
@@ -182,14 +137,16 @@ async function handleCallback(req: any, res: any) {
 
   try {
     const pending = await storage.getPendingPaymentByToken(token);
-    if (!pending || pending.status === "completed") {
+    if (!pending) {
       return res.redirect(`/thanks?payment=${isSuccess ? "success" : "failed"}`);
+    }
+    if (pending.status === "completed" && !isSuccess) {
+      return res.redirect(`/thanks?payment=success${pending.orderId ? `&orderId=${pending.orderId}` : ""}`);
     }
 
     if (isSuccess) {
-      const orderId = await finalizeOrder(pending, transactionId);
-      await storage.updatePendingPaymentStatus(token, "completed", transactionId);
-      return res.redirect(`/thanks?payment=success&orderId=${orderId}`);
+      const { orderId } = await finalizeOrder(token, transactionId);
+      return res.redirect(`/thanks?payment=success${orderId ? `&orderId=${orderId}` : ""}`);
     } else {
       await storage.updatePendingPaymentStatus(token, "failed");
       return res.redirect("/checkout?payment=failed");
@@ -234,13 +191,12 @@ async function handleWebhook(req: any, res: any) {
     }
 
     if (isSuccess) {
-      await finalizeOrder(pending, transactionId);
-      await storage.updatePendingPaymentStatus(token, "completed", transactionId);
+      const result = await finalizeOrder(token, transactionId);
       // Grow requires approveTransaction — but only for non-J5 payments.
       // For J5, the actual charge is deferred and triggered when order status → "ready".
       const isGrowJ5 = provider?.name === 'grow' &&
         (settings as any)?.paymentProviderConfig?.grow?.j5Enabled === true;
-      if (provider?.approveTransaction && transactionId && !isGrowJ5) {
+      if (result.created && provider?.approveTransaction && transactionId && !isGrowJ5) {
         await provider.approveTransaction(transactionId).catch((e: any) =>
           console.error("approveTransaction failed:", e)
         );

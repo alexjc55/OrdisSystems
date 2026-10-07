@@ -827,6 +827,7 @@ export const pendingPayments = pgTable("pending_payments", {
   userId: varchar("user_id").references(() => users.id), // null for guests
   status: varchar("status", { enum: ["pending", "completed", "failed", "expired"] }).default("pending").notNull(),
   transactionId: varchar("transaction_id", { length: 255 }), // Transaction ID returned by payment gateway
+  orderId: integer("order_id").references(() => orders.id, { onDelete: "set null" }).unique(),
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at").notNull(), // Auto-expire after 3 hours
 });
@@ -1097,6 +1098,7 @@ export const insertProductBranchAvailabilitySchema = createInsertSchema(productB
 export const insertPendingPaymentSchema = createInsertSchema(pendingPayments).omit({
   id: true,
   createdAt: true,
+  orderId: true,
 });
 
 // Types

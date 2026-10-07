@@ -10,6 +10,7 @@
     "check": "tsc",
     "test:security": "node --import tsx --test tests/user-security.test.ts tests/auth-rate-limits.test.ts",
     "test:payment-email": "node --import tsx --test tests/payment-order-email.test.ts",
+    "test:payments": "bash tests/run-payment-tests.sh",
     "test:passwords": "bash tests/run-password-tests.sh",
     "bootstrap:admin": "bash scripts/bootstrap-admin.sh",
     "test:bootstrap": "bash tests/run-bootstrap-tests.sh",

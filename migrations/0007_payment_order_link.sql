@@ -1,17 +1,10 @@
--- ============================================================
--- Min/max order quantity per product
--- ============================================================
-ALTER TABLE products
-  ADD COLUMN IF NOT EXISTS min_order_quantity DECIMAL(10,3),
-  ADD COLUMN IF NOT EXISTS max_order_quantity DECIMAL(10,3);
-
--- ============================================================
--- Online payment -> order link (apply before the updated server)
--- Existing completed payments without a known order stay completed.
--- ============================================================
+-- Apply before deploying the payment finalization code. Additive only: no
+-- orders or payments are removed. Safe to re-run on independently hosted stores.
 ALTER TABLE pending_payments
   ADD COLUMN IF NOT EXISTS order_id INTEGER UNIQUE REFERENCES orders(id) ON DELETE SET NULL;
 
+-- Recover only unambiguous historical links. Unknown/ambiguous completed
+-- payments stay completed with a null link and must never be recreated.
 UPDATE pending_payments AS p
 SET order_id = o.id
 FROM orders AS o
