@@ -60,9 +60,10 @@ Migration file sync (CRITICAL): Whenever shared/schema.ts is modified (new table
 - Delivery is at-least-once, not guaranteed exactly-once: provider acceptance followed by process/connection loss before the success commit can cause a duplicate. Existing SMTP/SendGrid transports do not offer a deduplication guarantee. Also, provider acceptance is not proof of inbox delivery.
 - `npm run test:payments` uses only a disposable UTF-8 PostgreSQL cluster. It covers callback races, atomic outbox insertion, transport errors/backoff/exhaustion, slow competing workers, real process death after commit and while holding a row lock, and recovery in a fresh process.
 
-- `npm run check` runs both independent strict checks: `check:app` (the unchanged application configuration) and `check:tests` (tests and TypeScript scripts, including application-adjacent `*.test.ts`/`*.test.tsx` files).
-- `npm run test:typecheck` verifies the independent root scopes and proves that deliberately invalid test and script fixtures make `check:tests` exit nonzero. Run it sequentially with other type checks: it temporarily creates invalid fixtures and removes them in `finally`.
-- Post-merge setup runs both type checks and this regression test before security tests and the build. Test configuration inherits application strictness without changing the application configuration.
+- `npm run check` runs three independent strict checks: `check:app` (the unchanged application configuration), `check:tests` (tests and TypeScript scripts, including application-adjacent `*.test.ts`/`*.test.tsx` files), and `check:build` (the two Vite configurations, service-worker Vite plugin, Drizzle configuration, and Tailwind configuration).
+- `check:build` uses `tsconfig.build.json` with explicit root files and no output. It only checks types: it does not execute configuration code, build assets, update the service worker, or connect to a database. It needs no database credentials.
+- `npm run test:typecheck` verifies the independent root scopes and proves that deliberately invalid test/script fixtures and isolated copies of all five build roots make their respective checks exit nonzero. The build copies also contain runtime traps and are checked without database settings to guard against configuration execution. Run it sequentially with other type checks: it temporarily creates invalid test/script fixtures and removes them in `finally`.
+- Post-merge setup runs all three type checks and this regression test before security tests and the build. Test and build configurations inherit application strictness without changing the application configuration.
 
 ## External Dependencies
 - **@tanstack/react-query**: Server state management.
