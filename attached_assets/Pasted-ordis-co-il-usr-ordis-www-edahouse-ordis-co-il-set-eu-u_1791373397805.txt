@@ -1,0 +1,230 @@
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$ (
+set -eu
+umask 077
+cd "$HOME/www/edahouse.ordis.co.il"
+
+# Резервная копия вне публичной папки сайта.
+BACKUP="$HOME/edahouse-security-$(date +%Y%m%d-%H%M%S)"
+mkdir "$BACKUP"
+tar -czf "$BACKUP/app-before-fix.tar.gz" server dist package.json
+pm2 logs edahouse --lines 20000 --nostream \
+  > "$BACKUP/pm2-before-fix.log" 2>&1
+
+echo "Резервная копия: $BACKUP"
+
+# Останавливаем магазин на время исправления.
+pm2 stop edahouse
+
+node --input-type=module <<'NODE'
+import fs from 'node:fs';
+
+const profilePath = 'server/routes/profile.routes.ts';
+const indexPath = 'server/routes/index.ts';
+
+const profile = fs.readFileSync(profilePath, 'utf8');
+const index = fs.readFileSync(indexPath, 'utf8');
+
+function replaceOnce(source, oldText, newText, label) {
+  const count = source.split(oldText).length - 1;
+  if (count !== 1) {
+    throw new Error(
+      `${label}: ожидаемый код найден ${count} раз. ` +
+      'Файлы не изменены. Нужна проверка версии.'
+    );
+  }
+  return source.replace(oldText, newText);
+}
+
+// Проверяем обе замены до записи любых файлов.
+const fixedProfile = replaceOnce(
+  profile,
+  `    const userId = req.user.id;
+    const updates = req.body;
+    const user = await storage.updateUserProfile(userId, updates);`,
+  `    const userId = req.user.id;
+    const body = req.body;
+    const allowedFields = new Set([
+      'firstName', 'lastName', 'phone',
+      'profileImageUrl', 'defaultAddress'
+    ]);
+
+    if (
+      !body ||
+      typeof body !== 'object' ||
+      Array.isArray(body) ||
+      Object.keys(body).length === 0 ||
+      Object.keys(body).some(key => !allowedFields.has(key)) ||
+      Object.values(body).some(
+        value => value !== null && typeof value !== 'string'
+      )
+    ) {
+      return res.status(400).json({
+        message: 'Invalid profile fields'
+      });
+)m2 logs edahouse --lines 40 --nostreamтся без запуска приложения.d' });ole.
+Резервная копия: /var/www/ordis_co_il_usr/data/edahouse-security-20261007-144038
+[PM2] Applying action stopProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name           │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1  │ api.clini      │ default     │ N/A     │ fork    │ 866      │ 2D     │ 0    │ online    │ 0%       │ 24.6mb   │ ord… │ disabled │
+│ 5  │ delisher       │ default     │ N/A     │ fork    │ 883      │ 2D     │ 0    │ online    │ 0%       │ 24.8mb   │ ord… │ disabled │
+│ 2  │ demo           │ default     │ 1.0.0   │ fork    │ 872      │ 2D     │ 0    │ online    │ 0%       │ 93.0mb   │ ord… │ disabled │
+│ 3  │ dk             │ default     │ N/A     │ fork    │ 878      │ 2D     │ 0    │ online    │ 0%       │ 36.8mb   │ ord… │ disabled │
+│ 4  │ dvizh          │ default     │ N/A     │ fork    │ 879      │ 2D     │ 0    │ online    │ 0%       │ 33.1mb   │ ord… │ disabled │
+│ 0  │ edahouse       │ default     │ 1.0.0   │ fork    │ 0        │ 0      │ 0    │ stopped   │ 0%       │ 0b       │ ord… │ disabled │
+│ 6  │ erp-davidov    │ default     │ 0.0.0   │ fork    │ 179342   │ 13h    │ 8    │ online    │ 0%       │ 157.0mb  │ ord… │ disabled │
+│ 7  │ lp-davidov     │ default     │ N/A     │ fork    │ 898      │ 2D     │ 0    │ online    │ 0%       │ 60.3mb   │ ord… │ disabled │
+└────┴────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+Оба исправления установлены в исходники.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 24 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 3864 modules transformed.
+../dist/public/index.html                              7.88 kB │ gzip:   2.35 kB
+../dist/public/assets/index-DZwS739G.css             172.08 kB │ gzip:  29.39 kB
+../dist/public/assets/arrow-left-DRf69gEj.js           0.33 kB │ gzip:   0.27 kB
+../dist/public/assets/lock-xTi6L3BX.js                 0.38 kB │ gzip:   0.30 kB
+../dist/public/assets/mail-BOW7NZ6w.js                 0.38 kB │ gzip:   0.30 kB
+../dist/public/assets/circle-alert-D3r0jf2r.js         0.42 kB │ gzip:   0.29 kB
+../dist/public/assets/shopping-bag-8xdEOGjE.js         0.42 kB │ gzip:   0.30 kB
+../dist/public/assets/calendar-Byqfd78J.js             0.43 kB │ gzip:   0.31 kB
+../dist/public/assets/send-Be-QMj0B.js                 0.46 kB │ gzip:   0.33 kB
+../dist/public/assets/label-6EMIlQb8.js                0.55 kB │ gzip:   0.38 kB
+../dist/public/assets/not-found-D6AsWnNm.js            0.73 kB │ gzip:   0.41 kB
+../dist/public/assets/user-check-FPJ7Qh5U.js           0.81 kB │ gzip:   0.42 kB
+../dist/public/assets/alert-BsOzLBTg.js                0.91 kB │ gzip:   0.47 kB
+../dist/public/assets/password-input-Ci3sTOZ4.js       1.18 kB │ gzip:   0.71 kB
+../dist/public/assets/forgot-password-CsOnxYQu.js      2.77 kB │ gzip:   1.14 kB
+../dist/public/assets/tabs-Br7V-ArL.js                 3.19 kB │ gzip:   1.35 kB
+../dist/public/assets/reset-password-BMZt9m0N.js       4.08 kB │ gzip:   1.49 kB
+../dist/public/assets/change-password-DyWorMgS.js      4.65 kB │ gzip:   1.58 kB
+../dist/public/assets/image-upload-B-OYiY0b.js         7.08 kB │ gzip:   2.92 kB
+../dist/public/assets/ar-BYstI9dp.js                   7.37 kB │ gzip:   2.65 kB
+../dist/public/assets/thanks-CmrbtJed.js              10.62 kB │ gzip:   3.42 kB
+../dist/public/assets/guest-order-bZBwoU0W.js         11.58 kB │ gzip:   3.21 kB
+../dist/public/assets/auth-page-BXjPRYWo.js           11.71 kB │ gzip:   4.21 kB
+../dist/public/assets/profile-CzRbspfO.js             40.71 kB │ gzip:   9.85 kB
+../dist/public/assets/checkout-DToGfdvd.js            56.91 kB │ gzip:  13.15 kB
+../dist/public/assets/calendar-BGe0gwwK.js            71.87 kB │ gzip:  21.08 kB
+../dist/public/assets/index-DpKKgnlx.js               87.24 kB │ gzip:  24.23 kB
+../dist/public/assets/admin-analytics-I4NkOnow.js    423.42 kB │ gzip: 114.42 kB
+../dist/public/assets/index-DzJo64Y9.js            1,073.30 kB │ gzip: 340.94 kB
+../dist/public/assets/admin-dashboard-BCfG8yVk.js  1,209.38 kB │ gzip: 288.77 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 30.29s
+
+  dist/index.js  517.4kb
+
+⚡ Done in 99ms
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id │ name           │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├────┼────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1  │ api.clini      │ default     │ N/A     │ fork    │ 866      │ 2D     │ 0    │ online    │ 0%       │ 23.8mb   │ ord… │ disabled │
+│ 5  │ delisher       │ default     │ N/A     │ fork    │ 883      │ 2D     │ 0    │ online    │ 0%       │ 24.2mb   │ ord… │ disabled │
+│ 2  │ demo           │ default     │ 1.0.0   │ fork    │ 872      │ 2D     │ 0    │ online    │ 0%       │ 86.5mb   │ ord… │ disabled │
+│ 3  │ dk             │ default     │ N/A     │ fork    │ 878      │ 2D     │ 0    │ online    │ 0%       │ 35.1mb   │ ord… │ disabled │
+│ 4  │ dvizh          │ default     │ N/A     │ fork    │ 879      │ 2D     │ 0    │ online    │ 0%       │ 31.4mb   │ ord… │ disabled │
+│ 0  │ edahouse       │ default     │ 1.0.0   │ fork    │ 221429   │ 0s     │ 0    │ online    │ 0%       │ 10.4mb   │ ord… │ disabled │
+│ 6  │ erp-davidov    │ default     │ 0.0.0   │ fork    │ 179342   │ 13h    │ 8    │ online    │ 0%       │ 155.0mb  │ ord… │ disabled │
+│ 7  │ lp-davidov     │ default     │ N/A     │ fork    │ 898      │ 2D     │ 0    │ online    │ 0%       │ 59.7mb   │ ord… │ disabled │
+└────┴────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+[TAILING] Tailing last 40 lines for [edahouse] process (change the value with --lines option)
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-error-3.log last 40 lines:
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+0|edahouse | Error: Failed to deserialize user out of session
+0|edahouse |     at pass (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:359:19)
+0|edahouse |     at deserialized (/var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/node_modules/passport/lib/authenticator.js:364:7)
+0|edahouse |     at file:///var/www/ordis_co_il_usr/data/www/edahouse.ordis.co.il/dist/index.js:3376:7
+0|edahouse |     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+/var/www/ordis_co_il_usr/data/.pm2/logs/edahouse-out-3.log last 40 lines:
+0|edahouse | 2:35:43 PM [express] GET /api/version 200 in 4ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:35:54 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:35:55 PM [express] GET /api/closed-dates 200 in 7ms :: []
+0|edahouse | 2:35:56 PM [express] GET /api/admin/themes 200 in 13ms :: [{"id":"default_theme_1750432574.178085","…
+0|edahouse | 2:35:56 PM [express] GET /api/settings 200 in 12ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2:36:24 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:36:31 PM [express] GET /api/version 200 in 21ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:36:31 PM [express] GET /api/version 200 in 7ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:36:54 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:37:14 PM [express] GET /api/version 200 in 19ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:37:24 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:37:44 PM [express] GET /api/version 200 in 5ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:37:54 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:38:14 PM [express] GET /api/version 200 in 20ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:38:45 PM [express] GET /api/version 200 in 25ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:38:51 PM [express] GET /api/version 200 in 2ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:39:15 PM [express] GET /api/version 200 in 25ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:39:45 PM [express] GET /api/version 200 in 19ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:39:51 PM [express] GET /api/version 200 in 1ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:39:51 PM [express] GET /api/version 200 in 5ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:39:51 PM [express] GET /api/auth/user 200 in 6ms :: {"id":"manual_1761646488646_y8efa4wsk","userna…
+0|edahouse | 2:39:51 PM [express] GET /api/categories 200 in 23ms :: [{"id":47,"name":"Салаты","name_en":"","name…
+0|edahouse | 2:39:51 PM [express] GET /api/config 200 in 39ms :: {"branchesEnabled":false}
+0|edahouse | 2:39:52 PM [express] GET /api/settings 200 in 49ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2:39:52 PM [express] GET /api/admin/products 200 in 47ms :: {"data":[{"id":382,"name":"Баклажаны по-…
+0|edahouse | 2:39:52 PM [express] GET /api/admin/orders 200 in 11ms :: {"data":[{"id":631,"userId":"manual_178419…
+0|edahouse | 2:39:52 PM [express] GET /api/admin/users 200 in 14ms :: {"data":[{"id":"manual_1790879039712_v1i2rv…
+0|edahouse | 2:39:52 PM [express] GET /api/barcode/config 200 in 31ms :: {"enabled":true,"productCodeStart":2,"pr…
+0|edahouse | 2:39:52 PM [express] GET /api/themes/active 200 in 37ms :: {"id":"default_theme_1750432574.178085","…
+0|edahouse | 2:39:52 PM [express] GET /api/products/volume-discounts 200 in 137ms :: {"378":[],"382":[],"383":[],…
+0|edahouse | 2:40:16 PM [express] GET /api/version 200 in 12ms :: {"version":"1.0.0","appHash":"bc196c40","buildT…
+0|edahouse | 2:40:29 PM [express] GET /api/themes/active 200 in 10ms :: {"id":"default_theme_1750432574.178085","…
+0|edahouse | 2:40:29 PM [express] GET /api/auth/user 401 in 1ms :: {"message":"Unauthorized"}
+0|edahouse | 2:40:29 PM [express] GET /api/config 200 in 1ms :: {"branchesEnabled":false}
+0|edahouse | 2:40:30 PM [express] GET /api/version 200 in 4ms :: {"version":"1.0.0","appHash":"bc196c40","buildTi…
+0|edahouse | 2:40:30 PM [express] GET /api/settings 200 in 31ms :: {"id":1,"storeName":"eDAHouse","welcomeTitle":…
+0|edahouse | 2:40:30 PM [express] GET /api/products 200 in 175ms :: [{"id":382,"name":"Баклажаны по-азиатски","na…
+0|edahouse | 2:40:30 PM [express] GET /api/loyalty/context 200 in 263ms :: {"loyaltyDiscountEnabled":false,"loyal…
+0|edahouse | 2:40:30 PM [express] GET /api/categories 200 in 288ms :: [{"id":47,"name":"Салаты","name_en":"","nam…
+0|edahouse | 2:40:30 PM [express] GET /api/products/volume-discounts 200 in 267ms :: {"377":[],"378":[],"382":[],…
+
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$
