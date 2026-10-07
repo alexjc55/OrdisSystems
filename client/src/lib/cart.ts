@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Product } from '@shared/schema';
 import { calculateTotal, roundUpToNearestTenAgorot, type ProductUnit } from './currency';
 import { triggerPushRequestAfterAction } from './prompt-utils';
+import { effectiveProductPrice as getEffectivePrice } from '@shared/product-pricing';
 
 export interface CartItem {
   product: Product;
@@ -40,18 +41,6 @@ interface CartStore {
 // discount (isSpecialOffer + discountType/discountValue) when present.
 // This ensures that cart totals and downstream discount calculations (loyalty, coupon)
 // operate on the price the customer actually pays, not the full base price.
-function getEffectivePrice(product: Product): number {
-  const base = parseFloat(product.price);
-  if (product.isSpecialOffer && product.discountType && product.discountValue) {
-    const dv = parseFloat(String(product.discountValue));
-    if (!isNaN(dv)) {
-      if (product.discountType === 'percentage') return Math.max(0, base * (1 - dv / 100));
-      if (product.discountType === 'fixed') return Math.max(0, base - dv);
-    }
-  }
-  return base;
-}
-
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({

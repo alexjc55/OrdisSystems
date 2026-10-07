@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { storage } from "../storage";
 import { randomBytes as rb } from "crypto";
-import { type InsertOrder } from "@shared/schema";
 import { BRANCHES_ENABLED } from "../config";
 import { getProvider, type PaymentProviderConfig } from "../lib/payment-providers/index";
-import { checkoutVerification, merchantFingerprint, money, PaymentVerificationError } from "../lib/payment-providers/verification";
+import { checkoutVerification, merchantFingerprint, PaymentVerificationError } from "../lib/payment-providers/verification";
 import { passwordResetOrigin } from "../password-reset-email";
+import { CheckoutQuoteError, quotePaymentCheckout } from "../payment-quote";
 
 const router = Router();
 
@@ -30,18 +30,12 @@ async function initiatePayment(req: any, res: any) {
       return res.status(400).json({ message: "No online payment provider configured" });
     }
 
-    const { items, totalAmount, orderData: clientOrderData, userId, language, branchId } = req.body;
-
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: "Invalid order items" });
-    }
-    if (!clientOrderData) {
-      return res.status(400).json({ message: "Order data is required" });
-    }
-    const amountInAgorot = money(totalAmount);
-    if (money(clientOrderData.totalAmount) !== amountInAgorot) {
-      return res.status(400).json({ message: "Payment and order amounts differ" });
-    }
+    const quote = await quotePaymentCheckout(
+      req.body, req.isAuthenticated?.() && req.user?.id ? req.user.id : null,
+      BRANCHES_ENABLED, storage,
+    );
+    const { orderData: orderSnapshot, orderItems, amountInAgorot, userId } = quote;
+    const language = orderSnapshot.orderLanguage || "ru";
     // Notify URLs carry a private authentication capability. Never derive their
     // destination (or customer returns) from Host/Origin/forwarded headers.
     let baseUrl: string;
@@ -56,22 +50,10 @@ async function initiatePayment(req: any, res: any) {
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 3);
 
-    const parsedBranchId =
-      BRANCHES_ENABLED && branchId && !isNaN(parseInt(branchId))
-        ? parseInt(branchId)
-        : undefined;
-
-    const orderSnapshot: InsertOrder = {
-      ...clientOrderData,
-      paymentMethod: "online",
-      orderLanguage: language || "ru",
-      ...(parsedBranchId !== undefined ? { branchId: parsedBranchId } : {}),
-    };
-
     await storage.createPendingPayment({
       token,
       orderData: orderSnapshot as any,
-      orderItems: items as any,
+      orderItems: orderItems as any,
       userId: userId || null,
       status: "pending",
       expiresAt,
@@ -80,21 +62,12 @@ async function initiatePayment(req: any, res: any) {
         (settings as any).paymentProviderConfig?.grow?.j5Enabled !== true,
     });
 
-    const customerName =
-      clientOrderData.guestName ||
-      (clientOrderData.firstName && clientOrderData.lastName
-        ? `${clientOrderData.firstName} ${clientOrderData.lastName}`
-        : "");
-    const customerEmail = clientOrderData.guestEmail || clientOrderData.email || "";
-    const customerPhone =
-      clientOrderData.guestPhone || clientOrderData.customerPhone || clientOrderData.phone || "";
-
     const result = await provider.initiate({
       token,
       amountInAgorot,
-      customerName,
-      customerEmail,
-      customerPhone,
+      customerName: quote.customerName,
+      customerEmail: quote.customerEmail,
+      customerPhone: quote.customerPhone,
       successUrl: `${baseUrl}/api/payment/callback`,
       errorUrl: `${baseUrl}/api/payment/callback?status=error`,
       notifyUrl: `${baseUrl}/api/payment/webhook?proof=${verification.notifySecret}`,
@@ -106,6 +79,12 @@ async function initiatePayment(req: any, res: any) {
 
     return res.json({ redirectUrl: result.redirectUrl, token });
   } catch (error) {
+    if (error instanceof CheckoutQuoteError) {
+      return res.status(error.status).json({ message: error.message, code: error.code });
+    }
+    if (error && typeof error === "object" && "isCouponError" in error) {
+      return res.status(422).json({ message: "coupon_invalid", couponError: (error as any).couponError });
+    }
     console.error("Payment initiate error:", error);
     const msg = error instanceof Error ? error.message : "Failed to initiate payment";
     return res.status(400).json({ message: msg });

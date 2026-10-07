@@ -18,4 +18,4 @@ export USE_NEON=false DATABASE_URL="postgresql://payment_test@localhost/postgres
 export PAYMENT_TEST_CLUSTER=isolated NODE_ENV=test REPLIT_APP_URL=https://shop.example.test
 unset SUPER_ADMIN_LOGIN SUPER_ADMIN_PASSWORD
 ./node_modules/.bin/drizzle-kit push --force >/dev/null
-node --import tsx --test tests/payment-finalization.test.ts tests/payment-verification.test.ts tests/payment-order-email.test.ts tests/checkout-order-email.test.ts
+node --import tsx --test tests/payment-finalization.test.ts tests/payment-verification.test.ts tests/payment-order-email.test.ts tests/checkout-order-email.test.ts tests/payment-quote.test.ts

@@ -1157,6 +1157,21 @@ export default function Checkout() {
     },
     onError: (error: any) => {
       console.error("Payment initiation error:", error.message);
+      if (error.code === "CART_PRICE_CHANGED") {
+        const messages: Record<string, string> = {
+          ru: "Цена или условия скидки изменились. Обновите товары в корзине и проверьте сумму перед оплатой.",
+          en: "Prices or discount conditions changed. Update the items in your cart and review the total before paying.",
+          he: "המחירים או תנאי ההנחה השתנו. עדכנו את המוצרים בסל ובדקו את הסכום לפני התשלום.",
+          ar: "تغيرت الأسعار أو شروط الخصم. حدّثوا المنتجات في السلة وراجعوا المبلغ قبل الدفع.",
+        };
+        toast({ title: tShop('checkout.paymentFailed'), description: messages[currentLanguage] || messages.ru, variant: "destructive" });
+        return;
+      }
+      if (error.message === "coupon_invalid") {
+        setAppliedCoupon(null);
+        toast({ title: tShop('checkout.paymentFailed'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
+        return;
+      }
       toast({ title: tShop('checkout.paymentFailed'), variant: "destructive" });
     },
   });
@@ -2184,6 +2199,7 @@ export default function Checkout() {
                           status: "pending",
                           ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
                           ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
+                          ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
                         },
                         userId: null,
                         language: currentLanguage,

@@ -9,6 +9,7 @@ import { BRANCHES_ENABLED } from "../config";
 import { insertOrderSchema, type InsertOrder, type InsertOrderItem } from "@shared/schema";
 import { z } from "zod";
 import { randomBytes } from "crypto";
+import { calculateOrderDiscounts } from "../order-discounts";
 
 const router = Router();
 
@@ -32,149 +33,8 @@ function resolvePaymentMethodNames(
 
 // ─── Server-side discount computation ────────────────────────────────────────
 // This ensures discount amounts are authoritative from DB, not from client input.
-async function computeServerDiscounts({
-  couponCode,
-  subtotal,
-  userId,
-  userEmail,
-  userRole,
-  giftAccepted,
-  orderItems,
-}: {
-  couponCode?: string | null;
-  subtotal: number;
-  userId?: string | null;
-  userEmail?: string | null;
-  userRole?: string | null;
-  giftAccepted?: boolean;
-  orderItems?: Array<{ productId: number; quantity: number; totalPrice: string }>;
-}): Promise<{
-  serverCouponCode: string | null;
-  serverCouponDiscount: number;
-  serverLoyaltyDiscount: number;
-  serverVolumeDiscount: number;
-  serverGiftProductId: number | null;
-  serverDiscountDetails: Record<string, any>;
-  giftOrderItem: InsertOrderItem | null;
-}> {
-  const settings = await storage.getStoreSettings();
-
-  let serverCouponCode: string | null = null;
-  let serverCouponDiscount = 0;
-  let serverLoyaltyDiscount = 0;
-  let serverVolumeDiscount = 0;
-  let serverGiftProductId: number | null = null;
-  const serverDiscountDetails: Record<string, any> = {};
-  let giftOrderItem: InsertOrderItem | null = null;
-
-  // 1. Volume discounts — computed per item, best (highest minQuantity) applicable tier wins.
-  //    Applied first so that subsequent discounts operate on the post-volume subtotal.
-  if (orderItems && orderItems.length > 0) {
-    const uniqueProductIds = [...new Set(orderItems.map(i => i.productId))];
-    const tiersPerProduct = await Promise.all(
-      uniqueProductIds.map(async (pid) => ({
-        productId: pid,
-        tiers: (await storage.getProductVolumeDiscounts(pid)).filter(t => t.isActive),
-      }))
-    );
-    const tiersMap = new Map(tiersPerProduct.map(({ productId, tiers }) => [productId, tiers]));
-    const volumeItemBreakdown: Record<number, number> = {};
-
-    for (const item of orderItems) {
-      const tiers = tiersMap.get(item.productId) || [];
-      const eligible = tiers.filter(t => parseFloat(t.minQuantity) <= item.quantity);
-      if (eligible.length === 0) continue;
-      const best = eligible.reduce((a, b) => parseFloat(a.minQuantity) >= parseFloat(b.minQuantity) ? a : b);
-      const itemTotal = parseFloat(item.totalPrice || '0');
-      let itemDiscount = 0;
-      if (best.discountType === 'percentage') {
-        itemDiscount = Math.round(itemTotal * parseFloat(best.discountValue) / 100 * 100) / 100;
-      } else {
-        itemDiscount = Math.min(parseFloat(best.discountValue), itemTotal);
-      }
-      if (itemDiscount > 0) {
-        serverVolumeDiscount += itemDiscount;
-        volumeItemBreakdown[item.productId] = (volumeItemBreakdown[item.productId] || 0) + itemDiscount;
-      }
-    }
-    serverVolumeDiscount = Math.round(serverVolumeDiscount * 100) / 100;
-    if (serverVolumeDiscount > 0) {
-      serverDiscountDetails.volumeDiscount = {
-        totalAmount: serverVolumeDiscount,
-        itemBreakdown: volumeItemBreakdown,
-      };
-    }
-  }
-
-  // Effective subtotal after volume discounts — used as base for loyalty/coupon
-  const subtotalAfterVolume = Math.max(0, subtotal - serverVolumeDiscount);
-
-  // 2. Validate coupon from DB (pass userId + userEmail + orderItems for full enforcement)
-  if (couponCode) {
-    const validation = await storage.validateCoupon(couponCode, subtotalAfterVolume, userId, userEmail, orderItems);
-    if (validation.valid && validation.coupon) {
-      // Reject product-scoped coupons that match no items in this order's cart
-      if (validation.coupon.scope === 'product' && (validation.discountAmount ?? 0) <= 0) {
-        throw Object.assign(new Error('coupon_not_eligible_for_cart'), { couponError: 'coupon_not_eligible_for_cart', isCouponError: true });
-      }
-      serverCouponCode = validation.coupon.code;
-      serverCouponDiscount = validation.discountAmount || 0;
-      serverDiscountDetails.coupon = {
-        code: validation.coupon.code,
-        type: validation.coupon.discountType,
-        value: parseFloat(validation.coupon.discountValue),
-        discountAmount: serverCouponDiscount,
-        stacksWithLoyalty: !!(validation.coupon as any).stacksWithLoyalty,
-      };
-    } else {
-      // Coupon was submitted but is invalid — surface reason via thrown error so callers can return 422
-      throw Object.assign(new Error(validation.message || 'coupon_invalid'), { couponError: validation.message, isCouponError: true });
-    }
-  }
-
-  // 3. Loyalty discount for any registered user (not guests)
-  //    Stacking rule: apply loyalty only if no coupon was used OR coupon explicitly stacks with loyalty
-  const couponStacksWithLoyalty = !!(serverDiscountDetails.coupon as any)?.stacksWithLoyalty;
-  if (userId && (!serverCouponCode || couponStacksWithLoyalty) && settings?.loyaltyDiscountEnabled) {
-    const pct = parseFloat(settings.loyaltyDiscountPercent || '0');
-    if (pct > 0) {
-      serverLoyaltyDiscount = Math.round(subtotalAfterVolume * pct) / 100;
-      serverDiscountDetails.loyalty = { percent: pct, discountAmount: serverLoyaltyDiscount };
-    }
-  }
-
-  // 4. Gift: only if enabled, amount eligible, and client explicitly accepted.
-  //    Threshold is compared against raw subtotal (before discounts) — matches UI behavior.
-  if (giftAccepted && settings?.giftEnabled && settings.giftProductId) {
-    const minAmount = parseFloat(settings.giftMinOrderAmount || '0');
-    if (subtotal >= minAmount) {
-      const giftProduct = await storage.getProductById(settings.giftProductId);
-      if (giftProduct) {
-        serverGiftProductId = giftProduct.id;
-        serverDiscountDetails.gift = { productId: giftProduct.id, productName: giftProduct.name };
-        // Add gift as zero-price order item with configured quantity
-        const giftQty = parseFloat(settings.giftProductQuantity || '1');
-        giftOrderItem = {
-          productId: giftProduct.id,
-          quantity: String(giftQty),
-          pricePerKg: '0',
-          totalPrice: '0',
-          orderId: 0,
-        };
-      }
-    }
-  }
-
-  return {
-    serverCouponCode,
-    serverCouponDiscount,
-    serverLoyaltyDiscount,
-    serverVolumeDiscount,
-    serverGiftProductId,
-    serverDiscountDetails,
-    giftOrderItem,
-  };
-}
+const computeServerDiscounts = (input: Parameters<typeof calculateOrderDiscounts>[0]) =>
+  calculateOrderDiscounts(input, storage);
 
 router.get('/orders', isAuthenticated, async (req: any, res) => {
   try {

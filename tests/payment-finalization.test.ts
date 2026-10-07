@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 import { randomUUID, createHmac, createHash } from "node:crypto";
 import express from "express";
 import type { Server } from "node:http";
-import type { StoreSettings } from "../shared/schema";
+import type { StoreSettings, InsertOrder, InsertOrderItem } from "../shared/schema";
 import { HypProvider, GrowProvider, AllPayProvider, PaymeProvider, type InitiateParams } from "../server/lib/payment-providers";
 import { checkoutVerification } from "../server/lib/payment-providers/verification";
 
@@ -73,7 +73,7 @@ before(async () => {
   await assert.rejects(storage.approvePendingPayment(historical, historical,
     async () => assert.fail("historical approval must not be replayed"), true), /outcome unknown/);
   const product = await pool.query(
-    "INSERT INTO products (name, price, price_per_kg) VALUES ('Тестовый продукт', 10, 10) RETURNING id",
+    "INSERT INTO products (name, price, price_per_kg, unit) VALUES ('Тестовый продукт', 10, 10, 'piece') RETURNING id",
   );
   productId = product.rows[0].id;
 
@@ -81,6 +81,7 @@ before(async () => {
     emailNotificationsEnabled: true, orderNotificationEmail: "admin@example.test",
     orderNotificationFromEmail: "shop@example.test", orderNotificationFromName: "Shop",
     storeName: "Shop", defaultLanguage: "ru", paymentProviderConfig: hypConfig, feedToken: "test-feed-token",
+    deliveryFee: "0.00", freeDeliveryFrom: null,
   } as StoreSettings;
   await storage.updateStoreSettings(settings);
   // Keep real database finalization, item joins, routes and mail templates;
@@ -119,7 +120,6 @@ before(async () => {
   const { default: paymentRoutes } = await import("../server/routes/payment.routes");
   const app = express();
   app.use(express.json());
-  app.use("/api", paymentRoutes);
   // Test-only identity injection; production uses the session middleware.
   app.use((req: any, _res, next) => {
     req.isAuthenticated = () => Boolean(req.headers["x-test-role"]);
@@ -128,6 +128,7 @@ before(async () => {
     } : undefined;
     next();
   });
+  app.use("/api", paymentRoutes);
   const { default: outboxRoutes } = await import("../server/routes/admin/payment-email-outbox.routes");
   app.use("/api", outboxRoutes);
   const { default: orderRoutes } = await import("../server/routes/orders.routes");
@@ -141,6 +142,100 @@ before(async () => {
 });
 
 beforeEach(drainMail);
+
+test("both initiate routes reject simultaneous total and line-price tampering before writes or gateway calls", async () => {
+  const original = HypProvider.prototype.initiate;
+  let calls = 0;
+  HypProvider.prototype.initiate = async () => { calls++; return { redirectUrl: "https://gateway.test/pay" }; };
+  const count = async () => Number((await pool.query("SELECT COUNT(*) AS n FROM pending_payments")).rows[0].n);
+  const before = await count();
+  try {
+    for (const path of ["/api/payment/initiate", "/api/payment/hyp/initiate"]) {
+      const response = await fetch(`${baseUrl}${path}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [{ productId, quantity: "1", pricePerKg: "0.01", totalPrice: "0.01" }],
+          totalAmount: "0.01", orderData: { totalAmount: "0.01", deliveryFee: "0" },
+        }),
+      });
+      assert.equal(response.status, 409);
+      assert.equal((await response.json()).code, "CART_PRICE_CHANGED");
+    }
+    assert.equal(calls, 0);
+    assert.equal(await count(), before);
+  } finally { HypProvider.prototype.initiate = original; }
+});
+
+test("correct amount with forged lines produces a DB-priced snapshot and exact gateway amount", async () => {
+  const original = HypProvider.prototype.initiate;
+  let amount = 0;
+  HypProvider.prototype.initiate = async params => {
+    amount = params.amountInAgorot;
+    return { redirectUrl: "https://gateway.test/pay" };
+  };
+  try {
+    const response = await fetch(`${baseUrl}/api/payment/initiate`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: [{ productId, quantity: "1", pricePerKg: "0.01", totalPrice: "0.01" }],
+        totalAmount: "10", userId: "forged-user",
+        orderData: { userId: "forged-user", status: "completed", totalAmount: "10",
+          deliveryFee: "-100", discountDetails: { fake: 100 }, loyaltyDiscount: "100" },
+      }),
+    });
+    assert.equal(response.status, 200);
+    const pending = await storage.getPendingPaymentByToken((await response.json()).token);
+    assert.equal(amount, 1000);
+    assert.equal(pending?.verification?.amountInAgorot, 1000);
+    assert.equal(pending?.userId, null);
+    assert.ok(pending);
+    const snapshot = pending.orderData as InsertOrder;
+    const lines = pending.orderItems as InsertOrderItem[];
+    assert.equal(snapshot.userId, null);
+    assert.equal(snapshot.status, "pending");
+    assert.equal(snapshot.deliveryFee, "0.00");
+    assert.deepEqual(snapshot.discountDetails, {});
+    assert.equal(lines[0].pricePerKg, "10.00");
+    assert.equal(lines[0].totalPrice, "10.00");
+  } finally { HypProvider.prototype.initiate = original; }
+});
+
+test("registered payment uses session identity and loyalty while guest cannot impersonate it", async () => {
+  const original = HypProvider.prototype.initiate;
+  const originalSettings = storage.getStoreSettings;
+  const settings = await originalSettings();
+  const id = randomUUID();
+  await pool.query("INSERT INTO users (id, username, password, first_name, email) VALUES ($1, $1, 'test-only-not-a-real-password', 'Buyer', 'buyer@example.test')", [id]);
+  storage.getStoreSettings = async () => ({
+    ...settings, loyaltyDiscountEnabled: true, loyaltyDiscountPercent: "20", deliveryFee: "5", freeDeliveryFrom: "50",
+  } as StoreSettings);
+  HypProvider.prototype.initiate = async () => ({ redirectUrl: "https://gateway.test/pay" });
+  const payload = {
+    items: [{ productId, quantity: "1", pricePerKg: "0.01", totalPrice: "0.01" }],
+    totalAmount: "13", userId: id, orderData: { userId: id, deliveryFee: "0" },
+  };
+  try {
+    const registered = await fetch(`${baseUrl}/api/payment/initiate`, {
+      method: "POST", headers: { "Content-Type": "application/json", "x-test-role": "customer", "x-test-user": id },
+      body: JSON.stringify(payload),
+    });
+    assert.equal(registered.status, 200);
+    const pending = await storage.getPendingPaymentByToken((await registered.json()).token);
+    assert.equal(pending?.userId, id);
+    assert.ok(pending);
+    const snapshot = pending.orderData as InsertOrder;
+    assert.equal(snapshot.loyaltyDiscount, "2.00");
+    assert.equal(snapshot.deliveryFee, "5.00");
+    assert.equal(pending?.verification?.amountInAgorot, 1300);
+    const guest = await fetch(`${baseUrl}/api/payment/initiate`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    });
+    assert.equal(guest.status, 409);
+  } finally {
+    HypProvider.prototype.initiate = original;
+    storage.getStoreSettings = originalSettings;
+  }
+});
 
 after(async () => {
   globalThis.fetch = originalFetch;

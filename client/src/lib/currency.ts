@@ -1,4 +1,5 @@
 export type ProductUnit = "100g" | "100ml" | "piece" | "kg" | "portion";
+export { calculateTotal, roundUpToNearestTenAgorot } from '@shared/product-pricing';
 
 export function formatCurrency(amount: number | string, locale?: string): string {
   const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
@@ -19,11 +20,6 @@ export function parseCurrency(amount: string): number {
   const cleaned = amount.replace(/[₪,\s]/g, '');
   const parsed = parseFloat(cleaned);
   return isNaN(parsed) ? 0 : parsed;
-}
-
-export function roundUpToNearestTenAgorot(amount: number): number {
-  // Round up to the nearest 0.10 ₪ (10 agorot)
-  return Math.ceil(amount * 10) / 10;
 }
 
 export function getUnitLabel(unit: ProductUnit, t?: (key: string, fallback?: string) => string): string {
@@ -70,34 +66,6 @@ export function getUnitShortLabel(unit: ProductUnit, t?: (key: string, fallback?
     "kg": "кг"
   };
   return labels[unit];
-}
-
-export function calculateTotal(price: number | string, quantity: number | string, unit: ProductUnit): number {
-  const priceNum = typeof price === 'string' ? parseFloat(price) : price;
-  const quantityNum = typeof quantity === 'string' ? parseFloat(quantity) : quantity;
-  
-  if (isNaN(priceNum) || isNaN(quantityNum)) return 0;
-  
-  let total;
-  switch (unit) {
-    case "100g":
-    case "100ml":
-      // Price is per 100g/100ml, quantity is in grams/ml, so divide by 100
-      total = priceNum * (quantityNum / 100);
-      break;
-    case "piece":
-    case "portion":
-      total = priceNum * quantityNum;
-      break;
-    case "kg":
-      total = priceNum * quantityNum;
-      break;
-    default:
-      total = priceNum * quantityNum;
-  }
-  
-  // Round up to nearest 10 agorot (0.10 ₪)
-  return roundUpToNearestTenAgorot(total);
 }
 
 export function formatQuantity(quantity: number | string, unit: ProductUnit, t?: (key: string) => string): string {
