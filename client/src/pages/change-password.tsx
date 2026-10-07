@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,13 +11,14 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, Check, Lock } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useCommonTranslation } from "@/hooks/use-language";
 
 export default function ChangePasswordPage() {
   const { t } = useCommonTranslation();
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -41,6 +42,8 @@ export default function ChangePasswordPage() {
         confirmPassword: "",
       });
       setErrors({});
+      queryClient.setQueryData(["/api/auth/user"], null);
+      navigate("/auth");
     },
     onError: (error: any) => {
       toast({

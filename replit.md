@@ -31,7 +31,7 @@ Migration file sync (CRITICAL): Whenever shared/schema.ts is modified (new table
 ### Backend
 - **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM.
-- **Authentication**: Local strategy with bcrypt and PostgreSQL-based session storage.
+- **Authentication**: Local strategy; new passwords use scrypt, existing bcrypt hashes remain supported. Password changes atomically revoke the affected user's PostgreSQL sessions in connect-pg-simple's `session` table (not the unused `sessions` schema declaration). Versioned Passport identities also reject stale sessions recreated by in-flight requests.
 - **File Upload**: Multer for image handling, storing files locally.
 - **API**: RESTful API with structured error handling.
 - **Route Structure**: Modularized routes for system, authentication, user profiles, catalog, orders, administration (users, orders, settings, themes, analytics, push), and integrations (feeds, translations, barcode).

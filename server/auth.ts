@@ -1,22 +1,19 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, type Request } from "express";
 import session from "express-session";
-import { scrypt, timingSafeEqual } from "crypto";
-import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
-import { hashPassword } from "./password-hash";
+import { hashPassword, comparePasswords } from "./password-hash";
+import { SESSION_TABLE_NAME, sessionIdentity, type SessionIdentity } from "./session-credentials";
 
 declare global {
   namespace Express {
     interface User extends SelectUser {}
   }
 }
-
-const scryptAsync = promisify(scrypt);
 
 const SUPER_ADMIN_ID = "__superadmin__";
 
@@ -45,13 +42,6 @@ function isSuperAdminCredentials(username: string, password: string): boolean {
   return username === login && password === pwd;
 }
 
-async function comparePasswords(supplied: string, stored: string) {
-  const [hashed, salt] = stored.split(".");
-  const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-  return timingSafeEqual(hashedBuf, suppliedBuf);
-}
-
 export function setupAuth(app: Express) {
   const PostgresSessionStore = connectPg(session);
   
@@ -61,6 +51,7 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: new PostgresSessionStore({ 
       pool, 
+      tableName: SESSION_TABLE_NAME,
       createTableIfMissing: false
     }),
     cookie: {
@@ -74,6 +65,15 @@ export function setupAuth(app: Express) {
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use((req, _res, next) => {
+    // Upgrade legacy id-only sessions before any route can save them again.
+    // A request in flight during password rotation retains the old fingerprint.
+    const authSession = (req.session as any)?.passport;
+    if (req.user && req.user.id !== SUPER_ADMIN_ID && typeof authSession?.user === "string") {
+      authSession.user = sessionIdentity(req.user);
+    }
+    next();
+  });
 
   passport.use(
     new LocalStrategy(async (username, password, done) => {
@@ -89,13 +89,23 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
-  passport.deserializeUser(async (id: string, done) => {
+  passport.serializeUser((user, done) => done(null,
+    user.id === SUPER_ADMIN_ID ? user.id : sessionIdentity(user)
+  ));
+  passport.deserializeUser(async (req: Request, identity: string | SessionIdentity, done: (error: any, user?: SelectUser | false) => void) => {
     try {
+      const id = typeof identity === "string" ? identity : identity?.id;
       if (id === SUPER_ADMIN_ID) {
         return done(null, getSuperAdminUser());
       }
-      const user = await storage.getUser(id);
+      if (typeof id !== "string") return done(null, false);
+      const user = typeof identity === "string"
+        ? await storage.getUserForLegacySession(id, req.sessionID)
+        : await storage.getUser(id);
+      if (!user || (typeof identity !== "string" &&
+        identity.passwordVersion !== sessionIdentity(user).passwordVersion)) {
+        return done(null, false);
+      }
       done(null, user);
     } catch (error) {
       done(error);

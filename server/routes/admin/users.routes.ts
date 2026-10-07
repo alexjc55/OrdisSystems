@@ -4,7 +4,7 @@ import { isAuthenticated } from "../../middleware/auth-guard";
 import { clearCachePattern, getCache, setCache } from "../../middleware/cache";
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../../facebook-conversions-api";
 import { BRANCHES_ENABLED } from "../../config";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "../../password-hash";
 import { deleteUploadFile } from "../../utils/delete-upload-file";
 
 const router = Router();
@@ -52,7 +52,10 @@ router.post('/admin/users', isAuthenticated, async (req: any, res) => {
       userData.username = userData.username.toLowerCase();
     }
     if (userData.password) {
-      userData.password = await bcrypt.hash(userData.password, 10);
+      if (typeof userData.password !== "string" || userData.password.length < 6) {
+        return res.status(400).json({ message: "Пароль должен содержать минимум 6 символов" });
+      }
+      userData.password = await hashPassword(userData.password);
     }
     const newUser = await storage.createUser(userData);
 

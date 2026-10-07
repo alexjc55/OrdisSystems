@@ -1,12 +1,19 @@
 import { Router } from "express";
 import { storage } from "../storage";
-import { isAuthenticated } from "../middleware/auth-guard";
-import { scryptAsync } from "../utils/app-hash";
-import { randomBytes } from "crypto";
-import bcrypt from "bcryptjs";
-import { z } from "zod";
+import { isAuthenticated, requireAdmin } from "../middleware/auth-guard";
+import { hashPassword, comparePasswords } from "../password-hash";
+import { PasswordUpdateConflict } from "../session-credentials";
 
 const router = Router();
+
+async function destroyAffectedSession(req: any, userId: string) {
+  if (req.user?.id !== userId) return;
+  // Prevent express-session from saving this request's deleted session again.
+  await new Promise<void>((resolve, reject) => {
+    req.session.destroy((error: Error | null) => error ? reject(error) : resolve());
+  });
+  req.user = undefined;
+}
 
 router.get('/auth/user', isAuthenticated, async (req: any, res) => {
   try {
@@ -47,7 +54,7 @@ router.post('/auth/change-password', isAuthenticated, async (req: any, res) => {
     const userId = req.user.id;
     const { currentPassword, newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
+    if (typeof newPassword !== "string" || newPassword.length < 6) {
       return res.status(400).json({ message: "Новый пароль должен содержать минимум 6 символов" });
     }
 
@@ -57,20 +64,24 @@ router.post('/auth/change-password', isAuthenticated, async (req: any, res) => {
     }
 
     if (user.password) {
-      if (!currentPassword) {
+      if (typeof currentPassword !== "string" || !currentPassword) {
         return res.status(400).json({ message: "Необходимо указать текущий пароль" });
       }
-      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      const isCurrentPasswordValid = await comparePasswords(currentPassword, user.password);
       if (!isCurrentPasswordValid) {
         return res.status(400).json({ message: "Неверный текущий пароль" });
       }
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await storage.updatePassword(userId, hashedPassword);
+    const hashedPassword = await hashPassword(newPassword);
+    await storage.updatePassword(userId, hashedPassword, { expectedPassword: user.password });
+    await destroyAffectedSession(req, userId);
 
     res.json({ message: "Пароль успешно изменен" });
   } catch (error) {
+    if (error instanceof PasswordUpdateConflict) {
+      return res.status(409).json({ message: "Пароль уже изменён. Войдите заново" });
+    }
     console.error("Error changing password:", error);
     res.status(500).json({ message: "Ошибка при изменении пароля" });
   }
@@ -80,7 +91,7 @@ router.post('/auth/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
 
-    if (!email) {
+    if (typeof email !== "string" || !email) {
       return res.status(400).json({ message: "Email обязателен" });
     }
 
@@ -89,8 +100,7 @@ router.post('/auth/forgot-password', async (req, res) => {
       return res.json({ message: "Если пользователь с таким email существует, инструкции отправлены на почту" });
     }
 
-    const { token } = await storage.createPasswordResetToken(email);
-    console.log(`Password reset token for ${email}: ${token}`);
+    await storage.createPasswordResetToken(email);
 
     res.json({ message: "Если пользователь с таким email существует, инструкции отправлены на почту" });
   } catch (error) {
@@ -103,7 +113,7 @@ router.post('/auth/reset-password', async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
-    if (!token || !newPassword) {
+    if (typeof token !== "string" || !token || typeof newPassword !== "string" || !newPassword) {
       return res.status(400).json({ message: "Токен и новый пароль обязательны" });
     }
 
@@ -116,36 +126,35 @@ router.post('/auth/reset-password', async (req, res) => {
       return res.status(400).json({ message: "Недействительный или истекший токен" });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await storage.updatePassword(userId, hashedPassword);
+    const hashedPassword = await hashPassword(newPassword);
+    await storage.updatePassword(userId, hashedPassword, { resetToken: token });
+    await destroyAffectedSession(req, userId);
 
     res.json({ message: "Пароль успешно сброшен" });
   } catch (error) {
+    if (error instanceof PasswordUpdateConflict) {
+      return res.status(400).json({ message: "Недействительный или истекший токен" });
+    }
     console.error("Error resetting password:", error);
     res.status(500).json({ message: "Ошибка при сбросе пароля" });
   }
 });
 
-router.post('/admin/users/:id/set-password', isAuthenticated, async (req: any, res) => {
+router.post('/admin/users/:id/set-password', requireAdmin, async (req: any, res) => {
   try {
-    const adminUserId = req.user.id;
-    const adminUser = await storage.getUser(adminUserId);
-
-    if (!adminUser || (adminUser.role !== "admin" && adminUser.email !== "alexjc55@gmail.com" && adminUser.username !== "admin")) {
-      return res.status(403).json({ message: "Admin access required" });
-    }
-
     const { id } = req.params;
     const { password } = req.body;
 
-    if (!password || password.length < 6) {
+    if (typeof password !== "string" || password.length < 6) {
       return res.status(400).json({ message: "Пароль должен содержать минимум 6 символов" });
     }
 
-    const salt = randomBytes(16).toString("hex");
-    const buf = (await scryptAsync(password, salt, 64)) as Buffer;
-    const hashedPassword = `${buf.toString("hex")}.${salt}`;
+    if (!await storage.getUser(id)) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    const hashedPassword = await hashPassword(password);
     await storage.updatePassword(id, hashedPassword);
+    await destroyAffectedSession(req, id);
 
     res.json({ message: "Пароль успешно установлен" });
   } catch (error) {

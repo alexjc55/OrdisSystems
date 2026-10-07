@@ -51,6 +51,13 @@ import {
 import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
+import { randomBytes } from "node:crypto";
+import { SESSION_TABLE_NAME, PasswordUpdateConflict } from "./session-credentials";
+
+export interface PasswordUpdateConditions {
+  expectedPassword?: string;
+  resetToken?: string;
+}
 
 // Pagination types
 export interface PaginationParams {
@@ -77,13 +84,14 @@ export interface PaginatedResult<T> {
 export interface IStorage {
   // User operations (independent auth)
   getUser(id: string): Promise<User | undefined>;
+  getUserForLegacySession(id: string, sessionId: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUserProfile(id: string, updates: Partial<UpsertUser>): Promise<User>;
   
   // Password management
-  updatePassword(userId: string, hashedPassword: string): Promise<User>;
+  updatePassword(userId: string, hashedPassword: string, conditions?: PasswordUpdateConditions): Promise<User>;
   createPasswordResetToken(email: string): Promise<{ token: string; userId: string }>;
   validatePasswordResetToken(token: string): Promise<{ userId: string; isValid: boolean }>;
   clearPasswordResetToken(userId: string): Promise<void>;
@@ -201,6 +209,18 @@ export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
     const db = await this.getDatabase();
     const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserForLegacySession(id: string, sessionId: string): Promise<User | undefined> {
+    const db = await this.getDatabase();
+    // One snapshot: never attach a new password version to an already revoked
+    // legacy cookie when rotation happens between session loading and user loading.
+    const [user] = await db.select().from(users).where(and(
+      eq(users.id, id),
+      sql`EXISTS (SELECT 1 FROM ${sql.identifier(SESSION_TABLE_NAME)} s
+        WHERE s.sid = ${sessionId} AND s.sess->'passport'->>'user' = ${id})`,
+    ));
     return user;
   }
 
@@ -1753,9 +1773,18 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updatePassword(userId: string, hashedPassword: string): Promise<User> {
+  async updatePassword(userId: string, hashedPassword: string, conditions: PasswordUpdateConditions = {}): Promise<User> {
     const db = await this.getDatabase();
-    const [user] = await db
+    return db.transaction(async (tx: any) => {
+      const predicates = [eq(users.id, userId)];
+      if (conditions.expectedPassword !== undefined) {
+        predicates.push(eq(users.password, conditions.expectedPassword));
+      }
+      if (conditions.resetToken !== undefined) {
+        predicates.push(eq(users.passwordResetToken, conditions.resetToken));
+        predicates.push(gt(users.passwordResetExpires, new Date()));
+      }
+      const [user] = await tx
       .update(users)
       .set({ 
         password: hashedPassword, 
@@ -1763,13 +1792,18 @@ export class DatabaseStorage implements IStorage {
         passwordResetToken: null,
         passwordResetExpires: null
       })
-      .where(eq(users.id, userId))
+      .where(and(...predicates))
       .returning();
-    
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return user;
+      if (!user) {
+        throw new PasswordUpdateConflict();
+      }
+      // Both old id-only and new versioned Passport sessions belong to this user.
+      // Parameterized exact-id predicate; never clear another user's sessions.
+      await tx.execute(sql`DELETE FROM ${sql.identifier(SESSION_TABLE_NAME)}
+        WHERE sess->'passport'->>'user' = ${userId}
+           OR sess->'passport'->'user'->>'id' = ${userId}`);
+      return user;
+    });
   }
 
   async createPasswordResetToken(email: string): Promise<{ token: string; userId: string }> {
@@ -1779,7 +1813,7 @@ export class DatabaseStorage implements IStorage {
       throw new Error("User not found");
     }
 
-    const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    const token = randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
     await db
@@ -1805,9 +1839,7 @@ export class DatabaseStorage implements IStorage {
       return { userId: "", isValid: false };
     }
 
-    const isExpired = user.passwordResetExpires && user.passwordResetExpires < new Date();
-    if (isExpired) {
-      await this.clearPasswordResetToken(user.id);
+    if (!user.passwordResetExpires || user.passwordResetExpires <= new Date()) {
       return { userId: user.id, isValid: false };
     }
 

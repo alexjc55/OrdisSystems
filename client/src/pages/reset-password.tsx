@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ export default function ResetPasswordPage() {
     },
     onSuccess: () => {
       setSuccess(true);
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       toast({
         title: t('auth.passwordReset'),
         description: t('auth.passwordResetSuccess'),
