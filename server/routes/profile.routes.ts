@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { storage } from "../storage";
 import { isAuthenticated } from "../middleware/auth-guard";
+import { validateProfileUpdates } from "../middleware/user-security";
 
 const router = Router();
 
-router.patch('/profile', isAuthenticated, async (req: any, res) => {
+router.patch('/profile', isAuthenticated, validateProfileUpdates, async (req: any, res) => {
   try {
     const userId = req.user.id;
     const updates = req.body;

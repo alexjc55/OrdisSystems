@@ -4,6 +4,7 @@ import express from "express";
 import path from "path";
 import { setupAuth } from "../auth";
 import rateLimit from "express-rate-limit";
+import { requireAdminForUserWrites } from "../middleware/user-security";
 
 import systemRoutes from "./system.routes";
 import authRoutes from "./auth.routes";
@@ -93,6 +94,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/login', loginLimiter);
   app.post('/api/auth/forgot-password', forgotPasswordLimiter);
   app.post('/api/orders/guest', guestOrderLimiter);
+
+  app.use('/api/admin/users', requireAdminForUserWrites);
 
   app.use(systemRoutes);
   app.use("/api", authRoutes);

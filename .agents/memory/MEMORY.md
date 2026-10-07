@@ -1,1 +1,2 @@
 - [PDF share on mobile (WhatsApp)](pdf-share-mobile.md) — hidden 794px iframe pre-generates blob; synchronous access preserves iOS navigator.share user gesture.
+- [External store updates](external-store-updates.md) — multiple stores run on an external PM2 server; reconcile emergency server fixes before repository-based updates.
