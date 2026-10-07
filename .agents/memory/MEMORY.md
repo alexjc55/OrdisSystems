@@ -2,3 +2,4 @@
 - [External store updates](external-store-updates.md) — multiple stores run on an external PM2 server; reconcile emergency server fixes before repository-based updates.
 - [Initial administrator scope](admin-initialization-scope.md) — owner-approved initialization never repurposes existing accounts; credential repair is separate work.
 - [PostgreSQL test encoding](postgresql-test-encoding.md) — disposable clusters need explicit UTF-8 or multilingual fixtures can fail before testing application behavior.
+- [Safe merge setup](safe-merge-setup.md) — code merges must not automatically push schema changes; interactive migration prompts can hang or risk store data.
