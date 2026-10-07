@@ -830,6 +830,8 @@ export const pendingPayments = pgTable("pending_payments", {
   orderId: integer("order_id").references(() => orders.id, { onDelete: "set null" }).unique(),
   providerApprovalRequired: boolean("provider_approval_required"), // null for legacy payments; snapshot non-J5 Grow at initiation
   providerApprovedAt: timestamp("provider_approved_at"), // independent of order creation
+  providerApprovalAttemptedAt: timestamp("provider_approval_attempted_at"), // committed BEFORE contacting Grow
+  providerApprovalReference: varchar("provider_approval_reference", { length: 255 }), // operator's Grow confirmation reference
   createdAt: timestamp("created_at").defaultNow(),
   expiresAt: timestamp("expires_at").notNull(), // Auto-expire after 3 hours
 });

@@ -210,6 +210,7 @@ export interface IStorage {
   getPendingPaymentByToken(token: string): Promise<PendingPayment | undefined>;
   finalizePendingPayment(token: string, transactionId?: string): Promise<PaymentFinalizationResult>;
   approvePendingPayment(token: string, transactionId: string | undefined, approve: (transactionId: string) => Promise<void>, legacyRequired: boolean): Promise<void>;
+  reconcilePendingPaymentApproval(token: string, transactionId: string, confirmationReference: string): Promise<void>;
   updatePendingPaymentStatus(token: string, status: "pending" | "failed" | "expired", transactionId?: string): Promise<PendingPayment | undefined>;
   deleteExpiredPendingPayments(): Promise<void>;
 }
@@ -2422,28 +2423,71 @@ export class DatabaseStorage implements IStorage {
     legacyRequired: boolean,
   ): Promise<void> {
     const db = await this.getDatabase();
-    await db.transaction(async (tx) => {
-      // Serialize across server processes, including duplicate webhooks.
-      // A failed call rolls back; the next webhook can retry independently
-      // of finalization, which has already committed its order/email intents.
+    const claimed = await db.transaction(async (tx) => {
+      // Commit intent BEFORE remote I/O. A crash or lost response must not erase
+      // the fact that Grow may have accepted this transaction already.
       const [pending] = await tx.select().from(pendingPayments)
         .where(eq(pendingPayments.token, token)).for("update");
       if (!pending) throw new Error("Pending payment not found");
-      if (!(pending.providerApprovalRequired ?? legacyRequired) || pending.providerApprovedAt) return;
-      if (pending.status !== "completed") throw new Error("Payment is not finalized");
       if (pending.transactionId && transactionId && pending.transactionId !== transactionId) {
         throw new Error("Payment transaction mismatch");
       }
+      if (!(pending.providerApprovalRequired ?? legacyRequired) || pending.providerApprovedAt) return;
+      if (pending.status !== "completed") throw new Error("Payment is not finalized");
+      // No documented already-approved code or status lookup exists for our
+      // legacy transactionCode contract. Neither history nor retries are proof.
+      if (pending.providerApprovalRequired === null || pending.providerApprovalAttemptedAt) {
+        throw new Error("Grow approval outcome unknown; verified reconciliation required");
+      }
       const savedTransactionId = pending.transactionId || transactionId;
       if (!savedTransactionId) throw new Error("Missing approval transaction ID");
-      await approve(savedTransactionId);
+      const attemptedAt = new Date();
       await tx.update(pendingPayments).set({
-        providerApprovedAt: new Date(),
+        providerApprovalAttemptedAt: attemptedAt,
         transactionId: savedTransactionId,
       }).where(eq(pendingPayments.id, pending.id));
-      // A browser callback can finalize without a transaction ID.
+      return { id: pending.id, orderId: pending.orderId, transactionId: savedTransactionId };
+    });
+    if (!claimed) return;
+    // Rejection, malformed data, timeout, process death and local commit failure
+    // all leave the durable intent intact. Never reissue approve automatically.
+    await approve(claimed.transactionId);
+    await db.transaction(async (tx) => {
+      await tx.update(pendingPayments).set({ providerApprovedAt: new Date() })
+        .where(and(eq(pendingPayments.id, claimed.id), eq(pendingPayments.transactionId, claimed.transactionId)));
+      if (claimed.orderId) {
+        await tx.update(orders).set({ transactionId: claimed.transactionId })
+          .where(and(eq(orders.id, claimed.orderId), isNull(orders.transactionId)));
+      }
+    });
+  }
+
+  /**
+   * Operator-only reconciliation, after Grow confirms acknowledgment for this
+   * exact NON-J5 transaction. No public endpoint and no gateway request.
+   * The reference is a Grow support/case reference, never a raw payment payload.
+   */
+  async reconcilePendingPaymentApproval(
+    token: string, transactionId: string, confirmationReference: string,
+  ): Promise<void> {
+    if (!token || !transactionId || !/^[A-Za-z0-9][A-Za-z0-9._:/-]{2,254}$/.test(confirmationReference)) {
+      throw new Error("A transaction and non-sensitive Grow confirmation reference are required");
+    }
+    const db = await this.getDatabase();
+    await db.transaction(async (tx) => {
+      const [pending] = await tx.select().from(pendingPayments)
+        .where(eq(pendingPayments.token, token)).for("update");
+      if (!pending || pending.status !== "completed") throw new Error("Completed payment not found");
+      if (pending.providerApprovalRequired === false) throw new Error("Payment does not require acknowledgment");
+      if (pending.transactionId && pending.transactionId !== transactionId) throw new Error("Payment transaction mismatch");
+      if (pending.providerApprovedAt) return;
+      await tx.update(pendingPayments).set({
+        providerApprovedAt: new Date(),
+        providerApprovalReference: confirmationReference,
+        transactionId,
+      }).where(eq(pendingPayments.id, pending.id));
       if (pending.orderId) {
-        await tx.update(orders).set({ transactionId: savedTransactionId })
+        await tx.update(orders).set({ transactionId })
           .where(and(eq(orders.id, pending.orderId), isNull(orders.transactionId)));
       }
     });

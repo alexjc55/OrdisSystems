@@ -49,3 +49,15 @@ WHERE p.status = 'completed'
 ALTER TABLE pending_payments
   ADD COLUMN IF NOT EXISTS provider_approval_required boolean,
   ADD COLUMN IF NOT EXISTS provider_approved_at timestamp;
+
+-- Durable intent before Grow I/O; historical rows remain unknown.
+ALTER TABLE pending_payments
+  ADD COLUMN IF NOT EXISTS provider_approval_attempted_at timestamp,
+  ADD COLUMN IF NOT EXISTS provider_approval_reference varchar(255);
+
+UPDATE pending_payments
+SET provider_approval_attempted_at = CURRENT_TIMESTAMP
+WHERE status = 'completed'
+  AND provider_approval_required = true
+  AND provider_approved_at IS NULL
+  AND provider_approval_attempted_at IS NULL;

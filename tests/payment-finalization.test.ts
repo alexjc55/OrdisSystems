@@ -49,6 +49,19 @@ before(async () => {
   const approvalMigration = await readFile("migrations/0009_payment_provider_approval.sql", "utf8");
   await pool.query(approvalMigration);
   await pool.query(approvalMigration);
+  await pool.query("ALTER TABLE pending_payments DROP COLUMN provider_approval_attempted_at, DROP COLUMN provider_approval_reference");
+  const historical = randomUUID();
+  await pool.query(`INSERT INTO pending_payments
+    (token, order_data, order_items, status, expires_at, provider_approval_required)
+    VALUES ($1, '{}', '[]', 'completed', NOW(), true)`, [historical]);
+  const reconciliationMigration = await readFile("migrations/0011_payment_approval_reconciliation.sql", "utf8");
+  await pool.query(reconciliationMigration);
+  await pool.query(reconciliationMigration);
+  const migrated = await storage.getPendingPaymentByToken(historical);
+  assert.ok(migrated?.providerApprovalAttemptedAt);
+  assert.equal(migrated?.providerApprovedAt, null);
+  await assert.rejects(storage.approvePendingPayment(historical, historical,
+    async () => assert.fail("historical approval must not be replayed"), true), /outcome unknown/);
   const product = await pool.query(
     "INSERT INTO products (name, price, price_per_kg) VALUES ('Тестовый продукт', 10, 10) RETURNING id",
   );
@@ -102,6 +115,7 @@ after(async () => {
 async function makePayment(userId: string | null = null, invalidItem = false) {
   return storage.createPendingPayment({
     token: randomUUID(), userId, status: "pending",
+    providerApprovalRequired: true,
     expiresAt: new Date(Date.now() + 3600000),
     orderData: {
       totalAmount: "10.00", guestName: "Покупатель", guestEmail: "guest@example.test",
@@ -571,7 +585,7 @@ test("Grow callback-first and webhook-first approve exactly once with one order 
   }
 });
 
-test("Grow concurrent callback and webhooks across independent storage instances serialize approval", async () => {
+test("Grow concurrent callbacks and independent storage instances send at most one approval", async () => {
   let calls = 0;
   let entered!: () => void;
   let release!: () => void;
@@ -587,10 +601,11 @@ test("Grow concurrent callback and webhooks across independent storage instances
       ...Array.from({ length: 5 }, () => growWebhook(pending.token)),
     ]);
     await started;
-    const competing = secondStorage.approvePendingPayment(pending.token, pending.token, approve, true);
+    await assert.rejects(secondStorage.approvePendingPayment(pending.token, pending.token, approve, true),
+      /outcome unknown/);
     release();
-    await competing;
-    assert.ok((await requests).every(response => response.status < 400));
+    assert.ok((await requests).every(response => [200, 302, 500].includes(response.status)));
+    assert.equal((await growWebhook(pending.token)).status, 200);
     assert.equal(calls, 1);
     await drainMail();
     assert.equal(mail.length, mailStart + 2);
@@ -598,10 +613,11 @@ test("Grow concurrent callback and webhooks across independent storage instances
   });
 });
 
-test("Grow approval failure returns 500 and a repeat retries without duplicate orders or emails", async () => {
+test("Grow lost response remains unknown; verified reconciliation makes repeats harmless without orders or emails", async () => {
   let calls = 0;
   await withGrow(async () => {
-    if (++calls === 1) throw new Error("Simulated approval rejection");
+    calls++;
+    throw new Error("Remote success followed by lost response");
   }, async () => {
     const pending = await makePayment();
     const initial = await counts();
@@ -610,12 +626,14 @@ test("Grow approval failure returns 500 and a repeat retries without duplicate o
     const saved = await storage.getPendingPaymentByToken(pending.token);
     assert.equal(saved?.status, "completed");
     assert.equal(saved?.providerApprovedAt, null);
+    assert.ok(saved?.providerApprovalAttemptedAt);
     await drainMail();
     assert.equal(mail.length, mailStart + 2);
-    assert.equal((await growWebhook(pending.token)).status, 200);
+    assert.equal((await growWebhook(pending.token)).status, 500);
+    await storage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-123");
     assert.ok((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt);
     assert.equal((await growWebhook(pending.token)).status, 200);
-    assert.equal(calls, 2);
+    assert.equal(calls, 1);
     await drainMail();
     assert.equal(mail.length, mailStart + 2);
     assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
@@ -628,10 +646,8 @@ test("Grow J5 never approves on webhook; saved mode survives configuration chang
   for (const storedRequired of [null, false, true]) {
     await withGrow(approve, async () => {
       const pending = await makePayment();
-      if (storedRequired !== null) {
-        await pool.query("UPDATE pending_payments SET provider_approval_required = $1 WHERE token = $2",
-          [storedRequired, pending.token]);
-      }
+      await pool.query("UPDATE pending_payments SET provider_approval_required = $1 WHERE token = $2",
+        [storedRequired, pending.token]);
       assert.equal((await growCallback(pending.token)).status, 302);
       assert.equal((await growWebhook(pending.token)).status, 200);
       assert.equal((await growWebhook(pending.token)).status, 200);
@@ -679,7 +695,7 @@ test("payment initiation persists Grow approval mode and webhook fills an absent
   assert.equal(calls, 1);
 });
 
-test("Grow never approves a conflicting transaction; a legacy completed row can be approved without recreation", async () => {
+test("Grow rejects conflicting transactions; legacy completed payments require verified reconciliation", async () => {
   const approved: string[] = [];
   await withGrow(async id => { approved.push(id); }, async () => {
     const pending = await makePayment();
@@ -689,19 +705,21 @@ test("Grow never approves a conflicting transaction; a legacy completed row can 
     assert.equal((await growWebhook(pending.token)).status, 200);
     assert.deepEqual(approved, [pending.token]);
     const legacy = await makePayment();
-    await pool.query("UPDATE pending_payments SET status = 'completed' WHERE token = $1", [legacy.token]);
+    await pool.query("UPDATE pending_payments SET status = 'completed', provider_approval_required = NULL WHERE token = $1", [legacy.token]);
     const initial = await counts();
     const mailStart = mail.length;
-    assert.equal((await growWebhook(legacy.token)).status, 200);
+    assert.equal((await growWebhook(legacy.token)).status, 500);
+    assert.equal((await storage.getPendingPaymentByToken(legacy.token))?.providerApprovalAttemptedAt, null);
+    await secondStorage.reconcilePendingPaymentApproval(legacy.token, legacy.token, "GROW-CASE-LEGACY");
     assert.equal((await growWebhook(legacy.token)).status, 200);
     assert.deepEqual(await counts(), initial);
     assert.equal(mail.length, mailStart);
     assert.equal((await storage.getPendingPaymentByToken(legacy.token))?.orderId, null);
-    assert.deepEqual(approved, [pending.token, legacy.token]);
+    assert.deepEqual(approved, [pending.token]);
   });
 });
 
-test("Grow durable approval survives process restart; death while holding lock leaves approval retryable", async () => {
+test("Grow process death preserves uncertain intent; a fresh process cannot repeat approval", async () => {
   const pending = await makePayment();
   await storage.finalizePendingPayment(pending.token, pending.token);
   const childCode = (approve: string) => `
@@ -713,9 +731,16 @@ test("Grow durable approval survives process restart; death while holding lock l
     childCode("async () => process.exit(0)")], { encoding: "utf8", timeout: 20_000 });
   assert.equal(crash.status, 0, crash.stderr);
   assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, null);
+  assert.ok((await storage.getPendingPaymentByToken(pending.token))?.providerApprovalAttemptedAt);
   const recovery = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e",
     childCode("async () => {}")], { encoding: "utf8", timeout: 20_000 });
-  assert.equal(recovery.status, 0, recovery.stderr);
+  assert.notEqual(recovery.status, 0);
+  assert.match(recovery.stderr, /outcome unknown/);
+  const reconcile = spawnSync(process.execPath, ["--import", "tsx", "scripts/reconcile-grow-approval.ts",
+    "--token", pending.token, "--transaction-code", pending.token,
+    "--grow-confirmation-reference", "GROW-CASE-CRASH", "--verified-non-j5-acknowledged"],
+  { encoding: "utf8", timeout: 20_000 });
+  assert.equal(reconcile.status, 0, reconcile.stderr);
   assert.ok((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt);
   await secondStorage.approvePendingPayment(pending.token, pending.token,
     async () => assert.fail("persisted approval must not be repeated"), true);
@@ -725,6 +750,10 @@ test("Grow approval contract rejects HTTP, API, malformed JSON and network error
   const provider = new GrowProvider("test-user", "test-key", "test-page", true);
   const originalFetch = globalThis.fetch;
   try {
+    for (const status of ["already-approved", "2", 2, true, [1], null, undefined]) {
+      globalThis.fetch = async () => Response.json({ status, err: "Already approved" });
+      await assert.rejects(provider.approveTransaction("txn"), /rejected/);
+    }
     for (const response of [
       new Response("unavailable", { status: 503 }),
       new Response(JSON.stringify({ status: 0 })),
@@ -743,7 +772,95 @@ test("Grow approval contract rejects HTTP, API, malformed JSON and network error
       return new Response(JSON.stringify({ status: "1" }));
     };
     await provider.approveTransaction("txn");
+    globalThis.fetch = async () => Response.json({ status: "1" });
+    await provider.approveTransaction("txn");
     await provider.captureJ5("txn", 10);
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test("Grow remote success then local commit failure never reissues approval", async () => {
+  const pending = await makePayment();
+  await storage.finalizePendingPayment(pending.token, pending.token);
+  const initial = await counts();
+  await drainMail();
+  const mailStart = mail.length;
+  let calls = 0;
+  await pool.query(`CREATE FUNCTION reject_grow_commit() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+      IF NEW.provider_approved_at IS NOT NULL THEN RAISE EXCEPTION 'Injected Grow commit failure'; END IF;
+      RETURN NEW;
+    END $$;
+    CREATE CONSTRAINT TRIGGER reject_grow_commit AFTER UPDATE ON pending_payments
+    DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION reject_grow_commit()`);
+  try {
+    await assert.rejects(storage.approvePendingPayment(pending.token, pending.token,
+      async () => { calls++; }, true), /Injected Grow commit failure/);
+    const saved = await storage.getPendingPaymentByToken(pending.token);
+    assert.ok(saved?.providerApprovalAttemptedAt);
+    assert.equal(saved?.providerApprovedAt, null);
+    await assert.rejects(secondStorage.approvePendingPayment(pending.token, pending.token,
+      async () => { calls++; }, true), /outcome unknown/);
+    assert.equal(calls, 1);
+  } finally {
+    await pool.query("DROP TRIGGER reject_grow_commit ON pending_payments; DROP FUNCTION reject_grow_commit()");
+  }
+  await storage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-COMMIT");
+  await secondStorage.approvePendingPayment(pending.token, pending.token,
+    async () => assert.fail("verified acknowledgment must not be repeated"), true);
+  await drainMail();
+  assert.equal(mail.length, mailStart);
+  assert.deepEqual(await counts(), initial);
+});
+
+test("Grow reconciliation validates one completed non-J5 transaction and preserves the evidence on repeats", async () => {
+  const pending = await makePayment();
+  await assert.rejects(storage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-VALID"),
+    /Completed payment not found/);
+  await storage.finalizePendingPayment(pending.token, pending.token);
+  await assert.rejects(storage.reconcilePendingPaymentApproval(pending.token, "wrong-code", "GROW-CASE-VALID"),
+    /mismatch/);
+  await assert.rejects(storage.reconcilePendingPaymentApproval(pending.token, pending.token, ""),
+    /reference/);
+  await assert.rejects(storage.reconcilePendingPaymentApproval("missing", pending.token, "GROW-CASE-VALID"),
+    /not found/);
+  await pool.query("UPDATE pending_payments SET provider_approval_required = false WHERE token = $1", [pending.token]);
+  await assert.rejects(storage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-VALID"),
+    /does not require/);
+  await pool.query("UPDATE pending_payments SET provider_approval_required = true WHERE token = $1", [pending.token]);
+  await Promise.all([
+    storage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-VALID"),
+    secondStorage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-VALID"),
+  ]);
+  const saved = await storage.getPendingPaymentByToken(pending.token);
+  await secondStorage.reconcilePendingPaymentApproval(pending.token, pending.token, "GROW-CASE-OTHER");
+  const repeated = await storage.getPendingPaymentByToken(pending.token);
+  assert.deepEqual(repeated?.providerApprovedAt, saved?.providerApprovedAt);
+  assert.equal(repeated?.providerApprovalReference, "GROW-CASE-VALID");
+  const missingConsent = spawnSync(process.execPath, ["--import", "tsx", "scripts/reconcile-grow-approval.ts",
+    "--token", pending.token, "--transaction-code", pending.token,
+    "--grow-confirmation-reference", "GROW-CASE-OTHER"],
+  { encoding: "utf8", timeout: 20_000 });
+  assert.equal(missingConsent.status, 1);
+  assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovalReference, "GROW-CASE-VALID");
+});
+
+test("Grow unverified already-approved reply is unknown, not successful or automatically repeated", async () => {
+  const pending = await makePayment();
+  await storage.finalizePendingPayment(pending.token, pending.token);
+  const provider = new GrowProvider("test-user", "test-key", "test-page", true);
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async () => {
+    calls++;
+    return Response.json({ status: 2, err: "Already approved" });
+  };
+  try {
+    await assert.rejects(storage.approvePendingPayment(pending.token, pending.token,
+      id => provider.approveTransaction(id), true), /rejected/);
+    await assert.rejects(secondStorage.approvePendingPayment(pending.token, pending.token,
+      id => provider.approveTransaction(id), true), /outcome unknown/);
+    assert.equal(calls, 1);
+    assert.equal((await storage.getPendingPaymentByToken(pending.token))?.providerApprovedAt, null);
   } finally { globalThis.fetch = originalFetch; }
 });
 

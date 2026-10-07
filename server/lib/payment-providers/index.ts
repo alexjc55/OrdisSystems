@@ -271,8 +271,10 @@ export class GrowProvider implements IPaymentProvider {
     }
 
     const data = await response.json();
-    if (String(data.status) !== '1') {
+    if (data?.status !== 1 && data?.status !== '1') {
       // Do not include the gateway payload (which can contain sensitive data).
+      // No documented "already approved" code for the transactionCode contract:
+      // every other response requires reconciliation, not success inference.
       throw new Error("Grow approveTransaction rejected");
     }
   }
