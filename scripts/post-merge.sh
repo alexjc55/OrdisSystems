@@ -4,6 +4,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 npm install --no-audit --no-fund
+npm run check
+npm run test:typecheck
 npm run test:security
 npm run build
 

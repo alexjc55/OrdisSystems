@@ -49,6 +49,11 @@ Migration file sync (CRITICAL): Whenever shared/schema.ts is modified (new table
 - **UI/UX**: Responsive design, mobile-first considerations, consistent styling, and accessible UI components.
 - **SEO**: Dynamic meta tag management, crawlable links via UTMLink components, structured data, and hreflang tags.
 
+## Type checks and regression tests
+- `npm run check` runs both independent strict checks: `check:app` (the unchanged application configuration) and `check:tests` (tests and TypeScript scripts, including application-adjacent `*.test.ts`/`*.test.tsx` files).
+- `npm run test:typecheck` verifies the independent root scopes and proves that deliberately invalid test and script fixtures make `check:tests` exit nonzero. Run it sequentially with other type checks: it temporarily creates invalid fixtures and removes them in `finally`.
+- Post-merge setup runs both type checks and this regression test before security tests and the build. Test configuration inherits application strictness without changing the application configuration.
+
 ## External Dependencies
 - **@tanstack/react-query**: Server state management.
 - **drizzle-orm**: Type-safe ORM for PostgreSQL.
