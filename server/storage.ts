@@ -1,3 +1,5 @@
+import { publicUserSelection } from "./user-dto";
+import type { AdminUser } from "@shared/user-dto";
 import {
   users,
   userAddresses,
@@ -140,7 +142,7 @@ export interface IStorage {
   claimGuestOrder(claimToken: string, userId: string): Promise<Order | undefined>;
 
   // User operations with pagination
-  getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User>>;
+  getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<AdminUser>>;
 
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
@@ -1057,7 +1059,7 @@ export class DatabaseStorage implements IStorage {
 
       // Get user data
       const [userData] = await db
-        .select()
+        .select(publicUserSelection)
         .from(users)
         .where(eq(users.id, order.userId || ''));
 
@@ -1204,7 +1206,7 @@ export class DatabaseStorage implements IStorage {
 
       // Get user data
       const [userData] = await db
-        .select()
+        .select(publicUserSelection)
         .from(users)
         .where(eq(users.id, order.userId || ''));
 
@@ -1345,7 +1347,7 @@ export class DatabaseStorage implements IStorage {
 
     // Get user data
     const [userData] = await db
-      .select()
+      .select(publicUserSelection)
       .from(users)
       .where(eq(users.id, order.userId || ''));
 
@@ -1584,7 +1586,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // User operations with pagination
-  async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<User & { orderCount: number; totalOrderAmount: number }>> {
+  async getUsersPaginated(params: PaginationParams): Promise<PaginatedResult<AdminUser>> {
     const db = await this.getDatabase();
     const { page, limit, search, status, sortField, sortDirection } = params;
     const offset = (page - 1) * limit;
@@ -1632,20 +1634,7 @@ export class DatabaseStorage implements IStorage {
     // Get paginated data with order statistics
     const data = await db
       .select({
-        id: users.id,
-        username: users.username,
-        email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        profileImageUrl: users.profileImageUrl,
-        phone: users.phone,
-        defaultAddress: users.defaultAddress,
-        password: users.password,
-        passwordResetToken: users.passwordResetToken,
-        passwordResetExpires: users.passwordResetExpires,
-        role: users.role,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
+        ...publicUserSelection,
         orderCount: sql<number>`(SELECT COALESCE(COUNT(*), 0) FROM orders o_cnt WHERE o_cnt.user_id = users.id)`,
         totalOrderAmount: sql<number>`(SELECT COALESCE(SUM(o_sum.total_amount::numeric), 0) FROM orders o_sum WHERE o_sum.user_id = users.id)`,
         branchIds: sql<number[]>`COALESCE(ARRAY(SELECT ub.branch_id FROM user_branches ub WHERE ub.user_id = users.id), ARRAY[]::int[])`,

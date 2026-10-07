@@ -4,7 +4,7 @@ import {
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { User as SelectUser } from "@shared/schema";
+import type { PublicUser as SelectUser } from "@shared/user-dto";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTranslation } from "@/hooks/use-language";

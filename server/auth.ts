@@ -4,6 +4,7 @@ import { Express, type Request } from "express";
 import session from "express-session";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
+import { toPublicUser } from "@shared/user-dto";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
 import { hashPassword, comparePasswords } from "./password-hash";
@@ -155,7 +156,7 @@ export function setupAuth(app: Express) {
         }
         
         res.status(201).json({ 
-          ...user, 
+          ...toPublicUser(user),
           claimedOrderId: claimedOrder?.id || null 
         });
       });
@@ -172,13 +173,13 @@ export function setupAuth(app: Express) {
       const superAdmin = getSuperAdminUser();
       req.login(superAdmin, (err) => {
         if (err) return next(err);
-        return res.status(200).json(superAdmin);
+        return res.status(200).json(toPublicUser(superAdmin));
       });
       return;
     }
     next();
   }, passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+    res.status(200).json(toPublicUser(req.user!));
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -190,7 +191,7 @@ export function setupAuth(app: Express) {
 
   app.get("/api/auth/user", (req, res) => {
     if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
-    res.json(req.user);
+    res.json(toPublicUser(req.user!));
   });
 }
 

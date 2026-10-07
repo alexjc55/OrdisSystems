@@ -705,7 +705,7 @@ export default function Profile() {
                       <div className="flex-1">
                         <h3 className="font-medium">{t('auth.password')}</h3>
                         <p className="text-sm text-gray-600">
-                          {user.password 
+                          {user.hasPassword
                             ? t('profile.passwordSet') 
                             : t('profile.passwordNotSet')
                           }
@@ -715,7 +715,7 @@ export default function Profile() {
                     <Link href="/change-password">
                       <Button variant="outline" className="w-full sm:w-auto">
                         <Lock className="h-4 w-4 mr-2" />
-                        {user.password ? t('auth.changePassword') : t('profile.setPassword')}
+                        {user.hasPassword ? t('auth.changePassword') : t('profile.setPassword')}
                       </Button>
                     </Link>
                   </div>

@@ -60,7 +60,7 @@ export default function ChangePasswordPage() {
     const newErrors: Record<string, string> = {};
     
     // Validation
-    if (!formData.currentPassword && user?.password) {
+    if (!formData.currentPassword && user?.hasPassword) {
       newErrors.currentPassword = t('auth.currentPasswordRequired');
     }
     
@@ -137,7 +137,7 @@ export default function ChangePasswordPage() {
               <div>
                 <CardTitle>{t('auth.changePassword')}</CardTitle>
                 <CardDescription>
-                  {user?.password 
+                  {user?.hasPassword
                     ? t('auth.updatePasswordSecurity') 
                     : t('auth.setPasswordAccount')
                   }
@@ -147,7 +147,7 @@ export default function ChangePasswordPage() {
           </CardHeader>
 
           <CardContent>
-            {!user?.password && (
+            {!user?.hasPassword && (
               <Alert className="mb-6 border-blue-200 bg-blue-50">
                 <AlertCircle className="h-4 w-4 text-blue-600" />
                 <AlertDescription className="text-blue-800">
@@ -157,7 +157,7 @@ export default function ChangePasswordPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {user?.password && (
+              {user?.hasPassword && (
                 <div>
                   <Label htmlFor="currentPassword">{t('auth.currentPassword')} *</Label>
                   <PasswordInput
@@ -175,7 +175,7 @@ export default function ChangePasswordPage() {
 
               <div>
                 <Label htmlFor="newPassword">
-                  {user?.password ? t('auth.newPassword') : t('auth.password')} *
+                  {user?.hasPassword ? t('auth.newPassword') : t('auth.password')} *
                 </Label>
                 <PasswordInput
                   id="newPassword"
@@ -191,7 +191,7 @@ export default function ChangePasswordPage() {
 
               <div>
                 <Label htmlFor="confirmPassword">
-                  {user?.password ? t('auth.confirmNewPassword') : t('auth.confirmPassword')} *
+                  {user?.hasPassword ? t('auth.confirmNewPassword') : t('auth.confirmPassword')} *
                 </Label>
                 <PasswordInput
                   id="confirmPassword"
@@ -216,7 +216,7 @@ export default function ChangePasswordPage() {
                   ) : (
                     <>
                       <Check className="h-4 w-4 mr-2" />
-                      {user?.password ? t('auth.changePassword') : t('auth.setPassword')}
+                      {user?.hasPassword ? t('auth.changePassword') : t('auth.setPassword')}
                     </>
                   )}
                 </Button>

@@ -5,6 +5,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import { hashPassword, comparePasswords } from "../server/password-hash";
 import { PasswordUpdateConflict, sessionIdentity } from "../server/session-credentials";
+import { toPublicUser, toAdminUser } from "../shared/user-dto";
 
 if (process.env.PASSWORD_TEST_CLUSTER !== "isolated" ||
     !process.env.PGHOST?.startsWith("/tmp/password-tests.")) {
@@ -32,6 +33,7 @@ before(async () => {
   const { setupAuth, isAuthenticated } = await import("../server/auth");
   const { default: authRoutes } = await import("../server/routes/auth.routes");
   const { default: adminUsers } = await import("../server/routes/admin/users.routes");
+  const { default: profileRoutes } = await import("../server/routes/profile.routes");
   const { requireAdminForUserWrites } = await import("../server/middleware/user-security");
   const app = express();
   app.use(express.json());
@@ -39,6 +41,9 @@ before(async () => {
   app.use("/api/admin/users", requireAdminForUserWrites);
   app.use("/api", authRoutes);
   app.use("/api", adminUsers);
+  app.use("/api", profileRoutes);
+  // Exercise the second auth router even though setupAuth owns the main URL.
+  app.use("/duplicate", authRoutes);
   app.post("/test/hold", isAuthenticated, async (req: any, res) => {
     heldRequestStarted?.();
     await new Promise<void>(resolve => { releaseHeldRequest = resolve; });
@@ -89,10 +94,137 @@ async function fixture(id: string, format: "scrypt" | "bcrypt" = "scrypt", role 
 async function login(username: string, password = oldPassword) {
   const response = await request("/api/login", { username, password });
   assert.equal(response.status, 200);
+  assertPublicUser(await response.json());
   const cookie = response.headers.get("set-cookie")?.split(";")[0];
   assert.ok(cookie);
   return cookie;
 }
+
+function assertNoUserSecrets(value: unknown) {
+  if (!value || typeof value !== "object") return;
+  for (const [key, child] of Object.entries(value)) {
+    assert.ok(!["password", "passwordResetToken", "passwordResetExpires"].includes(key), key);
+    assertNoUserSecrets(child);
+  }
+}
+
+function assertPublicUser(value: any, hasPassword = true) {
+  assertNoUserSecrets(value);
+  assert.equal(value.hasPassword, hasPassword);
+  assert.equal(typeof value.id, "string");
+  assert.equal(typeof value.username, "string");
+}
+
+test("public DTOs allowlist fields, preserve useful data and never mutate stored credentials", () => {
+  for (const password of ["test-hash", "", null]) {
+    const source = {
+      id: "dto", username: "dto", password, role: "customer", email: "dto@example.invalid",
+      passwordResetToken: "test-token", passwordResetExpires: new Date(),
+      futureSecret: "must-not-leak", hasPassword: !password,
+      orderCount: 2, totalOrderAmount: 30, branchIds: [1], customerBranchIds: [2],
+    } as any;
+    const dto = toPublicUser(source);
+    assertPublicUser(dto, Boolean(password));
+    assert.equal(dto.email, source.email);
+    assert.equal("futureSecret" in dto, false);
+    const adminDto = toAdminUser(source);
+    assertPublicUser(adminDto, Boolean(password));
+    assert.equal("futureSecret" in adminDto, false);
+    assert.deepEqual(adminDto.branchIds, [1]);
+    assert.equal(adminDto.orderCount, 2);
+    assert.equal(source.password, password);
+    assert.equal(source.passwordResetToken, "test-token");
+  }
+});
+
+test("registration, both auth routes, profile and all admin user responses omit credentials", async () => {
+  const registration = await request("/api/register", {
+    username: "public-register", password: oldPassword, email: "public-register@example.invalid",
+  });
+  assert.equal(registration.status, 201);
+  const registered = await registration.json();
+  assertPublicUser(registered);
+  assert.equal(registered.claimedOrderId, null);
+  const cookie = registration.headers.get("set-cookie")!.split(";")[0];
+  await storage.createPasswordResetToken(registered.email);
+  for (const path of ["/api/auth/user", "/duplicate/auth/user"]) {
+    const response = await request(path, undefined, cookie);
+    assert.equal(response.status, 200);
+    assertPublicUser(await response.json());
+  }
+  const profile = await fetch(`${baseUrl}/api/profile`, {
+    method: "PATCH", headers: { cookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ firstName: "Public profile" }),
+  });
+  assert.equal(profile.status, 200);
+  const profileDto = await profile.json();
+  assertPublicUser(profileDto);
+  assert.equal(profileDto.firstName, "Public profile");
+  assert.ok((await storage.getUser(registered.id))!.passwordResetToken);
+
+  await fixture("public-admin", "scrypt", "admin");
+  const adminCookie = await login("public-admin");
+  const create = await request("/api/admin/users", {
+    username: "public-created", password: oldPassword, email: "public-created@example.invalid",
+    role: "customer",
+  }, adminCookie);
+  assert.equal(create.status, 201);
+  const created = await create.json();
+  assertPublicUser(created);
+  await storage.createPasswordResetToken(created.email);
+  for (const [method, path, body] of [
+    ["GET", `/api/admin/users/${created.id}`, undefined],
+    ["PUT", `/api/admin/users/${created.id}`, { firstName: "Changed" }],
+    ["PATCH", `/api/admin/users/${created.id}/role`, { role: "worker" }],
+  ] as const) {
+    const response = await fetch(`${baseUrl}${path}`, {
+      method, headers: { cookie: adminCookie, "Content-Type": "application/json" },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+    assert.equal(response.status, 200);
+    assertPublicUser(await response.json());
+  }
+  await pool.query("INSERT INTO users (id,username,password) VALUES ('public-no-password','public-no-password','')");
+  // Repeat to exercise cache-hit behavior if caching is enabled later.
+  for (let i = 0; i < 2; i++) {
+    const list = await request("/api/admin/users?search=public-&limit=100", undefined, adminCookie);
+    assert.equal(list.status, 200);
+    const page = await list.json();
+    assertNoUserSecrets(page);
+    assert.ok(page.data.length >= 4);
+    for (const user of page.data) {
+      assertPublicUser(user, user.id !== "public-no-password");
+      assert.ok("orderCount" in user && "totalOrderAmount" in user);
+      assert.ok(Array.isArray(user.branchIds));
+    }
+    assert.equal(page.page, 1);
+    assert.equal(page.total, page.data.length);
+  }
+});
+
+test("nested users in all order read methods and paginated storage are public DTOs", async () => {
+  await fixture("public-order-user");
+  await storage.createPasswordResetToken("public-order-user@example.invalid");
+  const { rows: [order] } = await pool.query(
+    "INSERT INTO orders (user_id,total_amount) VALUES ('public-order-user','20.00') RETURNING id",
+  );
+  const results = [
+    await storage.getOrderById(order.id),
+    ...(await storage.getOrders("public-order-user")),
+    ...(await storage.getOrdersPaginated({ page: 1, limit: 100 })).data,
+  ];
+  assert.ok(results.length >= 3);
+  for (const result of results) {
+    assert.ok(result);
+    assertNoUserSecrets(JSON.parse(JSON.stringify(result)));
+    assertPublicUser(result.user);
+  }
+  const page = await storage.getUsersPaginated({ page: 1, limit: 100, search: "public-order-user" });
+  assertNoUserSecrets(page);
+  assertPublicUser(page.data[0]);
+  assert.equal(Number(page.data[0].orderCount), 1);
+  assert.equal(Number(page.data[0].totalOrderAmount), 20);
+});
 
 async function sessionCount(id: string) {
   return (await pool.query(`SELECT count(*)::int AS n FROM "session"

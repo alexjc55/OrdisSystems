@@ -44,7 +44,7 @@ import { Utensils, ShoppingCart, Menu, Settings, LogOut, User, X, Download, BarC
 import { getNotifications, getUnreadCount, markAllAsRead, type StoredNotification } from "@/lib/notification-storage";
 import { useLocation } from "wouter";
 import { UTMLink as Link } from "@/components/UTMLink";
-import type { User as UserType } from "@shared/schema";
+import type { PublicUser as UserType } from "@shared/user-dto";
 
 interface HeaderProps {
   onResetView?: () => void;

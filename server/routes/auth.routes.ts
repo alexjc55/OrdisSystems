@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { isAuthenticated, requireAdmin } from "../middleware/auth-guard";
 import { hashPassword, comparePasswords } from "../password-hash";
 import { PasswordUpdateConflict } from "../session-credentials";
+import { toPublicUser } from "@shared/user-dto";
 
 const router = Router();
 
@@ -19,10 +20,11 @@ router.get('/auth/user', isAuthenticated, async (req: any, res) => {
   try {
     const userId = req.user.id;
     if (userId === '__superadmin__') {
-      return res.json(req.user);
+      return res.json(toPublicUser(req.user));
     }
     const user = await storage.getUser(userId);
-    res.json(user);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(toPublicUser(user));
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Failed to fetch user" });

@@ -6,6 +6,7 @@ import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../../faceboo
 import { BRANCHES_ENABLED } from "../../config";
 import { hashPassword } from "../../password-hash";
 import { deleteUploadFile } from "../../utils/delete-upload-file";
+import { toPublicUser, toAdminUser } from "@shared/user-dto";
 
 const router = Router();
 
@@ -24,15 +25,16 @@ router.get('/admin/users', isAuthenticated, async (req: any, res) => {
     const sortField = req.query.sortField as string || 'createdAt';
     const sortDirection = req.query.sortDirection as string || 'desc';
 
-    const cacheKey = `admin-users-${page}-${limit}-${search}-${status}-${sortField}-${sortDirection}`;
+    const cacheKey = `admin-users-public-${page}-${limit}-${search}-${status}-${sortField}-${sortDirection}`;
 
     let result: any = getCache(cacheKey);
     if (!result) {
       result = await storage.getUsersPaginated({ page, limit, search, status, sortField, sortDirection });
+      result = { ...result, data: result.data.map(toAdminUser) };
       setCache(cacheKey, result, 180);
     }
 
-    res.json(result);
+    res.json({ ...result, data: result.data.map(toAdminUser) });
   } catch (error) {
     console.error("Error fetching admin users:", error);
     res.status(500).json({ message: "Failed to fetch users" });
@@ -67,7 +69,7 @@ router.post('/admin/users', isAuthenticated, async (req: any, res) => {
 
     const responseBranchIds = BRANCHES_ENABLED ? await storage.getUserBranches(newUser.id) : undefined;
     res.status(201).json({
-      ...newUser,
+      ...toPublicUser(newUser),
       ...(responseBranchIds !== undefined ? { branchIds: responseBranchIds } : {}),
     });
   } catch (error) {
@@ -99,7 +101,7 @@ router.put('/admin/users/:id', isAuthenticated, async (req: any, res) => {
 
     const responseBranchIds = BRANCHES_ENABLED ? await storage.getUserBranches(id) : undefined;
     res.json({
-      ...updatedUser,
+      ...toPublicUser(updatedUser),
       ...(responseBranchIds !== undefined ? { branchIds: responseBranchIds } : {}),
     });
   } catch (error) {
@@ -124,7 +126,7 @@ router.patch('/admin/users/:id/role', isAuthenticated, async (req: any, res) => 
     }
 
     const updatedUser = await storage.updateUserRole(id, role);
-    res.json(updatedUser);
+    res.json(toPublicUser(updatedUser));
   } catch (error) {
     console.error("Error updating user role:", error);
     res.status(500).json({ message: "Failed to update user role" });
@@ -142,7 +144,7 @@ router.get('/admin/users/:id', isAuthenticated, async (req: any, res) => {
     if (!foundUser) return res.status(404).json({ message: "User not found" });
     const branchIds = BRANCHES_ENABLED ? await storage.getUserBranches(id) : undefined;
     res.json({
-      ...foundUser,
+      ...toPublicUser(foundUser),
       ...(branchIds !== undefined ? { branchIds } : {}),
     });
   } catch (error) {

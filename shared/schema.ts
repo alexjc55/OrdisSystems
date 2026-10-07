@@ -1145,7 +1145,7 @@ export type ProductWithCategory = Product & {
 
 export type OrderWithItems = Order & {
   items: Array<OrderItem & { product: Product }>;
-  user: User | null;
+  user: import("./user-dto").PublicUser | null;
 };
 
 export type CategoryWithProducts = Category & {

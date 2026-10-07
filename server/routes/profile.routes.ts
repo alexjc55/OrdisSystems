@@ -2,6 +2,7 @@ import { Router } from "express";
 import { storage } from "../storage";
 import { isAuthenticated } from "../middleware/auth-guard";
 import { validateProfileUpdates } from "../middleware/user-security";
+import { toPublicUser } from "@shared/user-dto";
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.patch('/profile', isAuthenticated, validateProfileUpdates, async (req: an
     const userId = req.user.id;
     const updates = req.body;
     const user = await storage.updateUserProfile(userId, updates);
-    res.json(user);
+    res.json(toPublicUser(user));
   } catch (error) {
     console.error("Error updating profile:", error);
     res.status(500).json({ message: "Failed to update profile" });
