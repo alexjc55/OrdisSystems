@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { isAuthenticated } from "../../middleware/auth-guard";
 import { storage } from "../../storage";
-import { db } from "../../db";
+import { getDB } from "../../db";
 import { products, categories } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -169,6 +169,7 @@ function parse10bisJson(json: any, restaurantId: string) {
 
 // Helper: fetch existing product external IDs and category external IDs for a platform
 async function fetchExistingIds(platform: string) {
+  const db = await getDB();
   let existingExternalIds: string[] = [];
   let existingCategoryExternalIds: string[] = [];
   try {
@@ -262,6 +263,7 @@ router.post('/admin/catalog-import/fetch', isAuthenticated, async (req: any, res
 
 router.post('/admin/catalog-import/import', isAuthenticated, async (req: any, res) => {
   try {
+    const db = await getDB();
     const user = await storage.getUser(req.user.id);
     if (!user || user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
 

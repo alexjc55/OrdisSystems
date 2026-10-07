@@ -821,7 +821,7 @@ export default function Checkout() {
   });
 
   // Get user addresses if authenticated
-  const { data: addresses } = useQuery({
+  const { data: addresses } = useQuery<import('@shared/schema').UserAddress[]>({
     queryKey: ["/api/addresses"],
     enabled: isAuthenticated,
   });

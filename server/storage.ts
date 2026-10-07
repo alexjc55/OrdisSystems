@@ -25,14 +25,12 @@ import {
   type Product,
   type InsertProduct,
   type ProductWithCategory,
-  type ProductWithCategories,
   type ProductCategory,
   type InsertProductCategory,
   type Order,
   type InsertOrder,
   type OrderItem,
   type InsertOrderItem,
-  type OrderWithItems,
   type CategoryWithProducts,
   type CategoryWithCount,
   type StoreSettings,
@@ -43,18 +41,22 @@ import {
   type InsertBranch,
   type ProductBranchAvailability,
   type Coupon,
-  type InsertCoupon,
+  type InsertCoupon as CouponInput,
   type CouponUse,
   type ProductVolumeDiscount,
   pendingPayments,
   type PendingPayment,
   type InsertPendingPayment,
 } from "@shared/schema";
+import type { ProductWithCategories, OrderWithItems } from "@shared/catalog-dto";
 import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, gt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import { randomBytes } from "node:crypto";
 import { SESSION_TABLE_NAME, PasswordUpdateConflict } from "./session-credentials";
+type InsertCoupon = Omit<CouponInput, "expiresAt"> & { expiresAt?: Date | null };
+type StoreSettingsWrite = Partial<typeof storeSettings.$inferInsert>;
+type BranchAvailabilityWrite = Omit<typeof productBranchAvailability.$inferInsert, "productId">;
 
 export interface PasswordUpdateConditions {
   expectedPassword?: string;
@@ -146,7 +148,7 @@ export interface IStorage {
 
   // Store settings
   getStoreSettings(): Promise<StoreSettings | undefined>;
-  updateStoreSettings(settings: Partial<InsertStoreSettings>): Promise<StoreSettings>;
+  updateStoreSettings(settings: StoreSettingsWrite): Promise<StoreSettings>;
 
   // Theme management
   getThemes(): Promise<Theme[]>;
@@ -170,11 +172,11 @@ export interface IStorage {
   getProductsBranchAvailabilityByBranchIds(productIds: number[], branchIds: number[]): Promise<ProductBranchAvailability[]>;
   setProductBranchAvailability(
     productId: number,
-    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+    entries: BranchAvailabilityWrite[]
   ): Promise<void>;
   upsertProductBranchAvailabilityForBranches(
     productId: number,
-    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+    entries: BranchAvailabilityWrite[]
   ): Promise<void>;
   getProductBranchAvailabilityByBranch(branchId: number): Promise<ProductBranchAvailability[]>;
   getProductsForBranch(branchId: number, categoryId?: number, includeAll?: boolean): Promise<ProductWithCategories[]>;
@@ -1561,7 +1563,7 @@ export class DatabaseStorage implements IStorage {
     return settings;
   }
 
-  async updateStoreSettings(settings: Partial<InsertStoreSettings>): Promise<StoreSettings> {
+  async updateStoreSettings(settings: StoreSettingsWrite): Promise<StoreSettings> {
     const db = await this.getDatabase();
     const existingSettings = await this.getStoreSettings();
     
@@ -2076,7 +2078,7 @@ export class DatabaseStorage implements IStorage {
 
   async setProductBranchAvailability(
     productId: number,
-    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+    entries: BranchAvailabilityWrite[]
   ): Promise<void> {
     const db = await this.getDatabase();
     await db.transaction(async tx => {
@@ -2091,7 +2093,7 @@ export class DatabaseStorage implements IStorage {
 
   async upsertProductBranchAvailabilityForBranches(
     productId: number,
-    entries: Array<{ branchId: number; isAvailable: boolean; stockStatus: string; availabilityStatus: string }>
+    entries: BranchAvailabilityWrite[]
   ): Promise<void> {
     if (entries.length === 0) return;
     const db = await this.getDatabase();

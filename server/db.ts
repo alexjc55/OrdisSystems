@@ -1,8 +1,8 @@
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle, type NeonDatabase } from 'drizzle-orm/neon-serverless';
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
-let db: any;
+let db: NeonDatabase<typeof schema> | ReturnType<typeof drizzlePg<typeof schema>> | null = null;
 let pool: any;
 let isInitializing = false;
 

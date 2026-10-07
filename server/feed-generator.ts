@@ -1,4 +1,4 @@
-import { db } from './db';
+import { getDB } from './db';
 import { products, categories, productCategories, storeSettings } from '@shared/schema';
 import { eq, and, isNotNull, isNull, or } from 'drizzle-orm';
 
@@ -44,6 +44,7 @@ function normalizeImageUrl(imagePath: string, baseUrl: string): string {
  */
 async function getDefaultLanguage(): Promise<string> {
   try {
+    const db = await getDB();
     const storeData = await db.select().from(storeSettings).limit(1);
     return storeData?.[0]?.defaultLanguage || 'ru';
   } catch (error) {
@@ -56,6 +57,7 @@ async function getDefaultLanguage(): Promise<string> {
  * Get products for feed generation
  */
 export async function getFeedProducts(options: FeedOptions): Promise<FeedProduct[]> {
+  const db = await getDB();
   const defaultLang = await getDefaultLanguage();
   const { language = defaultLang, baseUrl } = options;
   

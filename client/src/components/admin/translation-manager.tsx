@@ -38,8 +38,9 @@ const FIELD_LABELS: Record<string, Record<string, string>> = {
   ingredients: { ru: "Состав",    en: "Ingredients", he: "מרכיבים",  ar: "مكونات" },
 };
 
-function fieldKey(base: string, lang: string): keyof ProductTranslation {
-  return (base + LANG_SUFFIX[lang]) as keyof ProductTranslation;
+type TranslationField = Exclude<keyof ProductTranslation, 'id' | 'categoryId'>;
+function fieldKey(base: string, lang: string): TranslationField {
+  return (base + LANG_SUFFIX[lang]) as TranslationField;
 }
 
 function catName(cat: Category, lang: string): string {

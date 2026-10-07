@@ -2,7 +2,7 @@ import { Router } from "express";
 import { storage } from "../storage";
 import { randomBytes as rb } from "crypto";
 import { type InsertOrder, type InsertOrderItem } from "@shared/schema";
-import { sendNewOrderEmail, sendGuestOrderEmail } from "../email-service";
+import { sendPaidOrderEmails } from "../payment-order-email";
 import { BRANCHES_ENABLED } from "../config";
 import { getProvider } from "../lib/payment-providers/index";
 
@@ -63,10 +63,10 @@ async function finalizeOrder(
 
   try {
     const settings = await storage.getStoreSettings();
-    if (isGuest) {
-      await sendGuestOrderEmail(newOrder as any, settings as any);
-    } else {
-      await sendNewOrderEmail(newOrder as any, settings as any);
+    if (settings?.emailNotificationsEnabled && settings.orderNotificationEmail) {
+      const orderWithItems = await storage.getOrderById(newOrder.id);
+      if (!orderWithItems) throw new Error("Created payment order not found");
+      await sendPaidOrderEmails(orderWithItems, settings);
     }
   } catch (emailErr) {
     console.error("Payment order email error:", emailErr);

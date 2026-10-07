@@ -1234,13 +1234,13 @@ export default function Profile() {
                               <span className="flex items-center gap-1">
                                 🏷️ {t('profile.couponDiscount') || 'Купон'} <span className="font-mono text-xs bg-green-100 px-1 rounded">{selectedOrder.couponCode}</span>
                               </span>
-                              <span>-{formatCurrency(parseFloat(selectedOrder.couponDiscount))}</span>
+                              <span>-{formatCurrency(parseFloat(selectedOrder.couponDiscount || '0'))}</span>
                             </div>
                           )}
                           {parseFloat(selectedOrder.loyaltyDiscount || '0') > 0 && (
                             <div className="flex justify-between text-sm text-blue-700">
                               <span>⭐ {t('profile.loyaltyDiscount') || 'Скидка постоянного покупателя'}</span>
-                              <span>-{formatCurrency(parseFloat(selectedOrder.loyaltyDiscount))}</span>
+                              <span>-{formatCurrency(parseFloat(selectedOrder.loyaltyDiscount || '0'))}</span>
                             </div>
                           )}
                           {(() => {

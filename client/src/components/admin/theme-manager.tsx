@@ -171,7 +171,8 @@ function ColorInput({ label, name, defaultValue }: { label: string; name: string
   );
 }
 
-interface ThemeData {
+type SlideTranslations = Partial<Record<`slide${1 | 2 | 3 | 4 | 5}${'Title' | 'Subtitle' | 'ButtonText'}${'En' | 'He' | 'Ar'}`, string>>;
+interface ThemeData extends SlideTranslations {
   id: string;
   name: string;
   name_en?: string;
@@ -586,7 +587,7 @@ export default function ThemeManager() {
     queryKey: ["/api/admin/themes"],
   });
 
-  const { data: storeSettings } = useQuery({
+  const { data: storeSettings } = useQuery<Partial<ThemeData>>({
     queryKey: ["/api/settings"],
   });
 

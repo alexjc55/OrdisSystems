@@ -98,7 +98,7 @@ export function SEOHead({
     queryKey: ['/api/settings'],
   });
   const { i18n } = useTranslation();
-  const currentLanguage = i18n.language || 'ru';
+  const currentLanguage = (i18n.language || 'ru') as import('@shared/localization').SupportedLanguage;
   const languages = ['ru', 'en', 'he', 'ar'];
   
   // Get URL components (SSR-safe)

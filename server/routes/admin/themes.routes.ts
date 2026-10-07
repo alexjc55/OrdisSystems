@@ -356,8 +356,8 @@ router.post('/admin/themes/:id/activate', isAuthenticated, async (req: any, res)
       `whatsapp_default_message_en = '${theme.whatsappMessageEn || ''}'`,
       `whatsapp_default_message_he = '${theme.whatsappMessageHe || ''}'`,
       `whatsapp_default_message_ar = '${theme.whatsappMessageAr || ''}'`,
-      `guest_promo_enabled = ${theme.guestPromoEnabled ?? false}`,
-      `guest_promo_text = '${(theme.guestPromoText || '').replace(/'/g, "''")}'`,
+      `guest_promo_enabled = ${('guestPromoEnabled' in theme ? theme.guestPromoEnabled : undefined) ?? false}`,
+      `guest_promo_text = '${(('guestPromoText' in theme && typeof theme.guestPromoText === 'string' ? theme.guestPromoText : '') || '').replace(/'/g, "''")}'`,
       `guest_promo_text_en = '${((theme as any).guestPromoText_en || '').replace(/'/g, "''")}'`,
       `guest_promo_text_he = '${((theme as any).guestPromoText_he || '').replace(/'/g, "''")}'`,
       `guest_promo_text_ar = '${((theme as any).guestPromoText_ar || '').replace(/'/g, "''")}'`

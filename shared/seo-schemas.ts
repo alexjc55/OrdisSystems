@@ -20,14 +20,14 @@ interface StoreSettings {
 
 interface Category {
   id: number;
-  name: string;
+  name: string | null;
   description?: string;
   url: string;
 }
 
 interface Product {
   id: number;
-  name: string;
+  name: string | null;
   description?: string;
   url: string;
   price?: number;

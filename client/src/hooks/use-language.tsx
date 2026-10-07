@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import type { TOptions } from 'i18next';
 import { useQuery } from '@tanstack/react-query';
 import { LANGUAGES, Language, isRTL, updateDocumentDirection, adminTranslations, commonTranslations, shopTranslations } from '../lib/i18n';
 import { stripLangPrefix, buildLangUrl } from './use-lang-prefix';
@@ -79,7 +80,7 @@ export function useCommonTranslation() {
   
   const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
     const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
-    const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
+    const translation = isOptions ? t(key, optionsOrFallback as TOptions & { returnObjects?: false }) : t(key);
     const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
     
     if (translation === key || !translation || translation.trim() === '') {
@@ -99,7 +100,7 @@ export function useShopTranslation() {
   
   const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
     const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
-    const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
+    const translation = isOptions ? t(key, optionsOrFallback as TOptions & { returnObjects?: false }) : t(key);
     const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
     
     if (translation === key || !translation || translation.trim() === '') {
@@ -160,7 +161,7 @@ export function useAdminTranslation() {
   const enhancedT = (key: string, optionsOrFallback?: string | Record<string, any>) => {
     try {
       const isOptions = optionsOrFallback !== null && typeof optionsOrFallback === 'object';
-      const translation = isOptions ? t(key, optionsOrFallback as any) : t(key);
+      const translation = isOptions ? t(key, optionsOrFallback as TOptions & { returnObjects?: false }) : t(key);
       const fallback = typeof optionsOrFallback === 'string' ? optionsOrFallback : undefined;
       
       if (translation === key || !translation || translation.trim() === '') {

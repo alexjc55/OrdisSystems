@@ -126,9 +126,9 @@ function HreflangTags() {
         const url = lang === defaultLanguage
           ? `${origin}${innerPath || '/'}`
           : `${origin}/${lang}${innerPath || ''}`;
-        return <link key={lang} rel="alternate" hreflang={lang} href={url} />;
+        return <link key={lang} rel="alternate" hrefLang={lang} href={url} />;
       })}
-      <link rel="alternate" hreflang="x-default" href={`${origin}${innerPath || '/'}`} />
+      <link rel="alternate" hrefLang="x-default" href={`${origin}${innerPath || '/'}`} />
     </Helmet>
   );
 }
@@ -169,7 +169,7 @@ function Router() {
     isOpen: boolean;
     title: string;
     message: string;
-    type: 'marketing' | 'order-status' | 'cart-reminder';
+    type: 'marketing' | 'order-status' | 'cart-reminder' | 'order' | 'system';
   }>({
     isOpen: false,
     title: '',

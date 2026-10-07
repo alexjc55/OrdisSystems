@@ -838,7 +838,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-  const { data: storeSettingsData } = useQuery({
+  const { data: storeSettingsData } = useQuery<StoreSettings>({
     queryKey: ['/api/settings'],
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -864,7 +864,7 @@ function OrderEditForm({ order, onClose, onSave, searchPlaceholder, adminT, tCom
   });
 
   // Generate time slots based on store working hours for this component
-  const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay = 'monday', deliveryHours?: any) => {
+  const getFormTimeSlots = (selectedDate = '', workingHours: any = {}, weekStartDay: string | null = 'monday', deliveryHours?: any) => {
     if (!selectedDate) return [];
     
     const date = new Date(selectedDate + 'T00:00:00');
@@ -4219,7 +4219,7 @@ export default function AdminDashboard() {
 
   // Branch CRUD mutations
   const createBranchMutation = useMutation({
-    mutationFn: async (data: { name: string; nameEn?: string; nameHe?: string; nameAr?: string; isActive: boolean; sortOrder: number }) => {
+    mutationFn: async (data: { name?: string; nameEn?: string; nameHe?: string; nameAr?: string; isActive: boolean; sortOrder: number }) => {
       return await apiRequest('POST', '/api/admin/branches', data);
     },
     onSuccess: () => {
@@ -9114,7 +9114,7 @@ function LoyaltySettingsCard({ isRTL, currentLanguage }: { isRTL: boolean; curre
       setGiftProductId(settings.giftProductId ? String(settings.giftProductId) : '');
       setGiftProductQuantity(settings.giftProductQuantity ? String(settings.giftProductQuantity) : '1');
       setGiftMinOrder(settings.giftMinOrderAmount || '300');
-      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean }; allpay?: { login?: string; apiKey?: string; j5Enabled?: boolean; maxInstallments?: number; createInvoice?: boolean }; payme?: { sellerPaymeId?: string; testMode?: boolean; j5Enabled?: boolean; j5BufferPercent?: number } } | null;
+      const ppc = (settings as any).paymentProviderConfig as { active?: string; hyp?: { masof?: string; passP?: string; key?: string; testMode?: boolean; j5Enabled?: boolean; j5BufferPercent?: number; sendEmail?: boolean }; grow?: { userId?: string; apiKey?: string; pageCode?: string; testMode?: boolean; j5Enabled?: boolean; j5BufferPercent?: number; maxInstallments?: number; createInvoice?: boolean }; allpay?: { login?: string; apiKey?: string; testMode?: boolean; j5Enabled?: boolean; j5BufferPercent?: number; maxInstallments?: number; createInvoice?: boolean }; payme?: { sellerPaymeId?: string; testMode?: boolean; j5Enabled?: boolean; j5BufferPercent?: number } } | null;
       setPaymentProvider(ppc?.active || 'none');
       setHypMasof(ppc?.hyp?.masof || '');
       setHypKey(ppc?.hyp?.key || '');
@@ -11133,7 +11133,7 @@ function CategoryFormDialog({ open, onClose, category, onSubmit }: any) {
     const reqField = langToField[categoryDefaultLang] || 'name';
     if (!data[reqField]?.trim()) {
       form.setError(reqField as any, { message: adminT('categories.categoryNameRequired') });
-      const tabKey = langToTabKey[categoryDefaultLang] || 'basic';
+      const tabKey = langToTabKey(categoryDefaultLang) || 'basic';
       if (availableTabs.some((t: any) => t.key === tabKey)) {
         setActiveTab(tabKey);
       }

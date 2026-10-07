@@ -250,7 +250,7 @@ export default function GuestOrderPage() {
                           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                             <img 
                               src={productImageUrl} 
-                              alt={productName}
+                              alt={productName || undefined}
                               className="w-full h-full object-cover"
                             />
                           </div>

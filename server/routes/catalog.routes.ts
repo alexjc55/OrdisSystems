@@ -120,7 +120,7 @@ router.put('/categories/:id', isAuthenticated, async (req: any, res) => {
     const categoryData = insertCategorySchema.partial().parse(req.body);
     if ('imageUrl' in categoryData) {
       const existing = await storage.getCategoryById(id);
-      if (existing?.imageUrl && existing.imageUrl !== categoryData.imageUrl) {
+      if (existing && 'imageUrl' in existing && typeof existing.imageUrl === 'string' && existing.imageUrl && existing.imageUrl !== categoryData.imageUrl) {
         deleteUploadFile(existing.imageUrl);
       }
     }
@@ -157,7 +157,7 @@ router.patch('/categories/:id', isAuthenticated, async (req: any, res) => {
     const categoryData = { ...schemaData, ...multilingualFields };
     if ('imageUrl' in categoryData) {
       const existing = await storage.getCategoryById(id);
-      if (existing?.imageUrl && existing.imageUrl !== categoryData.imageUrl) {
+      if (existing && 'imageUrl' in existing && typeof existing.imageUrl === 'string' && existing.imageUrl && existing.imageUrl !== categoryData.imageUrl) {
         deleteUploadFile(existing.imageUrl);
       }
     }
@@ -180,7 +180,7 @@ router.delete('/categories/:id', isAuthenticated, async (req: any, res) => {
     const id = parseInt(req.params.id);
     const existing = await storage.getCategoryById(id);
     await storage.deleteCategory(id);
-    if (existing?.imageUrl) deleteUploadFile(existing.imageUrl);
+    if (existing && 'imageUrl' in existing && typeof existing.imageUrl === 'string' && existing.imageUrl) deleteUploadFile(existing.imageUrl);
     res.json({ success: true });
   } catch (error: any) {
     console.error("Error deleting category:", error);

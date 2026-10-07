@@ -1,5 +1,9 @@
 // Theme System - Centralized theme management
 export interface ThemeColors {
+  tomorrowDark?: string;
+  workingHoursIcon?: string;
+  contactsIcon?: string;
+  paymentDeliveryIcon?: string;
   // Brand colors
   primary: string;
   primaryText: string;

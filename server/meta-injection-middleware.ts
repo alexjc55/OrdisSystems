@@ -168,9 +168,9 @@ export function metaInjectionMiddleware() {
 
         // 3. Products ItemList (featured / special offers, up to 12)
         const featuredProducts = allProducts
-          .filter((p: ProductWithCategories) => p.isSpecialOffer)
+          .filter((p) => p.isSpecialOffer)
           .slice(0, 12)
-          .map((p: ProductWithCategories) => ({
+        .map((p) => ({
             id: p.id,
             name: p.name,
             description: p.description || undefined,

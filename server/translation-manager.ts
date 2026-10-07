@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { getDB } from "./db";
 import { products, categories, storeSettings, themes } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import * as XLSX from 'xlsx';
@@ -102,6 +102,7 @@ function getDbFieldName(baseField: string, language: string, type: string): stri
 }
 
 export async function exportTranslations(): Promise<TranslationRow[]> {
+  const db = await getDB();
   const translations: TranslationRow[] = [];
 
   try {
@@ -207,6 +208,7 @@ export function generateExcelFile(translations: TranslationRow[]): Buffer {
 }
 
 export async function importTranslations(translations: TranslationRow[]): Promise<void> {
+  const db = await getDB();
   try {
     // Group translations by type and id
     const groupedTranslations = translations.reduce((acc, row) => {

@@ -842,7 +842,7 @@ export default function Home() {
                   const pillActive = "bg-primary text-white border-primary shadow-md";
                   const pillInactive = "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-primary";
                   const pillSize = "flex-1";
-                  const isImgUrl = (s?: string) => !!s && (s.startsWith('/') || s.startsWith('http'));
+                  const isImgUrl = (s?: string | null) => !!s && (s.startsWith('/') || s.startsWith('http'));
                   // Compute minWidth from the longest word so the card always fits its text
                   const cardMinWidth = (text: string) => {
                     const longest = text.split(/\s+/).reduce((a, b) => a.length > b.length ? a : b, '');

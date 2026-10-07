@@ -47,11 +47,11 @@ interface EmailParams {
 interface EmailSettings {
   useSendgrid: boolean;
   // Nodemailer SMTP settings
-  smtpHost?: string;
-  smtpPort?: number;
-  smtpSecure?: boolean;
-  smtpUser?: string;
-  smtpPassword?: string;
+  smtpHost?: string | null;
+  smtpPort?: number | null;
+  smtpSecure?: boolean | null;
+  smtpUser?: string | null;
+  smtpPassword?: string | null;
   // SendGrid settings
   sendgridApiKey?: string;
 }
@@ -270,13 +270,14 @@ function getLocalizedProductName(
 
 // Helper: get localized payment method name with fallback chain
 function getLocalizedPaymentMethod(
-  paymentMethodNames: Record<string, string> | undefined,
+  paymentMethodNames: Record<string, string | null> | undefined,
   fallback: string | undefined,
   lang: string,
   languageOrder: string[] = ['ru', 'en', 'he', 'ar']
 ): string {
   if (paymentMethodNames) {
-    function getVal(l: string): string { return paymentMethodNames[l] || ''; }
+    const names = paymentMethodNames;
+    function getVal(l: string): string { return names[l] || ''; }
     const val = getVal(lang);
     if (val) return val;
     for (const l of languageOrder) {
@@ -291,7 +292,7 @@ function getLocalizedPaymentMethod(
 // Helper: get localized store name with fallback chain
 function getLocalizedStoreName(
   storeName: string | undefined,
-  storeNameVariants: Record<string, string> | undefined,
+  storeNameVariants: Record<string, string | null> | undefined,
   lang: string,
   languageOrder: string[] = ['ru', 'en', 'he', 'ar']
 ): string {
@@ -325,7 +326,7 @@ export async function sendNewOrderEmail(
   opts?: {
     deliveryFee?: number;
     volumeDiscount?: number;
-    paymentMethodNames?: Record<string, string>;
+    paymentMethodNames?: Record<string, string | null>;
     languageOrder?: string[];
   }
 ): Promise<boolean> {
@@ -720,9 +721,9 @@ export async function sendGuestOrderEmail(
   opts?: {
     deliveryFee?: number;
     volumeDiscount?: number;
-    paymentMethodNames?: Record<string, string>;
+    paymentMethodNames?: Record<string, string | null>;
     languageOrder?: string[];
-    storeNameVariants?: Record<string, string>;
+    storeNameVariants?: Record<string, string | null>;
   }
 ): Promise<boolean> {
   const themeColor = hslToHex(primaryColor || '#f97316');

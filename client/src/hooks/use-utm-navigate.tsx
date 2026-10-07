@@ -14,7 +14,7 @@ export function useUTMNavigate() {
     if (options?.state !== undefined) {
       setLocation(enhancedPath, { replace: options.replace ?? false, state: options.state });
     } else {
-      setLocation(enhancedPath, options?.replace ?? false);
+      setLocation(enhancedPath, { replace: options?.replace ?? false });
     }
   }, [setLocation, addParamsToURL]);
   

@@ -6,7 +6,7 @@ interface NotificationModalProps {
   onClose: () => void;
   title: string;
   message: string;
-  type?: 'marketing' | 'order-status' | 'cart-reminder';
+  type?: 'marketing' | 'order-status' | 'cart-reminder' | 'order' | 'system';
 }
 
 export default function NotificationModal({ 

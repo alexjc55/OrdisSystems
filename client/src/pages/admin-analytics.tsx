@@ -97,7 +97,7 @@ export default function AdminAnalytics() {
     enabled: branchesEnabled,
   });
   const [customToDate, setCustomToDate] = useState<Date | undefined>();
-  const [customDateRange, setCustomDateRange] = useState<{from: Date | undefined, to: Date | undefined} | undefined>();
+  const [customDateRange, setCustomDateRange] = useState<import('react-day-picker').DateRange | undefined>();
   const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -235,7 +235,7 @@ export default function AdminAnalytics() {
     }
 
     // Обычная обработка
-    setCustomDateRange(range);
+    setCustomDateRange({ from: range.from, to: range.to });
     if (range.from && !range.to) {
       setCustomFromDate(range.from);
       setCustomToDate(undefined);

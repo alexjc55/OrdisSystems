@@ -81,7 +81,10 @@ export async function seedDatabase() {
     { name: "Пирожок с Яблоком", description: "Сладкий пирожок с ароматной яблочной начинкой и корицей", pricePerKg: "42.90", categoryId: insertedCategories.find(c => c.name === "Пирожки")!.id, isAvailable: true },
   ];
 
-  const insertedProducts = await db.insert(products).values(productData).returning();
+  const insertedProducts = await db.insert(products).values(productData.map(product => ({
+    ...product,
+    price: product.pricePerKg,
+  }))).returning();
   console.log(`✅ Created ${insertedProducts.length} demo products`);
 
   console.log("✨ Database seeded successfully!");

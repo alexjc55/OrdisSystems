@@ -25,10 +25,7 @@ router.post('/admin/coupons', isAuthenticated, isAdmin, async (req, res) => {
     if (!parsed.success) {
       return res.status(400).json({ message: "Validation error", errors: parsed.error.errors });
     }
-    const data = { ...parsed.data };
-    if (data.expiresAt && typeof data.expiresAt === 'string') {
-      data.expiresAt = new Date(data.expiresAt);
-    }
+    const data = { ...parsed.data, expiresAt: parsed.data.expiresAt != null ? new Date(parsed.data.expiresAt) : parsed.data.expiresAt };
     const coupon = await storage.createCoupon(data);
     res.status(201).json(coupon);
   } catch (error) {
@@ -48,10 +45,7 @@ router.patch('/admin/coupons/:id', isAuthenticated, isAdmin, async (req, res) =>
     if (!parsed.success) {
       return res.status(400).json({ message: "Validation error", errors: parsed.error.errors });
     }
-    const data = { ...parsed.data };
-    if (data.expiresAt && typeof data.expiresAt === 'string') {
-      data.expiresAt = new Date(data.expiresAt);
-    }
+    const data = { ...parsed.data, expiresAt: parsed.data.expiresAt != null ? new Date(parsed.data.expiresAt) : parsed.data.expiresAt };
     const coupon = await storage.updateCoupon(id, data);
     res.json(coupon);
   } catch (error) {
@@ -71,10 +65,7 @@ router.put('/admin/coupons/:id', isAuthenticated, isAdmin, async (req, res) => {
     if (!parsed.success) {
       return res.status(400).json({ message: "Validation error", errors: parsed.error.errors });
     }
-    const data = { ...parsed.data };
-    if (data.expiresAt && typeof data.expiresAt === 'string') {
-      data.expiresAt = new Date(data.expiresAt);
-    }
+    const data = { ...parsed.data, expiresAt: parsed.data.expiresAt != null ? new Date(parsed.data.expiresAt) : parsed.data.expiresAt };
     const coupon = await storage.updateCoupon(id, data);
     res.json(coupon);
   } catch (error) {

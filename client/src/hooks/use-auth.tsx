@@ -25,6 +25,7 @@ type LoginData = {
 };
 
 type RegisterData = {
+  claimToken?: string;
   username: string;
   email?: string;
   password: string;
