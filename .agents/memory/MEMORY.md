@@ -10,3 +10,4 @@
 - [Historical paid orders](historical-paid-orders.md) — preserve completed payments even when their old order association cannot be recovered safely.
 - [Remote payment confirmation](remote-payment-confirmation.md) — local serialization cannot resolve remote success followed by a lost response; verify provider retry semantics.
 - [Payment evidence](payment-evidence.md) — browser tokens are not proof; provider contracts and unverifiable older sessions require a safe cutover.
+- [Isolated build cleanup](isolated-build-cleanup.md) — redirecting Vite output alone does not contain Tailwind's temporary caches.

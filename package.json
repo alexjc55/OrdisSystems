@@ -11,6 +11,8 @@
     "check:app": "tsc -p tsconfig.json",
     "check:tests": "tsc -p tsconfig.tests.json",
     "check:build": "tsc -p tsconfig.build.json",
+    "check:vps": "bash scripts/check-vps-build.sh",
+    "test:vps-build": "node --import tsx --test tests/vps-build.test.ts",
     "test:typecheck": "node --import tsx --test tests/typecheck.test.ts",
     "test:security": "node --import tsx --test tests/user-security.test.ts tests/auth-rate-limits.test.ts",
     "test:payment-email": "node --import tsx --test tests/payment-order-email.test.ts",
