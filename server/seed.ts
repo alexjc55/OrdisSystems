@@ -1,6 +1,5 @@
 import { getDB } from "./db";
-import { categories, products, users } from "@shared/schema";
-import { hashPassword } from "./auth";
+import { categories, products } from "@shared/schema";
 
 export async function seedDatabase() {
   console.log("🌱 Seeding database...");
@@ -8,31 +7,10 @@ export async function seedDatabase() {
   const db = await getDB();
   const existingProducts = await db.select().from(products).limit(1);
   const existingCategories = await db.select().from(categories).limit(1);
-  const existingUsers = await db.select().from(users).limit(1);
 
   if (existingProducts.length > 0 || existingCategories.length > 0) {
     console.log("✅ Database already contains data, skipping seed");
     return;
-  }
-
-  // Create default admin account
-  if (existingUsers.length === 0) {
-    try {
-      const hashedPassword = await hashPassword("admin123");
-      await db.insert(users).values({
-        id: "admin-default",
-        username: "admin",
-        email: "admin@example.com",
-        firstName: "Admin",
-        lastName: "",
-        role: "admin",
-        password: hashedPassword,
-      });
-      console.log("✅ Created default admin user (login: admin / password: admin123)");
-      console.log("⚠️  Please change the admin password after first login!");
-    } catch (error) {
-      console.log("Admin user may already exist, skipping...");
-    }
   }
 
   // Insert categories
@@ -107,10 +85,4 @@ export async function seedDatabase() {
   console.log(`✅ Created ${insertedProducts.length} demo products`);
 
   console.log("✨ Database seeded successfully!");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  console.log("🔐 Admin credentials:");
-  console.log("   Login:    admin");
-  console.log("   Password: admin123");
-  console.log("   ⚠️  Change password after first login!");
-  console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 }

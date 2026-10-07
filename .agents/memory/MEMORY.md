@@ -1,2 +1,4 @@
 - [PDF share on mobile (WhatsApp)](pdf-share-mobile.md) — hidden 794px iframe pre-generates blob; synchronous access preserves iOS navigator.share user gesture.
 - [External store updates](external-store-updates.md) — multiple stores run on an external PM2 server; reconcile emergency server fixes before repository-based updates.
+- [Initial administrator scope](admin-initialization-scope.md) — owner-approved initialization never repurposes existing accounts; credential repair is separate work.
+- [PostgreSQL test encoding](postgresql-test-encoding.md) — disposable clusters need explicit UTF-8 or multilingual fixtures can fail before testing application behavior.
