@@ -50,6 +50,7 @@ import {
   type InsertPendingPayment,
 } from "@shared/schema";
 import type { ProductWithCategories, OrderWithItems } from "@shared/catalog-dto";
+import type { CheckoutEmailSnapshot } from "@shared/order-email";
 import { getDB } from "./db";
 import { eq, desc, and, like, sql, not, ne, count, asc, or, isNotNull, isNull, gt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
@@ -142,7 +143,7 @@ export interface IStorage {
   getOrders(userId?: string): Promise<OrderWithItems[]>;
   getOrdersPaginated(params: PaginationParams): Promise<PaginatedResult<OrderWithItems>>;
   getOrderById(id: number): Promise<OrderWithItems | undefined>;
-  createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order>;
+  createOrder(order: InsertOrder, items: InsertOrderItem[], emailSnapshot?: CheckoutEmailSnapshot): Promise<Order>;
   updateOrder(id: number, orderData: Partial<InsertOrder>): Promise<Order>;
   updateOrderStatus(id: number, status: "pending" | "confirmed" | "preparing" | "ready" | "delivered" | "cancelled"): Promise<Order>;
   updateOrderItems(orderId: number, items: any[]): Promise<void>;
@@ -1505,9 +1506,9 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async createOrder(order: InsertOrder, items: InsertOrderItem[]): Promise<Order> {
+  async createOrder(order: InsertOrder, items: InsertOrderItem[], emailSnapshot?: CheckoutEmailSnapshot): Promise<Order> {
     const db = await this.getDatabase();
-    return await db.transaction(async (tx: any) => {
+    return await db.transaction(async (tx) => {
       const [newOrder] = await tx
         .insert(orders)
         .values(order)
@@ -1520,6 +1521,24 @@ export class DatabaseStorage implements IStorage {
 
       await tx.insert(orderItems).values(itemsWithOrderId);
 
+      // Administrative order creation without a snapshot keeps its old behavior.
+      // Checkout order, items and automatic notifications commit atomically.
+      if (emailSnapshot) {
+        const [settings] = await tx.select().from(storeSettings).limit(1);
+        if (settings?.emailNotificationsEnabled && settings.orderNotificationEmail) {
+          const notifications: (typeof paymentEmailOutbox.$inferInsert)[] = [{
+            orderId: newOrder.id, audience: "admin",
+            recipient: settings.orderNotificationEmail, checkoutSnapshot: emailSnapshot,
+          }];
+          if (emailSnapshot.notifyGuest && !newOrder.userId && newOrder.guestEmail?.trim()) {
+            notifications.push({
+              orderId: newOrder.id, audience: "guest",
+              recipient: newOrder.guestEmail, checkoutSnapshot: emailSnapshot,
+            });
+          }
+          await tx.insert(paymentEmailOutbox).values(notifications);
+        }
+      }
       return newOrder;
     });
   }

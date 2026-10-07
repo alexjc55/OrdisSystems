@@ -42,6 +42,9 @@ before(async () => {
   const outboxMigration = await readFile("migrations/0008_payment_email_outbox.sql", "utf8");
   await pool.query(outboxMigration);
   await pool.query(outboxMigration);
+  const checkoutMigration = await readFile("migrations/0010_checkout_email_snapshot.sql", "utf8");
+  await pool.query(checkoutMigration);
+  await pool.query(checkoutMigration);
   await pool.query("ALTER TABLE pending_payments DROP COLUMN provider_approval_required, DROP COLUMN provider_approved_at");
   const approvalMigration = await readFile("migrations/0009_payment_provider_approval.sql", "utf8");
   await pool.query(approvalMigration);
@@ -71,11 +74,15 @@ before(async () => {
   // Test-only identity injection; production uses the session middleware.
   app.use((req: any, _res, next) => {
     req.isAuthenticated = () => Boolean(req.headers["x-test-role"]);
-    req.user = req.headers["x-test-role"] ? { role: req.headers["x-test-role"] } : undefined;
+    req.user = req.headers["x-test-role"] ? {
+      role: req.headers["x-test-role"], id: req.headers["x-test-user"],
+    } : undefined;
     next();
   });
   const { default: outboxRoutes } = await import("../server/routes/admin/payment-email-outbox.routes");
   app.use("/api", outboxRoutes);
+  const { default: orderRoutes } = await import("../server/routes/orders.routes");
+  app.use("/api", orderRoutes);
   await new Promise<void>(resolve => { server = app.listen(0, "127.0.0.1", resolve); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
@@ -125,6 +132,253 @@ async function counts() {
   );
   return result.rows[0] as { orders: number; items: number };
 }
+
+async function checkout(guest = true, email: string | null = "guest@example.test") {
+  const customerId = "ordinary-checkout-customer";
+  if (!guest) {
+    await storage.upsertUser({
+      id: customerId, username: customerId, email: "customer@example.test", password: "test-only",
+      firstName: "Registered", lastName: "Customer", role: "customer", phone: "456",
+    });
+  }
+  return fetch(`${baseUrl}/api/orders${guest ? "/guest" : ""}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(!guest ? { "x-test-role": "customer", "x-test-user": customerId } : {}),
+    },
+    body: JSON.stringify({
+      totalAmount: "5", language: "he",
+      items: [{ productId, quantity: "0.5", pricePerKg: "10", totalPrice: "5" }],
+      ...(guest ? { guestInfo: {
+        firstName: "Ordinary", lastName: "Guest", phone: "123",
+        address: "Address", email, customerNotes: "Checkout note", paymentMethod: "cash",
+      } } : { deliveryAddress: "Address", customerNotes: "Checkout note", paymentMethod: "cash" }),
+    }),
+  });
+}
+
+test("ordinary guest and registered checkout commit automatic intents without direct mail", async () => {
+  for (const guest of [true, false]) {
+    const mailStart = mail.length;
+    const response = await checkout(guest);
+    assert.equal(response.status, guest ? 201 : 200, await response.clone().text());
+    const result = await response.json();
+    const orderId = result.orderId ?? result.id;
+    const intents = (await pool.query(
+      "SELECT * FROM payment_email_outbox WHERE order_id = $1 ORDER BY audience", [orderId],
+    )).rows;
+    assert.equal(intents.length, guest ? 2 : 1);
+    assert.equal(mail.length, mailStart, "HTTP handler must not send automatic emails");
+    assert.ok(intents.every((row: { status: string; checkout_snapshot: unknown }) => row.status === "pending" && row.checkout_snapshot));
+    assert.equal(intents[0].checkout_snapshot.details.customerNotes, "Checkout note");
+    assert.equal(intents[0].checkout_snapshot.details.items[0].quantity, 0.5);
+    await drainMail();
+    assert.equal(mail.length - mailStart, guest ? 2 : 1);
+    assert.equal(mail[mailStart].to, "admin@example.test");
+    assert.ok(mail[mailStart].html?.includes(guest ? "Ordinary Guest" : "Registered Customer"));
+    if (guest) {
+      assert.equal(mail[mailStart + 1].to, "guest@example.test");
+      assert.ok(mail[mailStart + 1].html?.includes(result.guestAccessToken));
+    }
+  }
+});
+
+test("ordinary guest without email, blank email, and disabled alerts preserve prior audience rules", async () => {
+  for (const email of [null, "   "]) {
+    const response = await checkout(true, email);
+    assert.equal(response.status, 201);
+    const result = await response.json();
+    const intents = (await pool.query(
+      "SELECT audience FROM payment_email_outbox WHERE order_id = $1", [result.orderId],
+    )).rows;
+    assert.deepEqual(intents, [{ audience: "admin" }]);
+    await drainMail();
+  }
+  for (const missingRecipient of [false, true]) {
+    await pool.query(missingRecipient
+      ? "UPDATE store_settings SET order_notification_email = NULL"
+      : "UPDATE store_settings SET email_notifications_enabled = false");
+    try {
+      const response = await checkout();
+      assert.equal(response.status, 201);
+      const result = await response.json();
+      assert.equal((await pool.query(
+        "SELECT COUNT(*)::int AS n FROM payment_email_outbox WHERE order_id = $1", [result.orderId],
+      )).rows[0].n, 0);
+    } finally {
+      await pool.query("UPDATE store_settings SET email_notifications_enabled = true, order_notification_email = 'admin@example.test'");
+    }
+  }
+});
+
+test("ordinary outbox insertion failure rolls back the order and its items for both checkout paths", async () => {
+  await pool.query(`
+    CREATE FUNCTION reject_checkout_email() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN RAISE EXCEPTION 'Injected checkout email failure'; END $$;
+    CREATE TRIGGER reject_checkout_email BEFORE INSERT ON payment_email_outbox
+    FOR EACH ROW EXECUTE FUNCTION reject_checkout_email();
+  `);
+  try {
+    for (const guest of [true, false]) {
+      const initial = await counts();
+      const initialJobs = (await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox")).rows[0].n;
+      assert.equal((await checkout(guest)).status, 500);
+      assert.deepEqual(await counts(), initial);
+      assert.equal((await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox")).rows[0].n, initialJobs);
+    }
+  } finally {
+    await pool.query("DROP TRIGGER reject_checkout_email ON payment_email_outbox; DROP FUNCTION reject_checkout_email()");
+  }
+});
+
+test("ordinary item insertion failure rolls back the order and leaves no mail intent", async () => {
+  const initial = await counts();
+  const { prepareCheckoutEmail } = await import("../server/checkout-order-email");
+  const order = { totalAmount: "10", guestName: "Rollback", guestEmail: "guest@example.test" };
+  const items = [{ productId: -1, quantity: "1", pricePerKg: "10", totalPrice: "10", orderId: 0 }];
+  const snapshot = await prepareCheckoutEmail(order, items, {
+    customerName: "Rollback", notifyGuest: true, deliveryFee: 0, volumeDiscount: 0,
+  });
+  const initialJobs = (await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox")).rows[0].n;
+  await assert.rejects(storage.createOrder(order, items, snapshot));
+  assert.deepEqual(await counts(), initial);
+  assert.equal((await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox")).rows[0].n, initialJobs);
+});
+
+test("commit failure after ordinary intents were inserted rolls back both mail jobs and order", async () => {
+  await pool.query(`
+    CREATE FUNCTION reject_checkout_commit() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN RAISE EXCEPTION 'Injected checkout commit failure'; END $$;
+    CREATE CONSTRAINT TRIGGER reject_checkout_commit AFTER INSERT ON orders
+    DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION reject_checkout_commit();
+  `);
+  try {
+    const initial = await counts();
+    const jobs = (await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox")).rows[0].n;
+    assert.equal((await checkout()).status, 500);
+    assert.deepEqual(await counts(), initial);
+    assert.equal((await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox")).rows[0].n, jobs);
+  } finally {
+    await pool.query("DROP TRIGGER reject_checkout_commit ON orders; DROP FUNCTION reject_checkout_commit()");
+  }
+});
+
+test("ordinary guest transport failure retries only the failed audience, retaining checkout data", async () => {
+  const result = await (await checkout()).json();
+  const mailStart = mail.length;
+  assert.equal(await processNext(), true); // admin delivered
+  const { emailService } = await import("../server/email-service");
+  const original = emailService.sendEmail;
+  try {
+    emailService.sendEmail = async () => false;
+    assert.equal(await processNext(), true);
+    let job = (await pool.query(
+      "SELECT * FROM payment_email_outbox WHERE order_id = $1 AND audience = 'guest'", [result.orderId],
+    )).rows[0];
+    assert.equal(job.status, "pending");
+    assert.equal(job.attempts, 1);
+    assert.equal(await processNext(), false);
+    await pool.query("UPDATE payment_email_outbox SET available_at = now() WHERE id = $1", [job.id]);
+    emailService.sendEmail = async () => { throw new Error("Private SMTP failure"); };
+    await processNext();
+    job = (await pool.query("SELECT * FROM payment_email_outbox WHERE id = $1", [job.id])).rows[0];
+    assert.equal(job.attempts, 2);
+    assert.equal(job.last_error, "Order email delivery failed");
+    // Changing the order after checkout must not rewrite a delayed confirmation.
+    await storage.updateOrder(result.orderId, { guestName: "Changed", customerNotes: "Changed" });
+    await pool.query("UPDATE payment_email_outbox SET available_at = now() WHERE id = $1", [job.id]);
+  } finally {
+    emailService.sendEmail = original;
+  }
+  await drainMail();
+  assert.equal(mail.length - mailStart, 2);
+  assert.ok(mail[mailStart + 1].html?.includes("Ordinary Guest"));
+  assert.ok(!mail[mailStart + 1].html?.includes("Changed"));
+});
+
+test("ordinary checkout survives creator death after commit and a new worker process delivers the intents", async () => {
+  const marker = `checkout-recovery-${randomUUID()}`;
+  const child = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+    const { storage } = await import("./server/storage.ts");
+    const { prepareCheckoutEmail } = await import("./server/checkout-order-email.ts");
+    const order = {
+      totalAmount: "10", guestName: ${JSON.stringify(marker)}, guestEmail: "guest@example.test",
+      guestAccessToken: "recovery-access", guestClaimToken: "recovery-claim", orderLanguage: "he"
+    };
+    const items = [{ productId: ${productId}, quantity: "1", pricePerKg: "10", totalPrice: "10", orderId: 0 }];
+    const snapshot = await prepareCheckoutEmail(order, items, {
+      customerName: order.guestName, notifyGuest: true, deliveryFee: 0, volumeDiscount: 0,
+      baseUrl: "https://shop.example.test"
+    });
+    await storage.createOrder(order, items, snapshot);
+    process.exit(0);
+  `], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(child.status, 0, child.stderr);
+  const orderId = (await pool.query("SELECT id FROM orders WHERE guest_name = $1", [marker])).rows[0].id;
+  const before = (await pool.query("SELECT status FROM payment_email_outbox WHERE order_id = $1", [orderId])).rows;
+  assert.equal(before.length, 2);
+  assert.ok(before.every((row: { status: string }) => row.status === "pending"));
+  const recovery = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+    const { emailService } = await import("./server/email-service.ts");
+    emailService.updateSettings = () => {};
+    emailService.sendEmail = async () => true;
+    const { processNextPaymentEmail } = await import("./server/payment-email-outbox.ts");
+    while (await processNextPaymentEmail()) {}
+    process.exit(0);
+  `], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(recovery.status, 0, recovery.stderr);
+  assert.equal((await pool.query(
+    "SELECT COUNT(*)::int AS n FROM payment_email_outbox WHERE order_id = $1 AND status = 'sent'", [orderId],
+  )).rows[0].n, 2);
+});
+
+test("ordinary notification is locked through delivery and rolls back if its worker dies", async () => {
+  const result = await (await checkout(false)).json();
+  const orderId = result.id ?? result.orderId;
+  const crash = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+    const { processNextPaymentEmail } = await import("./server/payment-email-outbox.ts");
+    await processNextPaymentEmail(undefined, async () => process.exit(0));
+  `], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(crash.status, 0, crash.stderr);
+  const job = (await pool.query("SELECT status, attempts FROM payment_email_outbox WHERE order_id = $1", [orderId])).rows[0];
+  assert.deepEqual(job, { status: "pending", attempts: 0 });
+  let started!: () => void;
+  let release!: () => void;
+  const entered = new Promise<void>(resolve => { started = resolve; });
+  const wait = new Promise<void>(resolve => { release = resolve; });
+  let calls = 0;
+  const first = processNext(undefined, async () => { calls++; started(); await wait; });
+  await entered;
+  try {
+    assert.equal(await processNext(undefined, async () => { calls++; }), false);
+  } finally {
+    release();
+  }
+  await first;
+  assert.equal(calls, 1);
+  assert.equal((await pool.query("SELECT status FROM payment_email_outbox WHERE order_id = $1", [orderId])).rows[0].status, "sent");
+});
+
+test("explicit guest resend is independent of the automatic checkout queue", async () => {
+  const result = await (await checkout()).json();
+  const jobsBefore = (await pool.query(
+    "SELECT * FROM payment_email_outbox WHERE order_id = $1 ORDER BY id", [result.orderId],
+  )).rows;
+  const mailStart = mail.length;
+  const response = await fetch(`${baseUrl}/api/orders/guest/${result.guestAccessToken}/send-email`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: "resend@example.test" }),
+  });
+  assert.equal(response.status, 200, await response.clone().text());
+  assert.equal(mail.length - mailStart, 1);
+  assert.equal(mail[mailStart].to, "resend@example.test");
+  assert.deepEqual((await pool.query(
+    "SELECT * FROM payment_email_outbox WHERE order_id = $1 ORDER BY id", [result.orderId],
+  )).rows, jobsBefore);
+  await drainMail();
+  assert.equal(mail.length - mailStart, 3);
+});
 
 test("parallel browser callback/webhook commit one order and send one pair of emails; repeats return the same order", async () => {
   for (const legacy of [false, true]) {

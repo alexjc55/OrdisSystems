@@ -3,6 +3,7 @@ import { paymentEmailOutbox } from "@shared/schema";
 import { getDB } from "./db";
 import { storage } from "./storage";
 import { sendPaidOrderEmails } from "./payment-order-email";
+import { sendCheckoutOrderEmail } from "./checkout-order-email";
 
 export const MAX_EMAIL_ATTEMPTS = 8;
 export const EMAIL_POLL_INTERVAL_MS = 5_000;
@@ -48,6 +49,15 @@ export async function retryFailedPaymentEmail(id: number, database?: Database): 
 }
 
 async function deliverOrderEmail(notification: Notification): Promise<void> {
+  if (notification.checkoutSnapshot) {
+    const settings = await storage.getStoreSettings();
+    if (!settings) throw new Error("Store settings unavailable");
+    await sendCheckoutOrderEmail(
+      notification.orderId, notification.audience, notification.recipient,
+      notification.checkoutSnapshot, settings,
+    );
+    return;
+  }
   const [order, settings] = await Promise.all([
     storage.getOrderById(notification.orderId),
     storage.getStoreSettings(),

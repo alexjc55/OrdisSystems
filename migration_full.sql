@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS payment_email_outbox (
 );
 CREATE INDEX IF NOT EXISTS payment_email_outbox_due_idx
   ON payment_email_outbox(status, available_at);
+-- Ordinary checkout notifications share the durable order email queue.
+-- Existing NULL snapshots retain the paid-order delivery path.
+ALTER TABLE payment_email_outbox
+  ADD COLUMN IF NOT EXISTS checkout_snapshot jsonb;
 -- ============================================================
 -- Min/max order quantity per product
 -- ============================================================

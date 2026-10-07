@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { storage } from "../storage";
 import { isAuthenticated } from "../middleware/auth-guard";
-import { emailService, sendNewOrderEmail, sendGuestOrderEmail } from "../email-service";
+import { emailService, sendGuestOrderEmail } from "../email-service";
+import { prepareCheckoutEmail } from "../checkout-order-email";
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../facebook-conversions-api";
 import { PushNotificationService } from "../push-notifications";
 import { BRANCHES_ENABLED } from "../config";
@@ -444,6 +445,7 @@ router.post('/orders/guest', async (req: any, res) => {
       guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
       guestEmail: guestInfo.email,
       guestPhone: guestInfo.phone,
+      customerNotes: guestInfo.customerNotes,
       deliveryDate: guestInfo.deliveryDate,
       deliveryTime: guestInfo.deliveryTime,
       paymentMethod: guestInfo.paymentMethod,
@@ -469,7 +471,15 @@ router.post('/orders/guest', async (req: any, res) => {
     }));
     if (giftOrderItem) orderItems.push(giftOrderItem);
 
-    const order = await storage.createOrder(orderData, orderItems);
+    const emailSnapshot = await prepareCheckoutEmail(orderData, orderItems, {
+      customerName: orderData.guestName || 'Гость',
+      notifyGuest: true,
+      customerPhone: guestInfo.phone,
+      baseUrl: req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
+      deliveryFee,
+      volumeDiscount: serverVolumeDiscount,
+    });
+    const order = await storage.createOrder(orderData, orderItems, emailSnapshot);
 
     // Record coupon usage with server-authoritative coupon code
     if (serverCouponCode) {
@@ -492,125 +502,6 @@ router.post('/orders/guest', async (req: any, res) => {
       );
     } catch (pushError) {
       console.error('Error sending new order push notification:', pushError);
-    }
-
-    try {
-      const currentStoreSettings = await storage.getStoreSettings();
-      if (currentStoreSettings?.emailNotificationsEnabled && currentStoreSettings?.orderNotificationEmail) {
-        emailService.updateSettings({
-          useSendgrid: currentStoreSettings.useSendgrid || false,
-          smtpHost: currentStoreSettings.smtpHost || undefined,
-          smtpPort: currentStoreSettings.smtpPort || undefined,
-          smtpSecure: currentStoreSettings.smtpSecure || undefined,
-          smtpUser: currentStoreSettings.smtpUser || undefined,
-          smtpPassword: currentStoreSettings.smtpPassword || undefined,
-          sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
-        });
-
-        const productIds = orderItems.map((item: any) => item.productId);
-        const productsMap = await storage.getProductsByIds(productIds)
-          .then(products => new Map(products.map(p => [p.id, p])));
-
-        const itemsWithProducts = orderItems.map((item: any) => {
-          const product = productsMap.get(item.productId);
-          return {
-            productId: item.productId,
-            quantity: parseInt(item.quantity),
-            pricePerKg: parseFloat(item.pricePerKg),
-            totalPrice: parseFloat(item.totalPrice),
-            product: product ? { name: product.name, name_en: product.name_en, name_he: product.name_he, name_ar: product.name_ar, unit: product.unit || 'кг' } : null
-          };
-        });
-
-        const branchNameForEmail = parsedBranchId
-          ? (await storage.getBranchById(parsedBranchId))?.name
-          : undefined;
-
-        const guestActiveTheme = await storage.getActiveTheme();
-        const guestPaymentMethodNames = resolvePaymentMethodNames(currentStoreSettings.paymentMethods, guestInfo.paymentMethod);
-        const guestLanguageOrder: string[] = Array.isArray(currentStoreSettings.languageOrder) ? currentStoreSettings.languageOrder : ['ru', 'he', 'en', 'ar'];
-        const guestStoreNameVariants = { en: currentStoreSettings.storeNameEn, he: currentStoreSettings.storeNameHe, ar: currentStoreSettings.storeNameAr };
-
-        await sendNewOrderEmail(
-          order.id,
-          orderData.guestName || 'Гость',
-          totalAmount.toString(),
-          {
-            customerPhone: guestInfo.phone,
-            deliveryAddress: guestInfo.address,
-            deliveryDate: guestInfo.deliveryDate,
-            deliveryTime: guestInfo.deliveryTime,
-            paymentMethod: guestInfo.paymentMethod,
-            customerNotes: guestInfo.customerNotes,
-            status: 'pending',
-            items: itemsWithProducts,
-            branchName: branchNameForEmail,
-            couponCode: serverCouponCode || null,
-            couponDiscount: serverCouponDiscount > 0 ? serverCouponDiscount : null,
-            loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null,
-            giftProductId: serverGiftProductId || null
-          },
-          currentStoreSettings.orderNotificationEmail,
-          currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
-          currentStoreSettings.orderNotificationFromName || 'Ordis Store',
-          currentStoreSettings.defaultLanguage || 'ru',
-          currentStoreSettings.storeName || 'Ordis',
-          req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
-          guestActiveTheme?.primaryColor,
-          {
-            deliveryFee,
-            volumeDiscount: serverVolumeDiscount,
-            paymentMethodNames: guestPaymentMethodNames,
-            languageOrder: guestLanguageOrder
-          }
-        );
-
-        if (guestInfo.email && guestInfo.email.trim()) {
-          const fromEmail = currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il';
-          const fromName = currentStoreSettings.orderNotificationFromName || 'Ordis Store';
-          const storeName = currentStoreSettings.storeName || 'Ordis';
-          const baseUrl = req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined;
-
-          await sendGuestOrderEmail(
-            order.id,
-            orderData.guestName || 'Гость',
-            guestInfo.email,
-            totalAmount.toString(),
-            {
-              customerPhone: guestInfo.phone,
-              deliveryAddress: guestInfo.address,
-              deliveryDate: guestInfo.deliveryDate,
-              deliveryTime: guestInfo.deliveryTime,
-              paymentMethod: guestInfo.paymentMethod,
-              customerNotes: guestInfo.customerNotes,
-              status: 'pending',
-              items: itemsWithProducts,
-              branchName: branchNameForEmail,
-              couponCode: serverCouponCode || null,
-              couponDiscount: serverCouponDiscount > 0 ? serverCouponDiscount : null,
-              loyaltyDiscount: serverLoyaltyDiscount > 0 ? serverLoyaltyDiscount : null,
-              giftProductId: serverGiftProductId || null
-            },
-            guestAccessToken,
-            guestClaimToken,
-            fromEmail,
-            fromName,
-            orderData.orderLanguage || currentStoreSettings.defaultLanguage || 'ru',
-            storeName,
-            baseUrl,
-            guestActiveTheme?.primaryColor,
-            {
-              deliveryFee,
-              volumeDiscount: serverVolumeDiscount,
-              paymentMethodNames: guestPaymentMethodNames,
-              languageOrder: guestLanguageOrder,
-              storeNameVariants: guestStoreNameVariants
-            }
-          );
-        }
-      }
-    } catch (emailError) {
-      console.error('Error sending email notifications:', emailError);
     }
 
     try {
@@ -746,7 +637,15 @@ router.post('/orders', async (req: any, res) => {
     const authOrderItems: InsertOrderItem[] = validatedData.items.map(item => ({ ...item, orderId: 0 }));
     if (authGiftOrderItem) authOrderItems.push(authGiftOrderItem);
 
-    const order = await storage.createOrder(processedOrderData, authOrderItems);
+    const emailSnapshot = await prepareCheckoutEmail(processedOrderData, authOrderItems, {
+      customerName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь',
+      notifyGuest: false,
+      customerPhone: orderData.customerPhone || user?.phone,
+      baseUrl: req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
+      deliveryFee: authDeliveryFee,
+      volumeDiscount: authSvrVolumeDiscount,
+    });
+    const order = await storage.createOrder(processedOrderData, authOrderItems, emailSnapshot);
 
     // Record coupon usage with server-authoritative code
     if (authSvrCouponCode) {
@@ -770,80 +669,6 @@ router.post('/orders', async (req: any, res) => {
       );
     } catch (pushError) {
       console.error('Error sending new order push notification:', pushError);
-    }
-
-    try {
-      const currentStoreSettings = await storage.getStoreSettings();
-      if (currentStoreSettings?.emailNotificationsEnabled && currentStoreSettings?.orderNotificationEmail) {
-        emailService.updateSettings({
-          useSendgrid: currentStoreSettings.useSendgrid || false,
-          smtpHost: currentStoreSettings.smtpHost || undefined,
-          smtpPort: currentStoreSettings.smtpPort || undefined,
-          smtpSecure: currentStoreSettings.smtpSecure || undefined,
-          smtpUser: currentStoreSettings.smtpUser || undefined,
-          smtpPassword: currentStoreSettings.smtpPassword || undefined,
-          sendgridApiKey: currentStoreSettings.sendgridApiKey || undefined
-        });
-
-        const productIds = authOrderItems.map((item: any) => item.productId);
-        const productsMap = await storage.getProductsByIds(productIds)
-          .then(products => new Map(products.map(p => [p.id, p])));
-
-        const itemsWithProducts = authOrderItems.map((item: any) => {
-          const product = productsMap.get(item.productId);
-          return {
-            productId: item.productId,
-            quantity: parseInt(item.quantity),
-            pricePerKg: parseFloat(item.pricePerKg),
-            totalPrice: parseFloat(item.totalPrice),
-            product: product ? { name: product.name, name_en: product.name_en, name_he: product.name_he, name_ar: product.name_ar, unit: product.unit || 'кг' } : null
-          };
-        });
-
-        const authBranchName = processedOrderData.branchId
-          ? (await storage.getBranchById(processedOrderData.branchId))?.name
-          : undefined;
-
-        const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';
-        const authActiveTheme = await storage.getActiveTheme();
-        const authPaymentMethodNames = resolvePaymentMethodNames(currentStoreSettings.paymentMethods, orderData.paymentMethod);
-        const authLanguageOrder: string[] = Array.isArray(currentStoreSettings.languageOrder) ? currentStoreSettings.languageOrder : ['ru', 'he', 'en', 'ar'];
-        await sendNewOrderEmail(
-          order.id,
-          customerName,
-          validatedData.totalAmount?.toString() || '0',
-          {
-            customerPhone: orderData.customerPhone || user?.phone,
-            deliveryAddress: orderData.deliveryAddress,
-            deliveryDate: orderData.deliveryDate,
-            deliveryTime: orderData.deliveryTime,
-            paymentMethod: orderData.paymentMethod,
-            customerNotes: orderData.customerNotes,
-            status: 'pending',
-            items: itemsWithProducts,
-            branchName: authBranchName,
-            couponCode: authCouponCode || null,
-            couponDiscount: authSvrCouponDiscount > 0 ? authSvrCouponDiscount : null,
-            loyaltyDiscount: authSvrLoyaltyDiscount > 0 ? authSvrLoyaltyDiscount : null,
-            giftProductId: authSvrGiftProductId || null
-          },
-          currentStoreSettings.orderNotificationEmail,
-          currentStoreSettings.orderNotificationFromEmail || 'noreply@ordis.co.il',
-          currentStoreSettings.orderNotificationFromName || 'Ordis Store',
-          currentStoreSettings.defaultLanguage || 'ru',
-          currentStoreSettings.storeName || 'Ordis',
-          req.get('host') ? `${req.protocol}://${req.get('host')}` : undefined,
-          authActiveTheme?.primaryColor,
-          {
-            deliveryFee: authDeliveryFee,
-            volumeDiscount: authSvrVolumeDiscount,
-            paymentMethodNames: authPaymentMethodNames,
-            languageOrder: authLanguageOrder
-          }
-        );
-      }
-    } catch (emailError) {
-      console.error('Error sending new order email notification:', emailError);
     }
 
     try {
