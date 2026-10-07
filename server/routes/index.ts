@@ -14,6 +14,7 @@ import catalogRoutes from "./catalog.routes";
 import ordersRoutes from "./orders.routes";
 import adminUserRoutes from "./admin/users.routes";
 import adminOrderRoutes from "./admin/orders.routes";
+import adminPaymentEmailOutboxRoutes from "./admin/payment-email-outbox.routes";
 import adminSettingsRoutes from "./admin/settings.routes";
 import adminThemesRoutes from "./admin/themes.routes";
 import adminAnalyticsRoutes from "./admin/analytics.routes";
@@ -98,6 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", ordersRoutes);
   app.use("/api", adminUserRoutes);
   app.use("/api", adminOrderRoutes);
+  app.use("/api", adminPaymentEmailOutboxRoutes);
   app.use("/api", adminSettingsRoutes);
   app.use("/api", adminThemesRoutes);
   app.use("/api", adminAnalyticsRoutes);

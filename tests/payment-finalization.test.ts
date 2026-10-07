@@ -68,6 +68,14 @@ before(async () => {
   const app = express();
   app.use(express.json());
   app.use("/api", paymentRoutes);
+  // Test-only identity injection; production uses the session middleware.
+  app.use((req: any, _res, next) => {
+    req.isAuthenticated = () => Boolean(req.headers["x-test-role"]);
+    req.user = req.headers["x-test-role"] ? { role: req.headers["x-test-role"] } : undefined;
+    next();
+  });
+  const { default: outboxRoutes } = await import("../server/routes/admin/payment-email-outbox.routes");
+  app.use("/api", outboxRoutes);
   await new Promise<void>(resolve => { server = app.listen(0, "127.0.0.1", resolve); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
@@ -606,6 +614,98 @@ test("failure inserting an outbox intent rolls back order, items and payment com
     await pool.query("DROP TRIGGER reject_email_intent ON payment_email_outbox; DROP FUNCTION reject_email_intent()");
   }
   assert.equal((await storage.finalizePendingPayment(pending.token)).created, true);
+});
+
+test("failed-email API is admin-only, validates IDs and never exposes transport secrets", async () => {
+  const pending = await makePayment();
+  const result = await storage.finalizePendingPayment(pending.token);
+  const rows = await pool.query(
+    "UPDATE payment_email_outbox SET status = 'failed', attempts = 8, last_error = 'smtp password SECRET guestAccessToken=PRIVATE' WHERE order_id = $1 RETURNING id",
+    [result.orderId],
+  );
+  const id = rows.rows[0].id;
+  for (const [role, status] of [
+    [undefined, 401], ["customer", 403], ["worker", 403], ["super_admin", 403],
+  ] as const) {
+    const headers: Record<string, string> = role ? { "x-test-role": role } : {};
+    for (const [path, method] of [
+      ["/api/admin/payment-email-outbox", "GET"],
+      [`/api/admin/payment-email-outbox/${id}/retry`, "POST"],
+    ]) {
+      assert.equal((await fetch(baseUrl + path, { method, headers })).status, status);
+    }
+  }
+  const headers = { "x-test-role": "admin" };
+  const response = await fetch(baseUrl + "/api/admin/payment-email-outbox", { headers });
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  const item = body.items.find((row: any) => row.id === id);
+  assert.deepEqual(item, { id, orderId: result.orderId, audience: "admin", attempts: 8, diagnostic: "delivery_failed" });
+  assert.ok(!JSON.stringify(body).includes("SECRET"));
+  assert.ok(!JSON.stringify(body).includes("PRIVATE"));
+  assert.ok(!JSON.stringify(body).includes("example.test"));
+  for (const value of ["0", "-1", "1.5", "abc", "2147483648"]) {
+    assert.equal((await fetch(`${baseUrl}/api/admin/payment-email-outbox?before=${value}`, { headers })).status, 400);
+    assert.equal((await fetch(`${baseUrl}/api/admin/payment-email-outbox/${value}/retry`, { method: "POST", headers })).status, 400);
+  }
+  assert.equal((await fetch(`${baseUrl}/api/admin/payment-email-outbox?before=1&before=2`, { headers })).status, 400);
+});
+
+test("parallel admin retries enqueue once, preserve sent/pending, and worker delivers only the retried audience", async () => {
+  const pending = await makePayment();
+  const result = await storage.finalizePendingPayment(pending.token);
+  await drainMail();
+  const [admin, guest] = (await pool.query(
+    "SELECT * FROM payment_email_outbox WHERE order_id = $1 ORDER BY audience",
+    [result.orderId],
+  )).rows;
+  await pool.query("UPDATE payment_email_outbox SET status = 'failed', attempts = 8, sent_at = NULL, last_error = 'secret' WHERE id = $1", [guest.id]);
+  const requestRetry = (id: number) => fetch(`${baseUrl}/api/admin/payment-email-outbox/${id}/retry`, {
+    method: "POST", headers: { "x-test-role": "admin" },
+  });
+  const responses = await Promise.all(Array.from({ length: 10 }, () => requestRetry(guest.id)));
+  assert.deepEqual(responses.map(r => r.status).sort(), [200, ...Array(9).fill(409)]);
+  const queued = (await pool.query("SELECT * FROM payment_email_outbox WHERE id = $1", [guest.id])).rows[0];
+  assert.equal(queued.status, "pending");
+  assert.equal(queued.attempts, 0);
+  assert.equal(queued.last_error, null);
+  assert.ok(queued.available_at.getTime() <= Date.now());
+  assert.equal((await requestRetry(admin.id)).status, 409);
+  assert.equal((await requestRetry(guest.id)).status, 409);
+  assert.equal((await requestRetry(2147483647)).status, 409);
+  assert.deepEqual((await pool.query("SELECT * FROM payment_email_outbox WHERE id = $1", [admin.id])).rows[0], admin);
+  const sent: number[] = [];
+  await processNext(undefined, async notification => { sent.push(notification.id); });
+  assert.deepEqual(sent, [guest.id]);
+  assert.equal((await requestRetry(guest.id)).status, 409);
+  const final = (await pool.query("SELECT * FROM payment_email_outbox WHERE id = $1", [guest.id])).rows[0];
+  assert.equal(final.status, "sent");
+  assert.equal(final.attempts, 1);
+});
+
+test("failed-email list uses bounded cursor pages without exposing pending or sent messages", async () => {
+  const orders = (await pool.query(
+    "INSERT INTO orders (total_amount) SELECT 10 FROM generate_series(1, 52) RETURNING id",
+  )).rows.map((row: any) => row.id);
+  try {
+    await pool.query(
+      `INSERT INTO payment_email_outbox (order_id, audience, recipient, status, attempts)
+       SELECT unnest($1::int[]), 'admin', 'secret@example.test', 'failed', 8`,
+      [orders],
+    );
+    const headers = { "x-test-role": "admin" };
+    const first = await (await fetch(baseUrl + "/api/admin/payment-email-outbox", { headers })).json();
+    assert.equal(first.items.length, 50);
+    assert.equal(first.nextCursor, first.items[49].id);
+    const second = await (await fetch(`${baseUrl}/api/admin/payment-email-outbox?before=${first.nextCursor}`, { headers })).json();
+    assert.equal(second.nextCursor, null);
+    const all = [...first.items, ...second.items];
+    assert.equal(new Set(all.map((row: any) => row.id)).size, all.length);
+    assert.equal(all.filter((row: any) => orders.includes(row.orderId)).length, 52);
+    for (let i = 1; i < all.length; i++) assert.ok(all[i - 1].id > all[i].id);
+  } finally {
+    await pool.query("DELETE FROM orders WHERE id = ANY($1::int[])", [orders]);
+  }
 });
 
 test("checkout eligibility is persisted; disabling new notifications does not discard existing intents", async () => {

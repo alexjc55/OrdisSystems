@@ -66,6 +66,7 @@ import { CatalogImportModal } from "@/components/admin/catalog-import-modal";
 import { PushNotificationsPanel } from "@/components/PushNotificationsPanel";
 import { AdminCacheBuster } from "@/components/cache-buster";
 import { BarcodeConfigSection } from "@/components/barcode-config-section";
+import { FailedPaymentEmails } from "@/components/admin/failed-payment-emails";
 import { BarcodeScanner } from "@/components/barcode-scanner";
 import CreateOrderDialog from "@/components/create-order-dialog";
 import {
@@ -6535,6 +6536,7 @@ export default function AdminDashboard() {
           {/* Orders Management */}
           {hasPermission("canManageOrders") && (
             <TabsContent value="orders" className={`space-y-4 sm:space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
+              {isAdmin && activeTab === "orders" && <FailedPaymentEmails isRTL={isRTL} />}
               {/* Header Section */}
               <div className="flex flex-col gap-4" dir="ltr">
                 <div className={isRTL ? 'text-right' : 'text-left'}>

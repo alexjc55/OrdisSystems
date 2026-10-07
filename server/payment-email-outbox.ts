@@ -1,4 +1,4 @@
-import { and, eq, lte, sql } from "drizzle-orm";
+import { and, desc, eq, lt, lte, sql } from "drizzle-orm";
 import { paymentEmailOutbox } from "@shared/schema";
 import { getDB } from "./db";
 import { storage } from "./storage";
@@ -12,6 +12,40 @@ export const emailRetryDelay = (attempt: number) =>
 type Notification = typeof paymentEmailOutbox.$inferSelect;
 type Database = NonNullable<Awaited<ReturnType<typeof getDB>>>;
 type Deliver = (notification: Notification) => Promise<void>;
+
+// Explicit projection: never expose recipient, guest links or stored errors,
+// including historical errors written by other server versions.
+export async function listFailedPaymentEmails(before?: number, database?: Database) {
+  const db = database ?? await getDB();
+  if (!db) throw new Error("Database unavailable");
+  const rows = await db.select({
+    id: paymentEmailOutbox.id,
+    orderId: paymentEmailOutbox.orderId,
+    audience: paymentEmailOutbox.audience,
+    attempts: paymentEmailOutbox.attempts,
+  }).from(paymentEmailOutbox).where(and(
+    eq(paymentEmailOutbox.status, "failed"),
+    before === undefined ? undefined : lt(paymentEmailOutbox.id, before),
+  )).orderBy(desc(paymentEmailOutbox.id)).limit(51);
+  const items = rows.slice(0, 50).map(row => ({
+    ...row, diagnostic: "delivery_failed" as const,
+  }));
+  return { items, nextCursor: rows.length > 50 ? items[49].id : null };
+}
+
+export async function retryFailedPaymentEmail(id: number, database?: Database): Promise<boolean> {
+  const db = database ?? await getDB();
+  if (!db) throw new Error("Database unavailable");
+  // PostgreSQL rechecks this predicate after waiting on a competing UPDATE.
+  // Only one caller can reset a failed row; pending/sent are never changed.
+  const rows = await db.update(paymentEmailOutbox).set({
+    status: "pending", attempts: 0, availableAt: sql`now()`, lastError: null,
+  }).where(and(
+    eq(paymentEmailOutbox.id, id),
+    eq(paymentEmailOutbox.status, "failed"),
+  )).returning({ id: paymentEmailOutbox.id });
+  return rows.length === 1;
+}
 
 async function deliverOrderEmail(notification: Notification): Promise<void> {
   const [order, settings] = await Promise.all([
