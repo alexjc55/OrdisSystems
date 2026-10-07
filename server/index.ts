@@ -5,6 +5,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { seedDatabase } from "./seed";
 import { getDB } from "./db";
 import { metaInjectionMiddleware } from "./meta-injection-middleware";
+import { startPaymentEmailWorker } from "./payment-email-outbox";
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -90,5 +91,7 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    const stopEmailWorker = startPaymentEmailWorker();
+    server.once("close", stopEmailWorker);
   });
 })();

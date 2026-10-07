@@ -17,13 +17,19 @@ const mailDependencies: MailDependencies = {
   storeOrigin: passwordResetOrigin,
 };
 
+export type PaidOrderEmailAudience = "admin" | "guest";
+
 // Use the same store transport, senders and templates as ordinary order checkout.
 export async function sendPaidOrderEmails(
   order: OrderWithItems,
   settings: StoreSettings,
   dependencies: MailDependencies = mailDependencies,
+  audience?: PaidOrderEmailAudience,
 ): Promise<void> {
   if (!settings.emailNotificationsEnabled || !settings.orderNotificationEmail) return;
+  if (audience === "guest" && (order.userId || !order.guestEmail)) {
+    throw new Error("Guest notification no longer has an eligible guest order");
+  }
 
   await dependencies.updateSettings({
     useSendgrid: settings.useSendgrid || false,
@@ -60,19 +66,19 @@ export async function sendPaidOrderEmails(
     },
   };
 
-  await dependencies.sendNewOrderEmail(
+  if (audience !== "guest" && !await dependencies.sendNewOrderEmail(
     order.id, customerName, order.totalAmount, details,
     settings.orderNotificationEmail, fromEmail, fromName, language,
     settings.storeName, baseUrl, undefined, options,
-  );
-  if (!order.userId && order.guestEmail) {
+  )) throw new Error("Admin order email transport failed");
+  if (audience !== "admin" && !order.userId && order.guestEmail) {
     if (!order.guestAccessToken || !order.guestClaimToken) {
       throw new Error("Guest payment order is missing access tokens");
     }
-    await dependencies.sendGuestOrderEmail(
+    if (!await dependencies.sendGuestOrderEmail(
       order.id, customerName, order.guestEmail, order.totalAmount, details,
       order.guestAccessToken, order.guestClaimToken, fromEmail, fromName, language,
       settings.storeName, baseUrl, undefined, options,
-    );
+    )) throw new Error("Guest order email transport failed");
   }
 }

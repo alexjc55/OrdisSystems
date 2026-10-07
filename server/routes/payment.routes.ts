@@ -2,7 +2,6 @@ import { Router } from "express";
 import { storage } from "../storage";
 import { randomBytes as rb } from "crypto";
 import { type InsertOrder } from "@shared/schema";
-import { sendPaidOrderEmails } from "../payment-order-email";
 import { BRANCHES_ENABLED } from "../config";
 import { getProvider } from "../lib/payment-providers/index";
 
@@ -13,21 +12,7 @@ async function finalizeOrder(
   token: string,
   transactionId?: string
 ) {
-  const result = await storage.finalizePendingPayment(token, transactionId);
-  if (!result.created || result.orderId === null) return result;
-
-  try {
-    const settings = await storage.getStoreSettings();
-    if (settings?.emailNotificationsEnabled && settings.orderNotificationEmail) {
-      const orderWithItems = await storage.getOrderById(result.orderId);
-      if (!orderWithItems) throw new Error("Created payment order not found");
-      await sendPaidOrderEmails(orderWithItems, settings);
-    }
-  } catch (emailErr) {
-    console.error("Payment order email error:", emailErr);
-  }
-
-  return result;
+  return storage.finalizePendingPayment(token, transactionId);
 }
 
 // ─── Helper: build pending payment + call provider initiate ──────────────────

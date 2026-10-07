@@ -50,6 +50,15 @@ Migration file sync (CRITICAL): Whenever shared/schema.ts is modified (new table
 - **SEO**: Dynamic meta tag management, crawlable links via UTMLink components, structured data, and hreflang tags.
 
 ## Type checks and regression tests
+### Paid-order email queue
+- Apply `migrations/0008_payment_email_outbox.sql` (or the matching additive block in `migration_full.sql`) to each external store database **before** deploying this server version. Do not use a broad schema push or an automatic startup migration. Existing orders are not backfilled because their prior email delivery is unknown.
+- Paid-order administrator and guest messages are committed separately in the same transaction as the order. The worker starts with the server and polls every 5 seconds. Eligibility and recipient are fixed at checkout; current store SMTP/SendGrid settings and existing templates are reused. Turning off new order notifications does not cancel already queued messages.
+- Each delivery holds a PostgreSQL row lock through sending and recording success (`FOR UPDATE SKIP LOCKED`). Other processes skip locked rows. Process death rolls back the delivery transaction and releases the lock. This uses a database connection during sending; keep worker concurrency low.
+- Failed transport results (including `false`) retry up to 8 times: 30 seconds, 1 minute, 2 minutes, etc., capped at 1 hour. Exhausted messages remain `failed` with a redacted diagnostic; they are not deleted. Inspect queue counts with `SELECT status, count(*) FROM payment_email_outbox GROUP BY status`.
+- After fixing mail configuration, an operator can explicitly retry a **specific** failed row: `UPDATE payment_email_outbox SET status = 'pending', attempts = 0, available_at = now(), last_error = NULL WHERE id = <reviewed_id> AND status = 'failed'`. Never reset `sent` rows or bulk replay historical orders.
+- Delivery is at-least-once, not guaranteed exactly-once: provider acceptance followed by process/connection loss before the success commit can cause a duplicate. Existing SMTP/SendGrid transports do not offer a deduplication guarantee. Also, provider acceptance is not proof of inbox delivery.
+- `npm run test:payments` uses only a disposable UTF-8 PostgreSQL cluster. It covers callback races, atomic outbox insertion, transport errors/backoff/exhaustion, slow competing workers, real process death after commit and while holding a row lock, and recovery in a fresh process.
+
 - `npm run check` runs both independent strict checks: `check:app` (the unchanged application configuration) and `check:tests` (tests and TypeScript scripts, including application-adjacent `*.test.ts`/`*.test.tsx` files).
 - `npm run test:typecheck` verifies the independent root scopes and proves that deliberately invalid test and script fixtures make `check:tests` exit nonzero. Run it sequentially with other type checks: it temporarily creates invalid fixtures and removes them in `finally`.
 - Post-merge setup runs both type checks and this regression test before security tests and the build. Test configuration inherits application strictness without changing the application configuration.

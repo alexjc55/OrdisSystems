@@ -833,6 +833,23 @@ export const pendingPayments = pgTable("pending_payments", {
 });
 
 // Closed dates table (holidays and special closures)
+// One durable delivery intent per paid order and audience.
+export const paymentEmailOutbox = pgTable("payment_email_outbox", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  audience: varchar("audience", { enum: ["admin", "guest"] }).notNull(),
+  recipient: text("recipient").notNull(),
+  status: varchar("status", { enum: ["pending", "sent", "failed"] }).notNull().default("pending"),
+  attempts: integer("attempts").notNull().default(0),
+  availableAt: timestamp("available_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  sentAt: timestamp("sent_at"),
+  lastError: text("last_error"),
+}, table => [
+  unique("payment_email_outbox_order_audience_key").on(table.orderId, table.audience),
+  index("payment_email_outbox_due_idx").on(table.status, table.availableAt),
+]);
+
 export const closedDates = pgTable("closed_dates", {
   id: serial("id").primaryKey(),
   date: varchar("date", { length: 10 }).notNull().unique(), // YYYY-MM-DD format

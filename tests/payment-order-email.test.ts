@@ -103,6 +103,25 @@ test("guest without email does not attempt a guest notification", async () => {
   assert.equal(mail.guest.length, 0);
 });
 
+test("audiences are sent independently and false transport results fail explicitly", async () => {
+  for (const audience of ["admin", "guest"] as const) {
+    const mail = captureMail();
+    await sendPaidOrderEmails(makeOrder(), settings, mail.dependencies, audience);
+    assert.equal(mail.admin.length, audience === "admin" ? 1 : 0);
+    assert.equal(mail.guest.length, audience === "guest" ? 1 : 0);
+    await assert.rejects(sendPaidOrderEmails(makeOrder(), settings, {
+      ...mail.dependencies,
+      sendNewOrderEmail: async () => false,
+      sendGuestOrderEmail: async () => false,
+    }, audience), /transport failed/);
+  }
+  const mail = captureMail();
+  await assert.rejects(
+    sendPaidOrderEmails(makeOrder({ userId: "claimed-customer" }), settings, mail.dependencies, "guest"),
+    /eligible guest order/,
+  );
+});
+
 test("missing guest tokens and unconfigured trusted origin fail explicitly", async () => {
   const mail = captureMail();
   await assert.rejects(

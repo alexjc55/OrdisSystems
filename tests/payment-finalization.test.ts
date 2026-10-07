@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { after, before, test } from "node:test";
+import { after, before, beforeEach, test } from "node:test";
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import express from "express";
@@ -18,6 +19,11 @@ let server: Server;
 let baseUrl: string;
 let productId: number;
 const mail: { to: string; html?: string }[] = [];
+let processNext: typeof import("../server/payment-email-outbox").processNextPaymentEmail;
+
+async function drainMail() {
+  while (await processNext()) { /* drain committed delivery intents */ }
+}
 
 before(async () => {
   const db = await import("../server/db");
@@ -31,6 +37,10 @@ before(async () => {
   const migration = await readFile("migrations/0007_payment_order_link.sql", "utf8");
   await pool.query(migration);
   await pool.query(migration);
+  await pool.query("DROP TABLE payment_email_outbox");
+  const outboxMigration = await readFile("migrations/0008_payment_email_outbox.sql", "utf8");
+  await pool.query(outboxMigration);
+  await pool.query(outboxMigration);
   const product = await pool.query(
     "INSERT INTO products (name, price, price_per_kg) VALUES ('Тестовый продукт', 10, 10) RETURNING id",
   );
@@ -41,12 +51,14 @@ before(async () => {
     orderNotificationFromEmail: "shop@example.test", orderNotificationFromName: "Shop",
     storeName: "Shop", defaultLanguage: "ru", paymentProviderConfig: { active: "none" },
   } as StoreSettings;
+  await storage.updateStoreSettings(settings);
   // Keep real database finalization, item joins, routes and mail templates;
   // replace only store config and the external mail transport.
   storage.getStoreSettings = async () => settings;
   const { emailService } = await import("../server/email-service");
   emailService.updateSettings = async () => {};
   emailService.sendEmail = async params => { mail.push(params); return true; };
+  processNext = (await import("../server/payment-email-outbox")).processNextPaymentEmail;
   const { default: paymentRoutes } = await import("../server/routes/payment.routes");
   const app = express();
   app.use(express.json());
@@ -56,6 +68,8 @@ before(async () => {
   assert.ok(address && typeof address !== "string");
   baseUrl = `http://127.0.0.1:${address.port}`;
 });
+
+beforeEach(drainMail);
 
 after(async () => {
   if (server) await new Promise<void>((resolve, reject) => {
@@ -129,6 +143,8 @@ test("parallel browser callback/webhook commit one order and send one pair of em
     assert.equal(responses[0].headers.get("location"), `/thanks?payment=success&orderId=${saved.orderId}`);
     assert.equal(await responses[1].text(), "OK");
     assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
+    assert.equal(mail.length, mailStart, "HTTP callbacks only commit delivery intents");
+    await Promise.all([drainMail(), drainMail()]);
     assert.deepEqual(mail.slice(mailStart).map(m => m.to).sort(), ["admin@example.test", "guest@example.test"]);
     const order = await storage.getOrderById(saved.orderId);
     assert.ok(order?.guestAccessToken);
@@ -141,6 +157,7 @@ test("parallel browser callback/webhook commit one order and send one pair of em
       assert.equal(repeated.headers.get("location"), responses[0].headers.get("location"));
       assert.equal(await (await webhook(pending.token, "different-txn", true, legacy)).text(), "OK");
     }
+    await drainMail();
     assert.equal(mail.length, mailStart + 2);
     assert.deepEqual(await counts(), { orders: initial.orders + 1, items: initial.items + 1 });
     assert.equal((await storage.getPendingPaymentByToken(pending.token))?.transactionId, "txn-" + pending.token);
@@ -183,6 +200,7 @@ test("item insert failure rolls back order/payment; provider retry creates exact
   const completed = await storage.getPendingPaymentByToken(pending.token);
   assert.equal(completed?.status, "completed");
   assert.ok(completed?.orderId);
+  await drainMail();
   assert.equal(mail.length, mailStart + 2);
   assert.equal((await callback(pending.token)).headers.get("location"),
     `/thanks?payment=success&orderId=${completed.orderId}`);
@@ -220,6 +238,153 @@ test("unknown payment token fails explicitly without creating orders", async () 
   const initial = await counts();
   await assert.rejects(storage.finalizePendingPayment(randomUUID()), /Pending payment not found/);
   assert.deepEqual(await counts(), initial);
+});
+
+test("death immediately after order commit is recovered by a new process, not a repeated callback", async () => {
+  const pending = await makePayment();
+  const child = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+    const { storage } = await import("./server/storage.ts");
+    await storage.finalizePendingPayment(${JSON.stringify(pending.token)});
+    process.exit(0);
+  `], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(child.status, 0, child.stderr);
+  const saved = await storage.getPendingPaymentByToken(pending.token);
+  assert.ok(saved?.orderId);
+  const intents = await pool.query("SELECT status FROM payment_email_outbox WHERE order_id = $1", [saved.orderId]);
+  assert.equal(intents.rows.length, 2);
+  assert.ok(intents.rows.every((row: { status: string }) => row.status === "pending"));
+  const mailStart = mail.length;
+  // A genuinely new OS process uses the real templates, stubbing only transport.
+  const recovery = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+    const { emailService } = await import("./server/email-service.ts");
+    emailService.updateSettings = async () => {};
+    emailService.sendEmail = async () => true;
+    const { processNextPaymentEmail } = await import("./server/payment-email-outbox.ts");
+    while (await processNextPaymentEmail()) {}
+    process.exit(0);
+  `], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(recovery.status, 0, recovery.stderr);
+  assert.equal((await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox WHERE order_id = $1 AND status = 'sent'", [saved.orderId])).rows[0].n, 2);
+  await drainMail();
+  assert.equal(mail.length, mailStart);
+});
+
+test("transport false schedules a retry; guest retry never resends a successful admin email", async () => {
+  const pending = await makePayment();
+  const result = await storage.finalizePendingPayment(pending.token);
+  const mailStart = mail.length;
+  assert.equal(await processNext(), true); // admin succeeds
+  const { emailService } = await import("../server/email-service");
+  const original = emailService.sendEmail;
+  emailService.sendEmail = async () => false;
+  try {
+    assert.equal(await processNext(), true);
+  } finally {
+    emailService.sendEmail = original;
+  }
+  const failed = (await pool.query("SELECT * FROM payment_email_outbox WHERE order_id = $1 AND audience = 'guest'", [result.orderId])).rows[0];
+  assert.equal(failed.status, "pending");
+  assert.equal(failed.attempts, 1);
+  assert.ok(failed.available_at.getTime() > Date.now());
+  assert.equal(await processNext(), false, "not retried before backoff");
+  await pool.query("UPDATE payment_email_outbox SET available_at = now() WHERE id = $1", [failed.id]);
+  await drainMail();
+  assert.deepEqual(mail.slice(mailStart).map(m => m.to), ["admin@example.test", "guest@example.test"]);
+  assert.equal((await pool.query("SELECT attempts FROM payment_email_outbox WHERE id = $1", [failed.id])).rows[0].attempts, 2);
+});
+
+test("worker death with a locked notification rolls back and releases it for recovery", async () => {
+  const pending = await makePayment();
+  const result = await storage.finalizePendingPayment(pending.token);
+  const child = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e", `
+    const { processNextPaymentEmail } = await import("./server/payment-email-outbox.ts");
+    await processNextPaymentEmail(undefined, async () => process.exit(0));
+    process.exit(1);
+  `], { encoding: "utf8", timeout: 20_000 });
+  assert.equal(child.status, 0, child.stderr);
+  const rows = (await pool.query("SELECT status, attempts FROM payment_email_outbox WHERE order_id = $1", [result.orderId])).rows;
+  assert.ok(rows.every((row: { status: string; attempts: number }) => row.status === "pending" && row.attempts === 0));
+  const mailStart = mail.length;
+  await Promise.all(Array.from({ length: 8 }, drainMail));
+  assert.equal(mail.length, mailStart + 2);
+});
+
+test("a competing worker skips a notification even while delivery is slow", async () => {
+  const pending = await makePayment("payment-customer");
+  await storage.finalizePendingPayment(pending.token);
+  let started!: () => void;
+  let release!: () => void;
+  const deliveryStarted = new Promise<void>(resolve => { started = resolve; });
+  const wait = new Promise<void>(resolve => { release = resolve; });
+  let calls = 0;
+  const first = processNext(undefined, async () => { calls++; started(); await wait; });
+  await deliveryStarted;
+  try {
+    assert.equal(await processNext(undefined, async () => { calls++; }), false);
+  } finally {
+    release();
+  }
+  await first;
+  assert.equal(calls, 1);
+});
+
+test("repeated thrown errors stop after eight attempts and keep a redacted failure for manual retry", async () => {
+  const pending = await makePayment("payment-customer");
+  const result = await storage.finalizePendingPayment(pending.token);
+  const { emailRetryDelay, MAX_EMAIL_ATTEMPTS } = await import("../server/payment-email-outbox");
+  for (let attempt = 1; attempt <= MAX_EMAIL_ATTEMPTS; attempt++) {
+    await pool.query("UPDATE payment_email_outbox SET available_at = now() WHERE order_id = $1", [result.orderId]);
+    assert.equal(await processNext(undefined, async () => { throw new Error("secret transport payload"); }), true);
+    const row = (await pool.query("SELECT * FROM payment_email_outbox WHERE order_id = $1", [result.orderId])).rows[0];
+    assert.equal(row.attempts, attempt);
+    assert.equal(row.status, attempt === MAX_EMAIL_ATTEMPTS ? "failed" : "pending");
+    assert.equal(row.last_error, "Order email delivery failed");
+    assert.ok(row.available_at.getTime() > Date.now() + emailRetryDelay(attempt) - 2000);
+  }
+  assert.equal(await processNext(undefined, async () => { assert.fail("exhausted notification must not run"); }), false);
+});
+
+test("failure inserting an outbox intent rolls back order, items and payment completion", async () => {
+  const pending = await makePayment();
+  const initial = await counts();
+  await pool.query(`
+    CREATE FUNCTION reject_email_intent() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN RAISE EXCEPTION 'Injected outbox failure'; END $$;
+    CREATE TRIGGER reject_email_intent BEFORE INSERT ON payment_email_outbox
+      FOR EACH ROW EXECUTE FUNCTION reject_email_intent();
+  `);
+  try {
+    await assert.rejects(storage.finalizePendingPayment(pending.token), /Injected outbox failure/);
+    assert.deepEqual(await counts(), initial);
+    assert.equal((await storage.getPendingPaymentByToken(pending.token))?.status, "pending");
+  } finally {
+    await pool.query("DROP TRIGGER reject_email_intent ON payment_email_outbox; DROP FUNCTION reject_email_intent()");
+  }
+  assert.equal((await storage.finalizePendingPayment(pending.token)).created, true);
+});
+
+test("checkout eligibility is persisted; disabling new notifications does not discard existing intents", async () => {
+  const original = storage.getStoreSettings;
+  const settings = await secondStorage.getStoreSettings();
+  assert.ok(settings);
+  try {
+    for (const override of [{ emailNotificationsEnabled: false }, { orderNotificationEmail: null }]) {
+      await pool.query("UPDATE store_settings SET email_notifications_enabled = $1, order_notification_email = $2",
+        [override.emailNotificationsEnabled ?? true, "orderNotificationEmail" in override ? null : settings.orderNotificationEmail]);
+      const result = await storage.finalizePendingPayment((await makePayment()).token);
+      assert.equal((await pool.query("SELECT COUNT(*)::int AS n FROM payment_email_outbox WHERE order_id = $1", [result.orderId])).rows[0].n, 0);
+    }
+    await pool.query("UPDATE store_settings SET email_notifications_enabled = true, order_notification_email = $1", [settings.orderNotificationEmail]);
+    await storage.finalizePendingPayment((await makePayment()).token);
+    await pool.query("UPDATE store_settings SET email_notifications_enabled = false, order_notification_email = 'changed@example.test'");
+    storage.getStoreSettings = secondStorage.getStoreSettings.bind(secondStorage);
+    const mailStart = mail.length;
+    await drainMail();
+    assert.deepEqual(mail.slice(mailStart).map(m => m.to), ["admin@example.test", "guest@example.test"]);
+  } finally {
+    storage.getStoreSettings = original;
+    await pool.query("UPDATE store_settings SET email_notifications_enabled = true, order_notification_email = $1", [settings.orderNotificationEmail]);
+  }
 });
 
 test("failure while recording completion rolls back order and items, then retry succeeds", async () => {

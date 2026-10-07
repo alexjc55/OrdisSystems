@@ -45,6 +45,7 @@ import {
   type CouponUse,
   type ProductVolumeDiscount,
   pendingPayments,
+  paymentEmailOutbox,
   type PendingPayment,
   type InsertPendingPayment,
 } from "@shared/schema";
@@ -2378,6 +2379,18 @@ export class DatabaseStorage implements IStorage {
         orderId: order.id,
         transactionId: order.transactionId,
       }).where(eq(pendingPayments.id, pending.id));
+      // The order, payment result and delivery intents either all commit or
+      // all roll back. Repeated callbacks never enqueue a second notification.
+      const [settings] = await tx.select().from(storeSettings).limit(1);
+      if (settings?.emailNotificationsEnabled && settings.orderNotificationEmail) {
+        const notifications: (typeof paymentEmailOutbox.$inferInsert)[] = [{
+          orderId: order.id, audience: "admin", recipient: settings.orderNotificationEmail,
+        }];
+        if (!order.userId && order.guestEmail) {
+          notifications.push({ orderId: order.id, audience: "guest", recipient: order.guestEmail });
+        }
+        await tx.insert(paymentEmailOutbox).values(notifications);
+      }
       return { orderId: order.id, created: true };
     });
   }
