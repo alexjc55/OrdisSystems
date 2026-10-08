@@ -19,3 +19,6 @@ export PAYMENT_TEST_CLUSTER=isolated NODE_ENV=test REPLIT_APP_URL=https://shop.e
 unset SUPER_ADMIN_LOGIN SUPER_ADMIN_PASSWORD
 ./node_modules/.bin/drizzle-kit push --force >/dev/null
 node --import tsx --test tests/payment-finalization.test.ts tests/payment-verification.test.ts tests/payment-order-email.test.ts tests/checkout-order-email.test.ts tests/payment-quote.test.ts
+# Run route-pricing tests after migration/finalization tests, not concurrently:
+# those tests intentionally drop/rebuild shared tables to exercise migrations.
+node --import tsx --test tests/checkout-pricing.test.ts

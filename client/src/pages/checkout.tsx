@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { registerCheckoutAccount } from "@/lib/register-checkout-account";
 import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
@@ -370,6 +371,8 @@ export default function Checkout() {
   const { toast } = useToast();
   const [orderType, setOrderType] = useState<"guest" | "register" | "login">("register");
   const [orderTypeInitialized, setOrderTypeInitialized] = useState(false);
+  const [registeredCheckoutAddress, setRegisteredCheckoutAddress] = useState("");
+  const [registrationReviewRequired, setRegistrationReviewRequired] = useState(false);
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
@@ -911,29 +914,8 @@ export default function Checkout() {
 
   const registerAndOrderMutation = useMutation({
     mutationFn: async (data: RegistrationData) => {
-      // First register the user
-      const newUser = await apiRequest("POST", "/api/register", {
-        username: data.email, // Use email as username for checkout registration
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phone: data.phone,
-        password: data.password,
-      });
-
-      // Save the delivery address for the new user
-      if (data.address && data.address.trim()) {
-        try {
-          await apiRequest("POST", "/api/addresses", {
-            label: tCommon('address.home'),
-            address: data.address.trim()
-          });
-        } catch (error) {
-          console.warn("Failed to save address:", error);
-        }
-      }
-
-      // Validate delivery date/time before creating order
+      // Validate before creating the account, then return to checkout for
+      // confirmation with the new session's loyalty eligibility.
       const deliveryDateStr = selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "";
       if (!deliveryDateStr) {
         throw new Error(tCommon('validation.deliveryDateRequired'));
@@ -946,98 +928,24 @@ export default function Checkout() {
         throw new Error(validation.message);
       }
 
-      // Then create the order with user ID
-      const subtotal = getTotalPrice();
-      const deliveryFeeAmount = calculateDeliveryFee(
-        subtotalAfterAllDiscounts, 
-        parseFloat(storeSettings?.deliveryFee || "15.00"), 
-        (storeSettings?.freeDeliveryFrom && storeSettings.freeDeliveryFrom.trim() !== "") ? parseFloat(storeSettings.freeDeliveryFrom) : null
-      );
-      const total = subtotalAfterAllDiscounts + deliveryFeeAmount;
-
-      const regOrderPayload: BaseOrderPayload & {
-        userId: string;
-        deliveryAddress: string;
-        deliveryDate: string;
-        deliveryTime: string;
-        paymentMethod: string;
-        customerPhone: string;
-        deliveryFee: string;
-        couponCode?: string;
-        giftAccepted?: boolean;
-      } = {
-        items: items.map(item => ({
-          productId: item.product.id,
-          quantity: item.quantity.toString(),
-          pricePerKg: item.product.pricePerKg || item.product.price,
-          totalPrice: item.totalPrice.toString()
-        })),
-        totalAmount: total.toFixed(2),
-        userId: newUser.id,
-        deliveryAddress: data.address,
-        deliveryDate: selectedRegisterDate ? format(selectedRegisterDate, "yyyy-MM-dd") : "",
-        deliveryTime: selectedRegisterTime,
-        paymentMethod: selectedRegisterPaymentMethod,
-        customerPhone: data.phone,
-        deliveryFee: deliveryFeeAmount.toString(),
-        status: "pending",
-        ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
-        ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
-        ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
-      };
-      
-      if ((data as any)._useHyp) {
-        const hypResult = await apiRequest("POST", "/api/payment/initiate", {
-          items: regOrderPayload.items,
-          totalAmount: regOrderPayload.totalAmount,
-          orderData: {
-            userId: newUser.id,
-            deliveryAddress: regOrderPayload.deliveryAddress,
-            deliveryDate: regOrderPayload.deliveryDate,
-            deliveryTime: regOrderPayload.deliveryTime,
-            deliveryFee: regOrderPayload.deliveryFee,
-            status: "pending",
-            customerPhone: regOrderPayload.customerPhone,
-            ...(branchesEnabled && selectedBranchId ? { branchId: selectedBranchId } : {}),
-            ...(appliedCoupon ? { couponCode: appliedCoupon.code } : {}),
-            ...(giftAccepted && giftEligible ? { giftAccepted: true } : {}),
-          },
-          userId: newUser.id,
-          language: currentLanguage,
-          branchId: branchesEnabled && selectedBranchId ? selectedBranchId : null,
-        });
-        localStorage.setItem(HYP_PENDING_KEY, JSON.stringify({ token: hypResult.token, timestamp: Date.now() }));
-        window.location.href = hypResult.redirectUrl;
-        throw new Error("HYP_REDIRECT");
-      }
-
-      return await apiRequest("POST", "/api/orders", regOrderPayload);
+      return registerCheckoutAccount(data, apiRequest, tCommon('address.home'),
+        error => console.warn("Failed to save address:", error));
     },
-    onSuccess: (order) => {
-      clearCart();
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-      
-      // Trigger push notification request after successful checkout (contextual moment)
-      triggerPushRequestAfterAction('checkout');
-      
+    onSuccess: (newUser, data) => {
+      setRegisteredCheckoutAddress(data.address);
+      setSelectedDate(selectedRegisterDate);
+      setSelectedTime(selectedRegisterTime);
+      setSelectedPaymentMethod(selectedRegisterPaymentMethod);
+      setRegistrationReviewRequired(true);
+      queryClient.setQueryData(["/api/auth/user"], newUser);
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
       toast({
-        title: tShop('checkout.registrationAndOrderCompleted'),
-        description: tShop('checkout.orderAcceptedForProcessing', { orderId: order.id }),
+        title: tCommon('auth.registerSuccess'),
+        description: tShop('checkout.registrationReviewOrder'),
       });
-      // Redirect to thanks page for registered user order
-      const currentLang = localStorage.getItem('language') || 'ru';
-      const thanksUrl = `/thanks?orderId=${order.id}&guest=false&lang=${currentLang}`;
-      navigate(thanksUrl);
     },
     onError: (error: any) => {
-      if (error?.message === 'coupon_invalid') {
-        setAppliedCoupon(null);
-        toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
-      } else if (error?.message === 'HYP_REDIRECT') {
-        // ignore — browser is redirecting to HYP payment page
-      } else {
-        toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
-      }
+      toast({ title: tCommon('auth.registerError'), description: error.message, variant: "destructive" });
     },
   });
 
@@ -1671,7 +1579,9 @@ export default function Checkout() {
                 <Alert>
                   <CheckCircle className="h-4 w-4" />
                   <AlertDescription>
-                    {tShop('checkout.welcomeMessage').replace('{name}', user?.firstName || '')}
+                    {registrationReviewRequired
+                      ? tShop('checkout.registrationReviewOrder')
+                      : tShop('checkout.welcomeMessage').replace('{name}', user?.firstName || '')}
                   </AlertDescription>
                 </Alert>
 
@@ -1743,6 +1653,7 @@ export default function Checkout() {
                       <Input
                         id="address"
                         name="address"
+                        defaultValue={registeredCheckoutAddress}
                         placeholder={tShop('checkout.deliveryAddressPlaceholder')}
                         required
                       />
@@ -1915,7 +1826,7 @@ export default function Checkout() {
                     </AlertDescription>
                   </Alert>
 
-                  <form onSubmit={registerForm.handleSubmit((data) => registerAndOrderMutation.mutate({ ...data, _useHyp: isOnlinePayment(selectedRegisterPaymentMethod) } as any))}>
+                  <form onSubmit={registerForm.handleSubmit((data) => registerAndOrderMutation.mutate(data))}>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -2102,10 +2013,9 @@ export default function Checkout() {
                         className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
                         disabled={registerAndOrderMutation.isPending || hypPaymentMutation.isPending}
                       >
-                        {(registerAndOrderMutation.isPending || hypPaymentMutation.isPending)
-                          ? (isOnlinePayment(selectedRegisterPaymentMethod) ? tShop('checkout.processingPayment') : tShop('checkout.registeringAndProcessing'))
-                          : (isOnlinePayment(selectedRegisterPaymentMethod) ? tShop('checkout.payOnline') : tShop('checkout.registerAndPlaceOrder'))
-                        }
+                        {registerAndOrderMutation.isPending
+                          ? tShop('checkout.registeringAndProcessing')
+                          : tShop('checkout.registerAndReviewOrder')}
                       </Button>
                       {isOnlinePayment(selectedRegisterPaymentMethod) && <PaymentBadges provider={activePaymentProvider} />}
                     </div>

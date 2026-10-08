@@ -271,6 +271,8 @@
     "loginTab": "Войти",
     "registration": "Регистрация",
     "registerAndPlaceOrder": "Зарегистрироваться и заказать",
+    "registerAndReviewOrder": "Зарегистрироваться и проверить заказ",
+    "registrationReviewOrder": "Регистрация завершена. Проверьте обновлённую сумму с учётом скидок и подтвердите заказ или оплату.",
     "registeringAndProcessing": "Регистрация и обработка...",
     "registrationBenefit": "Зарегистрируйтесь для сохранения адресов и истории заказов",
     "orderPlaced": "Заказ размещен",

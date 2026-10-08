@@ -213,6 +213,8 @@
     "loginTab": "تسجيل الدخول",
     "registration": "التسجيل",
     "registerAndPlaceOrder": "التسجيل وتقديم الطلب",
+    "registerAndReviewOrder": "التسجيل ومراجعة الطلب",
+    "registrationReviewOrder": "اكتمل التسجيل. راجع المبلغ المحدّث مع الخصومات، ثم أكّد الطلب أو الدفع.",
     "registeringAndProcessing": "جاري التسجيل والمعالجة",
     "registrationBenefit": "فائدة التسجيل",
     "orderAccepted": "تم قبول الطلب",

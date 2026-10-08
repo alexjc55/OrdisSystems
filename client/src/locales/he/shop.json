@@ -205,6 +205,8 @@
     "loginTab": "התחבר",
     "registration": "הרשמה",
     "registerAndPlaceOrder": "הרשם וסיים הזמנה",
+    "registerAndReviewOrder": "הרשמה ובדיקת ההזמנה",
+    "registrationReviewOrder": "ההרשמה הושלמה. בדקו את הסכום המעודכן כולל הנחות, ואז אשרו את ההזמנה או התשלום.",
     "registeringAndProcessing": "מתרשם ומעבד...",
     "registrationBenefit": "הרשם לשמירת כתובות והיסטוריית הזמנות",
     "orderPlaced": "ההזמנה בוצעה",

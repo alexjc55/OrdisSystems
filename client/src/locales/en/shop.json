@@ -135,6 +135,8 @@
     "orderAccepted": "Order Accepted",
     "orderAcceptedForProcessing": "Your order has been placed. Order #{{orderId}}",
     "registrationAndOrderCompleted": "Registration and order completed",
+    "registerAndReviewOrder": "Register and review order",
+    "registrationReviewOrder": "Registration complete. Review the updated total including discounts, then confirm your order or payment.",
     "orderCancelled": "Order Cancelled",
     "orderCancelledDesc": "Your order has been cancelled",
     "futureOrderError": "Cannot order for future",

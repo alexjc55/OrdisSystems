@@ -6,10 +6,10 @@ import { prepareCheckoutEmail } from "../checkout-order-email";
 import { sendFacebookPurchaseEvent, type FacebookOrderData } from "../facebook-conversions-api";
 import { PushNotificationService } from "../push-notifications";
 import { BRANCHES_ENABLED } from "../config";
-import { insertOrderSchema, type InsertOrder, type InsertOrderItem } from "@shared/schema";
+import { insertOrderSchema, type InsertOrder } from "@shared/schema";
 import { z } from "zod";
 import { randomBytes } from "crypto";
-import { calculateOrderDiscounts } from "../order-discounts";
+import { CheckoutQuoteError, quoteCheckout } from "../checkout-quote";
 
 const router = Router();
 
@@ -30,11 +30,6 @@ function resolvePaymentMethodNames(
   if (!found) return undefined;
   return { ru: found.name, en: found.name_en, he: found.name_he, ar: found.name_ar };
 }
-
-// ─── Server-side discount computation ────────────────────────────────────────
-// This ensures discount amounts are authoritative from DB, not from client input.
-const computeServerDiscounts = (input: Parameters<typeof calculateOrderDiscounts>[0]) =>
-  calculateOrderDiscounts(input, storage);
 
 router.get('/orders', isAuthenticated, async (req: any, res) => {
   try {
@@ -259,77 +254,35 @@ router.post('/orders/guest', async (req: any, res) => {
       return res.status(400).json({ message: "Guest information is required" });
     }
 
-    // Compute subtotal from client items (prices are unit-based; authoritative prices reside in DB
-    // but changing unit-based pricing logic server-side is out of scope here)
-    const subtotal = items.reduce((sum: number, item: any) => sum + parseFloat(item.totalPrice || '0'), 0);
-
-    // Server-side authoritative discount computation
-    const guestOrderItems = items.map((item: any) => ({
-      productId: parseInt(item.productId),
-      quantity: parseFloat(item.quantity),
-      totalPrice: item.totalPrice?.toString() || '0',
-    }));
-    const {
-      serverCouponCode,
-      serverCouponDiscount,
-      serverLoyaltyDiscount,
-      serverVolumeDiscount,
-      serverGiftProductId,
-      serverDiscountDetails,
-      giftOrderItem,
-    } = await computeServerDiscounts({
-      couponCode: couponCode || null,
-      subtotal,
-      userId: null, // Guest — no loyalty discount
-      giftAccepted: !!giftAccepted,
-      orderItems: guestOrderItems,
-    });
-
-    const deliveryFee = parseFloat(guestInfo.deliveryFee || '0');
-    const serverTotalAmount = Math.max(0, subtotal - serverVolumeDiscount - serverCouponDiscount - serverLoyaltyDiscount + deliveryFee);
+    const quote = await quoteCheckout({
+      items, totalAmount, language, branchId,
+      orderData: {
+        deliveryAddress: guestInfo.address,
+        guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
+        guestEmail: guestInfo.email,
+        guestPhone: guestInfo.phone,
+        customerNotes: guestInfo.customerNotes,
+        deliveryDate: guestInfo.deliveryDate,
+        deliveryTime: guestInfo.deliveryTime,
+        paymentMethod: guestInfo.paymentMethod,
+        couponCode, giftAccepted,
+      },
+    }, null, BRANCHES_ENABLED, storage);
+    const { orderItems, volumeDiscount: serverVolumeDiscount } = quote;
+    const serverCouponCode = quote.orderData.couponCode;
+    const deliveryFee = Number(quote.orderData.deliveryFee);
 
     const guestAccessToken = randomBytes(32).toString('hex');
     const guestClaimToken = randomBytes(32).toString('hex');
     const guestAccessTokenExpires = new Date();
     guestAccessTokenExpires.setDate(guestAccessTokenExpires.getDate() + 30);
 
-    const parsedBranchId = BRANCHES_ENABLED && branchId && !isNaN(parseInt(branchId))
-      ? parseInt(branchId)
-      : undefined;
-
     const orderData: InsertOrder = {
-      userId: null,
-      totalAmount: serverTotalAmount.toString(),
-      status: "pending",
-      deliveryAddress: guestInfo.address,
-      guestName: `${guestInfo.firstName} ${guestInfo.lastName}`,
-      guestEmail: guestInfo.email,
-      guestPhone: guestInfo.phone,
-      customerNotes: guestInfo.customerNotes,
-      deliveryDate: guestInfo.deliveryDate,
-      deliveryTime: guestInfo.deliveryTime,
-      paymentMethod: guestInfo.paymentMethod,
+      ...quote.orderData,
       guestAccessToken,
       guestAccessTokenExpires,
       guestClaimToken,
-      orderLanguage: language || 'ru',
-      ...(parsedBranchId !== undefined ? { branchId: parsedBranchId } : {}),
-      ...(serverCouponCode ? { couponCode: serverCouponCode } : {}),
-      ...(serverCouponDiscount > 0 ? { couponDiscount: serverCouponDiscount.toString() } : {}),
-      ...(serverLoyaltyDiscount > 0 ? { loyaltyDiscount: serverLoyaltyDiscount.toString() } : {}),
-      ...(deliveryFee > 0 ? { deliveryFee: deliveryFee.toString() } : {}),
-      ...(serverGiftProductId ? { giftProductId: serverGiftProductId } : {}),
-      ...(Object.keys(serverDiscountDetails).length > 0 ? { discountDetails: serverDiscountDetails } : {}),
     };
-
-    const orderItems: InsertOrderItem[] = items.map((item: any) => ({
-      productId: item.productId,
-      quantity: item.quantity.toString(),
-      pricePerKg: item.pricePerKg.toString(),
-      totalPrice: item.totalPrice.toString(),
-      orderId: 0
-    }));
-    if (giftOrderItem) orderItems.push(giftOrderItem);
 
     const emailSnapshot = await prepareCheckoutEmail(orderData, orderItems, {
       customerName: orderData.guestName || 'Гость',
@@ -357,7 +310,7 @@ router.post('/orders/guest', async (req: any, res) => {
       await PushNotificationService.notifyNewOrder(
         order.id,
         orderData.guestName || 'Гость',
-        totalAmount.toString(),
+        orderData.totalAmount,
         true
       );
     } catch (pushError) {
@@ -377,9 +330,9 @@ router.post('/orders/guest', async (req: any, res) => {
           phone: guestInfo.phone,
           firstName: guestInfo.firstName,
           lastName: guestInfo.lastName,
-          totalAmount: typeof totalAmount === 'string' ? parseFloat(totalAmount) : totalAmount,
+          totalAmount: Number(orderData.totalAmount),
           currency: 'ILS',
-          items: items.map((item: any) => ({
+          items: orderItems.map((item) => ({
             productId: item.productId,
             quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
             price: typeof item.pricePerKg === 'string' ? parseFloat(item.pricePerKg) : item.pricePerKg,
@@ -408,6 +361,9 @@ router.post('/orders/guest', async (req: any, res) => {
       orderLanguage: orderData.orderLanguage
     });
   } catch (error: any) {
+    if (error instanceof CheckoutQuoteError) {
+      return res.status(error.status).json({ message: error.message, code: error.code });
+    }
     if (error?.isCouponError) {
       return res.status(422).json({ message: "coupon_invalid", couponError: error.couponError });
     }
@@ -424,78 +380,23 @@ router.post('/orders', async (req: any, res) => {
     if (req.isAuthenticated && req.isAuthenticated() && req.user?.id) {
       userId = req.user.id;
       user = await storage.getUser(userId);
-    } else if (req.body.userId) {
-      userId = req.body.userId;
-      user = await storage.getUser(userId);
     }
 
     const { items, language, couponCode: authCouponCode, giftAccepted: authGiftAccepted, ...orderData } = req.body;
 
-    const orderSchema = insertOrderSchema.extend({
-      requestedDeliveryDate: z.string().optional(),
-      requestedDeliveryTime: z.string().optional(),
-      items: z.array(z.object({
-        productId: z.number(),
-        quantity: z.string(),
-        pricePerKg: z.string(),
-        totalPrice: z.string(),
-      }))
-    });
-
-    const validatedData = orderSchema.parse({ ...orderData, userId, items });
-
-    const { requestedDeliveryDate, requestedDeliveryTime, items: _, ...orderDataWithoutTemp } = validatedData;
-
-    // Compute subtotal from validated items
-    const authSubtotal = validatedData.items.reduce((sum, item) => sum + parseFloat(item.totalPrice || '0'), 0);
-
-    // Server-side authoritative discount computation
-    const authOrderItemsForDiscounts = validatedData.items.map(item => ({
-      productId: item.productId,
-      quantity: parseFloat(item.quantity?.toString() || '0'),
-      totalPrice: item.totalPrice?.toString() || '0',
-    }));
-    const {
-      serverCouponCode: authSvrCouponCode,
-      serverCouponDiscount: authSvrCouponDiscount,
-      serverLoyaltyDiscount: authSvrLoyaltyDiscount,
-      serverVolumeDiscount: authSvrVolumeDiscount,
-      serverGiftProductId: authSvrGiftProductId,
-      serverDiscountDetails: authSvrDiscountDetails,
-      giftOrderItem: authGiftOrderItem,
-    } = await computeServerDiscounts({
-      couponCode: authCouponCode || null,
-      subtotal: authSubtotal,
-      userId,
-      userEmail: req.user ? (req.user as any).email : null,
-      userRole: req.user ? (req.user as any).role : null,
-      giftAccepted: !!authGiftAccepted,
-      orderItems: authOrderItemsForDiscounts,
-    });
-
-    const authDeliveryFee = parseFloat(String(orderData.deliveryFee || '0'));
-    const authServerTotal = Math.max(0, authSubtotal - authSvrVolumeDiscount - authSvrCouponDiscount - authSvrLoyaltyDiscount + authDeliveryFee);
-
+    const { requestedDeliveryDate, requestedDeliveryTime } = orderData;
     const deliveryOverride = (requestedDeliveryTime && requestedDeliveryDate)
       ? { deliveryDate: requestedDeliveryDate, deliveryTime: requestedDeliveryTime }
       : {};
-
-    const processedOrderData: InsertOrder = {
-      ...orderDataWithoutTemp,
-      totalAmount: authServerTotal.toString(),
-      ...(userId ? { userId } : {}),
-      orderLanguage: language || 'ru',
-      ...deliveryOverride,
-      ...(!BRANCHES_ENABLED ? { branchId: undefined } : {}),
-      ...(authSvrCouponCode ? { couponCode: authSvrCouponCode } : {}),
-      ...(authSvrCouponDiscount > 0 ? { couponDiscount: authSvrCouponDiscount.toString() } : {}),
-      ...(authSvrLoyaltyDiscount > 0 ? { loyaltyDiscount: authSvrLoyaltyDiscount.toString() } : {}),
-      ...(authSvrGiftProductId ? { giftProductId: authSvrGiftProductId } : {}),
-      ...(Object.keys(authSvrDiscountDetails).length > 0 ? { discountDetails: authSvrDiscountDetails } : {}),
-    };
-
-    const authOrderItems: InsertOrderItem[] = validatedData.items.map(item => ({ ...item, orderId: 0 }));
-    if (authGiftOrderItem) authOrderItems.push(authGiftOrderItem);
+    const quote = await quoteCheckout({
+      items, totalAmount: orderData.totalAmount, language, branchId: orderData.branchId,
+      orderData: { ...orderData, ...deliveryOverride, couponCode: authCouponCode, giftAccepted: authGiftAccepted },
+    }, userId, BRANCHES_ENABLED, storage);
+    const processedOrderData = insertOrderSchema.parse(quote.orderData);
+    const authOrderItems = quote.orderItems;
+    const authSvrCouponCode = processedOrderData.couponCode;
+    const authDeliveryFee = Number(processedOrderData.deliveryFee);
+    const authSvrVolumeDiscount = quote.volumeDiscount;
 
     const emailSnapshot = await prepareCheckoutEmail(processedOrderData, authOrderItems, {
       customerName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь',
@@ -524,7 +425,7 @@ router.post('/orders', async (req: any, res) => {
       await PushNotificationService.notifyNewOrder(
         order.id,
         customerName,
-        validatedData.totalAmount?.toString() || '0',
+        processedOrderData.totalAmount,
         false
       );
     } catch (pushError) {
@@ -544,9 +445,9 @@ router.post('/orders', async (req: any, res) => {
           phone: orderData.customerPhone || user?.phone,
           firstName: user?.firstName || undefined,
           lastName: user?.lastName || undefined,
-          totalAmount: typeof validatedData.totalAmount === 'string' ? parseFloat(validatedData.totalAmount as string) : (validatedData.totalAmount as number),
+          totalAmount: Number(processedOrderData.totalAmount),
           currency: 'ILS',
-          items: validatedData.items.map((item: any) => ({
+          items: authOrderItems.map((item) => ({
             productId: item.productId,
             quantity: typeof item.quantity === 'string' ? parseFloat(item.quantity) : item.quantity,
             price: typeof item.pricePerKg === 'string' ? parseFloat(item.pricePerKg) : item.pricePerKg,
@@ -570,6 +471,9 @@ router.post('/orders', async (req: any, res) => {
 
     res.json(order);
   } catch (error: any) {
+    if (error instanceof CheckoutQuoteError) {
+      return res.status(error.status).json({ message: error.message, code: error.code });
+    }
     if (error?.isCouponError) {
       return res.status(422).json({ message: "coupon_invalid", couponError: error.couponError });
     }
