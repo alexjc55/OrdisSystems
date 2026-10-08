@@ -19,6 +19,7 @@ import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { registerCheckoutAccount } from "@/lib/register-checkout-account";
+import { refreshCheckoutCart, cartVolumeDiscount, type LoyaltyContext, type VolumeDiscounts } from "@/lib/refresh-checkout-cart";
 import { formatCurrency, formatDeliveryTimeRange } from "@/lib/currency";
 import { useToast } from "@/hooks/use-toast";
 import { useUTMNavigate } from "@/hooks/use-utm-navigate";
@@ -365,7 +366,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
-  const { items, getTotalPrice, clearCart, removeItem, updateProductSnapshot, appliedCoupon, setAppliedCoupon, giftAccepted, setGiftAccepted } = useCartStore();
+  const { items, clearCart, removeItem, updateProductSnapshot, appliedCoupon, giftAccepted, setGiftAccepted } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -373,9 +374,17 @@ export default function Checkout() {
   const [orderTypeInitialized, setOrderTypeInitialized] = useState(false);
   const [registeredCheckoutAddress, setRegisteredCheckoutAddress] = useState("");
   const [registrationReviewRequired, setRegistrationReviewRequired] = useState(false);
+  const [cartRefreshRequired, setCartRefreshRequired] = useState(false);
+  const [isRefreshingCart, setIsRefreshingCart] = useState(false);
+  const [cartReviewRequired, setCartReviewRequired] = useState(false);
+  const [cartRefreshReport, setCartRefreshReport] = useState<{ removed: CartItem[]; couponRemoved: boolean } | null>(null);
+  const [cartRefreshFailed, setCartRefreshFailed] = useState(false);
   const { storeSettings } = useStoreSettings();
   const { currentLanguage } = useLanguage();
   const { selectedBranchId, selectedBranch, branches, selectBranch, branchesEnabled } = useBranch();
+  const checkoutIdentityRef = useRef("");
+  checkoutIdentityRef.current = `${branchesEnabled ? selectedBranchId : null}:${user?.id || "guest"}`;
+  const refreshedCheckoutRef = useRef<{ items: CartItem[]; coupon: typeof appliedCoupon; identity: string } | null>(null);
   const [showBranchConfirmDialog, setShowBranchConfirmDialog] = useState(true);
   const [showBranchChangeDialog, setShowBranchChangeDialog] = useState(false);
   const [pendingBranchId, setPendingBranchId] = useState<number | null>(null);
@@ -395,21 +404,14 @@ export default function Checkout() {
   });
 
   // Loyalty context (discount % for registered users + gift product)
-  const { data: loyaltyContext } = useQuery<{
-    loyaltyDiscountEnabled: boolean;
-    loyaltyDiscountPercent: number;
-    giftEnabled: boolean;
-    giftProduct: any | null;
-    giftProductQuantity: number;
-    giftMinOrderAmount: number;
-  }>({
+  const { data: loyaltyContext } = useQuery<LoyaltyContext>({
     queryKey: ['/api/loyalty/context'],
     staleTime: 5 * 60 * 1000,
   });
 
   // Fetch volume discounts for all products in cart (checkout view)
   const checkoutProductIds = items.map((item: any) => item.product?.id).filter(Boolean) as number[];
-  const { data: checkoutVolumeDiscountsMap } = useQuery<Record<number, Array<{ minQuantity: string; discountType: string; discountValue: string }>>>({
+  const { data: checkoutVolumeDiscountsMap } = useQuery<VolumeDiscounts>({
     queryKey: ['/api/products/volume-discounts', checkoutProductIds.join(',')],
     queryFn: () => apiRequest('GET', `/api/products/volume-discounts?productIds=${checkoutProductIds.join(',')}`),
     enabled: checkoutProductIds.length > 0,
@@ -417,33 +419,15 @@ export default function Checkout() {
   });
 
   // Compute per-item volume discounts for checkout totals
-  const checkoutVolumeDiscountAmount = (() => {
-    if (!checkoutVolumeDiscountsMap) return 0;
-    let total = 0;
-    for (const item of items as any[]) {
-      if (!item.product?.id) continue;
-      const tiers = (checkoutVolumeDiscountsMap[item.product.id] || []).filter((t: any) =>
-        t.minQuantity !== null && parseFloat(t.minQuantity) <= item.quantity
-      );
-      if (tiers.length === 0) continue;
-      const best = tiers.reduce((a: any, b: any) => parseFloat(a.minQuantity) >= parseFloat(b.minQuantity) ? a : b);
-      const pct = parseFloat(best.discountValue);
-      if (best.discountType === 'percentage') {
-        total += Math.round(item.totalPrice * pct / 100 * 100) / 100;
-      } else {
-        total += Math.min(pct, item.totalPrice);
-      }
-    }
-    return Math.round(total * 100) / 100;
-  })();
+  const checkoutVolumeDiscountAmount = cartVolumeDiscount(items, checkoutVolumeDiscountsMap);
 
   // Computed discount helpers used throughout the page
-  const subtotalForDiscounts = getTotalPrice();
+  const subtotalForDiscounts = Math.round(items.reduce((sum, item) => sum + item.totalPrice, 0) * 100) / 100;
   const subtotalAfterVolume = Math.max(0, subtotalForDiscounts - checkoutVolumeDiscountAmount);
   // Loyalty discount: skipped only when a coupon is applied that does NOT stack with loyalty
   // All registered users receive loyalty discount (not guests)
   const loyaltyDiscountAmount = ((!appliedCoupon || appliedCoupon?.stacksWithLoyalty) && loyaltyContext?.loyaltyDiscountEnabled && isAuthenticated && (loyaltyContext.loyaltyDiscountPercent || 0) > 0)
-    ? Math.round((subtotalAfterVolume * (loyaltyContext.loyaltyDiscountPercent || 0) / 100) * 100) / 100
+    ? Math.round(subtotalAfterVolume * (loyaltyContext.loyaltyDiscountPercent || 0)) / 100
     : 0;
   const subtotalAfterLoyalty = subtotalAfterVolume - loyaltyDiscountAmount;
   // Coupon discount: use the server-returned discountAmount as authoritative value.
@@ -458,6 +442,65 @@ export default function Checkout() {
   );
   // Gift eligibility uses raw subtotal (before discounts)
   const giftEligible = loyaltyContext?.giftEnabled && loyaltyContext?.giftProduct && subtotalForDiscounts >= (loyaltyContext.giftMinOrderAmount || 300);
+
+  const refreshedCheckout = refreshedCheckoutRef.current;
+  const refreshedContextChanged = !!cartRefreshReport && !!refreshedCheckout &&
+    (refreshedCheckout.items !== items || refreshedCheckout.coupon !== appliedCoupon ||
+     refreshedCheckout.identity !== checkoutIdentityRef.current);
+  const checkoutBlocked = cartRefreshRequired || isRefreshingCart || cartReviewRequired ||
+    refreshedContextChanged || items.length === 0;
+  const reviewTotal = subtotalAfterAllDiscounts + calculateDeliveryFee(
+    subtotalAfterAllDiscounts, parseFloat(storeSettings?.deliveryFee || "15.00"),
+    storeSettings?.freeDeliveryFrom?.trim() ? parseFloat(storeSettings.freeDeliveryFrom) : null,
+  );
+
+  const requireCartRefresh = () => {
+    setCartRefreshRequired(true);
+    setCartReviewRequired(false);
+    setCartRefreshReport(null);
+    setCartRefreshFailed(false);
+  };
+
+  const updateCheckoutCart = async () => {
+    if (isRefreshingCart) return;
+    setIsRefreshingCart(true);
+    setCartRefreshRequired(true);
+    setCartRefreshFailed(false);
+    const snapshot = useCartStore.getState();
+    const identity = checkoutIdentityRef.current;
+    try {
+      // Cancel stale in-flight responses before replacing the query data.
+      await Promise.all(["/api/settings", "/api/loyalty/context", "/api/products/volume-discounts"]
+        .map(key => queryClient.cancelQueries({ queryKey: [key] })));
+      const updated = await refreshCheckoutCart(
+        snapshot.items, snapshot.appliedCoupon, branchesEnabled ? selectedBranchId : null,
+      );
+      const current = useCartStore.getState();
+      if (identity !== checkoutIdentityRef.current || snapshot.items !== current.items ||
+          snapshot.appliedCoupon !== current.appliedCoupon) throw new Error("Checkout changed during refresh");
+      queryClient.setQueryData(["/api/settings"], updated.settings);
+      queryClient.setQueryData(["/api/loyalty/context"], updated.loyalty);
+      queryClient.setQueryData(["/api/products/volume-discounts", updated.productIds], updated.volume);
+      current.replaceCheckoutItems(updated.items, updated.coupon);
+      refreshedCheckoutRef.current = { items: updated.items, coupon: updated.coupon, identity };
+      setCartRefreshReport({ removed: updated.removed, couponRemoved: updated.couponRemoved });
+      setCartRefreshRequired(false);
+      setCartReviewRequired(true);
+    } catch {
+      setCartRefreshFailed(true);
+    } finally {
+      setIsRefreshingCart(false);
+    }
+  };
+
+  useEffect(() => {
+    const refreshed = refreshedCheckoutRef.current;
+    if (cartRefreshReport && refreshed &&
+        (refreshed.items !== items || refreshed.coupon !== appliedCoupon ||
+         refreshed.identity !== checkoutIdentityRef.current)) {
+      requireCartRefresh();
+    }
+  }, [items, appliedCoupon, selectedBranchId, branchesEnabled, user?.id, cartRefreshReport]);
 
   // Initialize orderType from store settings once loaded
   useEffect(() => {
@@ -844,7 +887,6 @@ export default function Checkout() {
         throw new Error(validation.message);
       }
 
-      const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotalAfterAllDiscounts, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
@@ -903,8 +945,12 @@ export default function Checkout() {
       navigate(thanksUrl);
     },
     onError: (error: any) => {
-      if (error?.message === 'coupon_invalid') {
-        setAppliedCoupon(null);
+      if (error?.code === "CART_PRICE_CHANGED" || error?.message === "Product is unavailable" ||
+          error?.message === "Product quantity is outside the allowed range" ||
+          error?.message === "This product is available for preorder only") {
+        requireCartRefresh();
+      } else if (error?.message === 'coupon_invalid') {
+        requireCartRefresh();
         toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
       } else {
         toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
@@ -983,7 +1029,6 @@ export default function Checkout() {
         throw new Error(validation.message);
       }
 
-      const subtotal = getTotalPrice();
       const deliveryFeeAmount = calculateDeliveryFee(
         subtotalAfterAllDiscounts, 
         parseFloat(storeSettings?.deliveryFee || "15.00"), 
@@ -1038,8 +1083,12 @@ export default function Checkout() {
       navigate(thanksUrl);
     },
     onError: (error: any) => {
-      if (error?.message === 'coupon_invalid') {
-        setAppliedCoupon(null);
+      if (error?.code === "CART_PRICE_CHANGED" || error?.message === "Product is unavailable" ||
+          error?.message === "Product quantity is outside the allowed range" ||
+          error?.message === "This product is available for preorder only") {
+        requireCartRefresh();
+      } else if (error?.message === 'coupon_invalid') {
+        requireCartRefresh();
         toast({ title: tShop('checkout.orderError'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
       } else {
         toast({ title: tShop('checkout.orderError'), description: error.message, variant: "destructive" });
@@ -1065,18 +1114,15 @@ export default function Checkout() {
     },
     onError: (error: any) => {
       console.error("Payment initiation error:", error.message);
-      if (error.code === "CART_PRICE_CHANGED") {
-        const messages: Record<string, string> = {
-          ru: "Цена или условия скидки изменились. Обновите товары в корзине и проверьте сумму перед оплатой.",
-          en: "Prices or discount conditions changed. Update the items in your cart and review the total before paying.",
-          he: "המחירים או תנאי ההנחה השתנו. עדכנו את המוצרים בסל ובדקו את הסכום לפני התשלום.",
-          ar: "تغيرت الأسعار أو شروط الخصم. حدّثوا المنتجات في السلة وراجعوا المبلغ قبل الدفع.",
-        };
-        toast({ title: tShop('checkout.paymentFailed'), description: messages[currentLanguage] || messages.ru, variant: "destructive" });
+      if (error.code === "CART_PRICE_CHANGED" || error.message === "Product is unavailable" ||
+          error.message === "Product quantity is outside the allowed range" ||
+          error.message === "This product is available for preorder only") {
+        requireCartRefresh();
+        toast({ title: tShop('checkout.paymentFailed'), description: tShop('checkout.cartRefreshNeeded'), variant: "destructive" });
         return;
       }
       if (error.message === "coupon_invalid") {
-        setAppliedCoupon(null);
+        requireCartRefresh();
         toast({ title: tShop('checkout.paymentFailed'), description: tShop(`cart.${error.couponError || 'couponError'}`), variant: "destructive" });
         return;
       }
@@ -1096,14 +1142,14 @@ export default function Checkout() {
     (activePaymentProvider === 'payme' && (storeSettings as any)?.paymentProviderConfig?.payme?.sellerPaymeId)
   );
 
-  if (items.length === 0) {
+  if (items.length === 0 && !cartRefreshReport && !cartRefreshRequired) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <ShoppingCart className="h-12 w-12 text-gray-400 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">{tCommon('cart.empty')}</h2>
-            <p className="text-gray-600 mb-4">{tCommon('cart.emptyDescription')}</p>
+            <h2 className="text-xl font-semibold mb-2">{tShop('cart.empty')}</h2>
+            <p className="text-gray-600 mb-4">{tShop('cart.emptyDescription', { defaultValue: tShop('cart.empty') })}</p>
             <Button asChild>
               <UTMLink href="/">
                 {tCommon('navigation.goShopping')}
@@ -1117,6 +1163,45 @@ export default function Checkout() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {(cartRefreshRequired || cartRefreshReport) && (
+        <Alert className="mb-6 border-amber-400" role="status" data-testid="checkout-cart-refresh">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription className="space-y-3">
+            <p>{tShop(cartRefreshRequired ? 'checkout.cartRefreshNeeded' : 'checkout.cartRefreshReview')}</p>
+            {cartRefreshFailed && <p role="alert">{tShop('checkout.cartRefreshFailed')}</p>}
+            {cartRefreshReport?.removed.length ? (
+              <div>
+                <p>{tShop('checkout.cartRefreshRemoved')}</p>
+                <ul className="list-disc list-inside">
+                  {cartRefreshReport.removed.map(item => (
+                    <li key={item.product.id}>{getLocalizedField(item.product, 'name', currentLanguage as SupportedLanguage, 'ru')}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {cartRefreshReport?.couponRemoved && <p>{tShop('checkout.cartRefreshCouponRemoved')}</p>}
+            {items.some(item => item.product.availabilityStatus === 'out_of_stock_today') && (
+              <p>{tShop('checkout.cartRefreshPreorder')}</p>
+            )}
+            {!cartRefreshRequired && items.length > 0 && (
+              <p className="font-semibold">{tShop('checkout.cartRefreshTotal', { total: formatCurrency(reviewTotal) })}</p>
+            )}
+            {items.length === 0 && <p>{tShop('cart.empty')}</p>}
+            <div className="flex flex-wrap gap-3">
+              <Button type="button" onClick={updateCheckoutCart} disabled={isRefreshingCart}
+                data-testid="refresh-checkout-cart">
+                {tShop(isRefreshingCart ? 'checkout.cartRefreshing' : 'checkout.cartRefreshAction')}
+              </Button>
+              {!cartRefreshRequired && cartReviewRequired && items.length > 0 && (
+                <Button type="button" onClick={() => setCartReviewRequired(false)} data-testid="confirm-checkout-total">
+                  {tShop('checkout.cartRefreshConfirm')}
+                </Button>
+              )}
+              {items.length === 0 && <Button asChild><UTMLink href="/">{tCommon('navigation.goShopping')}</UTMLink></Button>}
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
       {/* iOS PWA: HYP payment status check overlay */}
       {isCheckingHypPayment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -1587,6 +1672,7 @@ export default function Checkout() {
 
                 <form onSubmit={(e) => {
                   e.preventDefault();
+                  if (checkoutBlocked) return;
                   const formData = new FormData(e.target as HTMLFormElement);
                   const address = formData.get("address") as string;
                   const phone = formData.get("phone") as string;
@@ -1770,7 +1856,7 @@ export default function Checkout() {
                     <Button 
                       type="submit" 
                       className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
-                      disabled={createAuthenticatedOrderMutation.isPending || hypPaymentMutation.isPending}
+                      disabled={checkoutBlocked || createAuthenticatedOrderMutation.isPending || hypPaymentMutation.isPending}
                     >
                       {(createAuthenticatedOrderMutation.isPending || hypPaymentMutation.isPending)
                         ? (isOnlinePayment(selectedPaymentMethod) ? tShop('checkout.processingPayment') : tShop('checkout.processing'))
@@ -1826,7 +1912,9 @@ export default function Checkout() {
                     </AlertDescription>
                   </Alert>
 
-                  <form onSubmit={registerForm.handleSubmit((data) => registerAndOrderMutation.mutate(data))}>
+                  <form onSubmit={registerForm.handleSubmit((data) => {
+                    if (!checkoutBlocked) registerAndOrderMutation.mutate(data);
+                  })}>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -2011,7 +2099,7 @@ export default function Checkout() {
                       <Button 
                         type="submit" 
                         className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
-                        disabled={registerAndOrderMutation.isPending || hypPaymentMutation.isPending}
+                        disabled={checkoutBlocked || registerAndOrderMutation.isPending || hypPaymentMutation.isPending}
                       >
                         {registerAndOrderMutation.isPending
                           ? tShop('checkout.registeringAndProcessing')
@@ -2080,6 +2168,7 @@ export default function Checkout() {
                   </Alert>
 
                   <form onSubmit={guestForm.handleSubmit(async (data) => {
+                    if (checkoutBlocked) return;
                     if (isOnlinePayment(selectedGuestPaymentMethod)) {
                       const deliveryDate = selectedGuestDate ? format(selectedGuestDate, "yyyy-MM-dd") : "";
                       if (!deliveryDate) { toast({ title: tCommon('validation.deliveryDateRequired'), variant: "destructive" }); return; }
@@ -2276,7 +2365,7 @@ export default function Checkout() {
                       <Button 
                         type="submit" 
                         className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 text-lg shadow-lg"
-                        disabled={createGuestOrderMutation.isPending || hypPaymentMutation.isPending}
+                        disabled={checkoutBlocked || createGuestOrderMutation.isPending || hypPaymentMutation.isPending}
                       >
                         {(createGuestOrderMutation.isPending || hypPaymentMutation.isPending)
                           ? (isOnlinePayment(selectedGuestPaymentMethod) ? tShop('checkout.processingPayment') : tShop('checkout.processing'))

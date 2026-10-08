@@ -102,6 +102,16 @@
     "free": "Free"
   },
   "checkout": {
+    "cartRefreshNeeded": "Prices, availability or discount conditions changed. Update your cart and review the total before paying.",
+    "cartRefreshAction": "Update cart",
+    "cartRefreshing": "Updating cart…",
+    "cartRefreshFailed": "The cart could not be updated. Your order details are saved. Please try again.",
+    "cartRefreshReview": "Cart updated. Review the items, discounts and delivery. Confirm the new total, then place your order or proceed to payment.",
+    "cartRefreshTotal": "New total including delivery: {{total}}",
+    "cartRefreshConfirm": "Confirm new total",
+    "cartRefreshRemoved": "Unavailable items or items with changed units/quantity limits were removed. Add them again from the catalog if needed:",
+    "cartRefreshCouponRemoved": "The coupon no longer applies to this cart and was removed. The total was recalculated without it.",
+    "cartRefreshPreorder": "Some items are available for preorder only. Choose tomorrow or a later date.",
     "title": "Checkout",
     "customerInfo": "Customer Information",
     "deliveryInfo": "Delivery Information",

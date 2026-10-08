@@ -14,3 +14,9 @@ Registration during checkout changes loyalty eligibility. Establish the session 
 **Why:** A guest-priced registration submission becomes stale as soon as registration creates a session. Loyalty may lower the subtotal enough to remove free delivery, so even a new discount can increase the final total.
 
 **How to apply:** Preserve delivery/contact choices and the cart across registration, update the signed-in state immediately, and require a separate confirmation using the displayed updated total. Do not submit from the pre-registration render or clear the cart just because registration succeeded.
+
+When refreshing a saved cart, preserve the buyer's quantities rather than silently converting them if a catalog unit changes. Ask the buyer to re-add incompatible lines.
+
+**Why:** A saved quantity can mean grams, kilograms, millilitres or pieces. Reinterpreting it after a catalog edit can multiply the order size, and automatically adjusting it would exceed the buyer's consent.
+
+**How to apply:** Treat changed units and newly incompatible ordering limits as lines needing buyer attention. Keep preorder-only products for future delivery; price recovery is not permission to reset the selected date or customer details.

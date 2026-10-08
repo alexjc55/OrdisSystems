@@ -28,6 +28,7 @@ interface CartStore {
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   updateProductSnapshot: (productId: number, patch: Partial<Product>) => void;
+  replaceCheckoutItems: (items: CartItem[], coupon: AppliedCoupon | null) => void;
   clearCart: () => void;
   toggleCart: () => void;
   setCartOpen: (open: boolean) => void;
@@ -118,6 +119,8 @@ export const useCartStore = create<CartStore>()(
         set({ items: updatedItems });
       },
       
+      replaceCheckoutItems: (items, appliedCoupon) => set({ items, appliedCoupon }),
+
       clearCart: () => set({ items: [], appliedCoupon: null, giftAccepted: false }),
       
       toggleCart: () => set(state => ({ isOpen: !state.isOpen })),
