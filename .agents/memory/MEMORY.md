@@ -12,3 +12,4 @@
 - [Payment evidence](payment-evidence.md) — browser tokens are not proof; provider contracts and unverifiable older sessions require a safe cutover.
 - [Isolated build cleanup](isolated-build-cleanup.md) — redirecting Vite output alone does not contain Tailwind's temporary caches.
 - [Checkout price changes](checkout-price-changes.md) — reject changed totals before creating orders or charging; manual admin orders retain separate pricing.
+- [Coupon payment boundary](coupon-payment-boundary.md) — atomic finalization enforces limits but does not reserve coupon availability before remote payment.

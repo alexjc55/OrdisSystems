@@ -22,3 +22,4 @@ node --import tsx --test tests/payment-finalization.test.ts tests/payment-verifi
 # Run route-pricing tests after migration/finalization tests, not concurrently:
 # those tests intentionally drop/rebuild shared tables to exercise migrations.
 node --import tsx --test tests/checkout-pricing.test.ts
+node --import tsx --test tests/coupon-concurrency.test.ts

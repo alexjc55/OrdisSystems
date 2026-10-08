@@ -269,7 +269,6 @@ router.post('/orders/guest', async (req: any, res) => {
       },
     }, null, BRANCHES_ENABLED, storage);
     const { orderItems, volumeDiscount: serverVolumeDiscount } = quote;
-    const serverCouponCode = quote.orderData.couponCode;
     const deliveryFee = Number(quote.orderData.deliveryFee);
 
     const guestAccessToken = randomBytes(32).toString('hex');
@@ -293,18 +292,6 @@ router.post('/orders/guest', async (req: any, res) => {
       volumeDiscount: serverVolumeDiscount,
     });
     const order = await storage.createOrder(orderData, orderItems, emailSnapshot);
-
-    // Record coupon usage with server-authoritative coupon code
-    if (serverCouponCode) {
-      try {
-        const coupon = await storage.getCouponByCode(serverCouponCode);
-        if (coupon) {
-          await storage.recordCouponUse(coupon.id, order.id, null);
-        }
-      } catch (couponError) {
-        console.error('Error recording coupon use:', couponError);
-      }
-    }
 
     try {
       await PushNotificationService.notifyNewOrder(
@@ -394,7 +381,6 @@ router.post('/orders', async (req: any, res) => {
     }, userId, BRANCHES_ENABLED, storage);
     const processedOrderData = insertOrderSchema.parse(quote.orderData);
     const authOrderItems = quote.orderItems;
-    const authSvrCouponCode = processedOrderData.couponCode;
     const authDeliveryFee = Number(processedOrderData.deliveryFee);
     const authSvrVolumeDiscount = quote.volumeDiscount;
 
@@ -407,18 +393,6 @@ router.post('/orders', async (req: any, res) => {
       volumeDiscount: authSvrVolumeDiscount,
     });
     const order = await storage.createOrder(processedOrderData, authOrderItems, emailSnapshot);
-
-    // Record coupon usage with server-authoritative code
-    if (authSvrCouponCode) {
-      try {
-        const coupon = await storage.getCouponByCode(authSvrCouponCode);
-        if (coupon) {
-          await storage.recordCouponUse(coupon.id, order.id, userId);
-        }
-      } catch (couponError) {
-        console.error('Error recording coupon use for authenticated order:', couponError);
-      }
-    }
 
     try {
       const customerName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : 'Пользователь';

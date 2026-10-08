@@ -58,6 +58,7 @@ import { randomBytes } from "node:crypto";
 import { SESSION_TABLE_NAME, PasswordUpdateConflict } from "./session-credentials";
 type InsertCoupon = Omit<CouponInput, "expiresAt"> & { expiresAt?: Date | null };
 type StoreSettingsWrite = Partial<typeof storeSettings.$inferInsert>;
+type CouponExecutor = Pick<Awaited<ReturnType<typeof getDB>>, "select" | "insert" | "update">;
 type BranchAvailabilityWrite = Omit<typeof productBranchAvailability.$inferInsert, "productId">;
 
 export interface PasswordUpdateConditions {
@@ -198,7 +199,6 @@ export interface IStorage {
   updateCoupon(id: number, data: Partial<InsertCoupon>): Promise<Coupon>;
   deleteCoupon(id: number): Promise<void>;
   validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null, orderItems?: Array<{ productId: number; totalPrice: string }>): Promise<{ valid: boolean; message?: string; discountAmount?: number; eligibleSubtotal?: number; coupon?: Coupon }>;
-  recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void>;
   getCouponUses(couponId: number): Promise<CouponUse[]>;
 
   // Product volume discounts
@@ -1523,6 +1523,9 @@ export class DatabaseStorage implements IStorage {
 
       await tx.insert(orderItems).values(itemsWithOrderId);
 
+      // Customer checkout only: manual administrative orders retain their pricing.
+      if (emailSnapshot) await this.consumeOrderCoupon(tx, newOrder);
+
       // Administrative order creation without a snapshot keeps its old behavior.
       // Checkout order, items and automatic notifications commit atomically.
       if (emailSnapshot) {
@@ -2198,63 +2201,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async validateCoupon(code: string, orderTotal: number, userId?: string | null, userEmail?: string | null, orderItems?: Array<{ productId: number; totalPrice: string }>): Promise<{ valid: boolean; message?: string; discountAmount?: number; eligibleSubtotal?: number; coupon?: Coupon }> {
+    const db = await this.getDatabase();
     const coupon = await this.getCouponByCode(code);
     if (!coupon) return { valid: false, message: "coupon_not_found" };
-    if (!coupon.isActive) return { valid: false, message: "coupon_inactive" };
-
-    const now = new Date();
-    if (coupon.expiresAt && new Date(coupon.expiresAt) < now) {
-      return { valid: false, message: "coupon_expired" };
-    }
-
-    if (coupon.maxUses !== null && coupon.maxUses !== undefined && coupon.currentUses >= coupon.maxUses) {
-      return { valid: false, message: "coupon_max_uses" };
-    }
-
-    // Customer targeting by user ID (array takes priority over legacy single field)
-    const targetUserIdsArr = Array.isArray((coupon as any).targetUserIds) ? (coupon as any).targetUserIds as string[] : null;
-    if (targetUserIdsArr && targetUserIdsArr.length > 0) {
-      if (!userId || !targetUserIdsArr.includes(userId)) {
-        return { valid: false, message: "coupon_not_eligible" };
-      }
-    } else if (coupon.targetUserId) {
-      if (!userId || coupon.targetUserId !== userId) {
-        return { valid: false, message: "coupon_not_eligible" };
-      }
-    }
-
-    // Customer targeting by email (array takes priority over legacy single field)
-    const targetEmailsArr = Array.isArray((coupon as any).targetCustomerEmails) ? (coupon as any).targetCustomerEmails as string[] : null;
-    if (targetEmailsArr && targetEmailsArr.length > 0) {
-      if (!userEmail || !targetEmailsArr.some(e => e.toLowerCase() === userEmail.toLowerCase())) {
-        return { valid: false, message: "coupon_not_eligible" };
-      }
-    } else if (coupon.targetCustomerEmail) {
-      if (!userEmail || coupon.targetCustomerEmail.toLowerCase() !== userEmail.toLowerCase()) {
-        return { valid: false, message: "coupon_not_eligible" };
-      }
-    }
-
-    // Usage type enforcement:
-    // - 'single': one-time global — blocked if currentUses > 0
-    // - 'per_customer': once per authenticated user — check coupon_uses table
-    // - 'multi': default, only maxUses global limit applies
-    if (coupon.usageType === 'single' && coupon.currentUses > 0) {
-      return { valid: false, message: "coupon_max_uses" };
-    } else if (coupon.usageType === 'per_customer' && !userId) {
-      // per_customer coupons require an authenticated user — reject guests
-      return { valid: false, message: "coupon_not_eligible" };
-    } else if (coupon.usageType === 'per_customer' && userId) {
-      const db = await this.getDatabase();
-      const existingUse = await db
-        .select()
-        .from(couponUses)
-        .where(and(eq(couponUses.couponId, coupon.id), eq(couponUses.userId, userId)))
-        .limit(1);
-      if (existingUse.length > 0) {
-        return { valid: false, message: "coupon_already_used" };
-      }
-    }
+    const message = await this.couponEligibilityError(db, coupon, userId, userEmail);
+    if (message) return { valid: false, message };
 
     const minAmount = parseFloat(coupon.minOrderAmount || "0");
     if (orderTotal < minAmount) {
@@ -2284,12 +2235,87 @@ export class DatabaseStorage implements IStorage {
     return { valid: true, discountAmount, eligibleSubtotal, coupon };
   }
 
-  async recordCouponUse(couponId: number, orderId: number, userId?: string | null): Promise<void> {
-    const db = await this.getDatabase();
-    await db.insert(couponUses).values({ couponId, orderId, userId: userId || null });
-    await db.update(coupons)
-      .set({ currentUses: sql`current_uses + 1`, updatedAt: new Date() })
-      .where(eq(coupons.id, couponId));
+  // Shared by advisory cart validation and the authoritative, row-locked commit.
+  private async couponEligibilityError(db: CouponExecutor, coupon: Coupon, userId?: string | null, userEmail?: string | null): Promise<string | undefined> {
+    if (!coupon.isActive) return "coupon_inactive";
+
+    const now = new Date();
+    if (coupon.expiresAt && new Date(coupon.expiresAt) < now) {
+      return "coupon_expired";
+    }
+
+    if (coupon.maxUses !== null && coupon.maxUses !== undefined && coupon.currentUses >= coupon.maxUses) {
+      return "coupon_max_uses";
+    }
+
+    // Customer targeting by user ID (array takes priority over legacy single field)
+    const targetUserIdsArr = Array.isArray((coupon as any).targetUserIds) ? (coupon as any).targetUserIds as string[] : null;
+    if (targetUserIdsArr && targetUserIdsArr.length > 0) {
+      if (!userId || !targetUserIdsArr.includes(userId)) {
+        return "coupon_not_eligible";
+      }
+    } else if (coupon.targetUserId) {
+      if (!userId || coupon.targetUserId !== userId) {
+        return "coupon_not_eligible";
+      }
+    }
+
+    // Customer targeting by email (array takes priority over legacy single field)
+    const targetEmailsArr = Array.isArray((coupon as any).targetCustomerEmails) ? (coupon as any).targetCustomerEmails as string[] : null;
+    if (targetEmailsArr && targetEmailsArr.length > 0) {
+      if (!userEmail || !targetEmailsArr.some(e => e.toLowerCase() === userEmail.toLowerCase())) {
+        return "coupon_not_eligible";
+      }
+    } else if (coupon.targetCustomerEmail) {
+      if (!userEmail || coupon.targetCustomerEmail.toLowerCase() !== userEmail.toLowerCase()) {
+        return "coupon_not_eligible";
+      }
+    }
+
+    // Usage type enforcement:
+    // - 'single': one-time global — blocked if currentUses > 0
+    // - 'per_customer': once per authenticated user — check coupon_uses table
+    // - 'multi': default, only maxUses global limit applies
+    if (coupon.usageType === 'single' && coupon.currentUses > 0) {
+      return "coupon_max_uses";
+    } else if (coupon.usageType === 'per_customer' && !userId) {
+      // per_customer coupons require an authenticated user — reject guests
+      return "coupon_not_eligible";
+    } else if (coupon.usageType === 'per_customer' && userId) {
+      const existingUse = await db
+        .select()
+        .from(couponUses)
+        .where(and(eq(couponUses.couponId, coupon.id), eq(couponUses.userId, userId)))
+        .limit(1);
+      if (existingUse.length > 0) {
+        return "coupon_already_used";
+      }
+    }
+  }
+
+  private async consumeOrderCoupon(tx: CouponExecutor, order: Order): Promise<void> {
+    if (!order.couponCode) return;
+    // All checkout writers lock the same coupon row, across users/processes.
+    // Waiters read the winner's committed counter AND per-customer usage.
+    const [coupon] = await tx.select().from(coupons)
+      .where(eq(coupons.code, order.couponCode.toUpperCase())).for("update");
+    if (!coupon) {
+      throw Object.assign(new Error("coupon_not_found"), { isCouponError: true, couponError: "coupon_not_found" });
+    }
+    let email = order.guestEmail;
+    if (order.userId) {
+      const [user] = await tx.select({ email: users.email }).from(users).where(eq(users.id, order.userId));
+      email = user?.email || order.guestEmail;
+    }
+    const message = await this.couponEligibilityError(tx, coupon, order.userId, email);
+    if (message) {
+      throw Object.assign(new Error(message), { isCouponError: true, couponError: message });
+    }
+    // Do not recalculate the quoted (or paid) discount here.
+    await tx.insert(couponUses).values({ couponId: coupon.id, orderId: order.id, userId: order.userId });
+    await tx.update(coupons)
+      .set({ currentUses: sql`${coupons.currentUses} + 1`, updatedAt: new Date() })
+      .where(eq(coupons.id, coupon.id));
   }
 
   async getCouponUses(couponId: number): Promise<CouponUse[]> {
@@ -2404,6 +2430,7 @@ export class DatabaseStorage implements IStorage {
         pricePerKg: String(item.pricePerKg),
         totalPrice: String(item.totalPrice),
       })));
+      await this.consumeOrderCoupon(tx, order);
       await tx.update(pendingPayments).set({
         status: "completed",
         orderId: order.id,
