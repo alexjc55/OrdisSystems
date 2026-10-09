@@ -69,6 +69,7 @@ test("checkout recovery preserves forms/date and requires explicit consent in fo
             let refresh = false;
             let failRefresh = false;
             let emptyCatalog = false;
+            let onlineProviderEnabled = true;
             const payments: any[] = [];
             const catalogRequests: string[] = [];
             const old = {
@@ -92,7 +93,10 @@ test("checkout recovery preserves forms/date and requires explicit consent in fo
               if (url.pathname === "/api/auth/user") {
                 status = authenticated ? 200 : 401;
                 body = authenticated ? { id: "test-buyer", username: "Buyer", firstName: "Buyer", email: "buyer@example.test", phone: "0501234567", role: "customer" } : {};
-              } else if (url.pathname === "/api/config") body = { branchesEnabled: true };
+              } else if (url.pathname === "/api/config") body = {
+                branchesEnabled: true,
+                paymentProviders: { hyp: onlineProviderEnabled, grow: false, allpay: false, payme: false },
+              };
               else if (url.pathname === "/api/branches") body = [{ id: 7, name: "Test branch", isActive: true }];
               else if (url.pathname === "/api/settings") {
                 status = failRefresh ? 503 : 200;
@@ -202,6 +206,16 @@ test("checkout recovery preserves forms/date and requires explicit consent in fo
               assert.equal(await evaluate(`document.querySelector(${JSON.stringify(addressSelector)}).value`), "Test address 12");
               assert.equal(await evaluate(`${formExpression}.querySelector('button[aria-haspopup="dialog"]').textContent`), dateBefore);
               assert.equal(await evaluate(`${formExpression}.querySelector('button[type="submit"]').disabled`), true);
+            }
+            if (lang === "en" && authenticated) {
+              // A saved provider must not offer online payment when disabled.
+              // An unrelated offline option must remain available.
+              onlineProviderEnabled = false;
+              settings.paymentMethods = [{ id: 1, name: "Cash", name_en: "Cash", name_he: "Cash", name_ar: "Cash" }] as any;
+              await send("Page.reload", {}, sessionId);
+              await wait(`!!document.querySelector('#address') && document.body.textContent.includes('Cash')`);
+              assert.equal(await evaluate(`!!document.querySelector('[value="__online__"]')`), false);
+              assert.equal(payments.length, 2);
             }
             await send("Target.closeTarget", { targetId });
             interceptors.delete(sessionId);

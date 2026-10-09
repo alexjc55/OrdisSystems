@@ -135,6 +135,8 @@ before(async () => {
   app.use("/api", orderRoutes);
   const { default: settingsRoutes } = await import("../server/routes/admin/settings.routes");
   app.use("/api", settingsRoutes);
+  const { default: systemRoutes } = await import("../server/routes/system.routes");
+  app.use(systemRoutes);
   await new Promise<void>(resolve => { server = app.listen(0, "127.0.0.1", resolve); });
   const address = server.address();
   assert.ok(address && typeof address !== "string");
@@ -149,6 +151,40 @@ test("empty failed-email queue reports zero without requiring active orders", as
   });
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { items: [], totalCount: 0, nextCursor: null });
+});
+
+test("environment switches block both initiation paths without writes, but preserve verified in-flight payments", async () => {
+  const keys = ["PAYMENT_HYP_ENABLED", "PAYMENT_GROW_ENABLED", "PAYMENT_ALLPAY_ENABLED", "PAYMENT_PAYME_ENABLED"];
+  const originals = keys.map(key => process.env[key]);
+  const pending = await makePayment();
+  const initialPendingCount = Number((await pool.query("SELECT count(*) FROM pending_payments")).rows[0].count);
+  const initial = await counts();
+  try {
+    for (const key of keys) process.env[key] = "false";
+    const configResponse = await fetch(baseUrl + "/api/config");
+    assert.equal(configResponse.status, 200);
+    assert.deepEqual((await configResponse.json()).paymentProviders, {
+      hyp: false, grow: false, allpay: false, payme: false,
+    });
+    assert.equal((await (await fetch(baseUrl + "/api/settings")).json()).paymentProviderConfig.configured, false);
+    for (const path of ["/api/payment/initiate", "/api/payment/hyp/initiate"]) {
+      const response = await fetch(baseUrl + path, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: "{}",
+      });
+      assert.equal(response.status, 503);
+      assert.equal((await response.json()).code, "payment_provider_disabled");
+    }
+    assert.equal(Number((await pool.query("SELECT count(*) FROM pending_payments")).rows[0].count), initialPendingCount);
+    assert.deepEqual(await counts(), initial);
+    const completed = await webhook(pending.token);
+    assert.equal(completed.status, 200);
+    assert.equal((await storage.getPendingPaymentByToken(pending.token))?.status, "completed");
+  } finally {
+    keys.forEach((key, index) => {
+      if (originals[index] === undefined) delete process.env[key];
+      else process.env[key] = originals[index];
+    });
+  }
 });
 
 test("both initiate routes reject simultaneous total and line-price tampering before writes or gateway calls", async () => {

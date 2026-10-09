@@ -3,6 +3,7 @@ import { storage } from "../storage";
 import { randomBytes as rb } from "crypto";
 import { BRANCHES_ENABLED } from "../config";
 import { getProvider, type PaymentProviderConfig } from "../lib/payment-providers/index";
+import { isPaymentProviderEnabled } from "../lib/payment-providers/availability";
 import { checkoutVerification, merchantFingerprint, PaymentVerificationError } from "../lib/payment-providers/verification";
 import { passwordResetOrigin } from "../password-reset-email";
 import { CheckoutQuoteError, quotePaymentCheckout } from "../payment-quote";
@@ -25,6 +26,13 @@ async function initiatePayment(req: any, res: any) {
       return res.status(400).json({ message: "Store settings not found" });
     }
 
+    const active = (settings.paymentProviderConfig as PaymentProviderConfig | null)?.active;
+    if (active && active !== "none" && !isPaymentProviderEnabled(active)) {
+      return res.status(503).json({
+        code: "payment_provider_disabled",
+        message: "Online payment provider disabled by server configuration",
+      });
+    }
     const provider = getProvider(settings as any);
     if (!provider) {
       return res.status(400).json({ message: "No online payment provider configured" });
@@ -202,6 +210,12 @@ router.post("/payment/webhook", handleWebhook);
 // The HYP-specific initiate route still validates HYP credentials explicitly.
 router.post("/payment/hyp/initiate", async (req: any, res) => {
   try {
+    if (!isPaymentProviderEnabled("hyp")) {
+      return res.status(503).json({
+        code: "payment_provider_disabled",
+        message: "Online payment provider disabled by server configuration",
+      });
+    }
     const settings = await storage.getStoreSettings();
     if (!settings) {
       return res.status(400).json({ message: "Store settings not found" });

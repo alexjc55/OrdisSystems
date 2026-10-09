@@ -8,6 +8,7 @@ import { insertStoreSettingsSchema, storeSettings, closedDates, insertClosedDate
 import { z } from "zod";
 import { deleteUploadFiles } from "../../utils/delete-upload-file";
 import { publicPaymentConfig } from "../../lib/payment-providers/public-config";
+import { preserveDisabledPaymentConfig } from "../../lib/payment-providers/availability";
 
 const router = Router();
 
@@ -68,6 +69,21 @@ router.put('/settings', isAuthenticated, async (req: any, res) => {
     }
 
     const bodyData = { ...req.body };
+    if (Object.prototype.hasOwnProperty.call(bodyData, "paymentProviderConfig")) {
+      try {
+        bodyData.paymentProviderConfig = preserveDisabledPaymentConfig(
+          bodyData.paymentProviderConfig, currentSettings.paymentProviderConfig as { active?: string } | null,
+        );
+      } catch (error) {
+        if (error instanceof Error && error.message === "payment_provider_disabled") {
+          return res.status(400).json({
+            code: "payment_provider_disabled",
+            message: "This payment provider is disabled by server configuration",
+          });
+        }
+        throw error;
+      }
+    }
 
     // Never overwrite the SMTP password with an empty string —
     // keep the stored value if the incoming value is blank

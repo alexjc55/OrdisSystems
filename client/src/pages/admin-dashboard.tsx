@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import { useModalBackButton, suppressedHistoryBack, isPopstateSuppressed } from "@/hooks/useModalBackButton";
+import { usePaymentProviderAvailability } from "@/hooks/use-payment-provider-availability";
 
 import { useAdminTranslation, useCommonTranslation, useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
@@ -3571,6 +3572,7 @@ export default function AdminDashboard() {
 
   const isAdmin = user?.role === 'admin';
   const queryClient = useQueryClient();
+  const { isProviderEnabled } = usePaymentProviderAvailability();
 
   // Force component remount key to prevent stale state issues
   const [componentKey, setComponentKey] = useState(Date.now());
@@ -3610,7 +3612,7 @@ export default function AdminDashboard() {
   const selectedPaymentProvider = (storeSettings?.paymentProviderConfig as { active?: string } | null)?.active;
   const hasOnlinePayment = storeSettings == null
     ? undefined
-    : Boolean(selectedPaymentProvider && selectedPaymentProvider !== "none");
+    : Boolean(selectedPaymentProvider && selectedPaymentProvider !== "none" && isProviderEnabled(selectedPaymentProvider));
 
   // Stable permissions reference to prevent tab switching during mutations
   const stablePermissions = useRef<any>({});
@@ -11511,6 +11513,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
   testEmailMutation: any;
 }) {
   const { t: adminT } = useAdminTranslation();
+  const { hasAnyProvider, isProviderEnabled } = usePaymentProviderAvailability();
   const { i18n } = useCommonTranslation();
   const { toast } = useToast();
   const currentLanguage = i18n.language as SupportedLanguage;
@@ -11952,6 +11955,65 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
         }) || [];
 
         // Merge preserved data with current language updates and other form data
+        const storedPaymentProviderConfig = storeSettings?.paymentProviderConfig || {};
+        const storedPaymentProvider = storedPaymentProviderConfig.active || "none";
+        const shouldSubmitPaymentProviderConfig = hasAnyProvider && (
+          isProviderEnabled(data.paymentProvider) ||
+          (data.paymentProvider === "none" && isProviderEnabled(storedPaymentProvider))
+        );
+        const nextPaymentProviderConfig = shouldSubmitPaymentProviderConfig
+          ? {
+              ...storedPaymentProviderConfig,
+              active: data.paymentProvider || "none",
+              ...(data.paymentProvider === 'hyp' ? {
+                hyp: {
+                  ...(storedPaymentProviderConfig.hyp || {}),
+                  masof: data.hypMasof || '',
+                  passP: data.hypPassP || '',
+                  key: data.hypKey || '',
+                  testMode: data.hypTestMode !== false,
+                  j5Enabled: data.hypJ5Enabled || false,
+                  j5BufferPercent: data.hypJ5BufferPercent || 0,
+                  sendEmail: data.hypSendEmail || false,
+                },
+              } : {}),
+              ...(data.paymentProvider === 'grow' ? {
+                grow: {
+                  ...(storedPaymentProviderConfig.grow || {}),
+                  userId: data.growUserId || '',
+                  apiKey: data.growApiKey || '',
+                  pageCode: data.growPageCode || '',
+                  testMode: data.growTestMode !== false,
+                  j5Enabled: data.growJ5Enabled || false,
+                  j5BufferPercent: data.growJ5BufferPercent || 0,
+                  maxInstallments: data.growMaxInstallments || 1,
+                  createInvoice: data.growCreateInvoice || false,
+                },
+              } : {}),
+              ...(data.paymentProvider === 'allpay' ? {
+                allpay: {
+                  ...(storedPaymentProviderConfig.allpay || {}),
+                  login: data.allpayLogin || '',
+                  apiKey: data.allpayApiKey || '',
+                  testMode: data.allpayTestMode || false,
+                  j5Enabled: data.allpayJ5Enabled || false,
+                  j5BufferPercent: data.allpayJ5BufferPercent || 0,
+                  maxInstallments: data.allpayMaxInstallments || 1,
+                  createInvoice: data.allpayCreateInvoice || false,
+                },
+              } : {}),
+              ...(data.paymentProvider === 'payme' ? {
+                payme: {
+                  ...(storedPaymentProviderConfig.payme || {}),
+                  sellerPaymeId: data.paymeSellerPaymeId || '',
+                  testMode: data.paymeTestMode !== false,
+                  j5Enabled: data.paymeJ5Enabled || false,
+                  j5BufferPercent: data.paymeJ5BufferPercent || 0,
+                },
+              } : {}),
+            }
+          : undefined;
+
         const finalData = { 
           ...data, 
           ...preservedData, 
@@ -11975,51 +12037,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           // address IS multilingual — handled by multilingualUpdates + preservedData above.
           whatsappPhoneNumber: data.whatsappPhoneNumber,
           paymentMethods: processedPaymentMethods,
-          paymentProviderConfig: {
-            active: data.paymentProvider || 'none',
-            ...(data.paymentProvider === 'hyp' ? {
-              hyp: {
-                masof:     data.hypMasof || '',
-                passP:     data.hypPassP || '',
-                key:       data.hypKey || '',
-                testMode:  data.hypTestMode !== false,
-                j5Enabled:        data.hypJ5Enabled || false,
-                j5BufferPercent:  data.hypJ5BufferPercent || 0,
-                sendEmail:        data.hypSendEmail || false,
-              }
-            } : {}),
-            ...(data.paymentProvider === 'grow' ? {
-              grow: {
-                userId:           data.growUserId   || '',
-                apiKey:           data.growApiKey   || '',
-                pageCode:         data.growPageCode || '',
-                testMode:         data.growTestMode !== false,
-                j5Enabled:        data.growJ5Enabled || false,
-                j5BufferPercent:  data.growJ5BufferPercent || 0,
-                maxInstallments:  data.growMaxInstallments || 1,
-                createInvoice:    data.growCreateInvoice || false,
-              }
-            } : {}),
-            ...(data.paymentProvider === 'allpay' ? {
-              allpay: {
-                login:            data.allpayLogin   || '',
-                apiKey:           data.allpayApiKey  || '',
-                testMode:         data.allpayTestMode || false,
-                j5Enabled:        data.allpayJ5Enabled || false,
-                j5BufferPercent:  data.allpayJ5BufferPercent || 0,
-                maxInstallments:  data.allpayMaxInstallments || 1,
-                createInvoice:    data.allpayCreateInvoice || false,
-              }
-            } : {}),
-            ...(data.paymentProvider === 'payme' ? {
-              payme: {
-                sellerPaymeId:   data.paymeSellerPaymeId || '',
-                testMode:        data.paymeTestMode !== false,
-                j5Enabled:       data.paymeJ5Enabled || false,
-                j5BufferPercent: data.paymeJ5BufferPercent || 0,
-              }
-            } : {}),
-          },
+          ...(nextPaymentProviderConfig ? { paymentProviderConfig: nextPaymentProviderConfig } : {}),
           // Include email notification settings directly (they're not multilingual)
           emailNotificationsEnabled: data.emailNotificationsEnabled,
           orderNotificationEmail: data.orderNotificationEmail,
@@ -13403,6 +13421,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
           )}
         />
 
+        {hasAnyProvider && (
+        <>
         {/* Online Payment Provider (HYP) */}
         <div className="space-y-4 pt-2">
           <div className={`flex items-center gap-2 pb-2 border-b border-gray-200 w-full`} dir={isRTL ? 'rtl' : 'ltr'}>
@@ -13431,16 +13451,19 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
                 <FormLabel className={`text-sm ${isRTL ? 'text-right' : 'text-left'}`}>
                   {currentLanguage === 'ru' ? 'Провайдер' : currentLanguage === 'he' ? 'ספק תשלום' : currentLanguage === 'ar' ? 'مزود الدفع' : 'Provider'}
                 </FormLabel>
-                <Select value={field.value || 'none'} onValueChange={field.onChange}>
+                <Select
+                  value={isProviderEnabled(field.value) || field.value === 'none' ? field.value : 'none'}
+                  onValueChange={field.onChange}
+                >
                   <SelectTrigger className="text-sm">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">{currentLanguage === 'ru' ? 'Отключено' : currentLanguage === 'he' ? 'מושבת' : currentLanguage === 'ar' ? 'معطل' : 'None'}</SelectItem>
-                    <SelectItem value="hyp">HYP</SelectItem>
-                    <SelectItem value="grow">Grow (Meshulam)</SelectItem>
-                    <SelectItem value="allpay">AllPay</SelectItem>
-                    <SelectItem value="payme">PayMe</SelectItem>
+                    {isProviderEnabled('hyp') && <SelectItem value="hyp">HYP</SelectItem>}
+                    {isProviderEnabled('grow') && <SelectItem value="grow">Grow (Meshulam)</SelectItem>}
+                    {isProviderEnabled('allpay') && <SelectItem value="allpay">AllPay</SelectItem>}
+                    {isProviderEnabled('payme') && <SelectItem value="payme">PayMe</SelectItem>}
                   </SelectContent>
                 </Select>
                 <FormMessage className="text-xs" />
@@ -13448,7 +13471,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             )}
           />
 
-          {watchedPaymentProvider === 'hyp' && (
+          {watchedPaymentProvider === 'hyp' && isProviderEnabled('hyp') && (
             <>
             {/* HYP Setup Help Modal */}
             {showHypHelp && (
@@ -13801,7 +13824,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             </>
           )}
 
-          {watchedPaymentProvider === 'grow' && (
+          {watchedPaymentProvider === 'grow' && isProviderEnabled('grow') && (
             <>
             <div className="border rounded-xl overflow-hidden shadow-sm">
               {/* Grow branded header */}
@@ -14069,7 +14092,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             </>
           )}
 
-          {watchedPaymentProvider === 'payme' && (
+          {watchedPaymentProvider === 'payme' && isProviderEnabled('payme') && (
             <>
             <div className="border rounded-xl overflow-hidden shadow-sm">
               {/* PayMe branded header */}
@@ -14255,7 +14278,7 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             </>
           )}
 
-          {watchedPaymentProvider === 'allpay' && (
+          {watchedPaymentProvider === 'allpay' && isProviderEnabled('allpay') && (
             <>
             <div className="border rounded-xl overflow-hidden shadow-sm">
               {/* AllPay branded header */}
@@ -14525,6 +14548,8 @@ function StoreSettingsForm({ storeSettings, onSubmit, isLoading, testEmailMutati
             </>
           )}
         </div>
+        </>
+        )}
 
           </CollapsibleContent>
         </Collapsible>

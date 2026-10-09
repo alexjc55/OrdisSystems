@@ -29,6 +29,7 @@ import { ShoppingCart, User, UserCheck, UserPlus, AlertTriangle, CheckCircle, Ar
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { useCommonTranslation, useShopTranslation, useLanguage } from "@/hooks/use-language";
 import { useBranch } from "@/hooks/useBranch";
+import { usePaymentProviderAvailability } from "@/hooks/use-payment-provider-availability";
 import { getLocalizedField, type SupportedLanguage } from "@shared/localization";
 import { useSEO, generateKeywords } from "@/hooks/useSEO";
 import { getPaymentMethodName as getLocalizedPaymentMethodName } from "@shared/multilingual-helpers";
@@ -366,6 +367,7 @@ const generateDeliveryTimes = (
 
 export default function Checkout() {
   const { user, isAuthenticated } = useAuth();
+  const { isProviderEnabled } = usePaymentProviderAvailability();
   const { items, clearCart, removeItem, updateProductSnapshot, appliedCoupon, giftAccepted, setGiftAccepted } = useCartStore();
   const navigate = useUTMNavigate();
   const [, setLocation] = useLocation();
@@ -1135,11 +1137,13 @@ export default function Checkout() {
   // Check if online payment is available via paymentProviderConfig
   const activePaymentProvider: string = (storeSettings as any)?.paymentProviderConfig?.active || 'none';
   const isOnlinePaymentAvailable = Boolean(
-    (storeSettings as any)?.paymentProviderConfig?.configured ||
-    (activePaymentProvider === 'hyp' && (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
-    (activePaymentProvider === 'grow' && (storeSettings as any)?.paymentProviderConfig?.grow?.userId) ||
-    (activePaymentProvider === 'allpay' && (storeSettings as any)?.paymentProviderConfig?.allpay?.login) ||
-    (activePaymentProvider === 'payme' && (storeSettings as any)?.paymentProviderConfig?.payme?.sellerPaymeId)
+    isProviderEnabled(activePaymentProvider) && (
+      (storeSettings as any)?.paymentProviderConfig?.configured ||
+      (activePaymentProvider === 'hyp' && (storeSettings as any)?.paymentProviderConfig?.hyp?.masof) ||
+      (activePaymentProvider === 'grow' && (storeSettings as any)?.paymentProviderConfig?.grow?.userId) ||
+      (activePaymentProvider === 'allpay' && (storeSettings as any)?.paymentProviderConfig?.allpay?.login) ||
+      (activePaymentProvider === 'payme' && (storeSettings as any)?.paymentProviderConfig?.payme?.sellerPaymeId)
+    )
   );
 
   if (items.length === 0 && !cartRefreshReport && !cartRefreshRequired) {

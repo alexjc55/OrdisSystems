@@ -17,8 +17,9 @@ export PGHOST="$temp" PGPORT=5432 PGUSER=payment_test PGDATABASE=postgres PGPASS
 export USE_NEON=false DATABASE_URL="postgresql://payment_test@localhost/postgres?host=$temp"
 export PAYMENT_TEST_CLUSTER=isolated NODE_ENV=test REPLIT_APP_URL=https://shop.example.test
 unset SUPER_ADMIN_LOGIN SUPER_ADMIN_PASSWORD
+unset PAYMENT_HYP_ENABLED PAYMENT_GROW_ENABLED PAYMENT_ALLPAY_ENABLED PAYMENT_PAYME_ENABLED
 ./node_modules/.bin/drizzle-kit push --force >/dev/null
-node --import tsx --test tests/payment-finalization.test.ts tests/payment-verification.test.ts tests/payment-order-email.test.ts tests/checkout-order-email.test.ts tests/payment-quote.test.ts
+node --import tsx --test tests/payment-finalization.test.ts tests/payment-verification.test.ts tests/payment-order-email.test.ts tests/checkout-order-email.test.ts tests/payment-quote.test.ts tests/payment-provider-availability.test.ts
 # Run route-pricing tests after migration/finalization tests, not concurrently:
 # those tests intentionally drop/rebuild shared tables to exercise migrations.
 node --import tsx --test tests/checkout-pricing.test.ts

@@ -4,6 +4,7 @@ import { getDB } from "../db";
 import { sql } from "drizzle-orm";
 import { generateAppHash } from "../utils/app-hash";
 import { BRANCHES_ENABLED } from "../config";
+import { getPaymentProviderAvailability } from "../lib/payment-providers/availability";
 import path from "path";
 import fs from "fs";
 
@@ -159,7 +160,11 @@ router.get('/sitemap.xml', async (req, res) => {
 });
 
 router.get("/api/config", (req, res) => {
-  res.json({ branchesEnabled: BRANCHES_ENABLED });
+  res.setHeader("Cache-Control", "no-store");
+  res.json({
+    branchesEnabled: BRANCHES_ENABLED,
+    paymentProviders: getPaymentProviderAvailability(),
+  });
 });
 
 router.get('/clear-sw', (req, res) => {
