@@ -1,0 +1,106 @@
+ordis_co_il_usr@ordis:~/www/dk.ordis.co.il$ cd ~/www/edahouse.ordis.co.il/
+git pull origin main
+npm install
+npm run build
+pm2 restart edahouse --update-env
+From https://github.com/alexjc55/OrdisSystems
+ * branch              main       -> FETCH_HEAD
+Updating 64f7c824..04dd848b
+error: Your local changes to the following files would be overwritten by merge:
+        server/routes/index.ts
+        server/routes/profile.routes.ts
+Please commit your changes or stash them before you merge.
+Aborting
+
+up to date, audited 670 packages in 17s
+
+81 packages are looking for funding
+  run `npm fund` for details
+
+68 vulnerabilities (4 low, 32 moderate, 29 high, 3 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.
+npm warn allow-scripts 8 packages have install scripts not yet covered by allowS                                                                                                                                                             cripts:
+npm warn allow-scripts   esbuild@0.18.20 (install: (install scripts present))
+npm warn allow-scripts   bufferutil@4.0.8 (install: node-gyp rebuild)
+npm warn allow-scripts   esbuild@0.19.12 (install: (install scripts present))
+npm warn allow-scripts   es5-ext@0.10.64 (install: (install scripts present))
+npm warn allow-scripts   esbuild@0.25.0 (install: (install scripts present))
+npm warn allow-scripts   sharp@0.34.3 (install: (install scripts present))
+npm warn allow-scripts   esbuild@0.23.1 (install: (install scripts present))
+npm warn allow-scripts   esbuild@0.21.5 (install: (install scripts present))
+npm warn allow-scripts
+npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to revi                                                                                                                                                             ew, or `npm approve-scripts <pkg>` to allow.
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bu                                                                                                                                                             ndle --format=esm --outdir=dist
+
+vite v5.4.14 building for production...
+transforming (1) index.htmlBrowserslist: browsers data (caniuse-lite) is 24 mont                                                                                                                                                             hs old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#read                                                                                                                                                             me
+✓ 3864 modules transformed.
+../dist/public/index.html                              7.88 kB │ gzip:   2.35 kB
+../dist/public/assets/index-DZwS739G.css             172.08 kB │ gzip:  29.39 kB
+../dist/public/assets/arrow-left-DRf69gEj.js           0.33 kB │ gzip:   0.27 kB
+../dist/public/assets/lock-xTi6L3BX.js                 0.38 kB │ gzip:   0.30 kB
+../dist/public/assets/mail-BOW7NZ6w.js                 0.38 kB │ gzip:   0.30 kB
+../dist/public/assets/circle-alert-D3r0jf2r.js         0.42 kB │ gzip:   0.29 kB
+../dist/public/assets/shopping-bag-8xdEOGjE.js         0.42 kB │ gzip:   0.30 kB
+../dist/public/assets/calendar-Byqfd78J.js             0.43 kB │ gzip:   0.31 kB
+../dist/public/assets/send-Be-QMj0B.js                 0.46 kB │ gzip:   0.33 kB
+../dist/public/assets/label-6EMIlQb8.js                0.55 kB │ gzip:   0.38 kB
+../dist/public/assets/not-found-D6AsWnNm.js            0.73 kB │ gzip:   0.41 kB
+../dist/public/assets/user-check-FPJ7Qh5U.js           0.81 kB │ gzip:   0.42 kB
+../dist/public/assets/alert-BsOzLBTg.js                0.91 kB │ gzip:   0.47 kB
+../dist/public/assets/password-input-Ci3sTOZ4.js       1.18 kB │ gzip:   0.71 kB
+../dist/public/assets/forgot-password-CsOnxYQu.js      2.77 kB │ gzip:   1.14 kB
+../dist/public/assets/tabs-Br7V-ArL.js                 3.19 kB │ gzip:   1.35 kB
+../dist/public/assets/reset-password-BMZt9m0N.js       4.08 kB │ gzip:   1.49 kB
+../dist/public/assets/change-password-DyWorMgS.js      4.65 kB │ gzip:   1.58 kB
+../dist/public/assets/image-upload-B-OYiY0b.js         7.08 kB │ gzip:   2.92 kB
+../dist/public/assets/ar-BYstI9dp.js                   7.37 kB │ gzip:   2.65 kB
+../dist/public/assets/thanks-CmrbtJed.js              10.62 kB │ gzip:   3.42 kB
+../dist/public/assets/guest-order-bZBwoU0W.js         11.58 kB │ gzip:   3.21 kB
+../dist/public/assets/auth-page-BXjPRYWo.js           11.71 kB │ gzip:   4.21 kB
+../dist/public/assets/profile-CzRbspfO.js             40.71 kB │ gzip:   9.85 kB
+../dist/public/assets/checkout-DToGfdvd.js            56.91 kB │ gzip:  13.15 kB
+../dist/public/assets/calendar-BGe0gwwK.js            71.87 kB │ gzip:  21.08 kB
+../dist/public/assets/index-DpKKgnlx.js               87.24 kB │ gzip:  24.23 kB
+../dist/public/assets/admin-analytics-I4NkOnow.js    423.42 kB │ gzip: 114.42 kB
+../dist/public/assets/index-DzJo64Y9.js            1,073.30 kB │ gzip: 340.94 kB
+../dist/public/assets/admin-dashboard-BCfG8yVk.js  1,209.38 kB │ gzip: 288.77 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollu                                                                                                                                                             pjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 32.81s
+
+  dist/index.js  517.4kb
+
+⚡ Done in 147ms
+[PM2] Applying action restartProcessId on app [edahouse](ids: [ 0 ])
+[PM2] [edahouse](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 1  │ api.clini          │ fork     │ 0    │ online    │ 0%       │ 19.7mb   │
+│ 5  │ delisher           │ fork     │ 0    │ online    │ 0%       │ 20.1mb   │
+│ 2  │ demo               │ fork     │ 0    │ online    │ 7.1%     │ 85.0mb   │
+│ 3  │ dk                 │ fork     │ 1    │ online    │ 0%       │ 71.4mb   │
+│ 4  │ dvizh              │ fork     │ 0    │ online    │ 0%       │ 28.3mb   │
+│ 0  │ edahouse           │ fork     │ 2    │ online    │ 0%       │ 19.1mb   │
+│ 6  │ erp-davidov        │ fork     │ 23   │ online    │ 0%       │ 139.5mb  │
+│ 7  │ lp-davidov         │ fork     │ 0    │ online    │ 0%       │ 30.8mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+ordis_co_il_usr@ordis:~/www/edahouse.ordis.co.il$
