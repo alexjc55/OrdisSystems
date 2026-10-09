@@ -61,3 +61,10 @@ WHERE status = 'completed'
   AND provider_approval_required = true
   AND provider_approved_at IS NULL
   AND provider_approval_attempted_at IS NULL;
+
+-- ============================================================
+-- Server-side payment verification context (migration 0012)
+-- Historical payments remain NULL; never invent verification evidence.
+-- ============================================================
+ALTER TABLE pending_payments
+  ADD COLUMN IF NOT EXISTS verification jsonb;
