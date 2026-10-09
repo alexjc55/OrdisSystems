@@ -25,9 +25,12 @@ test("email panel collapses, counts all pages, retries, refreshes and supports R
           import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
           import {FailedPaymentEmails} from "./client/src/components/admin/failed-payment-emails";
           const lang = new URLSearchParams(location.search).get("lang");
+          const hasOnlinePayment = new URLSearchParams(location.search).get("online") !== "false";
+          const client = new QueryClient({defaultOptions:{queries:{retry:false}}});
+          window.refreshEmailFixture = () => client.invalidateQueries({queryKey:["admin", "payment-email-outbox"]});
           createRoot(document.getElementById("root")).render(
-            <QueryClientProvider client={new QueryClient({defaultOptions:{queries:{retry:false}}})}>
-              <FailedPaymentEmails isRTL={lang === "he" || lang === "ar"}/>
+            <QueryClientProvider client={client}>
+              <FailedPaymentEmails isRTL={lang === "he" || lang === "ar"} hasOnlinePayment={hasOnlinePayment}/>
             </QueryClientProvider>);`,
         resolveDir: process.cwd(), loader: "tsx",
       },
@@ -156,6 +159,27 @@ test("email panel collapses, counts all pages, retries, refreshes and supports R
         await waitFor(`!document.querySelector('button[aria-expanded] [aria-label]')`);
         unavailable = true;
         await evaluate(`[...document.querySelectorAll('button')].find(b => b.textContent.trim() === ${JSON.stringify(translations[lang].refresh)}).click()`);
+        await waitFor(`document.querySelector('[role=status]')?.textContent.includes(${JSON.stringify(translations[lang].countUnavailable)})`);
+        assert.equal(await evaluate(`document.querySelector('button[aria-expanded]').getAttribute('aria-expanded')`), "false");
+        // No online provider: zero failures hide the entire panel, not its query.
+        unavailable = false;
+        failed.clear();
+        await send("Page.navigate", { url: `http://127.0.0.1:${port}/?lang=${lang}&online=false` }, sessionId);
+        await waitFor(`typeof window.refreshEmailFixture === 'function'`);
+        await evaluate(`window.refreshEmailFixture()`);
+        await waitFor(`document.getElementById('root').children.length === 0`);
+        // A background query refresh must reveal new failures while hidden.
+        failed.add(900);
+        await evaluate(`window.refreshEmailFixture()`);
+        await waitFor(`document.querySelector('button[aria-expanded]')?.textContent.includes('1')`);
+        assert.equal(await evaluate(`document.querySelector('button[aria-expanded]').getAttribute('aria-expanded')`), "false");
+        await evaluate(`document.querySelector('button[aria-expanded]').click()`);
+        await waitFor(`document.querySelectorAll('tbody tr').length === 1`);
+        await evaluate(`document.querySelector('tbody button').click()`);
+        await waitFor(`document.getElementById('root').children.length === 0`);
+        // A failed refresh with cached zero must display an error, not disappear.
+        unavailable = true;
+        await evaluate(`window.refreshEmailFixture()`);
         await waitFor(`document.querySelector('[role=status]')?.textContent.includes(${JSON.stringify(translations[lang].countUnavailable)})`);
         assert.equal(await evaluate(`document.querySelector('button[aria-expanded]').getAttribute('aria-expanded')`), "false");
       }

@@ -3607,6 +3607,10 @@ export default function AdminDashboard() {
     staleTime: 5 * 60 * 1000, // 5 minutes - cache settings for 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
   });
+  const selectedPaymentProvider = (storeSettings?.paymentProviderConfig as { active?: string } | null)?.active;
+  const hasOnlinePayment = storeSettings == null
+    ? undefined
+    : Boolean(selectedPaymentProvider && selectedPaymentProvider !== "none");
 
   // Stable permissions reference to prevent tab switching during mutations
   const stablePermissions = useRef<any>({});
@@ -6536,7 +6540,9 @@ export default function AdminDashboard() {
           {/* Orders Management */}
           {hasPermission("canManageOrders") && (
             <TabsContent value="orders" className={`space-y-4 sm:space-y-6 ${isRTL ? 'rtl' : 'ltr'}`}>
-              {isAdmin && activeTab === "orders" && <FailedPaymentEmails isRTL={isRTL} />}
+              {isAdmin && activeTab === "orders" && (
+                <FailedPaymentEmails isRTL={isRTL} hasOnlinePayment={hasOnlinePayment} />
+              )}
               {/* Header Section */}
               <div className="flex flex-col gap-4" dir="ltr">
                 <div className={isRTL ? 'text-right' : 'text-left'}>

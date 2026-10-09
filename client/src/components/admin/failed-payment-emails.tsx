@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, ChevronDown, ChevronLeft, ChevronRight, MailWarning, RefreshCw, RotateCw } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
@@ -30,7 +30,13 @@ function isConflict(error: unknown) {
   return candidate?.code === "notification_not_failed";
 }
 
-export function FailedPaymentEmails({ isRTL }: { isRTL: boolean }) {
+export function FailedPaymentEmails({
+  isRTL,
+  hasOnlinePayment,
+}: {
+  isRTL: boolean;
+  hasOnlinePayment?: boolean;
+}) {
   const { t } = useAdminTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -69,6 +75,10 @@ export function FailedPaymentEmails({ isRTL }: { isRTL: boolean }) {
 
   const rows = pageQuery.data?.items ?? [];
   const totalCount = pageQuery.data?.totalCount;
+  const hidePanel = hasOnlinePayment === false && totalCount === 0 && !pageQuery.isError;
+  useEffect(() => {
+    if (hidePanel) setIsExpanded(false);
+  }, [hidePanel]);
   const goNext = () => {
     if (pageQuery.data?.nextCursor == null) return;
     setCursorHistory((history) => [...history, cursor]);
@@ -80,6 +90,8 @@ export function FailedPaymentEmails({ isRTL }: { isRTL: boolean }) {
     setCursor(cursorHistory[cursorHistory.length - 1]);
     setCursorHistory(cursorHistory.slice(0, -1));
   };
+
+  if (hidePanel) return null;
 
   return (
     <Card dir={isRTL ? "rtl" : "ltr"}>
