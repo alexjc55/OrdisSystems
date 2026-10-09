@@ -143,6 +143,14 @@ before(async () => {
 
 beforeEach(drainMail);
 
+test("empty failed-email queue reports zero without requiring active orders", async () => {
+  const response = await fetch(baseUrl + "/api/admin/payment-email-outbox", {
+    headers: { "x-test-role": "admin" },
+  });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { items: [], totalCount: 0, nextCursor: null });
+});
+
 test("both initiate routes reject simultaneous total and line-price tampering before writes or gateway calls", async () => {
   const original = HypProvider.prototype.initiate;
   let calls = 0;
@@ -1434,7 +1442,7 @@ test("parallel admin retries enqueue once, preserve sent/pending, and worker del
 
 test("failed-email list uses bounded cursor pages without exposing pending or sent messages", async () => {
   const orders = (await pool.query(
-    "INSERT INTO orders (total_amount) SELECT 10 FROM generate_series(1, 52) RETURNING id",
+    "INSERT INTO orders (total_amount, status) SELECT 10, 'delivered' FROM generate_series(1, 52) RETURNING id",
   )).rows.map((row: any) => row.id);
   try {
     await pool.query(
@@ -1443,15 +1451,29 @@ test("failed-email list uses bounded cursor pages without exposing pending or se
       [orders],
     );
     const headers = { "x-test-role": "admin" };
+    const expectedCount = Number((await pool.query(
+      "SELECT count(*) FROM payment_email_outbox WHERE status = 'failed'",
+    )).rows[0].count);
     const first = await (await fetch(baseUrl + "/api/admin/payment-email-outbox", { headers })).json();
     assert.equal(first.items.length, 50);
+    assert.equal(first.totalCount, expectedCount);
     assert.equal(first.nextCursor, first.items[49].id);
     const second = await (await fetch(`${baseUrl}/api/admin/payment-email-outbox?before=${first.nextCursor}`, { headers })).json();
+    assert.equal(second.totalCount, expectedCount);
     assert.equal(second.nextCursor, null);
     const all = [...first.items, ...second.items];
     assert.equal(new Set(all.map((row: any) => row.id)).size, all.length);
     assert.equal(all.filter((row: any) => orders.includes(row.orderId)).length, 52);
     for (let i = 1; i < all.length; i++) assert.ok(all[i - 1].id > all[i].id);
+    const emptyPage = await (await fetch(`${baseUrl}/api/admin/payment-email-outbox?before=1`, { headers })).json();
+    assert.equal(emptyPage.items.length, 0);
+    assert.equal(emptyPage.totalCount, expectedCount);
+    const retry = await fetch(`${baseUrl}/api/admin/payment-email-outbox/${first.items[0].id}/retry`, {
+      method: "POST", headers,
+    });
+    assert.equal(retry.status, 200);
+    const refreshed = await (await fetch(baseUrl + "/api/admin/payment-email-outbox", { headers })).json();
+    assert.equal(refreshed.totalCount, expectedCount - 1);
   } finally {
     await pool.query("DELETE FROM orders WHERE id = ANY($1::int[])", [orders]);
   }

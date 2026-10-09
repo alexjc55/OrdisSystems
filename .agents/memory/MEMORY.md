@@ -14,3 +14,4 @@
 - [Checkout price changes](checkout-price-changes.md) — reject changed totals before creating orders or charging; manual admin orders retain separate pricing.
 - [Coupon payment boundary](coupon-payment-boundary.md) — atomic finalization enforces limits but does not reserve coupon availability before remote payment.
 - [Combined migration completeness](combined-migration-completeness.md) — standalone SQL and migration_full must stay aligned; compare upgraded schemas on disposable PostgreSQL.
+- [Headless keyboard verification](headless-keyboard-verification.md) — failed synthetic Enter activation is not evidence of a broken button; verify browser focus separately.

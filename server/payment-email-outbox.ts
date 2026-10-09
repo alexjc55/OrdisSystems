@@ -1,4 +1,4 @@
-import { and, desc, eq, lt, lte, sql } from "drizzle-orm";
+import { and, count, desc, eq, lt, lte, sql } from "drizzle-orm";
 import { paymentEmailOutbox } from "@shared/schema";
 import { getDB } from "./db";
 import { storage } from "./storage";
@@ -19,19 +19,25 @@ type Deliver = (notification: Notification) => Promise<void>;
 export async function listFailedPaymentEmails(before?: number, database?: Database) {
   const db = database ?? await getDB();
   if (!db) throw new Error("Database unavailable");
-  const rows = await db.select({
-    id: paymentEmailOutbox.id,
-    orderId: paymentEmailOutbox.orderId,
-    audience: paymentEmailOutbox.audience,
-    attempts: paymentEmailOutbox.attempts,
-  }).from(paymentEmailOutbox).where(and(
-    eq(paymentEmailOutbox.status, "failed"),
-    before === undefined ? undefined : lt(paymentEmailOutbox.id, before),
-  )).orderBy(desc(paymentEmailOutbox.id)).limit(51);
-  const items = rows.slice(0, 50).map(row => ({
-    ...row, diagnostic: "delivery_failed" as const,
-  }));
-  return { items, nextCursor: rows.length > 50 ? items[49].id : null };
+  // The badge counts the entire queue, not this page or active orders.
+  // Read both values from one snapshot while retries/workers change statuses.
+  return db.transaction(async tx => {
+    const [{ totalCount }] = await tx.select({ totalCount: count() })
+      .from(paymentEmailOutbox).where(eq(paymentEmailOutbox.status, "failed"));
+    const rows = await tx.select({
+      id: paymentEmailOutbox.id,
+      orderId: paymentEmailOutbox.orderId,
+      audience: paymentEmailOutbox.audience,
+      attempts: paymentEmailOutbox.attempts,
+    }).from(paymentEmailOutbox).where(and(
+      eq(paymentEmailOutbox.status, "failed"),
+      before === undefined ? undefined : lt(paymentEmailOutbox.id, before),
+    )).orderBy(desc(paymentEmailOutbox.id)).limit(51);
+    const items = rows.slice(0, 50).map(row => ({
+      ...row, diagnostic: "delivery_failed" as const,
+    }));
+    return { items, totalCount, nextCursor: rows.length > 50 ? items[49].id : null };
+  }, { isolationLevel: "repeatable read", accessMode: "read only" });
 }
 
 export async function retryFailedPaymentEmail(id: number, database?: Database): Promise<boolean> {

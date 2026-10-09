@@ -305,6 +305,9 @@
     "failedPaymentEmails": {
       "title": "Failed payment emails",
       "description": "Payment confirmation emails that could not be delivered.",
+      "countLabel": "{{count}} failed payment emails",
+      "countLoading": "Checking failed email count…",
+      "countUnavailable": "Failed email count unavailable",
       "refresh": "Refresh",
       "loading": "Loading failed emails",
       "loadError": "Could not load failed payment emails.",
