@@ -18,6 +18,7 @@
     "test:payment-email": "node --import tsx --test tests/payment-order-email.test.ts",
     "test:payments": "bash tests/run-payment-tests.sh",
     "test:payment-quote": "node --import tsx --test tests/payment-quote.test.ts",
+    "test:settings-payments": "SETTINGS_PAYMENT_BROWSER_TESTS=1 node --import tsx --test tests/store-settings-payment-providers.browser.test.ts",
     "test:passwords": "bash tests/run-password-tests.sh",
     "bootstrap:admin": "bash scripts/bootstrap-admin.sh",
     "test:bootstrap": "bash tests/run-bootstrap-tests.sh",

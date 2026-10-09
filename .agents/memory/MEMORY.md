@@ -16,3 +16,4 @@
 - [Combined migration completeness](combined-migration-completeness.md) — standalone SQL and migration_full must stay aligned; compare upgraded schemas on disposable PostgreSQL.
 - [Headless keyboard verification](headless-keyboard-verification.md) — failed synthetic Enter activation is not evidence of a broken button; verify browser focus separately.
 - [Payment provider switches](payment-provider-switches.md) — availability flags govern new checkouts only; preserve saved merchant configuration and in-flight processing.
+- [Browser fixture language](browser-language-initialization.md) — initialize language before real-source imports; asynchronous application initialization can override a later change.
