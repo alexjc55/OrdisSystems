@@ -1,5 +1,6 @@
 import type { InsertOrder, InsertOrderItem } from "@shared/schema";
 import { calculateTotal, effectiveProductPrice } from "@shared/product-pricing";
+import { isProductQuantityWithinLimits } from "@shared/product-quantity-limits";
 import type { IStorage } from "./storage";
 import { calculateOrderDiscounts } from "./order-discounts";
 
@@ -77,10 +78,7 @@ export async function quoteCheckout(
     if (product.availabilityStatus === "out_of_stock_today" && (!deliveryDate || deliveryDate <= today)) {
       throw new CheckoutQuoteError("This product is available for preorder only");
     }
-    // Catalog limits are kg for 100g/ml products; cart quantities are grams/ml.
-    const limitQuantity = product.unit === "100g" || product.unit === "100ml" ? quantity / 1000 : quantity;
-    if ((product.minOrderQuantity != null && limitQuantity < Number(product.minOrderQuantity)) ||
-        (product.maxOrderQuantity != null && limitQuantity > Number(product.maxOrderQuantity))) {
+    if (!isProductQuantityWithinLimits(product, quantity)) {
       throw new CheckoutQuoteError("Product quantity is outside the allowed range");
     }
     const price = effectiveProductPrice(product);

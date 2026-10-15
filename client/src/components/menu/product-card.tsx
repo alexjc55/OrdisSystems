@@ -49,7 +49,7 @@ export default function ProductCard({ product, onCategoryClick }: ProductCardPro
   const localizedIngredients = getLocalizedField(product, 'ingredients', currentLanguage as SupportedLanguage, storeSettingsData as any);
 
   // Compute effective min/max quantity in display units
-  // DB stores: for 100g/100ml → kg (e.g. 0.4 = 400 g); for kg/piece/portion → as-is
+  // DB stores: for 100g/100ml → hundreds of grams/ml (e.g. 4 = 400 g); otherwise as-is
   const getEffectiveLimits = () => {
     const minRaw = product.minOrderQuantity ? parseFloat(product.minOrderQuantity as string) : null;
     const maxRaw = product.maxOrderQuantity ? parseFloat(product.maxOrderQuantity as string) : null;

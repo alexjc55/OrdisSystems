@@ -266,13 +266,34 @@ test("guest and authenticated branch preorders preserve price and reject unavail
 });
 
 test("quantity limits and malformed input fail without orders or emails for both paths", async () => {
-  await pool.query("UPDATE products SET unit = '100g', min_order_quantity = 0.25, max_order_quantity = 1 WHERE id = $1", [productId]);
+  await pool.query("UPDATE products SET unit = '100g', min_order_quantity = 2.5, max_order_quantity = 10 WHERE id = $1", [productId]);
   for (const guest of [true, false]) {
     for (const quantity of ["-1", "0", "NaN", "1junk", "0.0001", "100", "1001"]) {
       const initial = await counts();
       const response = await post(guest, body(guest, "25", quantity));
       assert.equal(response.status, 400, await response.clone().text());
       assert.deepEqual(await counts(), initial);
+    }
+  }
+});
+
+test("storefront weighted minimums and zero maximum persist ordinary orders and mail intents for both paths", async () => {
+  for (const unit of ["100g", "100ml"]) {
+    for (const maximum of ["5.500", "0.000"]) {
+      await pool.query(`UPDATE products SET unit = $1, min_order_quantity = 5.500,
+        max_order_quantity = $2 WHERE id = $3`, [unit, maximum, productId]);
+      for (const guest of [true, false]) {
+        const order = await saved(guest, body(guest, "55.00", "550"));
+        assert.equal(Number(order.totalAmount), 55);
+        assert.equal(Number(order.deliveryFee), 0);
+        assert.equal(Number(order.items[0].quantity), 550);
+        assert.equal(Number(order.items[0].totalPrice), 55);
+        const initial = await counts();
+        const belowMinimum = await post(guest, body(guest, "54.90", "549"));
+        assert.equal(belowMinimum.status, 400);
+        assert.match((await belowMinimum.json()).message, /allowed range/);
+        assert.deepEqual(await counts(), initial);
+      }
     }
   }
 });

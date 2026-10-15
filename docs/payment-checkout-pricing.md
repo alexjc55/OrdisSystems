@@ -12,7 +12,10 @@ come from the store database.
 
 The server and cart share the product-price calculation: quantities for `100g`
 and `100ml` are grams/ml, `kg` quantities are kilograms, and each line rounds up
-to 10 agorot. Quantity limits for grams/ml products remain expressed in kg/litre.
+to 10 agorot. For 100g/100ml products, stored quantity limits count hundreds
+of grams/ml, matching the existing editor and storefront: 5.5 means 550g/ml,
+not 5.5kg/litres. Non-positive min/max values mean no restriction. Checkout and
+cart refresh share this interpretation; no stored product values are converted.
 Volume discounts are applied first. Loyalty and coupon stacking keep the existing
 rules; free delivery uses the subtotal after discounts. A product marked unavailable
 today can be ordered for a later delivery date, but not for today. Branch-specific

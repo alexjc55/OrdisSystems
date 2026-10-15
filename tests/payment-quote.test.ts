@@ -3,6 +3,7 @@ import { test } from "node:test";
 import type { Product, StoreSettings, User, ProductVolumeDiscount, Coupon } from "@shared/schema";
 import type { IStorage } from "../server/storage";
 import { CheckoutQuoteError, quotePaymentCheckout } from "../server/payment-quote";
+import { quoteCheckout } from "../server/checkout-quote";
 import { calculateTotal, effectiveProductPrice } from "../shared/product-pricing";
 
 function fixture() {
@@ -180,7 +181,78 @@ test("bad quantities, nonexistent products and per-product min/max cannot be byp
   f.body.items = [{ ...f.body.items[0], productId: 99 }];
   await assert.rejects(f.quote(), /unavailable/);
   const weight = fixture();
-  Object.assign(weight.product, { unit: "100g", minOrderQuantity: "0.25" });
+  Object.assign(weight.product, { unit: "100g", minOrderQuantity: "2.5" });
   weight.body.items[0].quantity = "100";
   await assert.rejects(weight.quote(), /allowed range/);
+});
+
+test("ordinary guest/authenticated and online checkout match storefront quantity limits without changing prices", async () => {
+  for (const [unit, min, max, quantity, below, above] of [
+    ["100g", "5.500", "5.550", 550, 549, 556],
+    ["100ml", "2.750", "2.760", 275, 274, 277],
+    ["kg", "0.250", "0.500", 0.375, 0.249, 0.501],
+    ["piece", "2", "4", 3, 1, 5],
+    ["portion", "1", "3", 2, 0.5, 4],
+  ] as const) {
+    const f = fixture();
+    Object.assign(f.product, { unit, minOrderQuantity: min, maxOrderQuantity: max });
+    f.settings.deliveryFee = "0";
+    const setQuantity = (value: number) => {
+      f.body.items[0].quantity = String(value);
+      const total = calculateTotal(effectiveProductPrice(f.product), value, unit).toFixed(2);
+      f.body.totalAmount = f.body.orderData.totalAmount = total;
+      return total;
+    };
+    for (const valid of [quantity, Number(max) * (unit === "100g" || unit === "100ml" ? 100 : 1)]) {
+      const total = setQuantity(valid);
+      for (const userId of [null, f.user.id]) {
+        const result = await quoteCheckout(f.body, userId, false, f.storage);
+        assert.equal(result.orderData.totalAmount, total, unit);
+        assert.equal(result.orderItems[0].quantity, String(valid), unit);
+        const online = await f.quote(userId);
+        assert.equal(online.amountInAgorot, Math.round(Number(total) * 100), unit);
+      }
+    }
+    for (const invalid of [below, above]) {
+      setQuantity(invalid);
+      await assert.rejects(quoteCheckout(f.body, null, false, f.storage), /allowed range/, unit);
+      await assert.rejects(f.quote(), /allowed range/, unit);
+    }
+    f.product.maxOrderQuantity = "0.000";
+    setQuantity(quantity);
+    await quoteCheckout(f.body, null, false, f.storage);
+    await f.quote();
+    setQuantity(below);
+    await assert.rejects(f.quote(), /allowed range/, unit);
+    f.product.minOrderQuantity = "0.000";
+    setQuantity(quantity);
+    await quoteCheckout(f.body, null, false, f.storage);
+    await f.quote();
+  }
+});
+
+test("exact fractional weighted maximum remains inclusive without accepting excess weight", async () => {
+  for (const unit of ["100g", "100ml"]) {
+    const f = fixture();
+    Object.assign(f.product, { unit, minOrderQuantity: "4.550", maxOrderQuantity: "4.560" });
+    f.settings.deliveryFee = "0";
+    f.body.items[0].quantity = "456";
+    f.body.totalAmount = f.body.orderData.totalAmount = "45.60";
+    assert.equal((await f.quote()).amountInAgorot, 4560);
+    f.body.items[0].quantity = "456.001";
+    await assert.rejects(f.quote(), /allowed range/);
+  }
+});
+
+test("weighted min/max are checked against aggregate quantity, including split item submissions", async () => {
+  const f = fixture();
+  Object.assign(f.product, { unit: "100g", minOrderQuantity: "5.500", maxOrderQuantity: "5.500" });
+  f.settings.deliveryFee = "0";
+  f.body.items[0].quantity = "275";
+  f.body.items.push({ ...f.body.items[0] });
+  f.body.totalAmount = f.body.orderData.totalAmount = "55.00";
+  const result = await f.quote();
+  assert.equal(result.orderItems[0].quantity, "550");
+  f.body.items.push({ ...f.body.items[0], quantity: "0.1" });
+  await assert.rejects(f.quote(), /allowed range/);
 });

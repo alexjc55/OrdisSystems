@@ -12,6 +12,7 @@
 - [Payment evidence](payment-evidence.md) — browser tokens are not proof; provider contracts and unverifiable older sessions require a safe cutover.
 - [Isolated build cleanup](isolated-build-cleanup.md) — redirecting Vite output alone does not contain Tailwind's temporary caches.
 - [Checkout price changes](checkout-price-changes.md) — reject changed totals before creating orders or charging; manual admin orders retain separate pricing.
+- [Quantity-limit compatibility](checkout-quantity-compatibility.md) — preserve existing store configurations; stale kg comments are not permission to reinterpret weighted limits.
 - [Coupon payment boundary](coupon-payment-boundary.md) — atomic finalization enforces limits but does not reserve coupon availability before remote payment.
 - [Combined migration completeness](combined-migration-completeness.md) — standalone SQL and migration_full must stay aligned; compare upgraded schemas on disposable PostgreSQL.
 - [Checkout database readiness](checkout-database-readiness.md) — an unavailable transactional mail queue can block offline orders too; isolated tests do not prove the store DB is upgraded.

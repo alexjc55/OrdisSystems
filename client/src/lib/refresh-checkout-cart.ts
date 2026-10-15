@@ -1,5 +1,6 @@
 import type { Product, StoreSettings } from "../../../shared/schema";
 import { calculateTotal, effectiveProductPrice } from "../../../shared/product-pricing";
+import { isProductQuantityWithinLimits } from "../../../shared/product-quantity-limits";
 import type { AppliedCoupon, CartItem } from "./cart";
 import { apiRequest } from "./queryClient";
 
@@ -24,13 +25,10 @@ export function reconcileCartItems(items: CartItem[], products: Product[]) {
     const product = catalog.get(item.product.id);
     // Never reinterpret a saved weight as pieces (or vice versa), or silently
     // adjust quantities when the catalog's ordering limits have changed.
-    const limitQuantity = product?.unit === "100g" || product?.unit === "100ml"
-      ? item.quantity / 1000 : item.quantity;
     if (!product || !product.isActive || !product.isAvailable ||
         product.availabilityStatus === "completely_unavailable" ||
         product.unit !== item.product.unit ||
-        (product.minOrderQuantity != null && limitQuantity < Number(product.minOrderQuantity)) ||
-        (product.maxOrderQuantity != null && limitQuantity > Number(product.maxOrderQuantity))) {
+        !isProductQuantityWithinLimits(product, item.quantity)) {
       removed.push(item);
       continue;
     }

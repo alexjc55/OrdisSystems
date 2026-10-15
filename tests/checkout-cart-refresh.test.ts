@@ -44,8 +44,42 @@ test("removed, inactive, unavailable, incompatible units and invalid limits are 
     assert.deepEqual(result.items, []);
   }
   assert.equal(reconcileCartItems([item()], []).removed.length, 1);
-  const weighted = product({ unit: "100g", minOrderQuantity: "0.25", maxOrderQuantity: "0.5" });
+  const weighted = product({ unit: "100g", minOrderQuantity: "2.5", maxOrderQuantity: "5" });
   assert.equal(reconcileCartItems([item(weighted, 375)], [weighted]).items.length, 1);
+});
+
+test("refresh preserves valid quantities with existing storefront limits and still rejects violations", () => {
+  for (const [unit, min, max, quantity, below, above] of [
+    ["100g", "5.500", "5.550", 550, 549, 556],
+    ["100ml", "2.750", "2.760", 275, 274, 277],
+    ["kg", "0.250", "0.500", 0.375, 0.249, 0.501],
+    ["piece", "2", "4", 3, 1, 5],
+    ["portion", "1", "3", 2, 0.5, 4],
+  ] as const) {
+    const fresh = product({ unit, minOrderQuantity: min, maxOrderQuantity: max });
+    for (const valid of [quantity, Number(max) * (unit === "100g" || unit === "100ml" ? 100 : 1)]) {
+      const original = item(fresh, valid);
+      const result = reconcileCartItems([original], [fresh]);
+      assert.equal(result.removed.length, 0, `${unit}: valid quantity must not disappear`);
+      assert.equal(result.items[0].quantity, valid);
+    }
+    for (const invalid of [below, above]) {
+      assert.equal(reconcileCartItems([item(fresh, invalid)], [fresh]).removed.length, 1, unit);
+    }
+    fresh.maxOrderQuantity = "0.000";
+    assert.equal(reconcileCartItems([item(fresh, quantity)], [fresh]).items.length, 1, unit);
+    assert.equal(reconcileCartItems([item(fresh, below)], [fresh]).removed.length, 1, unit);
+    const unlimited = product({ unit, minOrderQuantity: "0.000", maxOrderQuantity: "0.000" });
+    assert.equal(reconcileCartItems([item(unlimited, quantity)], [unlimited]).items.length, 1, unit);
+  }
+});
+
+test("exact fractional weighted maximum does not acquire a floating-point rejection", () => {
+  for (const unit of ["100g", "100ml"]) {
+    const fresh = product({ unit, minOrderQuantity: "4.550", maxOrderQuantity: "4.560" });
+    assert.equal(reconcileCartItems([item(fresh, 456)], [fresh]).items.length, 1);
+    assert.equal(reconcileCartItems([item(fresh, 456.001)], [fresh]).removed.length, 1);
+  }
 });
 
 test("tomorrow-only products stay in the cart with their new preorder status", () => {

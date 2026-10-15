@@ -10363,7 +10363,7 @@ function ProductFormDialog({ open, onClose, categories, product, onSubmit, onDel
       }
     }
     
-    // Convert min/max order quantity from display units to stored units (kg for 100g/100ml)
+    // Convert min/max from grams/ml to hundreds of grams/ml for 100g/100ml products.
     const submitUnit = finalData.unit || '100g';
     const toStoredOrNull = (val: any) => {
       if (val === null || val === undefined || val === "" || val === "null") return null;
