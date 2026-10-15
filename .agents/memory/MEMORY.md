@@ -14,6 +14,7 @@
 - [Checkout price changes](checkout-price-changes.md) — reject changed totals before creating orders or charging; manual admin orders retain separate pricing.
 - [Coupon payment boundary](coupon-payment-boundary.md) — atomic finalization enforces limits but does not reserve coupon availability before remote payment.
 - [Combined migration completeness](combined-migration-completeness.md) — standalone SQL and migration_full must stay aligned; compare upgraded schemas on disposable PostgreSQL.
+- [Checkout database readiness](checkout-database-readiness.md) — an unavailable transactional mail queue can block offline orders too; isolated tests do not prove the store DB is upgraded.
 - [Headless keyboard verification](headless-keyboard-verification.md) — failed synthetic Enter activation is not evidence of a broken button; verify browser focus separately.
 - [Payment provider switches](payment-provider-switches.md) — availability flags govern new checkouts only; preserve saved merchant configuration and in-flight processing.
 - [Browser fixture language](browser-language-initialization.md) — initialize language before real-source imports; asynchronous application initialization can override a later change.

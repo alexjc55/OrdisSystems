@@ -2,6 +2,7 @@
 # Compare the combined upgrade to recent individual migrations, never a store DB.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+test -s migration_full.sql || { echo "migration_full.sql is empty; refusing to validate an empty upgrade." >&2; exit 1; }
 for tool in initdb pg_ctl psql pg_dump; do
   command -v "$tool" >/dev/null || { echo "Required: $tool" >&2; exit 1; }
 done
@@ -80,4 +81,40 @@ done
 psql -X -d fresh -v ON_ERROR_STOP=1 -qc \
   'SELECT order_id, verification, provider_approval_required, provider_approved_at,
     provider_approval_attempted_at, provider_approval_reference FROM pending_payments LIMIT 0;' >/dev/null
+
+# Exercise the operator command only against disposable databases.
+psql -X -d postgres -v ON_ERROR_STOP=1 -q \
+  -c 'CREATE DATABASE repair;' -c 'CREATE DATABASE repair_bad;'
+for db in repair repair_bad; do
+  psql -X -d "$db" -v ON_ERROR_STOP=1 -qc \
+    'CREATE TABLE orders (id serial PRIMARY KEY); INSERT INTO orders DEFAULT VALUES;'
+done
+USE_NEON=false PGDATABASE=repair node scripts/repair-order-email-queue.mjs >/dev/null
+if USE_NEON=false PGDATABASE=repair node scripts/repair-order-email-queue.mjs --apply --database wrong_target >"$temp/wrong-target.log" 2>&1; then
+  echo "Repair accepted an incorrect database confirmation." >&2
+  exit 1
+fi
+test "$(psql -X -d repair -Atqc "SELECT to_regclass('public.payment_email_outbox') IS NULL")" = t
+for run in 1 2; do
+  USE_NEON=false PGDATABASE=repair node scripts/repair-order-email-queue.mjs --apply --database repair >/dev/null
+done
+psql -X -d repair -v ON_ERROR_STOP=1 -q <<'SQL'
+DO $$
+BEGIN
+  IF (SELECT count(*) FROM orders) <> 1 OR
+     EXISTS (SELECT 1 FROM payment_email_outbox) OR
+     NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'public'
+                 AND table_name = 'payment_email_outbox' AND column_name = 'checkout_snapshot' AND data_type = 'jsonb') THEN
+    RAISE EXCEPTION 'Repair lost orders, backfilled mail or missed its required column';
+  END IF;
+END $$;
+SQL
+psql -X -d repair_bad -v ON_ERROR_STOP=1 -q -f migrations/0008_payment_email_outbox.sql >/dev/null
+psql -X -d repair_bad -v ON_ERROR_STOP=1 -qc 'ALTER TABLE payment_email_outbox DROP COLUMN recipient;'
+if USE_NEON=false PGDATABASE=repair_bad node scripts/repair-order-email-queue.mjs --apply --database repair_bad >"$temp/repair-failure.log" 2>&1; then
+  echo "Repair committed an incompatible partial queue." >&2
+  exit 1
+fi
+test "$(psql -X -d repair_bad -Atqc "SELECT count(*) = 0 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'payment_email_outbox' AND column_name = 'checkout_snapshot'")" = t
 echo "Combined migration matches migrations 0007–0012, including constraints/indexes; repeat application and historical data checks passed."
+echo "VPS repair: read-only inspection, wrong-target rejection, repeat application, no historical backfill and atomic rollback passed."
