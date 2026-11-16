@@ -14,3 +14,14 @@ Schema-only pg_dump comparisons must ignore generated psql guard tokens, but ret
 **Why:** PostgreSQL 16.10 emits random restrict/unrestrict tokens even for equivalent schemas; comparing raw dumps produced a false mismatch.
 
 **How to apply:** Strip only those guard lines in comparison-only dumps. Do not remove guards from backups intended for restoration or normalize away genuine DDL differences.
+
+When adapting a `pg_dump --clean` backup for an empty database, omit its cleanup
+preamble rather than ignoring restore errors, but retain both psql guard commands.
+
+**Why:** A clean dump without `--if-exists` fails on missing tables before import.
+Keeping only the schema/data tail can also leave `\unrestrict` without its matching
+`\restrict`, making an otherwise complete transactional restore fail.
+
+**How to apply:** Leave the original backup untouched. Build a portable copy with
+the session SET commands and matched guard pair, then validate a complete restore
+and dump roundtrip in a disposable UTF-8 cluster.

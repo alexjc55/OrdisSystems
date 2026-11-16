@@ -22,6 +22,7 @@ config/*.local.*
 # Build outputs
 dist/
 build/
+/generated-artifacts/
 
 # Database
 *.db

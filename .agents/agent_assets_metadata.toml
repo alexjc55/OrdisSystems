@@ -6,33 +6,67 @@ id = "7F0YwCyQSa-5AJZOQaR0v"
 uri = "file://backups/dump_20260509_234553.zip"
 type = "unspecified"
 title = "Дамп БД — 09.05.2026 23:45"
+logical_id = "4dd74c95-0f7c-49df-ae20-73d5006dc646"
 
 [[outputs]]
 id = "Vu26SwdgmNfnJSavvQ_Q2"
 uri = "file://db_dump_20260512_194035.zip"
 type = "unspecified"
 title = "Дамп базы данных — 12.05.2026"
+logical_id = "11ff7896-7f97-4b7f-9535-e775730c6194"
 
 [[outputs]]
 id = "wX6bljxPRBRrUzL4LYLZd"
 uri = "file://db_dump_20260512.zip"
 type = "unspecified"
 title = "Дамп базы данных — 12.05.2026"
+logical_id = "efaec5f2-5ba8-49e9-bda4-0d1f79a360e8"
 
 [[outputs]]
 id = "MeErTm4kDdTTj0xxCIoK1"
 uri = "file://dump_20260525_200700.zip"
 type = "unspecified"
 title = "eDAHouse DB dump — 25.05.2026"
+logical_id = "daa0ca55-45cb-4667-90d1-85c95ff03c3c"
 
 [[outputs]]
 id = "J6eE70g6o9LRRn7oGnBDU"
 uri = "file://db_dump.zip"
 type = "unspecified"
 title = "eDAHouse DB dump — 25.05.2026"
+logical_id = "46c6a699-1e58-4ed1-9b04-fdbb28986c92"
 
 [[outputs]]
 id = "WC6-hQAzOR3VMkfArOKs5"
 uri = "file://db_dump.txt"
 type = "text"
 title = "eDAHouse DB dump — 25.05.2026 (.sql)"
+logical_id = "e8e77ab0-6754-4c3a-ab94-1c2c52873fae"
+
+[[outputs]]
+id = "0_dxKIBLiTGAJ-lzJprSk"
+uri = "file://generated-artifacts/edahouse-recovery.zip"
+type = "unspecified"
+title = "Комплект восстановления eDAHouse"
+description = "Обновлённая БД, изображения, инструкция и результаты проверок. Около 92 МиБ. Содержит приватные данные магазина — хранить конфиденциально."
+logical_id = "12d3887c-98ff-4198-b550-5730fbea22b5"
+content_hash = "sha256:27b259fa7e089df070a7cb409a59688b65e82c24773ab87d2fc9be5657222b2d"
+size = 96493555
+mtime_ms = 1794829080217
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:491046aa-9b11-42b7-94fd-d84f70bd4f20/12d3887c-98ff-4198-b550-5730fbea22b5/50dafb36-33b6-4509-a6d9-45dc56c874ea"
+storage_version_token = "1794829110117513"
+content_type = "application/octet-stream"
+
+[[outputs]]
+id = "F-w8qnX0ogCGe0-_qm7LC"
+uri = "file://generated-artifacts/edahouse-recovery/storefront.jpg"
+type = "image"
+title = "Восстановленная главная страница eDAHouse"
+description = "Снимок проверочной копии с восстановленной БД и изображениями; удалённый сайт пока не установлен."
+logical_id = "7aa01ad8-2787-45df-8564-161d80110cf1"
+content_hash = "sha256:6b46a49d6b22c081d13fedf9ee659866973ea1216214c26a7bbfd3bc100a452e"
+size = 108437
+mtime_ms = 1794829039373
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:491046aa-9b11-42b7-94fd-d84f70bd4f20/7aa01ad8-2787-45df-8564-161d80110cf1/3ef19e58-caea-4f16-bc09-22a8c5f8a7b8"
+storage_version_token = "1794829111902336"
+content_type = "image/jpeg"
