@@ -24,7 +24,10 @@ not the old server's home-directory layout.
 
 **How to apply:** Use these destinations for scoped installation instructions,
 but verify ownership, database contents and connection settings before writes.
-Do not infer the PostgreSQL login or OS account from the directory name.
+The owner confirmed switching to OS account `edahouse_ordis` using
+`sudo -iu edahouse_ordis` and using `~/www/edahouse.ordis.co.il/` as the
+project directory. Resolve its absolute path with `pwd` when needed.
+Do not infer the PostgreSQL login from the OS account or directory name.
 
 Select recovery sources by their contents, not archive filenames.
 
