@@ -48,13 +48,13 @@ id = "0_dxKIBLiTGAJ-lzJprSk"
 uri = "file://generated-artifacts/edahouse-recovery.zip"
 type = "unspecified"
 title = "Комплект восстановления eDAHouse"
-description = "Обновлённая БД, изображения, инструкция и результаты проверок. Около 92 МиБ. Содержит приватные данные магазина — хранить конфиденциально."
+description = "Подготовленная БД и загруженные изображения. Содержит конфиденциальные данные — хранить вне публичной папки сайта."
 logical_id = "12d3887c-98ff-4198-b550-5730fbea22b5"
 content_hash = "sha256:27b259fa7e089df070a7cb409a59688b65e82c24773ab87d2fc9be5657222b2d"
 size = 96493555
 mtime_ms = 1794829080217
-storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:491046aa-9b11-42b7-94fd-d84f70bd4f20/12d3887c-98ff-4198-b550-5730fbea22b5/50dafb36-33b6-4509-a6d9-45dc56c874ea"
-storage_version_token = "1794829110117513"
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:491046aa-9b11-42b7-94fd-d84f70bd4f20/12d3887c-98ff-4198-b550-5730fbea22b5/f64f87d4-5863-42c8-b517-ca1c3b196d67"
+storage_version_token = "1794831154794708"
 content_type = "application/octet-stream"
 
 [[outputs]]
