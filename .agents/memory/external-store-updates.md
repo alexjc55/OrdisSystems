@@ -14,3 +14,9 @@ The original hosting provider suffered an attack, and the user reports that the 
 **Why:** The surviving database backups are historical snapshots, not copies of the stores at the moment the server was lost.
 
 **How to apply:** Do not assume the original server remains available for a final export or image synchronization. State the recovery cutoff explicitly, keep each store's recovery isolated, and distinguish restoring a backup from recovering later missing data. Do not overwrite the working Replit database to prepare an external-store recovery.
+
+Select recovery sources by their contents, not archive filenames.
+
+**Why:** A recovered source-code archive had a later date in its name than the newest business records in the accompanying database. A newer-looking code archive does not establish a newer database backup.
+
+**How to apply:** Check continuity of product/order/user IDs and original creation dates, compare store identity without disclosing contact details, and match media references against archive contents. Preserve old source code for reference rather than replacing current security fixes with it.
