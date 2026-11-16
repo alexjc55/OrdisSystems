@@ -29,6 +29,17 @@ The owner confirmed switching to OS account `edahouse_ordis` using
 project directory. Resolve its absolute path with `pwd` when needed.
 Do not infer the PostgreSQL login from the OS account or directory name.
 
+The replacement eDAHouse server runs PostgreSQL 15.19. The prepared recovery
+dump exported by PostgreSQL 16.10 was successfully imported there, with the
+expected record counts confirmed by the owner.
+
+**Why:** The recovery README recommended PostgreSQL 16, but that recommendation
+is not a requirement for this verified recovery on the existing server.
+
+**How to apply:** Do not require a major PostgreSQL upgrade solely because
+this dump's header says 16.10. This result applies to the inspected recovery
+dump, not to arbitrary restores from newer PostgreSQL versions.
+
 Select recovery sources by their contents, not archive filenames.
 
 **Why:** A recovered source-code archive had a later date in its name than the newest business records in the accompanying database. A newer-looking code archive does not establish a newer database backup.
