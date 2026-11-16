@@ -15,6 +15,17 @@ The original hosting provider suffered an attack, and the user reports that the 
 
 **How to apply:** Do not assume the original server remains available for a final export or image synchronization. State the recovery cutoff explicitly, keep each store's recovery isolated, and distinguish restoring a backup from recovering later missing data. Do not overwrite the working Replit database to prepare an external-store recovery.
 
+The owner specified the rebuilt eDAHouse project's directory as
+`/var/www/edahouse_ordis/data/www/edahouse.ordis.co.il` and its database name as
+`edahouse`.
+
+**Why:** These are the owner-provided destinations on the replacement server,
+not the old server's home-directory layout.
+
+**How to apply:** Use these destinations for scoped installation instructions,
+but verify ownership, database contents and connection settings before writes.
+Do not infer the PostgreSQL login or OS account from the directory name.
+
 Select recovery sources by their contents, not archive filenames.
 
 **Why:** A recovered source-code archive had a later date in its name than the newest business records in the accompanying database. A newer-looking code archive does not establish a newer database backup.
