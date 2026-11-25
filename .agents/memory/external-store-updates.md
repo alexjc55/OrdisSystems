@@ -45,6 +45,17 @@ to the individual process; never restart or stop all processes for this setup.
 The owner approved a per-store opt-out of demo initialization while preserving
 other installations' behavior. Keep new-store-only environment settings in
 that project's configuration, not the shared OS user's shell profile.
+For the DK installation, the owner supplied a full configuration with all
+four online-payment provider flags set to false, branches disabled with
+`MAX_BRANCHES=3`, and both `SUPER_ADMIN_*` fields empty.
+
+**Why:** These are the owner's intended settings for this new shop; omitting
+payment flags would instead leave all providers available by default.
+
+**How to apply:** Preserve these explicit per-store choices in installation
+instructions. Do not silently replace them with a minimal configuration that
+has different defaults, and do not add a hidden administrator.
+
 When giving shell commands after switching to the store's OS account, use
 `cd ~/www/dk.ordis.co.il/` rather than the long absolute path.
 
