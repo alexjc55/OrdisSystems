@@ -29,6 +29,20 @@ The owner confirmed switching to OS account `edahouse_ordis` using
 project directory. Resolve its absolute path with `pwd` when needed.
 Do not infer the PostgreSQL login from the OS account or directory name.
 
+The owner requested a fresh installation of `dk.ordis.co.il` on the same
+server, using OS account `edahouse_ordis`, project directory
+`/var/www/edahouse_ordis/data/www/dk.ordis.co.il`, database `dk_ordis`,
+and application port `5002`. The initial catalog must have no products or
+categories.
+
+**Why:** This is a new installation, not a restoration of eDAHouse data.
+The owner reported that the separate `dk_ordis` database was empty.
+
+**How to apply:** Verify the database is still empty before schema writes.
+Do not copy another store's records or credentials, and do not seed demo
+catalog data. Because both shops use the same OS account, scope PM2 operations
+to the individual process; never restart or stop all processes for this setup.
+
 The replacement eDAHouse server runs PostgreSQL 15.19. The prepared recovery
 dump exported by PostgreSQL 16.10 was successfully imported there, with the
 expected record counts confirmed by the owner.
