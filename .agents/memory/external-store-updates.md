@@ -45,6 +45,12 @@ to the individual process; never restart or stop all processes for this setup.
 The owner approved a per-store opt-out of demo initialization while preserving
 other installations' behavior. Keep new-store-only environment settings in
 that project's configuration, not the shared OS user's shell profile.
+When giving shell commands after switching to the store's OS account, use
+`cd ~/www/dk.ordis.co.il/` rather than the long absolute path.
+
+**Why:** The owner explicitly corrected the command format to the home-relative
+path after switching users. Both resolve to the same directory; keep the
+absolute path for identifying filesystem destinations, not routine `cd` commands.
 
 The replacement eDAHouse server runs PostgreSQL 15.19. The prepared recovery
 dump exported by PostgreSQL 16.10 was successfully imported there, with the
