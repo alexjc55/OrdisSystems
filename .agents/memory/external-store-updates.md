@@ -42,6 +42,9 @@ The owner reported that the separate `dk_ordis` database was empty.
 Do not copy another store's records or credentials, and do not seed demo
 catalog data. Because both shops use the same OS account, scope PM2 operations
 to the individual process; never restart or stop all processes for this setup.
+The owner approved a per-store opt-out of demo initialization while preserving
+other installations' behavior. Keep new-store-only environment settings in
+that project's configuration, not the shared OS user's shell profile.
 
 The replacement eDAHouse server runs PostgreSQL 15.19. The prepared recovery
 dump exported by PostgreSQL 16.10 was successfully imported there, with the

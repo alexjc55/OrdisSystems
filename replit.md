@@ -49,6 +49,11 @@ Migration file sync (CRITICAL): Whenever shared/schema.ts is modified (new table
 - **UI/UX**: Responsive design, mobile-first considerations, consistent styling, and accessible UI components.
 - **SEO**: Dynamic meta tag management, crawlable links via UTMLink components, structured data, and hreflang tags.
 
+## Clean external-store installations
+- `SEED_DEMO_CATALOG=false` disables startup demo seeding for a new empty store. An absent setting preserves previous behavior; accepted values are true/false/1/0, and invalid values fail before database initialization. This does not delete existing catalog data.
+- For a fresh external database, use the complete schema prepared by `node scripts/prepare-clean-install.mjs --prepare` after building the app. It derives tables from the current schema, adds the real `session` store and outbox checks, and verifies bootstrap/login and both seed modes in disposable PostgreSQL. `migration_full.sql` is an upgrade, not a fresh-install schema.
+- Owner-approved first administrator creation remains a separate `npm run bootstrap:admin` command before public startup. See `docs/dk-clean-install.md` for the scoped dk.ordis.co.il installation; never import eDAHouse business data into it.
+
 ## Type checks and regression tests
 ### Paid-order email queue
 - Apply `migrations/0008_payment_email_outbox.sql` (or the matching additive block in `migration_full.sql`) to each external store database **before** deploying this server version. Do not use a broad schema push or an automatic startup migration. Existing orders are not backfilled because their prior email delivery is unknown.

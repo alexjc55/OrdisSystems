@@ -70,3 +70,17 @@ mtime_ms = 1794829039373
 storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:491046aa-9b11-42b7-94fd-d84f70bd4f20/7aa01ad8-2787-45df-8564-161d80110cf1/3ef19e58-caea-4f16-bc09-22a8c5f8a7b8"
 storage_version_token = "1794829111902336"
 content_type = "image/jpeg"
+
+[[outputs]]
+id = "04ysUv3VG1rtaVgNV1zwA"
+uri = "file://generated-artifacts/ordis-dk-clean-install.zip"
+type = "unspecified"
+title = "Чистая БД Ordis для dk.ordis.co.il"
+description = "Полная SQL-схема: 23 пустые таблицы, без товаров, пользователей и настроек других магазинов. В комплекте инструкция и контрольные суммы."
+logical_id = "7d3b1d1a-5068-41fd-b20e-8e420f98d31d"
+content_hash = "sha256:6cbd833de2bc24b133c6ab28043928ab0ffefef33a98ab2219ea7665f07c43e8"
+size = 10988
+mtime_ms = 1795636010059
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:491046aa-9b11-42b7-94fd-d84f70bd4f20/7d3b1d1a-5068-41fd-b20e-8e420f98d31d/44071183-7abd-4083-80d3-fec908c24492"
+storage_version_token = "1795636101484413"
+content_type = "application/octet-stream"

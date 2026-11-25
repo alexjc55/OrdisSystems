@@ -6,6 +6,7 @@ import { seedDatabase } from "./seed";
 import { getDB } from "./db";
 import { metaInjectionMiddleware } from "./meta-injection-middleware";
 import { startPaymentEmailWorker } from "./payment-email-outbox";
+import { isDemoCatalogEnabled } from "./lib/demo-catalog";
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -42,6 +43,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Validate before connecting; a typo must not silently populate a new store.
+  const seedDemoCatalog = isDemoCatalogEnabled();
+
   // Ensure database is initialized before starting the server
   try {
     await getDB();
@@ -51,11 +55,15 @@ app.use((req, res, next) => {
     process.exit(1);
   }
 
-  // Seed database with initial data
-  try {
-    await seedDatabase();
-  } catch (error) {
-    console.log("Database already seeded or error occurred:", error);
+  // Keep legacy behavior by default; new empty stores can opt out explicitly.
+  if (seedDemoCatalog) {
+    try {
+      await seedDatabase();
+    } catch (error) {
+      console.log("Database already seeded or error occurred:", error);
+    }
+  } else {
+    console.log("Demo catalog seeding disabled by SEED_DEMO_CATALOG.");
   }
 
   const server = await registerRoutes(app);
