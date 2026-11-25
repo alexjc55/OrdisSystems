@@ -138,7 +138,7 @@ ALTER TABLE public.payment_email_outbox
   run("initdb", ["-D", `${temp}/data`, "-A", "trust", "-U", "install_test", "--no-locale", "--encoding=UTF8"]);
   run("pg_ctl", ["-D", `${temp}/data`, "-l", `${temp}/postgres.log`, "-o", `-h '' -k ${temp}`, "-w", "start"]);
   postgresStarted = true;
-  for (const database of ["fresh", "legacy_default"]) {
+  for (const database of ["fresh", "legacy_default", "initial_settings"]) {
     run("createdb", [database]);
     run("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", "-f", schemaFile], database);
   }
@@ -158,6 +158,8 @@ ALTER TABLE public.payment_email_outbox
     "SELECT count(*)::int AS count FROM pg_constraint WHERE conrelid = 'public.payment_email_outbox'::regclass AND contype = 'c'",
   );
   assert.equal(checks.rows[0].count, 2);
+  run(process.execPath, ["--import", "tsx", "--test", "tests/admin-initialization.test.ts"],
+    "initial_settings", { CLEAN_INSTALL_TESTS: "1" });
   // Synthetic credentials are only for this disposable database.
   const fixtureCredentials = {
     BOOTSTRAP_ADMIN_USERNAME: "install-test-admin",
@@ -180,7 +182,7 @@ ALTER TABLE public.payment_email_outbox
     const count = Number((await legacyClient.query(`SELECT count(*) AS count FROM public."${name}"`)).rows[0].count);
     assert.ok(count > 0, "Default seeding must remain enabled");
   }
-  const preview = await startApp("fresh", "false");
+  let preview = await startApp("fresh", "false");
   for (const endpoint of ["products", "categories"]) {
     const data = await (await fetch(`${preview.base}/api/${endpoint}`)).json();
     assert.deepEqual(data, [], `${endpoint} must stay empty`);
@@ -201,6 +203,20 @@ ALTER TABLE public.payment_email_outbox
   assert.equal(identity.status, 200);
   assert.equal((await identity.json()).role, "admin");
   assert.ok(Number((await client.query('SELECT count(*) AS count FROM public."session"')).rows[0].count) > 0);
+  assert.equal((await client.query("SELECT count(*)::int AS count FROM store_settings")).rows[0].count, 1);
+  const browserResult = run(process.execPath, ["--import", "tsx", "tests/clean-install-admin.browser.ts"],
+    "fresh", {
+      CLEAN_INSTALL_TESTS: "1", CLEAN_INSTALL_ORIGIN: preview.base, CLEAN_INSTALL_COOKIE: cookie,
+      CLEAN_INSTALL_SCREENSHOT: path.join(staging, "admin-settings.jpg"),
+    });
+  console.log(browserResult.trim());
+  const settingsBeforeRestart = (await client.query("SELECT * FROM store_settings")).rows;
+  const adminBeforeRestart = (await client.query("SELECT * FROM users")).rows;
+  assert.equal(settingsBeforeRestart[0].store_name, "Configured fixture shop");
+  // Restart the actual application, not just the browser.
+  preview = await startApp("fresh", "false");
+  assert.deepEqual((await client.query("SELECT * FROM store_settings")).rows, settingsBeforeRestart);
+  assert.deepEqual((await client.query("SELECT * FROM users")).rows, adminBeforeRestart);
   for (const name of ["products", "categories", "orders", "order_items", "payment_email_outbox"]) {
     assert.equal(Number((await client.query(`SELECT count(*) AS count FROM public."${name}"`)).rows[0].count), 0);
   }
@@ -209,7 +225,10 @@ ALTER TABLE public.payment_email_outbox
     tableCount: actualTables.length, initialRows: counts, schemaSha256: sha(schemaFile),
     freshImport: true, nonemptyImportRefused: true, bootstrapAndLoginVerified: true,
     emptyCatalogVerified: true, legacyDemoDefaultVerified: true, workspaceDatabaseUsed: false,
-    sourceHashes: Object.fromEntries(["shared/schema.ts", "server/index.ts", "server/lib/demo-catalog.ts"]
+    signedInAdminRendered: true, adminSettingsSavedAndReloaded: true,
+    settingsAndAdminPreservedOnRestart: true, atomicSettingsInitializationVerified: true,
+    sourceHashes: Object.fromEntries(["shared/schema.ts", "server/index.ts", "server/lib/demo-catalog.ts",
+      "server/initial-store-settings.ts", "client/src/pages/admin-dashboard.tsx"]
       .map(file => [file, sha(path.join(root, file))])),
   }, null, 2) + "\n", { mode: 0o600 });
   const files = fs.readdirSync(staging).sort();
@@ -219,7 +238,7 @@ ALTER TABLE public.payment_email_outbox
   fs.renameSync(staging, destination);
   published = true;
   console.log(`Verified clean schema: ${actualTables.length} tables, zero initial rows.`);
-  console.log("Verified empty catalog, unchanged demo default, first admin, login and stored session.");
+  console.log("Verified empty catalog, unchanged demo default, first admin, full signed-in dashboard and restart preservation.");
   console.log(`Output: ${path.relative(root, destination)}`);
   if (process.argv.includes("--preview") && !interrupted) {
     console.log(`CLEAN_INSTALL_PREVIEW_PORT=${preview.port}`);

@@ -79,18 +79,35 @@ export async function launchChromium() {
     return {
       close,
       errors,
-      async page(origin: string, imageFixtures: readonly string[] = []) {
+      async page(origin: string, imageFixtures: readonly string[] = [], options: {
+        initScript?: string;
+        delayRequest?: (url: string) => number;
+        emptyStylesheetOrigins?: readonly string[];
+        viewport?: { width: number; height: number };
+      } = {}) {
         const errorOffset = errors.length;
         const { targetId } = await send("Target.createTarget", { url: "about:blank" });
         const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true });
         await send("Page.enable", {}, sessionId);
         await send("Runtime.enable", {}, sessionId);
+        if (options.viewport) {
+          await send("Emulation.setDeviceMetricsOverride", {
+            ...options.viewport, deviceScaleFactor: 1, mobile: false,
+          }, sessionId);
+        }
         listeners.set(`${sessionId}:Runtime.exceptionThrown`, params => {
           errors.push(JSON.stringify(params.exceptionDetails));
         });
         // Block every non-fixture request, including external logos and APIs.
         listeners.set(`${sessionId}:Fetch.requestPaused`, params => {
           const url = new URL(params.request.url);
+          if (params.resourceType === "Stylesheet" && options.emptyStylesheetOrigins?.includes(url.origin)) {
+            void send("Fetch.fulfillRequest", {
+              requestId: params.requestId, responseCode: 200,
+              responseHeaders: [{ name: "Content-Type", value: "text/css" }], body: "",
+            }, sessionId).catch(error => errors.push(String(error)));
+            return;
+          }
           if (params.resourceType === "Image" && imageFixtures.includes(params.request.url)) {
             void send("Fetch.fulfillRequest", {
               requestId: params.requestId, responseCode: 200,
@@ -101,11 +118,19 @@ export async function launchChromium() {
           }
           const local = url.origin === origin;
           if (!local) errors.push(`Unexpected network request: ${url.origin}${url.pathname}`);
-          void send(local ? "Fetch.continueRequest" : "Fetch.failRequest", {
-            requestId: params.requestId,
-            ...(!local ? { errorReason: "BlockedByClient" } : {}),
-          }, sessionId).catch(error => errors.push(String(error)));
+          const continueRequest = () => {
+            void send(local ? "Fetch.continueRequest" : "Fetch.failRequest", {
+              requestId: params.requestId,
+              ...(!local ? { errorReason: "BlockedByClient" } : {}),
+            }, sessionId).catch(error => errors.push(String(error)));
+          };
+          const delay = local ? options.delayRequest?.(params.request.url) || 0 : 0;
+          if (delay) setTimeout(continueRequest, delay);
+          else continueRequest();
         });
+        if (options.initScript) {
+          await send("Page.addScriptToEvaluateOnNewDocument", { source: options.initScript }, sessionId);
+        }
         await send("Fetch.enable", { patterns: [{ urlPattern: "*", requestStage: "Request" }] }, sessionId);
         const evaluate = async (expression: string) => {
           const result = await send("Runtime.evaluate", {
@@ -124,6 +149,27 @@ export async function launchChromium() {
         };
         return {
           evaluate, wait,
+          async click(selector: string) {
+            const point = await evaluate(`(() => {
+              const element = document.querySelector(${JSON.stringify(selector)});
+              if (!element) throw new Error('Missing click target');
+              element.scrollIntoView({block: 'center'});
+              const rect = element.getBoundingClientRect();
+              if (!rect.width || !rect.height) throw new Error('Hidden click target');
+              return {x: rect.x + rect.width / 2, y: rect.y + rect.height / 2};
+            })()`);
+            for (const type of ["mousePressed", "mouseReleased"]) {
+              await send("Input.dispatchMouseEvent", {
+                type, ...point, button: "left", clickCount: 1,
+              }, sessionId);
+            }
+          },
+          // Install a real, server-issued session in an isolated HTTP fixture.
+          // Secure TLS transport is supplied by nginx in production, not here.
+          setSessionCookie: (name: string, value: string) => send("Network.setCookie", {
+            name, value, url: origin, httpOnly: true, secure: false,
+          }, sessionId),
+          screenshot: async () => (await send("Page.captureScreenshot", { format: "jpeg", quality: 75 }, sessionId)).data as string,
           navigate: (path: string) => send("Page.navigate", { url: `${origin}${path}` }, sessionId),
           reload: () => send("Page.reload", {}, sessionId),
           async close() {

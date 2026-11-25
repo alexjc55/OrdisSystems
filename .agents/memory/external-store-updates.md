@@ -45,6 +45,18 @@ to the individual process; never restart or stop all processes for this setup.
 The owner approved a per-store opt-out of demo initialization while preserving
 other installations' behavior. Keep new-store-only environment settings in
 that project's configuration, not the shared OS user's shell profile.
+
+An empty catalog must not prevent required initial shop configuration.
+The owner approved creating an absent settings record while preserving the
+existing administrator, catalog and any previously saved settings.
+
+**Why:** A completely unconfigured fresh installation could authenticate an
+administrator but could not open the screen needed to save its first settings.
+
+**How to apply:** Keep required first-start configuration separate from optional
+demo data. Initialize only an absent record; never backfill intentionally empty
+fields or overwrite another store's saved configuration.
+
 For the DK installation, the owner supplied a full configuration with all
 four online-payment provider flags set to false, branches disabled with
 `MAX_BRANCHES=3`, and both `SUPER_ADMIN_*` fields empty.

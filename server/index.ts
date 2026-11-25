@@ -7,6 +7,7 @@ import { getDB } from "./db";
 import { metaInjectionMiddleware } from "./meta-injection-middleware";
 import { startPaymentEmailWorker } from "./payment-email-outbox";
 import { isDemoCatalogEnabled } from "./lib/demo-catalog";
+import { ensureInitialStoreSettings } from "./initial-store-settings";
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
@@ -52,6 +53,17 @@ app.use((req, res, next) => {
     console.log("✅ Database connection verified");
   } catch (error) {
     console.error("❌ Failed to connect to database. Server will not start.", error);
+    process.exit(1);
+  }
+
+  // The dashboard needs settings before its first render, even with no catalog.
+  // Existing stores are read, never reset or backfilled.
+  try {
+    if (await ensureInitialStoreSettings(await getDB())) {
+      console.log("Initial store settings created; catalog and users unchanged.");
+    }
+  } catch {
+    console.error("Store settings initialization failed. Check database schema and permissions.");
     process.exit(1);
   }
 

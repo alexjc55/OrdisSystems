@@ -26,7 +26,7 @@ router.get('/settings', async (req, res) => {
     res.json(settings && user?.role !== "admin" ? {
       ...settings,
       paymentProviderConfig: publicPaymentConfig(settings.paymentProviderConfig as any),
-    } : settings);
+    } : settings ?? null);
   } catch (error) {
     console.error("Error fetching store settings:", error);
     res.status(500).json({ message: "Failed to fetch store settings" });

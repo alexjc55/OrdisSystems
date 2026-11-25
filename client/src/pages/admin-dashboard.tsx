@@ -3588,23 +3588,8 @@ export default function AdminDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Show timeout message if loading takes too long
-  if (loadingTimeout && isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center p-8">
-          <h2 className="text-xl font-semibold mb-4">Панель загружается медленно</h2>
-          <p className="text-gray-600 mb-6">Возможно проблема с подключением к серверу</p>
-          <Button onClick={() => window.location.reload()}>
-            Обновить страницу
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   // Data queries with pagination  
-  const { data: storeSettings, isLoading: storeSettingsLoading } = useQuery<StoreSettings>({
+  const { data: storeSettings, isLoading: storeSettingsLoading, isError: storeSettingsError } = useQuery<StoreSettings | null>({
     queryKey: ["/api/settings"],
     staleTime: 5 * 60 * 1000, // 5 minutes - cache settings for 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
@@ -4959,12 +4944,35 @@ export default function AdminDashboard() {
   // No JavaScript scroll manipulation needed.
 
   // Enhanced loading state checks to prevent hanging
-  const isStillLoading = (isLoading || !user || storeSettingsLoading || !storeSettings) && !loadingTimeout;
+  const isStillLoading = isLoading || !user || storeSettingsLoading || !storeSettings;
+
+  // Hooks must run on every render, including the initial loading/error frames.
+  const _allProductIds = (productsData as any[] || []).map((p: any) => p.id).filter(Boolean);
+  const { data: listVolumeDiscounts } = useQuery({
+    queryKey: [`/api/products/volume-discounts?productIds=${_allProductIds.join(',')}`],
+    enabled: _allProductIds.length > 0,
+    staleTime: 2 * 60 * 1000,
+  });
+
+  // A timeout must show recovery UI, not force rendering with incomplete data.
+  if ((loadingTimeout || storeSettingsError) && isStillLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-semibold mb-4">Панель загружается медленно</h2>
+          <p className="text-gray-600 mb-6">Возможно проблема с подключением к серверу</p>
+          <Button onClick={() => window.location.reload()}>
+            Обновить страницу
+          </Button>
+        </div>
+      </div>
+    );
+  }
   
   // Additional check for first data load for workers
   const isWorkerWithoutPermissions = user?.role === "worker" && storeSettings && !storeSettings.workerPermissions;
 
-  if ((isStillLoading || isWorkerWithoutPermissions) && !loadingTimeout) {
+  if (isStillLoading || (isWorkerWithoutPermissions && !loadingTimeout)) {
     return (
       <div key={componentKey} className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -5189,13 +5197,6 @@ export default function AdminDashboard() {
       default: return '';
     }
   }
-
-  const _allProductIds = (productsData as any[] || []).map((p: any) => p.id).filter(Boolean);
-  const { data: listVolumeDiscounts } = useQuery({
-    queryKey: [`/api/products/volume-discounts?productIds=${_allProductIds.join(',')}`],
-    enabled: _allProductIds.length > 0,
-    staleTime: 2 * 60 * 1000,
-  });
 
   const filteredProducts = (productsData as any[] || [])
     .filter((product: any) => {
