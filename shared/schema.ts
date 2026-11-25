@@ -216,6 +216,9 @@ export const storeSettings = pgTable("store_settings", {
   welcomeTitle: varchar("welcome_title", { length: 255 }),
   storeDescription: text("store_description"),
   logoUrl: varchar("logo_url", { length: 500 }),
+  logoUrl_en: varchar("logo_url_en", { length: 500 }),
+  logoUrl_he: varchar("logo_url_he", { length: 500 }),
+  logoUrl_ar: varchar("logo_url_ar", { length: 500 }),
   bannerImage: varchar("banner_image", { length: 500 }),
   contactPhone: varchar("contact_phone", { length: 50 }),
   contactEmail: varchar("contact_email", { length: 255 }),
@@ -276,6 +279,9 @@ export const storeSettings = pgTable("store_settings", {
   bannerButtonText: varchar("banner_button_text", { length: 100 }).default("Смотреть каталог"), // Banner button text
   bannerButtonLink: varchar("banner_button_link", { length: 500 }).default("#categories"), // Banner button link
   bannerImageUrl: varchar("banner_image_url", { length: 500 }), // Main banner image URL
+  bannerImageUrl_en: varchar("banner_image_url_en", { length: 500 }),
+  bannerImageUrl_he: varchar("banner_image_url_he", { length: 500 }),
+  bannerImageUrl_ar: varchar("banner_image_url_ar", { length: 500 }),
   cartBannerImage: varchar("cart_banner_image", { length: 500 }), // Banner image URL
   cartBannerImage_en: varchar("cart_banner_image_en", { length: 500 }),
   cartBannerImage_he: varchar("cart_banner_image_he", { length: 500 }),
@@ -566,7 +572,7 @@ export const themes = pgTable("themes", {
   isActive: boolean("is_active").default(false),
   
   // Color configuration
-  primaryColor: varchar("primary_color", { length: 20 }).notNull().default("hsl(24.6, 95%, 53.1%)"),
+  primaryColor: varchar("primary_color", { length: 64 }).notNull().default("hsl(24.6, 95%, 53.1%)"),
   primaryTextColor: varchar("primary_text_color", { length: 20 }).notNull().default("hsl(0, 0%, 100%)"),
   primaryDarkColor: varchar("primary_dark_color", { length: 20 }).notNull().default("hsl(20.5, 90%, 48%)"),
   primaryLightColor: varchar("primary_light_color", { length: 20 }).notNull().default("hsl(24.6, 95%, 96%)"),

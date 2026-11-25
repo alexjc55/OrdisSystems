@@ -1366,7 +1366,7 @@ export default function ThemeManager() {
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="btn-primary w-full sm:w-auto">
+            <Button className="btn-primary w-full sm:w-auto" data-testid="theme-create">
               <Plus className="h-4 w-4 mr-2" />
               {adminT("themes.createTheme")}
             </Button>
@@ -1399,7 +1399,7 @@ export default function ThemeManager() {
                   </TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="basic" className="space-y-4">
+                <TabsContent value="basic" forceMount className="space-y-4 data-[state=inactive]:hidden">
                   <div className="grid grid-cols-1 gap-4">
                     {/* Многоязычное название темы */}
                     <div className="space-y-2">
@@ -1591,7 +1591,7 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="colors" className="space-y-6">
+                <TabsContent value="colors" forceMount className="space-y-6 data-[state=inactive]:hidden">
                   {/* Brand */}
                   <div>
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.brandColors")}</h4>
@@ -1687,7 +1687,7 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="visuals" className="space-y-6">
+                <TabsContent value="visuals" forceMount className="space-y-6 data-[state=inactive]:hidden">
                   {/* Main Display Elements */}
                   <div>
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.mainInterfaceElements")}</h4>
@@ -2161,6 +2161,7 @@ export default function ThemeManager() {
                   size="sm"
                   variant="outline"
                   onClick={() => setEditingTheme(theme)}
+                  data-testid={`theme-edit-${theme.id}`}
                   title={adminT('themes.editTheme')}
                 >
                   <Settings className="h-4 w-4" />
@@ -2255,7 +2256,7 @@ export default function ThemeManager() {
                   </TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="basic" className="space-y-4">
+                <TabsContent value="basic" forceMount className="space-y-4 data-[state=inactive]:hidden">
                   <div className="grid grid-cols-1 gap-4">
                     {/* Многоязычное название темы */}
                     <div className="space-y-2">
@@ -2575,7 +2576,7 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="colors" className="space-y-6">
+                <TabsContent value="colors" forceMount className="space-y-6 data-[state=inactive]:hidden">
                   {/* Бренд */}
                   <div>
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT('themes.brandSection')}</h4>
@@ -2671,7 +2672,7 @@ export default function ThemeManager() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="visuals" className="space-y-6">
+                <TabsContent value="visuals" forceMount className="space-y-6 data-[state=inactive]:hidden">
                   {/* Основные элементы отображения */}
                   <div>
                     <h4 className="text-sm font-semibold text-gray-800 mb-4 pb-2 border-b">{adminT("themes.mainInterfaceElements")}</h4>

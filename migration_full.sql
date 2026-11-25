@@ -62,3 +62,26 @@ WHERE status = 'completed'
 -- Never invent verification evidence for historical payments.
 ALTER TABLE pending_payments
   ADD COLUMN IF NOT EXISTS verification jsonb;
+
+-- The standard theme primary color needs 21 characters, not 20.
+-- Widen only undersized columns, preserving larger custom columns and all data.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'themes'
+      AND column_name = 'primary_color' AND data_type = 'character varying'
+      AND character_maximum_length < 64
+  ) THEN
+    ALTER TABLE public.themes ALTER COLUMN primary_color TYPE varchar(64);
+  END IF;
+END $$;
+
+-- Missing translated shop images used when saving/applying themes.
+ALTER TABLE IF EXISTS public.store_settings
+  ADD COLUMN IF NOT EXISTS logo_url_en varchar(500),
+  ADD COLUMN IF NOT EXISTS logo_url_he varchar(500),
+  ADD COLUMN IF NOT EXISTS logo_url_ar varchar(500),
+  ADD COLUMN IF NOT EXISTS banner_image_url_en varchar(500),
+  ADD COLUMN IF NOT EXISTS banner_image_url_he varchar(500),
+  ADD COLUMN IF NOT EXISTS banner_image_url_ar varchar(500);

@@ -158,7 +158,7 @@ ALTER TABLE public.payment_email_outbox
     "SELECT count(*)::int AS count FROM pg_constraint WHERE conrelid = 'public.payment_email_outbox'::regclass AND contype = 'c'",
   );
   assert.equal(checks.rows[0].count, 2);
-  run(process.execPath, ["--import", "tsx", "--test", "tests/admin-initialization.test.ts"],
+  run(process.execPath, ["--import", "tsx", "--test", "tests/admin-initialization.test.ts", "tests/theme-colors.test.ts"],
     "initial_settings", { CLEAN_INSTALL_TESTS: "1" });
   // Synthetic credentials are only for this disposable database.
   const fixtureCredentials = {
@@ -212,11 +212,13 @@ ALTER TABLE public.payment_email_outbox
   console.log(browserResult.trim());
   const settingsBeforeRestart = (await client.query("SELECT * FROM store_settings")).rows;
   const adminBeforeRestart = (await client.query("SELECT * FROM users")).rows;
+  const themesBeforeRestart = (await client.query("SELECT * FROM themes ORDER BY id")).rows;
   assert.equal(settingsBeforeRestart[0].store_name, "Configured fixture shop");
   // Restart the actual application, not just the browser.
   preview = await startApp("fresh", "false");
   assert.deepEqual((await client.query("SELECT * FROM store_settings")).rows, settingsBeforeRestart);
   assert.deepEqual((await client.query("SELECT * FROM users")).rows, adminBeforeRestart);
+  assert.deepEqual((await client.query("SELECT * FROM themes ORDER BY id")).rows, themesBeforeRestart);
   for (const name of ["products", "categories", "orders", "order_items", "payment_email_outbox"]) {
     assert.equal(Number((await client.query(`SELECT count(*) AS count FROM public."${name}"`)).rows[0].count), 0);
   }
@@ -226,9 +228,11 @@ ALTER TABLE public.payment_email_outbox
     freshImport: true, nonemptyImportRefused: true, bootstrapAndLoginVerified: true,
     emptyCatalogVerified: true, legacyDemoDefaultVerified: true, workspaceDatabaseUsed: false,
     signedInAdminRendered: true, adminSettingsSavedAndReloaded: true,
+    themeCreatedEditedAndReloaded: true, themeAppliedAndPreservedOnRestart: true,
     settingsAndAdminPreservedOnRestart: true, atomicSettingsInitializationVerified: true,
     sourceHashes: Object.fromEntries(["shared/schema.ts", "server/index.ts", "server/lib/demo-catalog.ts",
-      "server/initial-store-settings.ts", "client/src/pages/admin-dashboard.tsx"]
+      "server/initial-store-settings.ts", "client/src/pages/admin-dashboard.tsx",
+      "client/src/components/admin/theme-manager.tsx", "migrations/0013_theme_primary_color.sql"]
       .map(file => [file, sha(path.join(root, file))])),
   }, null, 2) + "\n", { mode: 0o600 });
   const files = fs.readdirSync(staging).sort();

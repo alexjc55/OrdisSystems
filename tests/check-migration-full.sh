@@ -21,6 +21,13 @@ psql -X -d postgres -v ON_ERROR_STOP=1 -q \
 for db in combined separate; do
   psql -X -d "$db" -v ON_ERROR_STOP=1 -q <<'SQL'
 CREATE TABLE products (id serial PRIMARY KEY, name text);
+CREATE TABLE store_settings (id serial PRIMARY KEY, store_name text);
+INSERT INTO store_settings (store_name) VALUES ('Существующий магазин');
+CREATE TABLE themes (
+  id varchar(50) PRIMARY KEY, name text,
+  primary_color varchar(20) NOT NULL DEFAULT 'hsl(24.6, 95%, 53.1%)'
+);
+INSERT INTO themes (id, name, primary_color) VALUES ('existing', 'Сохранённая тема', '#123456');
 CREATE TABLE orders (id serial PRIMARY KEY, payment_method text, transaction_id text);
 CREATE TABLE pending_payments (
   id serial PRIMARY KEY, token text, status text, transaction_id text,
@@ -39,7 +46,7 @@ done
 psql -X -d separate -v ON_ERROR_STOP=1 -qc \
   'ALTER TABLE products ADD COLUMN min_order_quantity DECIMAL(10,3), ADD COLUMN max_order_quantity DECIMAL(10,3);'
 for migration in migrations/0007*.sql migrations/0008*.sql migrations/0009*.sql \
-  migrations/0010*.sql migrations/0011*.sql migrations/0012*.sql; do
+  migrations/0010*.sql migrations/0011*.sql migrations/0012*.sql migrations/0013*.sql; do
   psql -X -d separate -v ON_ERROR_STOP=1 --single-transaction -q -f "$migration" >/dev/null
 done
 for run in 1 2; do
@@ -56,7 +63,13 @@ BEGIN
                  AND provider_approval_attempted_at IS NOT NULL) OR
      EXISTS (SELECT 1 FROM pending_payments WHERE token <> 'linked' AND order_id IS NOT NULL) OR
      EXISTS (SELECT 1 FROM pending_payments WHERE verification IS NOT NULL) OR
-     EXISTS (SELECT 1 FROM payment_email_outbox) THEN
+     EXISTS (SELECT 1 FROM payment_email_outbox) OR
+     (SELECT count(*) FROM themes) <> 1 OR
+     (SELECT count(*) FROM store_settings) <> 1 OR
+     NOT EXISTS (SELECT 1 FROM store_settings WHERE store_name = 'Существующий магазин'
+                 AND logo_url_en IS NULL AND banner_image_url_he IS NULL) OR
+     NOT EXISTS (SELECT 1 FROM themes WHERE id = 'existing'
+                 AND name = 'Сохранённая тема' AND primary_color = '#123456') THEN
     RAISE EXCEPTION 'Historical linkage, approval, verification or mail backfill is incorrect';
   END IF;
 END $$;
@@ -68,6 +81,19 @@ SQL
   pg_dump -d separate --schema-only --no-owner --no-privileges |
     sed '/^\\restrict /d; /^\\unrestrict /d' > "$temp/separate.sql"
   diff -u "$temp/separate.sql" "$temp/combined.sql"
+done
+# Both individual and cumulative paths must now accept the actual default.
+for db in combined separate; do
+  psql -X -d "$db" -v ON_ERROR_STOP=1 -qc \
+    "INSERT INTO themes (id, name) VALUES ('new', 'Новая тема');"
+done
+# Do not narrow or rewrite a store's already larger custom column.
+psql -X -d separate -v ON_ERROR_STOP=1 -qc \
+  "ALTER TABLE themes ALTER COLUMN primary_color TYPE varchar(100);
+   UPDATE themes SET primary_color = repeat('x', 90) WHERE id = 'existing';"
+for run in 1 2; do
+  psql -X -d separate -v ON_ERROR_STOP=1 --single-transaction -q -f migrations/0013_theme_primary_color.sql
+  test "$(psql -X -d separate -Atqc "SELECT length(primary_color) FROM themes WHERE id = 'existing'")" = 90
 done
 psql -X -d postgres -v ON_ERROR_STOP=1 -qc 'CREATE DATABASE fresh;'
 psql -X -d fresh -v ON_ERROR_STOP=1 -q <<'SQL'
@@ -116,5 +142,6 @@ if USE_NEON=false PGDATABASE=repair_bad node scripts/repair-order-email-queue.mj
   exit 1
 fi
 test "$(psql -X -d repair_bad -Atqc "SELECT count(*) = 0 FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'payment_email_outbox' AND column_name = 'checkout_snapshot'")" = t
-echo "Combined migration matches migrations 0007–0012, including constraints/indexes; repeat application and historical data checks passed."
+echo "Combined migration matches migrations 0007–0013, including constraints/indexes; repeat application and historical data checks passed."
+echo "Theme migration: standard color accepted, existing themes and larger custom columns preserved."
 echo "VPS repair: read-only inspection, wrong-target rejection, repeat application, no historical backfill and atomic rollback passed."

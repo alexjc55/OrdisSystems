@@ -25,3 +25,14 @@ Keeping only the schema/data tail can also leave `\unrestrict` without its match
 **How to apply:** Leave the original backup untouched. Build a portable copy with
 the session SET commands and matched guard pair, then validate a complete restore
 and dump roundtrip in a disposable UTF-8 cluster.
+
+Validate fresh schemas against raw SQL writes and automatic side effects too,
+not just the ORM's table creation or the first successful API response.
+
+**Why:** Existing stores had manually added translated image columns that were
+absent from the declared schema. A freshly saved theme could therefore exist
+while its automatic application failed.
+
+**How to apply:** Exercise complete create/apply/edit/reload flows against an
+empty, generated schema. Keep fields used by raw SQL in the declared schema
+and in the safe cumulative upgrade, preserving existing values.

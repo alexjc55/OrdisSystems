@@ -197,6 +197,66 @@ systemctl is-enabled pm2-edahouse_ordis
 Перезапускается только `dk-ordis`; eDAHouse трогать не нужно.
 После обновления перезагрузите страницу админки без старого кэша (`Ctrl+F5`).
 
+## Исправление сохранения новых тем на уже установленном DK
+
+Для этой ошибки недостаточно только обновить файлы: старое поле основного
+цвета ограничено 20 символами, а стандартное значение занимает 21.
+Миграция `0013_theme_primary_color.sql` расширяет это поле до 64
+символов и добавляет отсутствующие поля переведённых изображений магазина,
+которые уже использует форма. Она не удаляет темы,
+не меняет сохранённые цвета и не сужает уже более широкие поля.
+Те же изменения включены в `migration_full.sql`.
+
+После синхронизации кода с GitHub, под пользователем `edahouse_ordis`:
+
+```bash
+(
+  set -eu
+  cd ~/www/dk.ordis.co.il/
+  git pull --ff-only
+  npm run build
+  node --input-type=module <<'NODE'
+import 'dotenv/config';
+import pg from 'pg';
+import { readFile } from 'node:fs/promises';
+const client = new pg.Client(process.env.DATABASE_URL
+  ? { connectionString: process.env.DATABASE_URL } : {});
+try {
+  if (process.env.USE_NEON === 'true') throw new Error('Wrong database mode');
+  await client.connect();
+  const { rows } = await client.query('SELECT current_database() AS name');
+  if (rows[0].name !== 'dk_ordis') throw new Error('Wrong database');
+  await client.query('BEGIN');
+  await client.query("SET LOCAL lock_timeout = '10s'");
+  await client.query(await readFile('migrations/0013_theme_primary_color.sql', 'utf8'));
+  const check = await client.query(`SELECT data_type, character_maximum_length AS size
+    FROM information_schema.columns WHERE table_schema='public'
+    AND table_name='themes' AND column_name='primary_color'`);
+  const column = check.rows[0];
+  if (!column || !(column.data_type === 'text' ||
+      (column.data_type === 'character varying' &&
+       (column.size === null || column.size >= 64)))) throw new Error('Unexpected column');
+  await client.query('COMMIT');
+  console.log('Готово: миграция тем в dk_ordis выполнена. Существующие данные сохранены.');
+} catch {
+  await client.query('ROLLBACK').catch(() => {});
+  console.error('Миграция не выполнена. Проверьте подключение к dk_ordis, права и структуру themes.');
+  process.exitCode = 1;
+} finally {
+  await client.end().catch(() => {});
+}
+NODE
+  NODE_ENV=production PORT=5002 SEED_DEMO_CATALOG=false \
+    pm2 restart dk-ordis --update-env
+  pm2 save
+)
+```
+
+При ошибке сборки или миграции блок остановится, не перезапуская приложение.
+Полный SQL-дамп повторно не импортировать, администратора заново не создавать.
+После успешного обновления нажмите `Ctrl+F5`, создайте тему и сохраните её.
+Форма теперь сохраняет поля всех вкладок, включая те, которые не открывались.
+
 ## Повторная подготовка комплекта
 
 В среде разработки с PostgreSQL и установленными зависимостями:

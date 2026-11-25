@@ -99,7 +99,9 @@ export async function launchChromium() {
           errors.push(JSON.stringify(params.exceptionDetails));
         });
         // Block every non-fixture request, including external logos and APIs.
+        let navigation = 0;
         listeners.set(`${sessionId}:Fetch.requestPaused`, params => {
+          const requestNavigation = navigation;
           const url = new URL(params.request.url);
           if (params.resourceType === "Stylesheet" && options.emptyStylesheetOrigins?.includes(url.origin)) {
             void send("Fetch.fulfillRequest", {
@@ -119,10 +121,14 @@ export async function launchChromium() {
           const local = url.origin === origin;
           if (!local) errors.push(`Unexpected network request: ${url.origin}${url.pathname}`);
           const continueRequest = () => {
+            // Reload invalidates paused interception IDs from the old document.
+            if (requestNavigation !== navigation) return;
             void send(local ? "Fetch.continueRequest" : "Fetch.failRequest", {
               requestId: params.requestId,
               ...(!local ? { errorReason: "BlockedByClient" } : {}),
-            }, sessionId).catch(error => errors.push(String(error)));
+            }, sessionId).catch(error => {
+              if (requestNavigation === navigation) errors.push(String(error));
+            });
           };
           const delay = local ? options.delayRequest?.(params.request.url) || 0 : 0;
           if (delay) setTimeout(continueRequest, delay);
@@ -170,9 +176,16 @@ export async function launchChromium() {
             name, value, url: origin, httpOnly: true, secure: false,
           }, sessionId),
           screenshot: async () => (await send("Page.captureScreenshot", { format: "jpeg", quality: 75 }, sessionId)).data as string,
-          navigate: (path: string) => send("Page.navigate", { url: `${origin}${path}` }, sessionId),
-          reload: () => send("Page.reload", {}, sessionId),
+          navigate: (path: string) => {
+            navigation++;
+            return send("Page.navigate", { url: `${origin}${path}` }, sessionId);
+          },
+          reload: () => {
+            navigation++;
+            return send("Page.reload", {}, sessionId);
+          },
           async close() {
+            navigation++;
             await send("Target.closeTarget", { targetId });
             for (const key of listeners.keys()) {
               if (key.startsWith(`${sessionId}:`)) listeners.delete(key);
